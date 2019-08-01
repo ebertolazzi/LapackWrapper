@@ -1350,11 +1350,13 @@ namespace lapack_wrapper {
       valueType       y[],
       integer incy
     ) const {
-      gemv( NO_TRANSPOSE,
-            nRow, minRC,
-            alpha, Umat, nRow,
-            x, incx,
-            beta, y, incy );
+      gemv(
+        NO_TRANSPOSE,
+        nRow, minRC,
+        alpha, Umat, nRow,
+        x, incx,
+        beta, y, incy
+      );
     }
 
     //! y <- alpha * U' * x + beta * y
@@ -1367,11 +1369,13 @@ namespace lapack_wrapper {
       valueType       y[],
       integer         incy
     ) const {
-      gemv( TRANSPOSE,
-            nRow, minRC,
-            alpha, Umat, nRow,
-            x, incx,
-            beta, y, incy );
+      gemv(
+        TRANSPOSE,
+        nRow, minRC,
+        alpha, Umat, nRow,
+        x, incx,
+        beta, y, incy
+      );
     }
 
     //! y <- alpha * V * x + beta * y
@@ -1384,11 +1388,13 @@ namespace lapack_wrapper {
       valueType       y[],
       integer         incy
     ) const {
-      gemv( TRANSPOSE,
-            minRC, nCol,
-            alpha, VTmat, nRow,
-            x, incx,
-            beta, y, incy );
+      gemv(
+        TRANSPOSE,
+        minRC, nCol,
+        alpha, VTmat, nRow,
+        x, incx,
+        beta, y, incy
+      );
     }
 
     //! y <- alpha * V' * x + beta * y
@@ -1401,11 +1407,13 @@ namespace lapack_wrapper {
       valueType       y[],
       integer         incy
     ) const {
-      gemv( NO_TRANSPOSE,
-            minRC, nCol,
-            alpha, VTmat, nRow,
-            x, incx,
-            beta, y, incy );
+      gemv(
+        NO_TRANSPOSE,
+        minRC, nCol,
+        alpha, VTmat, nRow,
+        x, incx,
+        beta, y, incy
+      );
     }
 
     /*\

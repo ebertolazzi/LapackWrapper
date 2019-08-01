@@ -864,13 +864,15 @@ namespace lapack_wrapper {
     T                        c[],
     integer                  incc
   ) {
-    lapack_wrapper::gemv( TRANSA,
-                  A.numRows(), A.numCols(),
-                  alpha,
-                  A.get_data(), A.lDim(),
-                  v, incv,
-                  beta,
-                  c, incc );
+    lapack_wrapper::gemv(
+      TRANSA,
+      A.numRows(), A.numCols(),
+      alpha,
+      A.get_data(), A.lDim(),
+      v, incv,
+      beta,
+      c, incc
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -899,13 +901,15 @@ namespace lapack_wrapper {
     T                        c[],
     integer                  incc
   ) {
-    lapack_wrapper::gemv( NO_TRANSPOSE,
-                  A.numRows(), A.numCols(),
-                  alpha,
-                  A.get_data(), A.lDim(),
-                  v, incv,
-                  beta,
-                  c, incc );
+    lapack_wrapper::gemv(
+      NO_TRANSPOSE,
+      A.numRows(), A.numCols(),
+      alpha,
+      A.get_data(), A.lDim(),
+      v, incv,
+      beta,
+      c, incc
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
