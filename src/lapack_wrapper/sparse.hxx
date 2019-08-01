@@ -402,6 +402,8 @@ namespace lapack_wrapper {
     std::vector<integer>   cols;  //!< the columns index
 
     bool fortran_indexing;
+    bool matrix_is_full;
+    bool matrix_is_row_major;
 
   public:
 
@@ -410,6 +412,8 @@ namespace lapack_wrapper {
     , nCols(0)
     , nnz(0)
     , fortran_indexing(false)
+    , matrix_is_full(false)
+    , matrix_is_row_major(false)
     {}
 
     SparseCCOOR(
@@ -651,6 +655,19 @@ namespace lapack_wrapper {
 
     void
     reserve( integer reserve_nnz );
+
+    void
+    get_full_view( MatrixWrapper<valueType> & MW ) {
+      LAPACK_WRAPPER_ASSERT(
+        this->matrix_is_full,
+        "get_full_view, matrix is sparse"
+      );
+      if ( this->matrix_is_row_major ) {
+        MW.setup( &this->vals.front(), nCols, nRows, nCols );
+      } else {
+        MW.setup( &this->vals.front(), nRows, nCols, nRows );
+      }
+    }
   };
 
   // explicit instantiation declaration to suppress warnings

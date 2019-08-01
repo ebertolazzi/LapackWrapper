@@ -52,12 +52,34 @@ namespace lapack_wrapper {
       ", dimY = " << DimY << " matrix is " << this->nRows <<
       " x " << this->nCols
     );
-    this->y_manage( beta, DimY, y, incY );
-    integer offs = this->fortran_indexing ? -1 : 0;
-    for ( integer idx = 0; idx < this->nnz; ++idx ) {
-      integer i = this->rows[idx] + offs;
-      integer j = this->cols[idx] + offs;
-      y[ i * incY ] += alpha * this->vals[idx] * x[ j * incX ];
+    if ( this->matrix_is_full ) {
+      if ( this->matrix_is_row_major ) {
+        lapack_wrapper::gemv(
+          TRANSPOSE, nCols, nRows,
+          alpha,
+          &this->vals.front(), nCols,
+          x, 1,
+          beta,
+          y, 1
+        );
+      } else {
+        lapack_wrapper::gemv(
+          NO_TRANSPOSE, nRows, nCols,
+          alpha,
+          &this->vals.front(), nRows,
+          x, 1,
+          beta,
+          y, 1
+        );
+      }
+    } else {
+      this->y_manage( beta, DimY, y, incY );
+      integer offs = this->fortran_indexing ? -1 : 0;
+      for ( integer idx = 0; idx < this->nnz; ++idx ) {
+        integer i = this->rows[idx] + offs;
+        integer j = this->cols[idx] + offs;
+        y[ i * incY ] += alpha * this->vals[idx] * x[ j * incX ];
+      }
     }
   }
 
@@ -79,12 +101,34 @@ namespace lapack_wrapper {
       ", dimY = " << DimY << " matrix is " << this->nRows <<
       " x " << this->nCols
     );
-    this->y_manage( beta, DimY, y, incY );
-    integer offs = this->fortran_indexing ? -1 : 0;
-    for ( integer idx = 0; idx < this->nnz; ++idx ) {
-      integer j = this->rows[idx] + offs;
-      integer i = this->cols[idx] + offs;
-      y[ i * incY ] += alpha * this->vals[idx] * x[ j * incX ];
+    if ( this->matrix_is_full ) {
+      if ( this->matrix_is_row_major ) {
+        lapack_wrapper::gemv(
+          NO_TRANSPOSE, nCols, nRows,
+          alpha,
+          &this->vals.front(), nCols,
+          x, 1,
+          beta,
+          y, 1
+        );
+      } else {
+        lapack_wrapper::gemv(
+          TRANSPOSE, nRows, nCols,
+          alpha,
+          &this->vals.front(), nRows,
+          x, 1,
+          beta,
+          y, 1
+        );
+      }
+    } else {
+      this->y_manage( beta, DimY, y, incY );
+      integer offs = this->fortran_indexing ? -1 : 0;
+      for ( integer idx = 0; idx < this->nnz; ++idx ) {
+        integer j = this->rows[idx] + offs;
+        integer i = this->cols[idx] + offs;
+        y[ i * incY ] += alpha * this->vals[idx] * x[ j * incX ];
+      }
     }
   }
 
@@ -139,6 +183,8 @@ namespace lapack_wrapper {
   , nCols(M)
   , nnz(reserve_nnz)
   , fortran_indexing(fi)
+  , matrix_is_full(false)
+  , matrix_is_row_major(false)
   {
     this->vals.clear(); this->vals.reserve(reserve_nnz);
     this->rows.clear(); this->rows.reserve(reserve_nnz);
@@ -148,9 +194,11 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseCCOOR<T>::clear() {
-    this->nRows = 0;
-    this->nCols = 0;
-    this->nnz   = 0;
+    this->nRows               = 0;
+    this->nCols               = 0;
+    this->nnz                 = 0;
+    this->matrix_is_full      = false;
+    this->matrix_is_row_major = false;
     this->vals.clear();
     this->rows.clear();
     this->cols.clear();
@@ -159,10 +207,14 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseCCOOR<T>::setZero() {
-    this->nnz = 0;
-    this->vals.clear();
-    this->rows.clear();
-    this->cols.clear();
+    if ( this->matrix_is_full ) {
+      std::fill( this->vals.begin(), this->vals.end(), 0 );
+    } else {
+      this->nnz            = 0;
+      this->vals.clear();
+      this->rows.clear();
+      this->cols.clear();
+    }
   }
 
   template <typename T>
@@ -173,10 +225,12 @@ namespace lapack_wrapper {
     integer reserve_nnz,
     bool    fi
   ) {
-    this->fortran_indexing = fi;
-    this->nRows            = N;
-    this->nCols            = M;
-    this->nnz              = 0;
+    this->fortran_indexing    = fi;
+    this->nRows               = N;
+    this->nCols               = M;
+    this->nnz                 = 0;
+    this->matrix_is_full      = false;
+    this->matrix_is_row_major = false;
     this->vals.clear(); this->vals.reserve(reserve_nnz);
     this->rows.clear(); this->rows.reserve(reserve_nnz);
     this->cols.clear(); this->cols.reserve(reserve_nnz);
@@ -199,6 +253,8 @@ namespace lapack_wrapper {
         this->cols.push_back( j+offs );
       }
     }
+    this->matrix_is_full      = true;
+    this->matrix_is_row_major = false;
   }
 
   template <typename T>
@@ -218,6 +274,8 @@ namespace lapack_wrapper {
         this->cols.push_back( j+offs );
       }
     }
+    this->matrix_is_full      = true;
+    this->matrix_is_row_major = true;
   }
 
   template <typename T>
@@ -282,11 +340,16 @@ namespace lapack_wrapper {
       row >= 0 && row < this->nRows && col >= 0 && col < this->nCols,
       "SparseCCOOR::push_value_C( " << row << ", " << col << ") out of bound"
     );
-    if ( this->fortran_indexing ) { ++row; ++col; }
-    this->vals.push_back(val);
-    this->rows.push_back(row);
-    this->cols.push_back(col);
-    ++this->nnz;
+    if ( this->matrix_is_full ) {
+       if ( this->matrix_is_row_major ) vals[ col + row * nCols ] =  val;
+       else                             vals[ row + col * nRows ] =  val;
+    } else {
+      if ( this->fortran_indexing ) { ++row; ++col; }
+      this->vals.push_back(val);
+      this->rows.push_back(row);
+      this->cols.push_back(col);
+      ++this->nnz;
+    }
   }
 
   template <typename T>
@@ -301,10 +364,15 @@ namespace lapack_wrapper {
       "SparseCCOOR::push_value_F( " << row << ", " << col << ") out of bound"
     );
     if ( !this->fortran_indexing ) { --row; --col; }
-    this->vals.push_back(val);
-    this->rows.push_back(row);
-    this->cols.push_back(col);
-    ++this->nnz;
+    if ( this->matrix_is_full ) {
+       if ( this->matrix_is_row_major ) vals[ col + row * nCols ] =  val;
+       else                             vals[ row + col * nRows ] =  val;
+    } else {
+      this->vals.push_back(val);
+      this->rows.push_back(row);
+      this->cols.push_back(col);
+      ++this->nnz;
+    }
   }
 
   template <typename T>
@@ -315,18 +383,28 @@ namespace lapack_wrapper {
     MatW const & Matrix,
     bool         transpose
   ) {
-    if ( this->fortran_indexing ) { ++row_offs; ++col_offs; }
-    for ( integer j = 0; j < Matrix.numCols(); ++j ) {
-      for ( integer i = 0; i < Matrix.numRows(); ++i ) {
-        if ( transpose ) {
-          this->rows.push_back( row_offs + j );
-          this->cols.push_back( col_offs + i );
-        } else {
-          this->rows.push_back( row_offs + i );
-          this->cols.push_back( col_offs + j );
+    if ( this->matrix_is_full ) {
+      MatW tmp;
+      this->get_full_view( tmp );
+      if ( (this->matrix_is_row_major && transpose) || (!this->matrix_is_row_major && !transpose) ) {
+        tmp.load_block(Matrix,row_offs,col_offs);
+      } else {
+        tmp.load_block_transposed(Matrix,row_offs,col_offs);
+      }
+    } else {
+      if ( this->fortran_indexing ) { ++row_offs; ++col_offs; }
+      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
+       for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+           if ( transpose ) {
+            this->rows.push_back( row_offs + j );
+            this->cols.push_back( col_offs + i );
+          } else {
+            this->rows.push_back( row_offs + i );
+            this->cols.push_back( col_offs + j );
+          }
+          this->vals.push_back( Matrix(i,j) );
+          ++this->nnz;
         }
-        this->vals.push_back( Matrix(i,j) );
-        ++this->nnz;
       }
     }
   }
@@ -339,21 +417,30 @@ namespace lapack_wrapper {
     Sparse const & Matrix,
     bool           transpose
   ) {
-    integer const * rowsM;
-    integer const * colsM;
-    T       const * valsM;
-    Matrix.get_data( rowsM, colsM, valsM );
-    if ( transpose ) std::swap( rowsM, colsM );
-    if ( Matrix.FORTRAN_indexing() ) { --row_offs; --col_offs; }
-    if ( this->fortran_indexing )    { ++row_offs; ++col_offs; }
-    for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
-      this->rows.push_back( row_offs + rowsM[index] );
-      this->cols.push_back( col_offs + colsM[index] );
-      this->vals.push_back( valsM[index] );
-      ++this->nnz;
+    if ( this->matrix_is_full ) {
+      MatW tmp;
+      this->get_full_view( tmp );
+      if ( (this->matrix_is_row_major && transpose) || (!this->matrix_is_row_major && !transpose) ) {
+        tmp.load(Matrix,row_offs,col_offs);
+      } else {
+        tmp.load_transposed(Matrix,row_offs,col_offs);
+      }
+    } else {
+      integer const * rowsM;
+      integer const * colsM;
+      T       const * valsM;
+      Matrix.get_data( rowsM, colsM, valsM );
+      if ( transpose ) std::swap( rowsM, colsM );
+      if ( Matrix.FORTRAN_indexing() ) { --row_offs; --col_offs; }
+      if ( this->fortran_indexing )    { ++row_offs; ++col_offs; }
+      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
+        this->rows.push_back( row_offs + rowsM[index] );
+        this->cols.push_back( col_offs + colsM[index] );
+        this->vals.push_back( valsM[index] );
+        ++this->nnz;
+      }
     }
   }
-
 
   template <typename T>
   void

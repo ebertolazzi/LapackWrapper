@@ -546,6 +546,7 @@ namespace lapack_wrapper {
     :|:
     \*/
     void load( Sparse const & sp );
+    void load_transposed( Sparse const & sp );
 
     void
     load(
@@ -564,6 +565,7 @@ namespace lapack_wrapper {
     :|:
     \*/
     void load( Sparse const & sp, integer i_offs, integer j_offs );
+    void load_transposed( Sparse const & sp, integer i_offs, integer j_offs );
 
     void
     load(

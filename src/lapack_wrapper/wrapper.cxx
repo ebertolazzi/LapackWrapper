@@ -199,6 +199,54 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
+  MatrixWrapper<T>::load_transposed( Sparse const & sp ) {
+    #ifndef LAPACK_WRAPPER_NO_DEBUG
+    check(sp);
+    #endif
+    integer   const * pRows;
+    integer   const * pCols;
+    valueType const * pValues;
+    sp.get_data( pCols, pRows, pValues ); // read index transposed
+    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+      this->data[ this->iaddr(pRows[idx],pCols[idx]) ] = pValues[idx];
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  MatrixWrapper<T>::load( Sparse const & sp, integer i_offs, integer j_offs ) {
+    #ifndef LAPACK_WRAPPER_NO_DEBUG
+    check(sp);
+    #endif
+    integer   const * pRows;
+    integer   const * pCols;
+    valueType const * pValues;
+    sp.get_data( pRows, pCols, pValues );
+    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+      this->data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  MatrixWrapper<T>::load_transposed( Sparse const & sp, integer i_offs, integer j_offs ) {
+    #ifndef LAPACK_WRAPPER_NO_DEBUG
+    check(sp);
+    #endif
+    integer   const * pRows;
+    integer   const * pCols;
+    valueType const * pValues;
+    sp.get_data( pCols, pRows, pValues ); // read index transposed
+    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+      this->data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
   MatrixWrapper<T>::load(
     integer   const rows[],
     integer   const cols[],
@@ -267,24 +315,6 @@ namespace lapack_wrapper {
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
       this->data[ this->iaddr(pRows[idx],pCols[idx]) ]
         += alpha * pValues[idx];
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  void
-  MatrixWrapper<T>::load(
-    Sparse const & sp,
-    integer        i_offs,
-    integer        j_offs
-  ) {
-    integer   const * pRows;
-    integer   const * pCols;
-    valueType const * pValues;
-    sp.get_data( pRows, pCols, pValues );
-    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
-      this->data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ]
-        = pValues[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
