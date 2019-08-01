@@ -374,6 +374,10 @@ namespace lapack_wrapper {
       integer         incY
     ) const LAPACK_WRAPPER_PURE_VIRTUAL;
 
+    virtual
+    void
+    get_full_view( MatrixWrapper<valueType> & MW ) LAPACK_WRAPPER_PURE_VIRTUAL;
+
   };
 
   /*
@@ -657,7 +661,7 @@ namespace lapack_wrapper {
     reserve( integer reserve_nnz );
 
     void
-    get_full_view( MatrixWrapper<valueType> & MW ) {
+    get_full_view( MatrixWrapper<valueType> & MW ) LAPACK_WRAPPER_OVERRIDE {
       LAPACK_WRAPPER_ASSERT(
         this->matrix_is_full,
         "get_full_view, matrix is sparse"
