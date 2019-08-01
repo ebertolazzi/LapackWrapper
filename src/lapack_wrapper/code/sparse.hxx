@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: LapackWrapper_sparse.hxx
+/// file: sparse.hxx
 ///
 
 #include <vector>
@@ -696,3 +696,7 @@ namespace lapack_wrapper {
   #endif
 
 }
+
+///
+/// eof: sparse.hxx
+///

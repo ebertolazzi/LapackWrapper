@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: LapackWrapper_banded.hxx
+/// file: banded.hxx
 ///
 
 namespace lapack_wrapper {

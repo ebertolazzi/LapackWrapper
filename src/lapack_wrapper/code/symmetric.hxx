@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: LapackWrapper_symmetric.hxx
+/// file: symmetric.hxx
 ///
 
 /*
@@ -786,4 +786,6 @@ namespace lapack_wrapper {
 
 }
 
-
+///
+/// eof: symmetric.hxx
+///

@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: LapackWrapper_general_qr.hxx
+/// file: general_qr.hxx
 ///
 
 namespace lapack_wrapper {

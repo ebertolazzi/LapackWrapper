@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: LapackWrapper_tridiagonal.hxx
+/// file: tridiagonal.hxx
 ///
 
 namespace lapack_wrapper {
@@ -1177,3 +1177,7 @@ namespace lapack_wrapper {
   }
 
 }
+
+///
+/// eof: tridiagonal.hxx
+///

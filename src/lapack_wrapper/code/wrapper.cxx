@@ -17,6 +17,10 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
+///
+/// file: wrapper.cxx
+///
+
 namespace lapack_wrapper {
 
   /*
@@ -472,5 +476,5 @@ namespace lapack_wrapper {
 }
 
 ///
-/// eof: LapackWrapper_wrapper.cxx
+/// eof: wrapper.cxx
 ///

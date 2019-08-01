@@ -875,17 +875,21 @@ namespace lapack_wrapper {
     integer         N4
   ) {
     #ifdef LAPACK_WRAPPER_USE_ACCELERATE
-    return CLAPACKNAME(ilaenv)( &ISPEC,
-                                const_cast<character*>(NAME),
-                                const_cast<character*>(OPTS),
-                                &N1, &N2, &N3, &N4 );
+    return CLAPACKNAME(ilaenv)(
+      &ISPEC,
+      const_cast<character*>(NAME),
+      const_cast<character*>(OPTS),
+      &N1, &N2, &N3, &N4
+    );
     #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
     size_t len_NAME = strlen( NAME );
     size_t len_OPTS = strlen( OPTS );
-    return LAPACK_F77NAME(ilaenv)( &ISPEC,
-                                   const_cast<character*>(NAME),
-                                   const_cast<character*>(OPTS),
-                                   &N1, &N2, &N3, &N4, &len_NAME, &len_OPTS );
+    return LAPACK_F77NAME(ilaenv)(
+      &ISPEC,
+      const_cast<character*>(NAME),
+      const_cast<character*>(OPTS),
+      &N1, &N2, &N3, &N4, &len_NAME, &len_OPTS
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     return ::ilaenv( &ISPEC, NAME, OPTS, &N1, &N2, &N3, &N4 );
     #else
@@ -1011,21 +1015,30 @@ namespace lapack_wrapper {
     real     & C
   )
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { CLAPACKNAME(slaic1)( &JOB, &J,
-                         const_cast<real*>(X), &SEST,
-                         const_cast<real*>(W), &GAMMA,
-                         &SESTPR, &S, &C ); }
+  { CLAPACKNAME(slaic1)(
+      &JOB, &J,
+      const_cast<real*>(X), &SEST,
+      const_cast<real*>(W), &GAMMA,
+      &SESTPR, &S, &C
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-  { LAPACK_F77NAME(slaic1)( &JOB, &J,
-                            const_cast<real*>(X), &SEST,
-                            const_cast<real*>(W), &GAMMA,
-                            &SESTPR, &S, &C ); }
+  { LAPACK_F77NAME(slaic1)(
+      &JOB, &J,
+      const_cast<real*>(X), &SEST,
+      const_cast<real*>(W), &GAMMA,
+      &SESTPR, &S, &C
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
   //@@ USE LAPACK ROUTINE @@
-  { LAPACK_F77NAME(slaic1)( &JOB, &J,
-                            const_cast<real*>(X), &SEST,
-                            const_cast<real*>(W), &GAMMA,
-                            &SESTPR, &S, &C ); }
+  { LAPACK_F77NAME(slaic1)(
+      &JOB, &J,
+      const_cast<real*>(X), &SEST,
+      const_cast<real*>(W), &GAMMA,
+      &SESTPR, &S, &C
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { slaic1( &JOB, &J, X, &SEST, W, &GAMMA, &SESTPR, &S, &C  ); }
   #else
@@ -1046,21 +1059,30 @@ namespace lapack_wrapper {
     doublereal     & C
   )
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { CLAPACKNAME(dlaic1)( &JOB, &J,
-                         const_cast<doublereal*>(X), &SEST,
-                         const_cast<doublereal*>(W), &GAMMA,
-                         &SESTPR, &S, &C ); }
+  { CLAPACKNAME(dlaic1)(
+      &JOB, &J,
+      const_cast<doublereal*>(X), &SEST,
+      const_cast<doublereal*>(W), &GAMMA,
+      &SESTPR, &S, &C
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-  { LAPACK_F77NAME(dlaic1)( &JOB, &J,
-                            const_cast<doublereal*>(X), &SEST,
-                            const_cast<doublereal*>(W), &GAMMA,
-                            &SESTPR, &S, &C ); }
+  { LAPACK_F77NAME(dlaic1)(
+      &JOB, &J,
+      const_cast<doublereal*>(X), &SEST,
+      const_cast<doublereal*>(W), &GAMMA,
+      &SESTPR, &S, &C
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
   //@@ USE LAPACK ROUTINE @@
-  { LAPACK_F77NAME(dlaic1)( &JOB, &J,
-                            const_cast<doublereal*>(X), &SEST,
-                            const_cast<doublereal*>(W), &GAMMA,
-                            &SESTPR, &S, &C ); }
+  { LAPACK_F77NAME(dlaic1)(
+      &JOB, &J,
+      const_cast<doublereal*>(X), &SEST,
+      const_cast<doublereal*>(W), &GAMMA,
+      &SESTPR, &S, &C
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { dlaic1( &JOB, &J, X, &SEST, W, &GAMMA, &SESTPR, &S, &C ); }
   #else

@@ -20,7 +20,6 @@
 		D940910022F1A7AF00EB3EBD /* libLapackWrapperLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D940909622F195B600EB3EBD /* libLapackWrapperLib.a */; };
 		D940910122F1A7AF00EB3EBD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D94090D122F1A44600EB3EBD /* Accelerate.framework */; };
 		D958BCB322F32F0B00D41FCA /* lapack_wrapper.hh in Headers */ = {isa = PBXBuildFile; fileRef = D958BC9C22F32F0B00D41FCA /* lapack_wrapper.hh */; };
-		D958BCB422F32F0B00D41FCA /* TicToc.hh in Headers */ = {isa = PBXBuildFile; fileRef = D958BC9D22F32F0B00D41FCA /* TicToc.hh */; };
 		D958BCC022F32F0B00D41FCA /* lapack_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = D958BCAC22F32F0B00D41FCA /* lapack_wrapper.cc */; };
 		D958BCC122F32F0B00D41FCA /* lapack_wrapper++.hh in Headers */ = {isa = PBXBuildFile; fileRef = D958BCAE22F32F0B00D41FCA /* lapack_wrapper++.hh */; };
 		D958BCC222F32F0B00D41FCA /* lapack_wrapper++.cc in Sources */ = {isa = PBXBuildFile; fileRef = D958BCAF22F32F0B00D41FCA /* lapack_wrapper++.cc */; };
@@ -102,7 +101,6 @@
 		D94090F722F1A77100EB3EBD /* test4-BFGS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test4-BFGS"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94090FE22F1A77F00EB3EBD /* test4-BFGS.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test4-BFGS.cc"; path = "../src_tests/test4-BFGS.cc"; sourceTree = "<group>"; };
 		D958BC9C22F32F0B00D41FCA /* lapack_wrapper.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lapack_wrapper.hh; sourceTree = "<group>"; };
-		D958BC9D22F32F0B00D41FCA /* TicToc.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TicToc.hh; sourceTree = "<group>"; };
 		D958BCAC22F32F0B00D41FCA /* lapack_wrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lapack_wrapper.cc; sourceTree = "<group>"; };
 		D958BCAD22F32F0B00D41FCA /* lapack_wrapper_config.hh.tmpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lapack_wrapper_config.hh.tmpl; sourceTree = "<group>"; };
 		D958BCAE22F32F0B00D41FCA /* lapack_wrapper++.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = "lapack_wrapper++.hh"; sourceTree = "<group>"; };
@@ -112,6 +110,9 @@
 		D992160122F1BA6500B9C5FC /* test5-BLOCKTRID.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test5-BLOCKTRID.cc"; path = "../src_tests/test5-BLOCKTRID.cc"; sourceTree = "<group>"; };
 		D992160922F1BB6D00B9C5FC /* test6-EIGS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test6-EIGS"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D992161022F1BB7900B9C5FC /* test6-EIGS.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test6-EIGS.cc"; path = "../src_tests/test6-EIGS.cc"; sourceTree = "<group>"; };
+		D9DE0B3C22F3811C00C08382 /* code */ = {isa = PBXFileReference; lastKnownFileType = folder; path = code; sourceTree = "<group>"; };
+		D9DE0B3D22F381FE00C08382 /* TicToc.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TicToc.hh; sourceTree = "<group>"; };
+		D9DE0B3E22F3827B00C08382 /* code++ */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "code++"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,13 +229,15 @@
 		D958BC9B22F32F0B00D41FCA /* lapack_wrapper */ = {
 			isa = PBXGroup;
 			children = (
-				D958BC9C22F32F0B00D41FCA /* lapack_wrapper.hh */,
-				D958BC9D22F32F0B00D41FCA /* TicToc.hh */,
-				D958BCAC22F32F0B00D41FCA /* lapack_wrapper.cc */,
 				D958BCAD22F32F0B00D41FCA /* lapack_wrapper_config.hh.tmpl */,
+				D958BCB022F32F0B00D41FCA /* lapack_wrapper_config.hh */,
+				D9DE0B3D22F381FE00C08382 /* TicToc.hh */,
+				D9DE0B3E22F3827B00C08382 /* code++ */,
+				D9DE0B3C22F3811C00C08382 /* code */,
+				D958BC9C22F32F0B00D41FCA /* lapack_wrapper.hh */,
+				D958BCAC22F32F0B00D41FCA /* lapack_wrapper.cc */,
 				D958BCAE22F32F0B00D41FCA /* lapack_wrapper++.hh */,
 				D958BCAF22F32F0B00D41FCA /* lapack_wrapper++.cc */,
-				D958BCB022F32F0B00D41FCA /* lapack_wrapper_config.hh */,
 			);
 			path = lapack_wrapper;
 			sourceTree = "<group>";
@@ -248,7 +251,6 @@
 			files = (
 				D958BCC322F32F0B00D41FCA /* lapack_wrapper_config.hh in Headers */,
 				D958BCB322F32F0B00D41FCA /* lapack_wrapper.hh in Headers */,
-				D958BCB422F32F0B00D41FCA /* TicToc.hh in Headers */,
 				D958BCC122F32F0B00D41FCA /* lapack_wrapper++.hh in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

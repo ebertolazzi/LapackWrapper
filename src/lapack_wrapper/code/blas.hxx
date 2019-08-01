@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: lapack_wrapper_blas.hxx
+/// file: blas.hxx
 ///
 
 namespace lapack_wrapper {

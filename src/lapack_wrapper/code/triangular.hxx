@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: LapackWrapper_triangular.hxx
+/// file: triangular.hxx
 ///
 
 namespace lapack_wrapper {
@@ -867,3 +867,7 @@ namespace lapack_wrapper {
   #endif
   }
 }
+
+///
+/// eof: triangular.hxx
+///

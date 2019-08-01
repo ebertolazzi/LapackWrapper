@@ -51,11 +51,13 @@
     static char dir[1024];
     static char fname[256];
     static char ext[128];
-    errno_t e = _splitpath_s( path,
-                              drive, 100,
-                              dir,   1024,
-                              fname, 256,
-                              ext,   128);
+    errno_t e = _splitpath_s(
+      path,
+      drive, 100,
+      dir,   1024,
+      fname, 256,
+      ext,   128
+    );
     return dir;
   }
 #else
@@ -79,10 +81,12 @@ namespace lapack_wrapper {
   character const *uplo_blas[2]    = { "Upper", "Lower" };
   character const *diag_blas[2]    = { "Unit",  "NonUnit" };
   character const *side_blas[2]    = { "Left",  "Right" };
-  character const *balance_blas[4] = { "No Balance",
-                                       "Permute Only",
-                                       "Scale Only",
-                                       "Both permute and scale" };
+  character const *balance_blas[4] = {
+    "No Balance",
+    "Permute Only",
+    "Scale Only",
+    "Both permute and scale"
+  };
 
   character const *job_blas[4]   = { "A", "S", "O", "N" };
   character const *sense_blas[4] = { "N", "E", "V", "B" };
@@ -144,17 +148,19 @@ namespace lapack_wrapper {
   ) {
     for ( integer i = 0; i < DIM; ++i ) {
       if ( isInfinite(pv[i]) ) {
-        LAPACK_WRAPPER_ERROR( LINE_LINE_LINE_LINE <<
-                      "\n(" << basename(const_cast<char*>(file)) <<
-                      ':' << line <<
-                      ") found Infinity at " << v_name << "[" << i << "]\n" <<
-                      LINE_LINE_LINE_LINE )
+        LAPACK_WRAPPER_ERROR(
+          LINE_LINE_LINE_LINE <<
+          "\n(" << basename(const_cast<char*>(file)) << ':' << line <<
+          ") found Infinity at " << v_name << "[" << i << "]\n" <<
+          LINE_LINE_LINE_LINE
+        )
       } else if ( isNaN(pv[i]) ) {
-        LAPACK_WRAPPER_ERROR( LINE_LINE_LINE_LINE <<
-                      "\n(" << basename(const_cast<char*>(file)) <<
-                      ':' << line <<
-                      ") found NaN at " << v_name << "[" << i << "]\n" <<
-                      LINE_LINE_LINE_LINE );
+        LAPACK_WRAPPER_ERROR(
+          LINE_LINE_LINE_LINE <<
+          "\n(" << basename(const_cast<char*>(file)) << ':' << line <<
+          ") found NaN at " << v_name << "[" << i << "]\n" <<
+          LINE_LINE_LINE_LINE
+        );
       }
     }
   }
@@ -169,17 +175,19 @@ namespace lapack_wrapper {
   ) {
     for ( integer i = 0; i < DIM; ++i ) {
       if ( isInfinite(pv[i]) ) {
-        LAPACK_WRAPPER_ERROR( LINE_LINE_LINE_LINE <<
-                      "\n(" << basename(const_cast<char*>(file)) <<
-                      ':' << line <<
-                      ") found Infinity at " << v_name << "[" << i << "]\n" <<
-                      LINE_LINE_LINE_LINE )
+        LAPACK_WRAPPER_ERROR(
+          LINE_LINE_LINE_LINE <<
+          "\n(" << basename(const_cast<char*>(file)) << ':' << line <<
+          ") found Infinity at " << v_name << "[" << i << "]\n" <<
+          LINE_LINE_LINE_LINE
+        )
       } else if ( isNaN(pv[i]) ) {
-        LAPACK_WRAPPER_ERROR( LINE_LINE_LINE_LINE <<
-                      "\n(" << basename(const_cast<char*>(file)) <<
-                      ':' << line <<
-                      ") found NaN at " << v_name << "[" << i << "]\n" <<
-                      LINE_LINE_LINE_LINE );
+        LAPACK_WRAPPER_ERROR(
+          LINE_LINE_LINE_LINE <<
+          "\n(" << basename(const_cast<char*>(file)) << ':' << line <<
+          ") found NaN at " << v_name << "[" << i << "]\n" <<
+          LINE_LINE_LINE_LINE
+        );
       }
     }
   }
@@ -252,18 +260,22 @@ namespace lapack_wrapper {
         }
       }
       // COMPUTE SUPERDIAGONAL BLOCK OF U
-      trsm( RIGHT,
-            UPPER,
-            NO_TRANSPOSE,
-            NON_UNIT,
-            M-jjB, JB, 1, Ajj, LDA, Ajj+JB, LDA );
+      trsm(
+        RIGHT,
+        UPPER,
+        NO_TRANSPOSE,
+        NON_UNIT,
+        M-jjB, JB, 1, Ajj, LDA, Ajj+JB, LDA
+      );
       // UPDATE DIAGONAL AND SUBDIAGONAL BLOCKS
-      gemm( NO_TRANSPOSE,
-            NO_TRANSPOSE,
-            M-jjB, N-jjB, JB,
-            -1.0, Ajj+JB,         LDA,
-                  Ajj+JB*LDA,     LDA,
-            1.0,  Ajj+JB*(LDA+1), LDA );
+      gemm(
+        NO_TRANSPOSE,
+        NO_TRANSPOSE,
+        M-jjB, N-jjB, JB,
+        -1.0, Ajj+JB,         LDA,
+              Ajj+JB*LDA,     LDA,
+        1.0,  Ajj+JB*(LDA+1), LDA
+      );
     }
     return 0;
   }
@@ -326,18 +338,22 @@ namespace lapack_wrapper {
       }
       if ( INFO != 0 ) return INFO + j;
       // COMPUTE SUPERDIAGONAL BLOCK OF U
-      trsm( LEFT,
-            LOWER,
-            NO_TRANSPOSE,
-            UNIT,
-            JB, N-jjB, 1.0, Ajj, LDA, Ajj+JB*LDA, LDA );
+      trsm(
+        LEFT,
+        LOWER,
+        NO_TRANSPOSE,
+        UNIT,
+        JB, N-jjB, 1.0, Ajj, LDA, Ajj+JB*LDA, LDA
+      );
       // UPDATE DIAGONAL AND SUBDIAGONAL BLOCKS
-      gemm( NO_TRANSPOSE,
-            NO_TRANSPOSE,
-            M-jjB, N-jjB, JB,
-            -1.0, Ajj+JB,         LDA,
-                  Ajj+JB*LDA,     LDA,
-            1.0,  Ajj+JB*(LDA+1), LDA );
+      gemm(
+        NO_TRANSPOSE,
+        NO_TRANSPOSE,
+        M-jjB, N-jjB, JB,
+        -1.0, Ajj+JB,         LDA,
+              Ajj+JB*LDA,     LDA,
+         1.0, Ajj+JB*(LDA+1), LDA
+      );
     }
     return 0;
   }
@@ -403,11 +419,13 @@ namespace lapack_wrapper {
       }
     }
     // risolvo R
-    trsm( LEFT,
-          UPPER,
-          NO_TRANSPOSE,
-          NON_UNIT,
-          N, nrhs, 1.0, &Tmat.front(), N, RHS, ldRHS );
+    trsm(
+      LEFT,
+      UPPER,
+      NO_TRANSPOSE,
+      NON_UNIT,
+      N, nrhs, 1.0, &Tmat.front(), N, RHS, ldRHS
+    );
   }
 
   #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
@@ -452,17 +470,22 @@ namespace lapack_wrapper {
     return INFO;
   }
 
-  template integer getc2_tmpl( integer N,
-                               real    A[],
-                               integer LDA,
-                               integer IPIV[],
-                               integer JPIV[] );
+  template integer getc2_tmpl(
+    integer N,
+    real    A[],
+    integer LDA,
+    integer IPIV[],
+    integer JPIV[]
+  );
 
-  template integer getc2_tmpl( integer    N,
-                               doublereal A[],
-                               integer    LDA,
-                               integer    IPIV[],
-                               integer    JPIV[] );
+  template integer getc2_tmpl(
+    integer    N,
+    doublereal A[],
+    integer    LDA,
+    integer    IPIV[],
+    integer    JPIV[]
+  );
+
   template <typename T>
   T
   gesc2_tmpl(
@@ -509,19 +532,23 @@ namespace lapack_wrapper {
     return SCALE;
   }
 
-  template real gesc2_tmpl( integer       N,
-                            real    const A[],
-                            integer       LDA,
-                            real          RHS[],
-                            integer const IPIV[],
-                            integer const JPIV[] );
+  template real gesc2_tmpl(
+    integer       N,
+    real    const A[],
+    integer       LDA,
+    real          RHS[],
+    integer const IPIV[],
+    integer const JPIV[]
+  );
 
-  template doublereal gesc2_tmpl( integer          N,
-                                  doublereal const A[],
-                                  integer          LDA,
-                                  doublereal       RHS[],
-                                  integer    const IPIV[],
-                                  integer    const JPIV[] );
+  template doublereal gesc2_tmpl(
+    integer          N,
+    doublereal const A[],
+    integer          LDA,
+    doublereal       RHS[],
+    integer    const IPIV[],
+    integer    const JPIV[]
+  );
 
   template <typename T>
   void
@@ -540,45 +567,53 @@ namespace lapack_wrapper {
     LAPACK_WRAPPER_ERROR("NOT YET IMPLEMENTED" );
   }
 
-  template void laqge_tmpl( integer             M,
-                            integer             N,
-                            real                A[],
-                            integer             LDA,
-                            real const          R[],
-                            real const          C[],
-                            real                ROWCND,
-                            real                COLCND,
-                            real                AMAX,
-                            EquilibrationType & equ );
+  template void laqge_tmpl(
+    integer             M,
+    integer             N,
+    real                A[],
+    integer             LDA,
+    real const          R[],
+    real const          C[],
+    real                ROWCND,
+    real                COLCND,
+    real                AMAX,
+    EquilibrationType & equ
+  );
 
-  template void laqge_tmpl( integer             M,
-                            integer             N,
-                            doublereal          A[],
-                            integer             LDA,
-                            doublereal const    R[],
-                            doublereal const    C[],
-                            doublereal          ROWCND,
-                            doublereal          COLCND,
-                            doublereal          AMAX,
-                            EquilibrationType & equ );
+  template void laqge_tmpl(
+    integer             M,
+    integer             N,
+    doublereal          A[],
+    integer             LDA,
+    doublereal const    R[],
+    doublereal const    C[],
+    doublereal          ROWCND,
+    doublereal          COLCND,
+    doublereal          AMAX,
+    EquilibrationType & equ
+  );
 
   #endif
 
-  template void triTikhonov( integer    N,
-                             real const Tmat[],
-                             integer    LDT,
-                             integer    nrhs,
-                             real       RHS[],
-                             integer    ldRHS,
-                             real       lambda );
+  template void triTikhonov(
+    integer    N,
+    real const Tmat[],
+    integer    LDT,
+    integer    nrhs,
+    real       RHS[],
+    integer    ldRHS,
+    real       lambda
+  );
 
-  template void triTikhonov( integer          N,
-                             doublereal const Tmat[],
-                             integer          LDT,
-                             integer          nrhs,
-                             doublereal       RHS[],
-                             integer          ldRHS,
-                             doublereal       lambda );
+  template void triTikhonov(
+    integer          N,
+    doublereal const Tmat[],
+    integer          LDT,
+    integer          nrhs,
+    doublereal       RHS[],
+    integer          ldRHS,
+    doublereal       lambda
+  );
 } // end namespace lapack_wrapper
 
 ///

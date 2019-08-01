@@ -17,6 +17,10 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
+///
+/// file: sparse.cxx
+///
+
 namespace lapack_wrapper {
 
   template <typename real>
@@ -499,5 +503,5 @@ namespace lapack_wrapper {
 }
 
 ///
-/// eof: LapackWrapper_sparse.cxx
+/// eof: sparse.cxx
 ///

@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: LapackWrapper_wrapper.hxx
+/// file: wrapper.hxx
 ///
 
 #ifdef __clang__
@@ -606,8 +606,10 @@ namespace lapack_wrapper {
     void
     add( valueType alpha, MatW const & A ) {
       #if defined(DEBUG) || defined(_DEBUG)
-      LAPACK_WRAPPER_ASSERT( nRows == A.nRows && nCols == A.nCols,
-                     "add(..) incompatible dimensions" );
+      LAPACK_WRAPPER_ASSERT(
+        nRows == A.nRows && nCols == A.nCols,
+        "add(..) incompatible dimensions"
+      );
       #endif
       this->add( alpha, A.data, A.ldData );
     }
@@ -615,8 +617,10 @@ namespace lapack_wrapper {
     void
     add( MatW const & A ) {
       #if defined(DEBUG) || defined(_DEBUG)
-      LAPACK_WRAPPER_ASSERT( nRows == A.nRows && nCols == A.nCols,
-                     "add(..) incompatible dimensions");
+      LAPACK_WRAPPER_ASSERT(
+        nRows == A.nRows && nCols == A.nCols,
+        "add(..) incompatible dimensions"
+      );
       #endif
       this->add( A.data, A.ldData );
     }
@@ -685,10 +689,12 @@ namespace lapack_wrapper {
       MatW const & B,
       MatW       & C
     ) {
-      geadd( C.nRows, C.nCols,
-             alpha, A.data, A.ldData,
-             beta,  B.data, B.ldData,
-             C.data, C.ldData );
+      geadd(
+        C.nRows, C.nCols,
+        alpha, A.data, A.ldData,
+        beta,  B.data, B.ldData,
+        C.data, C.ldData
+      );
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1459,3 +1465,7 @@ namespace lapack_wrapper {
   #endif
 
 }
+
+///
+/// eof: wrapper.hxx
+///

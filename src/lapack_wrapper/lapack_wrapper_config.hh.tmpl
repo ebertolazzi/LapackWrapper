@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: LapackWrapperConfig.hh
+/// file: lapack_wrapper_config.hh
 ///
 
 #ifndef LAPACK_WRAPPER_CONFIG_HH
@@ -106,5 +106,5 @@
 #endif
 
 ///
-/// eof: LapackWrapperConfig.hh
+/// eof: lapack_wrapper_config.hh
 ///
