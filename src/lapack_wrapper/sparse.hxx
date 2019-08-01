@@ -376,7 +376,21 @@ namespace lapack_wrapper {
 
     virtual
     void
-    get_full_view( MatrixWrapper<valueType> & MW ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    get_full_view( MatrixWrapper<valueType> & ) {
+      LAPACK_WRAPPER_ERROR( "get_full_view not defined");
+    }
+
+    /*!
+     * \brief print:
+     *        Print the sparse matrix to a stream element by element
+     *
+     *        row, col, value
+     *
+     *
+     * \param[in] stream  Stream where to write elements.
+     *
+     */
+    void print( ostream_type & stream ) const;
 
   };
 

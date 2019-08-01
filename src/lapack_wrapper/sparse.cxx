@@ -19,6 +19,19 @@
 
 namespace lapack_wrapper {
 
+  template <typename real>
+  void
+  SparseMatrixBase<real>::print( ostream_type & stream ) const {
+    integer const * iRow;
+    integer const * jCol;
+    real    const * vals;
+    this->get_data(iRow, jCol, vals);
+    stream << std::scientific;
+    for ( size_t i = 0; i < size_t(this->get_nnz()); ++i)
+      stream << iRow[i] << ", " << jCol[i] << ", " << vals[i] << '\n';
+    stream << std::flush;
+  }
+
   /*\
   :|:   ____                             ____ ____ ___   ___  ____
   :|:  / ___| _ __   __ _ _ __ ___  ___ / ___/ ___/ _ \ / _ \|  _ \
