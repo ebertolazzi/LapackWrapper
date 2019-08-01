@@ -25,6 +25,9 @@
 #endif
 
 #include "lapack_wrapper.hh"
+#include "lapack_wrapper++.hh"
+#include "TicToc.hh"
+
 #include <vector>
 #include <limits>
 #include <string>

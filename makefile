@@ -169,8 +169,8 @@ endif
 endif
 
 SRCS = \
-src/lapack_wrapper++.cc \
-src/lapack_wrapper.cc
+src/lapack_wrapper/lapack_wrapper++.cc \
+src/lapack_wrapper/lapack_wrapper.cc
 
 OBJS = $(SRCS:.cc=.o)
 
@@ -186,21 +186,21 @@ OBJS_TESTS = $(SRCS_TESTS:.cc=.o)
 
 #src/AlglinConfig.hh
 DEPS = \
-src/TicToc.hh \
-src/lapack_wrapper++.hh \
-src/lapack_wrapper.hh \
-src/lapack_wrapper_config.hh \
-src/lapack_wrapper/banded.hxx \
-src/lapack_wrapper/blas.hxx \
-src/lapack_wrapper/general.hxx \
-src/lapack_wrapper/general_qr.hxx \
-src/lapack_wrapper/sparse.cxx \
-src/lapack_wrapper/sparse.hxx \
-src/lapack_wrapper/symmetric.hxx \
-src/lapack_wrapper/triangular.hxx \
-src/lapack_wrapper/tridiagonal.hxx \
-src/lapack_wrapper/wrapper.cxx \
-src/lapack_wrapper/wrapper.hxx
+src/lapack_wrapper/TicToc.hh \
+src/lapack_wrapper/lapack_wrapper++.hh \
+src/lapack_wrapper/lapack_wrapper.hh \
+src/lapack_wrapper/lapack_wrapper_config.hh \
+src/lapack_wrapper/code/banded.hxx \
+src/lapack_wrapper/code/blas.hxx \
+src/lapack_wrapper/code/general.hxx \
+src/lapack_wrapper/code/general_qr.hxx \
+src/lapack_wrapper/code/sparse.cxx \
+src/lapack_wrapper/code/sparse.hxx \
+src/lapack_wrapper/code/symmetric.hxx \
+src/lapack_wrapper/code/triangular.hxx \
+src/lapack_wrapper/code/tridiagonal.hxx \
+src/lapack_wrapper/code/wrapper.cxx \
+src/lapack_wrapper/code/wrapper.hxx
 
 MKDIR = mkdir -p
 
@@ -265,10 +265,10 @@ install_as_framework: lib/$(LIB_LAPACK_WRAPPER)
 	cp -f -P lib/$(LIB_LAPACK_WRAPPER) $(PREFIX)/lib/$(LIB_LAPACK_WRAPPER)
 
 config:
-	rm -f src/lapack_wrapper_config.hh
-	sed 's/@@LAPACK_WRAPPER_USE@@/#define $(USED_LIB) 1/' <src/lapack_wrapper_config.hh.tmpl | \
+	rm -f src/lapack_wrapper/lapack_wrapper_config.hh
+	sed 's/@@LAPACK_WRAPPER_USE@@/#define $(USED_LIB) 1/' <src/lapack_wrapper/lapack_wrapper_config.hh.tmpl | \
 	sed 's/@@LAPACK_WRAPPER_THREAD@@/#define $(THREAD) 1/' | \
-	sed 's/@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@/$(SYSTEMOPENBLAS)#define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1/' >src/lapack_wrapper_config.hh
+	sed 's/@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@/$(SYSTEMOPENBLAS)#define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1/' >src/lapack_wrapper/lapack_wrapper_config.hh
 
 run:
 	./bin/test1-small-factorization

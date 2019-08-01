@@ -1068,15 +1068,15 @@ namespace lapack_wrapper {
   #endif
 }
 
-#include "lapack_wrapper/blas.hxx"
-#include "lapack_wrapper/general.hxx"
-#include "lapack_wrapper/general_qr.hxx"
-#include "lapack_wrapper/triangular.hxx"
-#include "lapack_wrapper/tridiagonal.hxx"
-#include "lapack_wrapper/banded.hxx"
-#include "lapack_wrapper/symmetric.hxx"
-#include "lapack_wrapper/sparse.hxx"
-#include "lapack_wrapper/wrapper.hxx"
+#include "code/blas.hxx"
+#include "code/general.hxx"
+#include "code/general_qr.hxx"
+#include "code/triangular.hxx"
+#include "code/tridiagonal.hxx"
+#include "code/banded.hxx"
+#include "code/symmetric.hxx"
+#include "code/sparse.hxx"
+#include "code/wrapper.hxx"
 
 namespace lapack_wrapper {
 

@@ -25,6 +25,9 @@
 #define LAPACK_WRAPPERPP_HH
 
 #include "lapack_wrapper.hh"
+#include "lapack_wrapper++.hh"
+#include "TicToc.hh"
+
 #include <complex>
 
 #ifdef __GNUC__ 

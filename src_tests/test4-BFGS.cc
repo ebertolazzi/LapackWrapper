@@ -17,7 +17,10 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-#include "lapack_wrapper++.hh"
+#include <lapack_wrapper/lapack_wrapper.hh>
+#include <lapack_wrapper/lapack_wrapper++.hh>
+#include <lapack_wrapper/TicToc.hh>
+
 #include <iostream>
 
 using namespace std;

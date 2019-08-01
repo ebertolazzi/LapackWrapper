@@ -32,8 +32,8 @@
 #include <vector>
 
 #include "lapack_wrapper++.hh"
-#include "lapack_wrapper/wrapper.cxx"
-#include "lapack_wrapper/sparse.cxx"
+#include "code/wrapper.cxx"
+#include "code/sparse.cxx"
 
 namespace lapack_wrapper {
 

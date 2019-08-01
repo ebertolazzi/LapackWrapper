@@ -4,3 +4,4 @@ build
 DerivedData
 lib
 src/.vscode
+src/lapack_wrapper/code/.vscode
