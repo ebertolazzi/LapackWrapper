@@ -398,31 +398,68 @@ namespace lapack_wrapper {
     integer      row_offs,
     integer      col_offs,
     MatW const & Matrix,
-    bool         transpose
+    bool         transpose,
+    integer      lower_upper
   ) {
-    if ( this->matrix_is_full ) {
-      MatW tmp;
-      this->get_full_view( tmp );
-      if ( (this->matrix_is_row_major && transpose) || (!this->matrix_is_row_major && !transpose) ) {
-        tmp.load_block(Matrix,row_offs,col_offs);
-      } else {
-        tmp.load_block_transposed(Matrix,row_offs,col_offs);
-      }
-    } else {
-      if ( this->fortran_indexing ) { ++row_offs; ++col_offs; }
+    /*\
+     * lower_upper 0 = full matrix
+     *             1 = upper part with diagonal
+     *             2 = upper part without diagonal
+     *             3 = push symmetric, for each A(i,j) element an A(j,i) is inserted
+     *            -3 = push anty symmetric, for each A(i,j) element an -A(j,i) is inserted
+     *            -1 = lower part with diagonal
+     *            -2 = lower part without diagonal
+    \*/
+    switch ( lower_upper ) {
+    case 0:
+    case 1:
+    case 2:
+    case -1:
+    case -2:
       for ( integer j = 0; j < Matrix.numCols(); ++j ) {
-       for ( integer i = 0; i < Matrix.numRows(); ++i ) {
-           if ( transpose ) {
-            this->rows.push_back( row_offs + j );
-            this->cols.push_back( col_offs + i );
-          } else {
-            this->rows.push_back( row_offs + i );
-            this->cols.push_back( col_offs + j );
+        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+          integer ii = i;
+          integer jj = j;
+          if ( transpose ) std::swap( ii, jj );
+          bool do_push = true;
+          switch ( lower_upper ) {
+            case  1: do_push = j >= i; break;
+            case  2: do_push = j  > i; break;
+            case -1: do_push = j <= i; break;
+            case -2: do_push = j  < i; break;
           }
-          this->vals.push_back( Matrix(i,j) );
-          ++this->nnz;
+          if ( do_push ) {
+            ii += row_offs;
+            jj += col_offs;
+            this->push_value_C( ii, jj, Matrix(i,j) );
+          }
         }
       }
+      break;
+    case 3:
+      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
+        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+          integer ii = i;
+          integer jj = j;
+          if ( transpose ) std::swap( ii, jj );
+          T const & v = Matrix(i,j);
+          this->push_value_C( ii, jj, v );
+          if ( i != j ) this->push_value_C( jj, ii, v );
+        }
+      }
+      break;
+    case -3:
+      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
+        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+          integer ii = i;
+          integer jj = j;
+          if ( transpose ) std::swap( ii, jj );
+          T const & v = Matrix(i,j);
+          this->push_value_C( ii, jj, v );
+          if ( i != j ) this->push_value_C( jj, ii, -v );
+        }
+      }
+      break;
     }
   }
 
@@ -432,30 +469,64 @@ namespace lapack_wrapper {
     integer        row_offs,
     integer        col_offs,
     Sparse const & Matrix,
-    bool           transpose
+    bool           transpose,
+    integer        lower_upper
   ) {
-    if ( this->matrix_is_full ) {
-      MatW tmp;
-      this->get_full_view( tmp );
-      if ( (this->matrix_is_row_major && transpose) || (!this->matrix_is_row_major && !transpose) ) {
-        tmp.load(Matrix,row_offs,col_offs);
-      } else {
-        tmp.load_transposed(Matrix,row_offs,col_offs);
-      }
-    } else {
-      integer const * rowsM;
-      integer const * colsM;
-      T       const * valsM;
-      Matrix.get_data( rowsM, colsM, valsM );
-      if ( transpose ) std::swap( rowsM, colsM );
-      if ( Matrix.FORTRAN_indexing() ) { --row_offs; --col_offs; }
-      if ( this->fortran_indexing )    { ++row_offs; ++col_offs; }
+    /*\
+     * lower_upper 0 = full matrix
+     *             1 = upper part with diagonal
+     *             2 = upper part without diagonal
+     *             3 = push symmetric, for each A(i,j) element an A(j,i) is inserted
+     *            -3 = push anty symmetric, for each A(i,j) element an -A(j,i) is inserted
+     *            -1 = lower part with diagonal
+     *            -2 = lower part without diagonal
+    \*/
+    integer const * rowsM;
+    integer const * colsM;
+    T       const * valsM;
+    Matrix.get_data( rowsM, colsM, valsM );
+    if ( transpose ) std::swap( rowsM, colsM );
+    if ( Matrix.FORTRAN_indexing() ) { --row_offs; --col_offs; }
+
+    switch ( lower_upper ) {
+    case 0:
+    case 1:
+    case 2:
+    case -1:
+    case -2:
       for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
-        this->rows.push_back( row_offs + rowsM[index] );
-        this->cols.push_back( col_offs + colsM[index] );
-        this->vals.push_back( valsM[index] );
-        ++this->nnz;
+        integer i = rowsM[index];
+        integer j = colsM[index];
+        T const & v = valsM[index];
+        bool do_push = true;
+        switch ( lower_upper ) {
+          case  1: do_push = j >= i; break;
+          case  2: do_push = j  > i; break;
+          case -1: do_push = j <= i; break;
+          case -2: do_push = j  < i; break;
+        }
+        if ( do_push )
+          this->push_value_C( row_offs+i, col_offs+j, v );
       }
+      break;
+    case 3:
+      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
+        integer i = rowsM[index];
+        integer j = colsM[index];
+        T const & v = valsM[index];
+        this->push_value_C( row_offs+i, col_offs+j, v );
+        if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, v );
+      }
+      break;
+    case -3:
+      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
+        integer i = rowsM[index];
+        integer j = colsM[index];
+        T const & v = valsM[index];
+        this->push_value_C( row_offs+i, col_offs+j, v );
+        if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, -v );
+      }
+      break;
     }
   }
 

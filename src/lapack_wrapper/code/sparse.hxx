@@ -220,10 +220,15 @@ namespace lapack_wrapper {
     /*!
      *  \brief insert a matrix into the sparse matrix
      *
-     *  \param[in] row_offs  offset to the row indices
-     *  \param[in] col_offs  offset to the column indices
-     *  \param[in] Matrix    the (full) matrix to be inserted
-     *  \param[in] transpose if true matrix is inserted transposed
+     *  \param[in] row_offs    offset to the row indices
+     *  \param[in] col_offs    offset to the column indices
+     *  \param[in] Matrix      the (full) matrix to be inserted
+     *  \param[in] transpose   if true matrix is inserted transposed
+     *  \param[in] lower_upper 0 = full matrix
+     *                         1 = upper part with diagonal
+     *                         2 = upper part without diagonal
+     *                         -1 = lower part with diagonal
+     *                         -2 = lower part without diagonal
      *
     \*/
     virtual
@@ -232,7 +237,8 @@ namespace lapack_wrapper {
       integer      row_offs,
       integer      col_offs,
       MatW const & Matrix,
-      bool         transpose = false
+      bool         transpose   = false,
+      integer      lower_upper = 0
     ) LAPACK_WRAPPER_PURE_VIRTUAL;
 
     /*!
@@ -242,6 +248,13 @@ namespace lapack_wrapper {
      *  \param[in] col_offs  offset to the column indices
      *  \param[in] Matrix    the (sparsse) matrix to be inserted
      *  \param[in] transpose if true matrix is inserted transposed
+     *  \param[in] lower_upper 0 = full matrix
+     *                         1 = upper part with diagonal
+     *                         2 = upper part without diagonal
+     *                         3 = push symmetric, for each A(i,j) element an A(j,i) is inserted
+     *                        -3 = push anty symmetric, for each A(i,j) element an -A(j,i) is inserted
+     *                        -1 = lower part with diagonal
+     *                        -2 = lower part without diagonal
      *
     \*/
     virtual
@@ -250,7 +263,8 @@ namespace lapack_wrapper {
       integer        row_offs,
       integer        col_offs,
       Sparse const & Matrix,
-      bool           transpose = false
+      bool           transpose   = false,
+      integer        lower_upper = 0
     ) LAPACK_WRAPPER_PURE_VIRTUAL;
 
     /*!
@@ -519,7 +533,8 @@ namespace lapack_wrapper {
       integer      row_offs,
       integer      col_offs,
       MatW const & Matrix,
-      bool         transpose = false
+      bool         transpose = false,
+      integer      lower_upper = 0
     ) LAPACK_WRAPPER_OVERRIDE;
 
     virtual
@@ -528,7 +543,8 @@ namespace lapack_wrapper {
       integer        row_offs,
       integer        col_offs,
       Sparse const & Matrix,
-      bool           transpose = false
+      bool           transpose   = false,
+      integer        lower_upper = 0
     ) LAPACK_WRAPPER_OVERRIDE;
 
     virtual
