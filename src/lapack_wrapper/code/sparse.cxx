@@ -23,9 +23,9 @@
 
 namespace lapack_wrapper {
 
-  template <typename real>
+  template <typename T>
   void
-  SparseMatrixBase<real>::print( ostream_type & stream ) const {
+  SparseMatrixBase<T>::print( ostream_type & stream ) const {
     integer const * iRow;
     integer const * jCol;
     real    const * vals;
@@ -36,9 +36,9 @@ namespace lapack_wrapper {
     stream << std::flush;
   }
 
-  template <typename real>
+  template <typename T>
   void
-  SparseMatrixBase<real>::push_matrix(
+  SparseMatrixBase<T>::push_matrix(
     integer      row_offs,
     integer      col_offs,
     MatW const & Matrix,
@@ -86,7 +86,7 @@ namespace lapack_wrapper {
           integer ii = i;
           integer jj = j;
           if ( transpose ) std::swap( ii, jj );
-          real const & v = Matrix(i,j);
+          T const & v = Matrix(i,j);
           this->push_value_C( ii, jj, v );
           if ( i != j ) this->push_value_C( jj, ii, v );
         }
@@ -98,7 +98,7 @@ namespace lapack_wrapper {
           integer ii = i;
           integer jj = j;
           if ( transpose ) std::swap( ii, jj );
-          real const & v = Matrix(i,j);
+          T const & v = Matrix(i,j);
           this->push_value_C( ii, jj, v );
           if ( i != j ) this->push_value_C( jj, ii, -v );
         }
@@ -107,9 +107,9 @@ namespace lapack_wrapper {
     }
   }
 
-  template <typename real>
+  template <typename T>
   void
-  SparseMatrixBase<real>::push_matrix(
+  SparseMatrixBase<T>::push_matrix(
     integer        row_offs,
     integer        col_offs,
     Sparse const & Matrix,
@@ -127,7 +127,7 @@ namespace lapack_wrapper {
     \*/
     integer const * rowsM;
     integer const * colsM;
-    real    const * valsM;
+    T       const * valsM;
     Matrix.get_data( rowsM, colsM, valsM );
     if ( transpose ) std::swap( rowsM, colsM );
     if ( Matrix.FORTRAN_indexing() ) { --row_offs; --col_offs; }
@@ -141,7 +141,7 @@ namespace lapack_wrapper {
       for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
         integer i = rowsM[index];
         integer j = colsM[index];
-        real const & v = valsM[index];
+        T const & v = valsM[index];
         bool do_push = true;
         switch ( lower_upper ) {
           case  1: do_push = j >= i; break;
@@ -157,7 +157,7 @@ namespace lapack_wrapper {
       for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
         integer i = rowsM[index];
         integer j = colsM[index];
-        real const & v = valsM[index];
+        T const & v = valsM[index];
         this->push_value_C( row_offs+i, col_offs+j, v );
         if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, v );
       }
@@ -166,7 +166,7 @@ namespace lapack_wrapper {
       for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
         integer i = rowsM[index];
         integer j = colsM[index];
-        real const & v = valsM[index];
+        T const & v = valsM[index];
         this->push_value_C( row_offs+i, col_offs+j, v );
         if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, -v );
       }
@@ -182,6 +182,23 @@ namespace lapack_wrapper {
   :|:  |____/| .__/ \__,_|_|  |___/\___|\____\____\___/ \___/|_| \_\
   :|:        |_|
   \*/
+
+  template <typename T>
+  SparseCCOOR<T>::SparseCCOOR(
+    integer N,
+    integer M,
+    integer reserve_nnz,
+    bool    fi
+  )
+  : SparseMatrixBase<T>(N,M)
+  , fortran_indexing(fi)
+  , matrix_is_full(false)
+  , matrix_is_row_major(false)
+  {
+    this->vals.clear(); this->vals.reserve(reserve_nnz);
+    this->rows.clear(); this->rows.reserve(reserve_nnz);
+    this->cols.clear(); this->cols.reserve(reserve_nnz);
+  }
 
   //! Sparse Matrix Structure
   template <typename T>
@@ -326,25 +343,6 @@ namespace lapack_wrapper {
   :|:  / _` / _` / _` | |  _| / _ \ ' \/ _` | | | '  \/ -_)  _| ' \/ _ \/ _` (_-<
   :|:  \__,_\__,_\__,_|_|\__|_\___/_||_\__,_|_| |_|_|_\___|\__|_||_\___/\__,_/__/
   \*/
-
-  template <typename T>
-  SparseCCOOR<T>::SparseCCOOR(
-    integer N,
-    integer M,
-    integer reserve_nnz,
-    bool    fi
-  )
-  : nRows(N)
-  , nCols(M)
-  , nnz(reserve_nnz)
-  , fortran_indexing(fi)
-  , matrix_is_full(false)
-  , matrix_is_row_major(false)
-  {
-    this->vals.clear(); this->vals.reserve(reserve_nnz);
-    this->rows.clear(); this->rows.reserve(reserve_nnz);
-    this->cols.clear(); this->cols.reserve(reserve_nnz);
-  }
 
   template <typename T>
   void

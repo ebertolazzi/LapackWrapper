@@ -33,13 +33,27 @@ namespace lapack_wrapper {
     typedef T                   valueType;
     typedef SparseMatrixBase<T> Sparse;
     typedef MatrixWrapper<T>    MatW;
+
   protected:
+    integer nRows; //!< Number of rows
+    integer nCols; //!< Number of columns
+    integer nnz;   //!< Total number of nonzeros
 
     /*!
      * \brief SparseMatrixBase:
      *        Protected Constructor of the class SparseMatrixBase.
     \*/
-    SparseMatrixBase() {}
+    SparseMatrixBase()
+    : nRows(0)
+    , nCols(0)
+    , nnz(0)
+    {}
+
+    SparseMatrixBase( integer N, integer M )
+    : nRows(N)
+    , nCols(M)
+    , nnz(0)
+    {}
 
     void
     y_manage(
@@ -104,36 +118,36 @@ namespace lapack_wrapper {
     bool
     FORTRAN_indexing() const LAPACK_WRAPPER_PURE_VIRTUAL;
 
-    virtual
     integer
-    get_number_of_rows() const LAPACK_WRAPPER_PURE_VIRTUAL;
+    get_number_of_rows() const
+    { return this->nRows; }
 
-    virtual
     integer
-    get_number_of_cols() const LAPACK_WRAPPER_PURE_VIRTUAL;
+    get_number_of_cols() const
+    { return this->nCols; }
 
-    virtual
     integer
-    get_nnz() const LAPACK_WRAPPER_PURE_VIRTUAL;
+    get_nnz() const
+    { return this->nnz; }
 
     /*!
      * \brief get_info:
      *        Returns the number of nonzeroes and dimension of the sparse matrix.
-     * \param[out] numRows Row dimension of the matrix
-     * \param[out] numCols Column dimension of the matrix
-     * \param[out] nnz     the number of nonzeroes
+     * \param[out] _numRows Row dimension of the matrix
+     * \param[out] _numCols Column dimension of the matrix
+     * \param[out] _nnz     the number of nonzeroes
      *
     \*/
     virtual
     void
     get_info(
-      integer & numRows,
-      integer & numCols,
-      integer & nnz
+      integer & _numRows,
+      integer & _numCols,
+      integer & _nnz
     ) const {
-      numRows = this->get_number_of_rows();
-      numCols = this->get_number_of_cols();
-      nnz     = this->get_nnz();
+      _numRows = this->nRows;
+      _numCols = this->nCols;
+      _nnz     = this->nnz;
     }
 
     /*!
@@ -418,17 +432,14 @@ namespace lapack_wrapper {
   */
 
   //! Sparse Matrix Structure
-  template <typename T>
-  class SparseCCOOR : public SparseMatrixBase<T> {
+  template <typename real>
+  class SparseCCOOR : public SparseMatrixBase<real> {
   public:
-    typedef SparseMatrixBase<T>        Sparse;
-    typedef MatrixWrapper<T>           MatW;
+    typedef SparseMatrixBase<real>     Sparse;
+    typedef MatrixWrapper<real>        MatW;
     typedef typename Sparse::valueType valueType;
 
   protected:
-    integer                nRows; //!< Number of rows
-    integer                nCols; //!< Number of columns
-    integer                nnz;   //!< Total number of nonzeros
     std::vector<valueType> vals;  //!< the values of the sparse matrix
     std::vector<integer>   rows;  //!< the rows index
     std::vector<integer>   cols;  //!< the columns index
@@ -439,10 +450,12 @@ namespace lapack_wrapper {
 
   public:
 
+    using SparseMatrixBase<real>::nRows;
+    using SparseMatrixBase<real>::nCols;
+    using SparseMatrixBase<real>::nnz;
+
     SparseCCOOR()
-    : nRows(0)
-    , nCols(0)
-    , nnz(0)
+    : SparseMatrixBase<real>()
     , fortran_indexing(false)
     , matrix_is_full(false)
     , matrix_is_row_major(false)
@@ -480,21 +493,6 @@ namespace lapack_wrapper {
     bool
     FORTRAN_indexing() const LAPACK_WRAPPER_OVERRIDE
     { return this->fortran_indexing; }
-
-    virtual
-    integer
-    get_number_of_rows() const LAPACK_WRAPPER_OVERRIDE
-    { return this->nRows; }
-
-    virtual
-    integer
-    get_number_of_cols() const LAPACK_WRAPPER_OVERRIDE
-    { return this->nCols; }
-
-    virtual
-    integer
-    get_nnz() const LAPACK_WRAPPER_OVERRIDE
-    { return this->nnz; }
 
     virtual
     void
