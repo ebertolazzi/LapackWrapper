@@ -36,6 +36,144 @@ namespace lapack_wrapper {
     stream << std::flush;
   }
 
+  template <typename real>
+  void
+  SparseMatrixBase<real>::push_matrix(
+    integer      row_offs,
+    integer      col_offs,
+    MatW const & Matrix,
+    bool         transpose,
+    integer      lower_upper
+  ) {
+    /*\
+     * lower_upper 0 = full matrix
+     *             1 = upper part with diagonal
+     *             2 = upper part without diagonal
+     *             3 = push symmetric, for each A(i,j) element an A(j,i) is inserted
+     *            -3 = push anty symmetric, for each A(i,j) element an -A(j,i) is inserted
+     *            -1 = lower part with diagonal
+     *            -2 = lower part without diagonal
+    \*/
+    switch ( lower_upper ) {
+    case 0:
+    case 1:
+    case 2:
+    case -1:
+    case -2:
+      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
+        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+          integer ii = i;
+          integer jj = j;
+          if ( transpose ) std::swap( ii, jj );
+          bool do_push = true;
+          switch ( lower_upper ) {
+            case  1: do_push = j >= i; break;
+            case  2: do_push = j  > i; break;
+            case -1: do_push = j <= i; break;
+            case -2: do_push = j  < i; break;
+          }
+          if ( do_push ) {
+            ii += row_offs;
+            jj += col_offs;
+            this->push_value_C( ii, jj, Matrix(i,j) );
+          }
+        }
+      }
+      break;
+    case 3:
+      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
+        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+          integer ii = i;
+          integer jj = j;
+          if ( transpose ) std::swap( ii, jj );
+          real const & v = Matrix(i,j);
+          this->push_value_C( ii, jj, v );
+          if ( i != j ) this->push_value_C( jj, ii, v );
+        }
+      }
+      break;
+    case -3:
+      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
+        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+          integer ii = i;
+          integer jj = j;
+          if ( transpose ) std::swap( ii, jj );
+          real const & v = Matrix(i,j);
+          this->push_value_C( ii, jj, v );
+          if ( i != j ) this->push_value_C( jj, ii, -v );
+        }
+      }
+      break;
+    }
+  }
+
+  template <typename real>
+  void
+  SparseMatrixBase<real>::push_matrix(
+    integer        row_offs,
+    integer        col_offs,
+    Sparse const & Matrix,
+    bool           transpose,
+    integer        lower_upper
+  ) {
+    /*\
+     * lower_upper 0 = full matrix
+     *             1 = upper part with diagonal
+     *             2 = upper part without diagonal
+     *             3 = push symmetric, for each A(i,j) element an A(j,i) is inserted
+     *            -3 = push anty symmetric, for each A(i,j) element an -A(j,i) is inserted
+     *            -1 = lower part with diagonal
+     *            -2 = lower part without diagonal
+    \*/
+    integer const * rowsM;
+    integer const * colsM;
+    real    const * valsM;
+    Matrix.get_data( rowsM, colsM, valsM );
+    if ( transpose ) std::swap( rowsM, colsM );
+    if ( Matrix.FORTRAN_indexing() ) { --row_offs; --col_offs; }
+
+    switch ( lower_upper ) {
+    case 0:
+    case 1:
+    case 2:
+    case -1:
+    case -2:
+      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
+        integer i = rowsM[index];
+        integer j = colsM[index];
+        real const & v = valsM[index];
+        bool do_push = true;
+        switch ( lower_upper ) {
+          case  1: do_push = j >= i; break;
+          case  2: do_push = j  > i; break;
+          case -1: do_push = j <= i; break;
+          case -2: do_push = j  < i; break;
+        }
+        if ( do_push )
+          this->push_value_C( row_offs+i, col_offs+j, v );
+      }
+      break;
+    case 3:
+      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
+        integer i = rowsM[index];
+        integer j = colsM[index];
+        real const & v = valsM[index];
+        this->push_value_C( row_offs+i, col_offs+j, v );
+        if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, v );
+      }
+      break;
+    case -3:
+      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
+        integer i = rowsM[index];
+        integer j = colsM[index];
+        real const & v = valsM[index];
+        this->push_value_C( row_offs+i, col_offs+j, v );
+        if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, -v );
+      }
+      break;
+    }
+  }
+
   /*\
   :|:   ____                             ____ ____ ___   ___  ____
   :|:  / ___| _ __   __ _ _ __ ___  ___ / ___/ ___/ _ \ / _ \|  _ \
@@ -389,144 +527,6 @@ namespace lapack_wrapper {
       this->rows.push_back(row);
       this->cols.push_back(col);
       ++this->nnz;
-    }
-  }
-
-  template <typename T>
-  void
-  SparseCCOOR<T>::push_matrix(
-    integer      row_offs,
-    integer      col_offs,
-    MatW const & Matrix,
-    bool         transpose,
-    integer      lower_upper
-  ) {
-    /*\
-     * lower_upper 0 = full matrix
-     *             1 = upper part with diagonal
-     *             2 = upper part without diagonal
-     *             3 = push symmetric, for each A(i,j) element an A(j,i) is inserted
-     *            -3 = push anty symmetric, for each A(i,j) element an -A(j,i) is inserted
-     *            -1 = lower part with diagonal
-     *            -2 = lower part without diagonal
-    \*/
-    switch ( lower_upper ) {
-    case 0:
-    case 1:
-    case 2:
-    case -1:
-    case -2:
-      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
-        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
-          integer ii = i;
-          integer jj = j;
-          if ( transpose ) std::swap( ii, jj );
-          bool do_push = true;
-          switch ( lower_upper ) {
-            case  1: do_push = j >= i; break;
-            case  2: do_push = j  > i; break;
-            case -1: do_push = j <= i; break;
-            case -2: do_push = j  < i; break;
-          }
-          if ( do_push ) {
-            ii += row_offs;
-            jj += col_offs;
-            this->push_value_C( ii, jj, Matrix(i,j) );
-          }
-        }
-      }
-      break;
-    case 3:
-      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
-        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
-          integer ii = i;
-          integer jj = j;
-          if ( transpose ) std::swap( ii, jj );
-          T const & v = Matrix(i,j);
-          this->push_value_C( ii, jj, v );
-          if ( i != j ) this->push_value_C( jj, ii, v );
-        }
-      }
-      break;
-    case -3:
-      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
-        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
-          integer ii = i;
-          integer jj = j;
-          if ( transpose ) std::swap( ii, jj );
-          T const & v = Matrix(i,j);
-          this->push_value_C( ii, jj, v );
-          if ( i != j ) this->push_value_C( jj, ii, -v );
-        }
-      }
-      break;
-    }
-  }
-
-  template <typename T>
-  void
-  SparseCCOOR<T>::push_matrix(
-    integer        row_offs,
-    integer        col_offs,
-    Sparse const & Matrix,
-    bool           transpose,
-    integer        lower_upper
-  ) {
-    /*\
-     * lower_upper 0 = full matrix
-     *             1 = upper part with diagonal
-     *             2 = upper part without diagonal
-     *             3 = push symmetric, for each A(i,j) element an A(j,i) is inserted
-     *            -3 = push anty symmetric, for each A(i,j) element an -A(j,i) is inserted
-     *            -1 = lower part with diagonal
-     *            -2 = lower part without diagonal
-    \*/
-    integer const * rowsM;
-    integer const * colsM;
-    T       const * valsM;
-    Matrix.get_data( rowsM, colsM, valsM );
-    if ( transpose ) std::swap( rowsM, colsM );
-    if ( Matrix.FORTRAN_indexing() ) { --row_offs; --col_offs; }
-
-    switch ( lower_upper ) {
-    case 0:
-    case 1:
-    case 2:
-    case -1:
-    case -2:
-      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
-        integer i = rowsM[index];
-        integer j = colsM[index];
-        T const & v = valsM[index];
-        bool do_push = true;
-        switch ( lower_upper ) {
-          case  1: do_push = j >= i; break;
-          case  2: do_push = j  > i; break;
-          case -1: do_push = j <= i; break;
-          case -2: do_push = j  < i; break;
-        }
-        if ( do_push )
-          this->push_value_C( row_offs+i, col_offs+j, v );
-      }
-      break;
-    case 3:
-      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
-        integer i = rowsM[index];
-        integer j = colsM[index];
-        T const & v = valsM[index];
-        this->push_value_C( row_offs+i, col_offs+j, v );
-        if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, v );
-      }
-      break;
-    case -3:
-      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
-        integer i = rowsM[index];
-        integer j = colsM[index];
-        T const & v = valsM[index];
-        this->push_value_C( row_offs+i, col_offs+j, v );
-        if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, -v );
-      }
-      break;
     }
   }
 

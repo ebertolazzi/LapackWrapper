@@ -239,7 +239,7 @@ namespace lapack_wrapper {
       MatW const & Matrix,
       bool         transpose   = false,
       integer      lower_upper = 0
-    ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    );
 
     /*!
      *  \brief insert a matrix into the sparse matrix
@@ -265,7 +265,7 @@ namespace lapack_wrapper {
       Sparse const & Matrix,
       bool           transpose   = false,
       integer        lower_upper = 0
-    ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    );
 
     /*!
      *  \brief extract the sparse matrix to a full matrix
@@ -525,26 +525,6 @@ namespace lapack_wrapper {
       integer   row,
       integer   col,
       valueType val
-    ) LAPACK_WRAPPER_OVERRIDE;
-
-    virtual
-    void
-    push_matrix(
-      integer      row_offs,
-      integer      col_offs,
-      MatW const & Matrix,
-      bool         transpose = false,
-      integer      lower_upper = 0
-    ) LAPACK_WRAPPER_OVERRIDE;
-
-    virtual
-    void
-    push_matrix(
-      integer        row_offs,
-      integer        col_offs,
-      Sparse const & Matrix,
-      bool           transpose   = false,
-      integer        lower_upper = 0
     ) LAPACK_WRAPPER_OVERRIDE;
 
     virtual
