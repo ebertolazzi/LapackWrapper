@@ -170,7 +170,9 @@ endif
 
 SRCS = \
 src/lapack_wrapper/lapack_wrapper++.cc \
-src/lapack_wrapper/lapack_wrapper.cc
+src/lapack_wrapper/lapack_wrapper.cc \
+src/lapack_wrapper/HSL/ma48_wrapper.cc \
+src/lapack_wrapper/HSL/ma57_wrapper.cc
 
 OBJS = $(SRCS:.cc=.o)
 
@@ -200,16 +202,21 @@ src/lapack_wrapper/code/symmetric.hxx \
 src/lapack_wrapper/code/triangular.hxx \
 src/lapack_wrapper/code/tridiagonal.hxx \
 src/lapack_wrapper/code/wrapper.cxx \
-src/lapack_wrapper/code/wrapper.hxx
+src/lapack_wrapper/code/wrapper.hxx \
+src/lapack_wrapper/HSL/hsl.h \
+src/lapack_wrapper/HSL/hsl_solver.h \
+src/lapack_wrapper/HSL/ma48_wrapper.h \
+src/lapack_wrapper/HSL/ma57_wrapper.h
 
 MKDIR = mkdir -p
+
+.SUFFIXES:           # Delete the default suffixes
+.SUFFIXES: .c .cc .o # Define our suffix list
 
 # prefix for installation, use make PREFIX=/new/prefix install
 # to override
 PREFIX    = /usr/local
 FRAMEWORK = lapack_wrapper
-
-
 
 all: config lib $(OBJS_TESTS)
 	mkdir -p bin
@@ -222,16 +229,10 @@ all: config lib $(OBJS_TESTS)
 
 lib: config lib/$(LIB_LAPACK_WRAPPER)
 
-src/%.o: src/%.cc $(DEPS)
+.cc.o:
 	$(CXX) $(INC) $(CXXFLAGS) $(DEFS) -c $< -o $@
 
-src/%.o: src/%.c $(DEPS)
-	$(CC) $(INC) $(CFLAGS) $(DEFS) -c -o $@ $<
-
-src_tests/%.o: src_tests/%.cc $(DEPS)
-	$(CXX) $(INC) $(CXXFLAGS) $(DEFS) -c $< -o $@
-
-src_tests/%.o: src_tests/%.c $(DEPS)
+.c.o:
 	$(CC) $(INC) $(CFLAGS) $(DEFS) -c -o $@ $<
 
 lib/liblapack_wrapper.a: $(OBJS)
@@ -282,5 +283,5 @@ doc:
 	doxygen
 
 clean:
-	rm -rf lib/liblapack_wrapper.* src/*.o src_tests/*.o
+	rm -rf lib/liblapack_wrapper.* src/*.o src/*/*.o src/*/*/*.o src_tests/*.o
 	rm -rf bin

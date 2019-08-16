@@ -111,12 +111,12 @@ namespace lapack_wrapper {
     }
 
     /*!
-    :|:  Do SVD factorization of a rectangular matrix
-    :|:  \param NR  number of rows of the matrix
-    :|:  \param NC  number of columns of the matrix
-    :|:  \param A   pointer to the matrix
-    :|:  \param LDA Leading dimension of the matrix
-    \*/
+     *  Do SVD factorization of a rectangular matrix
+     *  \param NR  number of rows of the matrix
+     *  \param NC  number of columns of the matrix
+     *  \param A   pointer to the matrix
+     *  \param LDA Leading dimension of the matrix
+     */
     virtual
     void
     factorize(

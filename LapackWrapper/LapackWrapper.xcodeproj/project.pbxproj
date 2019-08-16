@@ -30,6 +30,12 @@
 		D992161122F1BB7900B9C5FC /* test6-EIGS.cc in Sources */ = {isa = PBXBuildFile; fileRef = D992161022F1BB7900B9C5FC /* test6-EIGS.cc */; };
 		D992161222F1BC5400B9C5FC /* libLapackWrapperLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D940909622F195B600EB3EBD /* libLapackWrapperLib.a */; };
 		D992161322F1BC5400B9C5FC /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D94090D122F1A44600EB3EBD /* Accelerate.framework */; };
+		D9CFB414230723E600FB2DD8 /* hsl_solver.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9CFB40E230723E600FB2DD8 /* hsl_solver.hh */; };
+		D9CFB415230723E600FB2DD8 /* ma48_wrapper.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9CFB40F230723E600FB2DD8 /* ma48_wrapper.hh */; };
+		D9CFB416230723E600FB2DD8 /* hsl.h in Headers */ = {isa = PBXBuildFile; fileRef = D9CFB410230723E600FB2DD8 /* hsl.h */; };
+		D9CFB417230723E600FB2DD8 /* ma57_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9CFB411230723E600FB2DD8 /* ma57_wrapper.cc */; };
+		D9CFB418230723E600FB2DD8 /* ma57_wrapper.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9CFB412230723E600FB2DD8 /* ma57_wrapper.hh */; };
+		D9CFB419230723E600FB2DD8 /* ma48_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9CFB413230723E600FB2DD8 /* ma48_wrapper.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -110,6 +116,12 @@
 		D992160122F1BA6500B9C5FC /* test5-BLOCKTRID.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test5-BLOCKTRID.cc"; path = "../src_tests/test5-BLOCKTRID.cc"; sourceTree = "<group>"; };
 		D992160922F1BB6D00B9C5FC /* test6-EIGS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test6-EIGS"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D992161022F1BB7900B9C5FC /* test6-EIGS.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test6-EIGS.cc"; path = "../src_tests/test6-EIGS.cc"; sourceTree = "<group>"; };
+		D9CFB40E230723E600FB2DD8 /* hsl_solver.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = hsl_solver.hh; sourceTree = "<group>"; };
+		D9CFB40F230723E600FB2DD8 /* ma48_wrapper.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ma48_wrapper.hh; sourceTree = "<group>"; };
+		D9CFB410230723E600FB2DD8 /* hsl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hsl.h; sourceTree = "<group>"; };
+		D9CFB411230723E600FB2DD8 /* ma57_wrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ma57_wrapper.cc; sourceTree = "<group>"; };
+		D9CFB412230723E600FB2DD8 /* ma57_wrapper.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ma57_wrapper.hh; sourceTree = "<group>"; };
+		D9CFB413230723E600FB2DD8 /* ma48_wrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ma48_wrapper.cc; sourceTree = "<group>"; };
 		D9DE0B3C22F3811C00C08382 /* code */ = {isa = PBXFileReference; lastKnownFileType = folder; path = code; sourceTree = "<group>"; };
 		D9DE0B3D22F381FE00C08382 /* TicToc.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TicToc.hh; sourceTree = "<group>"; };
 		D9DE0B3E22F3827B00C08382 /* code++ */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "code++"; sourceTree = "<group>"; };
@@ -229,6 +241,7 @@
 		D958BC9B22F32F0B00D41FCA /* lapack_wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				D9CFB40D230723E600FB2DD8 /* HSL */,
 				D958BCAD22F32F0B00D41FCA /* lapack_wrapper_config.hh.tmpl */,
 				D958BCB022F32F0B00D41FCA /* lapack_wrapper_config.hh */,
 				D9DE0B3D22F381FE00C08382 /* TicToc.hh */,
@@ -242,6 +255,19 @@
 			path = lapack_wrapper;
 			sourceTree = "<group>";
 		};
+		D9CFB40D230723E600FB2DD8 /* HSL */ = {
+			isa = PBXGroup;
+			children = (
+				D9CFB410230723E600FB2DD8 /* hsl.h */,
+				D9CFB40E230723E600FB2DD8 /* hsl_solver.hh */,
+				D9CFB412230723E600FB2DD8 /* ma57_wrapper.hh */,
+				D9CFB411230723E600FB2DD8 /* ma57_wrapper.cc */,
+				D9CFB40F230723E600FB2DD8 /* ma48_wrapper.hh */,
+				D9CFB413230723E600FB2DD8 /* ma48_wrapper.cc */,
+			);
+			path = HSL;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -249,6 +275,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9CFB416230723E600FB2DD8 /* hsl.h in Headers */,
+				D9CFB414230723E600FB2DD8 /* hsl_solver.hh in Headers */,
+				D9CFB415230723E600FB2DD8 /* ma48_wrapper.hh in Headers */,
+				D9CFB418230723E600FB2DD8 /* ma57_wrapper.hh in Headers */,
 				D958BCC322F32F0B00D41FCA /* lapack_wrapper_config.hh in Headers */,
 				D958BCB322F32F0B00D41FCA /* lapack_wrapper.hh in Headers */,
 				D958BCC122F32F0B00D41FCA /* lapack_wrapper++.hh in Headers */,
@@ -438,7 +468,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D958BCC022F32F0B00D41FCA /* lapack_wrapper.cc in Sources */,
+				D9CFB417230723E600FB2DD8 /* ma57_wrapper.cc in Sources */,
 				D958BCC222F32F0B00D41FCA /* lapack_wrapper++.cc in Sources */,
+				D9CFB419230723E600FB2DD8 /* ma48_wrapper.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
