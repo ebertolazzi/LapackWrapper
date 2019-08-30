@@ -57,7 +57,7 @@ namespace lapack_wrapper {
       "Eigenvalues<T>::allocate, call geev return info = " << info
     );
     this->Lwork = integer(Lworkdummy);
-    this->mem_real.allocate( size_t( this->Lwork + (2+this->N) * this->N) ) ;
+    this->mem_real.allocate( size_t( this->Lwork + (2+this->N) * this->N) );
     this->Re      = this->mem_real( size_t(this->N) );
     this->Im      = this->mem_real( size_t(this->N) );
     this->Work    = this->mem_real( size_t(this->Lwork) );
@@ -162,7 +162,7 @@ namespace lapack_wrapper {
     integer   const col[]
   ) {
     this->allocate( NRC );
-    std::fill(  this->A_saved, this->A_saved + NRC*NRC, 0 );
+    lapack_wrapper::zero( NRC*NRC, this->A_saved, 1 );
     for ( integer i = 0; i < nnz; ++i )  this->A_saved[row[i]+col[i]*NRC] += values[i];
     this->compute();
   }
@@ -246,7 +246,7 @@ namespace lapack_wrapper {
       "Eigenvectors::allocate, call geev return info = " << info
     );
     this->Lwork = integer(Lworkdummy);
-    this->mem_real.allocate( size_t( this->Lwork + (2+3*this->N) * this->N) ) ;
+    this->mem_real.allocate( size_t( this->Lwork + (2+3*this->N) * this->N) );
     this->Re      = this->mem_real( size_t(this->N) );
     this->Im      = this->mem_real( size_t(this->N) );
     this->A_saved = this->mem_real( size_t(this->N*this->N) );
@@ -364,7 +364,7 @@ namespace lapack_wrapper {
     integer   const A_col[]
   ) {
     this->allocate( NRC );
-    std::fill(  this->A_saved, this->A_saved + NRC*NRC, 0 );
+    lapack_wrapper::zero( NRC*NRC, this->A_saved, 1 );
     for ( integer i = 0; i < A_nnz; ++i )
       this->A_saved[A_row[i]+A_col[i]*NRC] += A_values[i];
     this->compute();
@@ -495,7 +495,7 @@ namespace lapack_wrapper {
       "GeneralizedEigenvalues::allocate, call geev return info = " << info
     );
     this->Lwork = integer(Lworkdummy);
-    this->mem_real.allocate( size_t( this->Lwork + (3+2*this->N) * this->N) ) ;
+    this->mem_real.allocate( size_t( this->Lwork + (3+2*this->N) * this->N) );
     this->alphaRe = this->mem_real( size_t(this->N) );
     this->alphaIm = this->mem_real( size_t(this->N) );
     this->beta    = this->mem_real( size_t(this->N) );
@@ -634,8 +634,8 @@ namespace lapack_wrapper {
     integer   const B_col[]
   ) {
     this->allocate( NRC );
-    std::fill(  this->A_saved, this->A_saved + NRC*NRC, 0 );
-    std::fill(  this->B_saved, this->B_saved + NRC*NRC, 0 );
+    lapack_wrapper::zero( NRC*NRC, this->A_saved, 1 );
+    lapack_wrapper::zero( NRC*NRC, this->B_saved, 1 );
     for ( integer i = 0; i < A_nnz; ++i )
       this->A_saved[A_row[i]+A_col[i]*NRC] += A_values[i];
     for ( integer i = 0; i < B_nnz; ++i )
@@ -735,8 +735,8 @@ namespace lapack_wrapper {
       "GeneralizedEigenvectors::allocate, call geev return info = " << info
     );
     this->Lwork = integer(Lworkdummy);
-    this->mem_real.allocate( size_t( this->Lwork + (7+4*this->N) * this->N) ) ;
-    this->mem_int.allocate( size_t( 2*this->N + 6 ) ) ;
+    this->mem_real.allocate( size_t( this->Lwork + (7+4*this->N) * this->N) );
+    this->mem_int.allocate( size_t( 2*this->N + 6 ) );
     this->alphaRe = this->mem_real( size_t(this->N) );
     this->alphaIm = this->mem_real( size_t(this->N) );
     this->beta    = this->mem_real( size_t(this->N) );
@@ -919,8 +919,8 @@ namespace lapack_wrapper {
     integer   const B_col[]
   ) {
     this->allocate( NRC );
-    std::fill(  this->A_saved, this->A_saved + NRC*NRC, 0 );
-    std::fill(  this->B_saved, this->B_saved + NRC*NRC, 0 );
+    lapack_wrapper::zero( NRC*NRC, this->A_saved, 1 );
+    lapack_wrapper::zero( NRC*NRC, this->B_saved, 1 );
     for ( integer i = 0; i < A_nnz; ++i )
       this->A_saved[A_row[i]+A_col[i]*NRC] += A_values[i];
     for ( integer i = 0; i < B_nnz; ++i )

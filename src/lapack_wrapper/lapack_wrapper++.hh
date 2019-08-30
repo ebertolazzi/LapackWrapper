@@ -189,7 +189,6 @@ namespace lapack_wrapper {
     Matrix( Matrix<T> const & M );
     Matrix( integer nr, integer nc );
     void setup( integer nr, integer nc );
-    void scale_by( T );
     Matrix<T> const & operator = ( Matrix<T> const & rhs );
   };
 

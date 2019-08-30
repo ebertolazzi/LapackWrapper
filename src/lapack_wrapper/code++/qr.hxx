@@ -445,7 +445,7 @@ namespace lapack_wrapper {
     virtual
     void
     factorize( char const who[] ) LAPACK_WRAPPER_OVERRIDE {
-      std::fill( JPVT, JPVT + nCol, 0 );
+      std::fill( JPVT, JPVT+nCol, integer(0) );
       integer info = geqp3(
         nRow, nCol, Amat, nRow, JPVT, Tau, Work, Lwork
       );

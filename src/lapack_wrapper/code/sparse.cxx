@@ -361,9 +361,9 @@ namespace lapack_wrapper {
   void
   SparseCCOOR<T>::setZero() {
     if ( this->matrix_is_full ) {
-      std::fill( this->vals.begin(), this->vals.end(), 0 );
+      std::fill( this->vals.begin(), this->vals.end(), T(0) );
     } else {
-      this->nnz            = 0;
+      this->nnz = 0;
       this->vals.clear();
       this->rows.clear();
       this->cols.clear();

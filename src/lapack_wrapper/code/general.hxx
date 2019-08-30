@@ -146,14 +146,16 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     sger( &M, &N, &ALPHA, X, &INCX, Y, &INCY, A, &LDA );
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(sger)(
       &M, &N, &ALPHA,
       const_cast<real*>(X), &INCX,
       const_cast<real*>(Y), &INCY,
       A, &LDA
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(sger)( CblasColMajor, M, N, ALPHA, X, INCX, Y, INCY, A, LDA );
   #else
   #error "LapackWrapper undefined mapping!"
@@ -175,14 +177,16 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     dger( &M, &N, &ALPHA, X, &INCX, Y, &INCY, A, &LDA );
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(dger)(
       &M, &N, &ALPHA,
       const_cast<doublereal*>(X), &INCX,
       const_cast<doublereal*>(Y), &INCY,
       A, &LDA
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dger)( CblasColMajor, M, N, ALPHA, X, INCX, Y, INCY, A, LDA );
   #else
   #error "LapackWrapper undefined mapping!"
@@ -333,7 +337,7 @@ namespace lapack_wrapper {
       trans_blas[TRANS],
       &M, &N, &ALPHA, A, &LDA, X, &INCX, &BETA, Y, &INCY
     );
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(sgemv)(
       const_cast<character*>(trans_blas[TRANS]),
       &M, &N, &ALPHA,
@@ -341,7 +345,9 @@ namespace lapack_wrapper {
       const_cast<real*>(X), &INCX,
       &BETA, Y, &INCY
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(sgemv)(
       CblasColMajor, trans_cblas[TRANS],
       M, N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY
@@ -371,7 +377,7 @@ namespace lapack_wrapper {
       trans_blas[TRANS],
       &M, &N, &ALPHA, A, &LDA, X, &INCX, &BETA, Y, &INCY
     );
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(dgemv)(
       const_cast<character*>(trans_blas[TRANS]),
       &M, &N, &ALPHA,
@@ -379,7 +385,9 @@ namespace lapack_wrapper {
       const_cast<doublereal*>(X), &INCX,
       &BETA, Y, &INCY
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dgemv)(
       CblasColMajor, trans_cblas[TRANS],
       M, N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY
@@ -567,7 +575,7 @@ namespace lapack_wrapper {
       &M, &N, &K, &ALPHA, A, &LDA, B, &LDB,
       &BETA, C, &LDC
     );
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(sgemm)(
       const_cast<character*>(trans_blas[TRANSA]),
       const_cast<character*>(trans_blas[TRANSB]),
@@ -576,7 +584,9 @@ namespace lapack_wrapper {
       const_cast<real*>(B), &LDB,
       &BETA, C, &LDC
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(sgemm)(
       CblasColMajor,
       trans_cblas[TRANSA],
@@ -614,7 +624,7 @@ namespace lapack_wrapper {
       &M, &N, &K, &ALPHA, A, &LDA, B, &LDB,
       &BETA, C, &LDC
     );
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(dgemm)(
       const_cast<character*>(trans_blas[TRANSA]),
       const_cast<character*>(trans_blas[TRANSB]),
@@ -623,7 +633,9 @@ namespace lapack_wrapper {
       const_cast<doublereal*>(B), &LDB,
       &BETA, C, &LDC
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dgemm)(
       CblasColMajor,
       trans_cblas[TRANSA],
@@ -691,7 +703,8 @@ namespace lapack_wrapper {
    *                to solve a system of equations.
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
     void
     BLASFUNC(sgetrf)(
@@ -725,7 +738,10 @@ namespace lapack_wrapper {
     integer IPIV[]
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(sgetrf)( &N, &M, A, &LDA, IPIV, &INFO );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
     BLASFUNC(sgetrf)( &N, &M, A, &LDA, IPIV, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgetrf( &N, &M, A, &LDA, IPIV, &INFO );
@@ -747,7 +763,10 @@ namespace lapack_wrapper {
     integer    IPIV[]
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(dgetrf)( &N, &M, A, &LDA, IPIV, &INFO );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
     BLASFUNC(dgetrf)( &N, &M, A, &LDA, IPIV, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgetrf( &N, &M, A, &LDA, IPIV, &INFO );
@@ -815,7 +834,8 @@ namespace lapack_wrapper {
    *          < 0:  if INFO = -i, the i-th argument had an illegal value
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
     void
     BLASFUNC(sgetrs)(
@@ -858,7 +878,16 @@ namespace lapack_wrapper {
     integer               LDB
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(sgetrs)(
+      const_cast<character*>(trans_blas[TRANS]),
+      &N, &NRHS,
+      const_cast<real*>(A), &LDA,
+      const_cast<integer*>(IPIV),
+      B, &LDB, &INFO
+    );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
     BLASFUNC(sgetrs)(
       const_cast<character*>(trans_blas[TRANS]),
       &N, &NRHS,
@@ -895,7 +924,16 @@ namespace lapack_wrapper {
     integer               LDB
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(dgetrs)(
+      const_cast<character*>(trans_blas[TRANS]),
+      &N, &NRHS,
+      const_cast<doublereal*>(A), &LDA,
+      const_cast<integer*>(IPIV),
+      B, &LDB, &INFO
+    );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
     BLASFUNC(dgetrs)(
       const_cast<character*>(trans_blas[TRANS]),
       &N, &NRHS,
@@ -980,7 +1018,8 @@ namespace lapack_wrapper {
    *
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
     void
     BLASFUNC(sgesv)(
@@ -1020,7 +1059,10 @@ namespace lapack_wrapper {
     integer LDB
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(sgesv)( &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
     BLASFUNC(sgesv)( &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgesv( &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
@@ -1044,7 +1086,10 @@ namespace lapack_wrapper {
     integer    LDB
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(dgesv)( &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
     BLASFUNC(dgesv)( &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgesv( &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
@@ -1139,7 +1184,8 @@ namespace lapack_wrapper {
   }
   #endif
 
-  #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   template <typename T>
   integer
   getc2_tmpl(
@@ -1161,7 +1207,8 @@ namespace lapack_wrapper {
     integer   JPIV[]
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     INFO = getc2_tmpl<real>(N,A,LDA,IPIV,JPIV);
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgetc2( &N, A, &LDA, IPIV, JPIV, &INFO );
@@ -1183,7 +1230,8 @@ namespace lapack_wrapper {
     integer    JPIV[]
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     INFO = getc2_tmpl<doublereal>(N,A,LDA,IPIV,JPIV);
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgetc2( &N, A, &LDA, IPIV, JPIV, &INFO );
@@ -1279,7 +1327,8 @@ namespace lapack_wrapper {
   }
   #endif
 
-  #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   template <typename T>
   T
   gesc2_tmpl(
@@ -1303,20 +1352,25 @@ namespace lapack_wrapper {
     integer const JPIV[]
   ) {
     real SCALE = 0;
-    #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     SCALE = gesc2_tmpl<real>( N, A, LDA, RHS, IPIV, JPIV );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgesc2( &N, A, &LDA, RHS, IPIV, JPIV, &SCALE );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sgesc2)( &N,
-                         const_cast<real*>(A), &LDA, RHS,
-                         const_cast<integer*>(IPIV),
-                         const_cast<integer*>(JPIV), &SCALE );
+    CLAPACKNAME(sgesc2)(
+      &N,
+      const_cast<real*>(A), &LDA, RHS,
+      const_cast<integer*>(IPIV),
+      const_cast<integer*>(JPIV), &SCALE
+    );
     #else
-    LAPACK_F77NAME(sgesc2)( &N,
-                            const_cast<real*>(A), &LDA, RHS,
-                            const_cast<integer*>(IPIV),
-                            const_cast<integer*>(JPIV), &SCALE );
+    LAPACK_F77NAME(sgesc2)(
+      &N,
+      const_cast<real*>(A), &LDA, RHS,
+      const_cast<integer*>(IPIV),
+      const_cast<integer*>(JPIV), &SCALE
+    );
     #endif
     return SCALE;
   }
@@ -1332,20 +1386,25 @@ namespace lapack_wrapper {
     integer    const JPIV[]
   ) {
     doublereal SCALE = 0;
-    #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     SCALE = gesc2_tmpl<doublereal>( N, A, LDA, RHS, IPIV, JPIV );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgesc2( &N, A, &LDA, RHS, IPIV, JPIV, &SCALE );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dgesc2)( &N,
-                         const_cast<doublereal*>(A), &LDA, RHS,
-                         const_cast<integer*>(IPIV),
-                         const_cast<integer*>(JPIV), &SCALE );
+    CLAPACKNAME(dgesc2)(
+      &N,
+      const_cast<doublereal*>(A), &LDA, RHS,
+      const_cast<integer*>(IPIV),
+      const_cast<integer*>(JPIV), &SCALE
+    );
     #else
-    LAPACK_F77NAME(dgesc2)( &N,
-                            const_cast<doublereal*>(A), &LDA, RHS,
-                            const_cast<integer*>(IPIV),
-                            const_cast<integer*>(JPIV), &SCALE);
+    LAPACK_F77NAME(dgesc2)(
+      &N,
+      const_cast<doublereal*>(A), &LDA, RHS,
+      const_cast<integer*>(IPIV),
+      const_cast<integer*>(JPIV), &SCALE
+    );
     #endif
     return SCALE;
   }
@@ -1405,7 +1464,8 @@ namespace lapack_wrapper {
    *          < 0:  if INFO = -i, the i-th argument had an illegal value
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
 
     void
@@ -1448,17 +1508,22 @@ namespace lapack_wrapper {
     integer    iwork[]
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)
     LAPACK_F77NAME(sgecon)( "1", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(sgecon)( "1", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sgecon)(
+      const_cast<character*>("1"),
+      &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgecon( "1", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sgecon)( const_cast<character*>("1"), &N,
-                         const_cast<real*>(A),
-                         &LDA, &anorm, &rcond, work, iwork, &INFO );
+    CLAPACKNAME(sgecon)(
+      const_cast<character*>("1"), &N,
+      const_cast<real*>(A),
+      &LDA, &anorm, &rcond, work, iwork, &INFO
+    );
     #else
     LAPACK_F77NAME(sgecon)( "1", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO);
     #endif
@@ -1477,17 +1542,22 @@ namespace lapack_wrapper {
     integer          iwork[]
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)
     LAPACK_F77NAME(dgecon)( "1", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(dgecon)( "1", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dgecon)(
+      const_cast<character*>("1"),
+      &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgecon( "1", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dgecon)( const_cast<character*>("1"), &N,
-                         const_cast<doublereal*>(A),
-                         &LDA, &anorm, &rcond, work, iwork, &INFO );
+    CLAPACKNAME(dgecon)(
+      const_cast<character*>("1"), &N,
+      const_cast<doublereal*>(A),
+      &LDA, &anorm, &rcond, work, iwork, &INFO
+    );
     #else
     LAPACK_F77NAME(dgecon)( "1", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO);
     #endif
@@ -1506,17 +1576,22 @@ namespace lapack_wrapper {
     integer    iwork[]
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)
     LAPACK_F77NAME(sgecon)( "I", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(sgecon)( "I", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sgecon)(
+      const_cast<character*>("I"),
+      &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgecon( "I", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sgecon)( const_cast<character*>("I"), &N,
-                         const_cast<real*>(A),
-                         &LDA, &anorm, &rcond, work, iwork, &INFO );
+    CLAPACKNAME(sgecon)(
+      const_cast<character*>("I"), &N,
+      const_cast<real*>(A),
+      &LDA, &anorm, &rcond, work, iwork, &INFO
+    );
     #else
     LAPACK_F77NAME(sgecon)( "I", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO);
     #endif
@@ -1535,17 +1610,22 @@ namespace lapack_wrapper {
     integer          iwork[]
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)
     LAPACK_F77NAME(dgecon)( "I", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(dgecon)( "I", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dgecon)(
+      const_cast<character*>("I"),
+      &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgecon( "I", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dgecon)( const_cast<character*>("I"), &N,
-                         const_cast<doublereal*>(A),
-                         &LDA, &anorm, &rcond, work, iwork, &INFO );
+    CLAPACKNAME(dgecon)(
+      const_cast<character*>("I"), &N,
+      const_cast<doublereal*>(A),
+      &LDA, &anorm, &rcond, work, iwork, &INFO
+    );
     #else
     LAPACK_F77NAME(dgecon)( "I", &N, A, &LDA, &anorm, &rcond, work, iwork, &INFO);
     #endif
@@ -1613,7 +1693,8 @@ namespace lapack_wrapper {
    *                >  M:  the (i-M)-th column of A is exactly zero
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
 
     void
@@ -1660,16 +1741,22 @@ namespace lapack_wrapper {
     real     & AMAX
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(sgeequ)( &M, &N,
-                            A, &LDA,
-                            R, C, &ROWCND, &COLCND, &AMAX, &INFO );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)  || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(sgeequ)(
+      &M, &N,
+      A, &LDA,
+      R, C, &ROWCND, &COLCND, &AMAX, &INFO
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgeequ( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sgeequ)( &M, &N,
-                         const_cast<real*>(A), &LDA,
-                         R, C, &ROWCND, &COLCND, &AMAX, &INFO );
+    CLAPACKNAME(sgeequ)(
+      &M, &N,
+      const_cast<real*>(A), &LDA,
+      R, C, &ROWCND, &COLCND, &AMAX, &INFO
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -1690,16 +1777,22 @@ namespace lapack_wrapper {
     doublereal     & AMAX
   ) {
     integer INFO = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dgeequ)( &M, &N,
-                            A, &LDA,
-                            R, C, &ROWCND, &COLCND, &AMAX, &INFO );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)  || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(dgeequ)(
+      &M, &N,
+      A, &LDA,
+      R, C, &ROWCND, &COLCND, &AMAX, &INFO
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgeequ( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dgeequ)( &M, &N,
-                        const_cast<doublereal*>(A), &LDA,
-                        R, C, &ROWCND, &COLCND, &AMAX, &INFO );
+    CLAPACKNAME(dgeequ)(
+      &M, &N,
+      const_cast<doublereal*>(A), &LDA,
+      R, C, &ROWCND, &COLCND, &AMAX, &INFO
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -1772,7 +1865,8 @@ namespace lapack_wrapper {
    *  =====================================================================
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
 
     void
@@ -1805,6 +1899,39 @@ namespace lapack_wrapper {
   }
   #endif
 
+  #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  extern "C" {
+
+    void
+    BLASFUNC(slaqge)(
+      integer   const * M,
+      integer   const * N,
+      real            * A,
+      integer   const * ldA,
+      real      const * R,
+      real      const * C,
+      real      const * ROWCND,
+      real      const * COLCND,
+      real      const * AMAX,
+      character const * EQUED
+    );
+
+    void
+    BLASFUNC(dlaqge)(
+      integer    const * M,
+      integer    const * N,
+      doublereal       * A,
+      integer    const * ldA,
+      doublereal const * R,
+      doublereal const * C,
+      doublereal const * ROWCND,
+      doublereal const * COLCND,
+      doublereal const * AMAX,
+      character  const * EQUED
+    );
+  }
+  #endif
+
   inline
   void
   laqge(
@@ -1819,19 +1946,28 @@ namespace lapack_wrapper {
     real                AMAX,
     EquilibrationType & equ
   ) {
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(slaqge)( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX,
-                            equilibrate_blas[equ] );
-
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(slaqge)(
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, equilibrate_blas[equ]
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    BLASFUNC(slaqge)(
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, equilibrate_blas[equ]
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    slaqge( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX,
-            const_cast<character*>(equilibrate_blas[equ]));
+    slaqge(
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX,
+      const_cast<character*>(equilibrate_blas[equ])
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(slaqge)( &M, &N, A, &LDA,
-                         const_cast<real*>(R),
-                         const_cast<real*>(C),
-                         &ROWCND, &COLCND, &AMAX,
-                         const_cast<character*>(equilibrate_blas[equ]) );
+    CLAPACKNAME(slaqge)(
+      &M, &N, A, &LDA,
+      const_cast<real*>(R),
+      const_cast<real*>(C),
+      &ROWCND, &COLCND, &AMAX,
+      const_cast<character*>(equilibrate_blas[equ])
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -1851,19 +1987,28 @@ namespace lapack_wrapper {
     doublereal          AMAX,
     EquilibrationType & equ
   ) {
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dlaqge)( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX,
-                            equilibrate_blas[equ] );
-
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dlaqge)(
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, equilibrate_blas[equ]
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    BLASFUNC(dlaqge)(
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, equilibrate_blas[equ]
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dlaqge( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX,
-            const_cast<character*>(equilibrate_blas[equ]));
+    dlaqge(
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX,
+      const_cast<character*>(equilibrate_blas[equ])
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dlaqge)( &M, &N, A, &LDA,
-                         const_cast<doublereal*>(R),
-                         const_cast<doublereal*>(C),
-                         &ROWCND, &COLCND, &AMAX,
-                         const_cast<character*>(equilibrate_blas[equ]) );
+    CLAPACKNAME(dlaqge)(
+      &M, &N, A, &LDA,
+      const_cast<doublereal*>(R),
+      const_cast<doublereal*>(C),
+      &ROWCND, &COLCND, &AMAX,
+      const_cast<character*>(equilibrate_blas[equ])
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -1913,7 +2058,7 @@ namespace lapack_wrapper {
    *          The leading dimension of the array B.  LDB >= max(1,M).
    *
   \*/
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK)
   extern "C" {
     void
     LAPACK_F77NAME(slacpy)(
@@ -1949,8 +2094,14 @@ namespace lapack_wrapper {
     real       B[],
     integer    LDB
   )
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK)
   { LAPACK_F77NAME(slacpy)( "A", &M, &N, A, &LDA, B, &LDB ); return 0; }
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  { LAPACK_F77NAME(slacpy)(
+      const_cast<character*>("A"), &M, &N, A, &LDA, B, &LDB
+    );
+    return 0;
+  }
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
   { for ( integer j = 0; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
     return 0; }
@@ -1973,8 +2124,14 @@ namespace lapack_wrapper {
     doublereal       B[],
     integer          LDB
   )
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK)
   { LAPACK_F77NAME(dlacpy)( "A", &M, &N, A, &LDA, B, &LDB ); return 0; }
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  { LAPACK_F77NAME(dlacpy)(
+      const_cast<character*>("A"), &M, &N, A, &LDA, B, &LDB
+    );
+    return 0;
+  }
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
   { for ( integer j = 0; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
     return 0; }
@@ -2037,7 +2194,8 @@ namespace lapack_wrapper {
    *          The leading dimension of the array A.  LDA >= max(1,M).
    *
   \*/
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
     void
     LAPACK_F77NAME(slaset)(
@@ -2073,7 +2231,8 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_LAPACK)
   { real zero = 0; LAPACK_F77NAME(slaset)( "A", &M, &N, &zero, &zero, A, &LDA ); }
-  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { for ( integer j = 0; j < N; ++j ) zero( M, A+j*LDA, 1 ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { real zero = 0; slaset( "A", &M, &N, &zero, &zero, A, &LDA ); }
@@ -2093,7 +2252,8 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_LAPACK)
   { doublereal zero = 0; LAPACK_F77NAME(dlaset)( "A", &M, &N, &zero, &zero, A, &LDA ); }
-  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { for ( integer j = 0; j < N; ++j ) zero( M, A+j*LDA, 1 ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { doublereal zero = 0; dlaset( "A", &M, &N, &zero, &zero, A, &LDA ); }
@@ -2114,7 +2274,8 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_LAPACK)
   { LAPACK_F77NAME(slaset)( "A", &M, &N, &value, &value, A, &LDA ); }
-  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { for ( integer j = 0; j < N; ++j ) copy( M, &value, 0, A+j*LDA, 1 ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { slaset( "A", &M, &N, &value, &value, A, &LDA ); }
@@ -2135,7 +2296,8 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_LAPACK)
   { LAPACK_F77NAME(dlaset)( "A", &M, &N, &value, &value, A, &LDA ); }
-  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { for ( integer j = 0; j < N; ++j ) copy( M, &value, 0, A+j*LDA, 1 ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { dlaset( "A", &M, &N, &value, &value, A, &LDA ); }
@@ -2164,7 +2326,8 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_LAPACK)
   { real zero = 0; LAPACK_F77NAME(slaset)( "A", &M, &N, &zero, &diag, A, &LDA ); }
-  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { gezero(M,N,A,LDA); copy( std::min(M,N), &diag, 0, A, LDA+1); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { real zero = 0; slaset( "A", &M, &N, &zero, &diag, A, &LDA ); }
@@ -2185,7 +2348,8 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_LAPACK)
   { doublereal zero = 0; LAPACK_F77NAME(dlaset)( "A", &M, &N, &zero, &diag, A, &LDA ); }
-  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { gezero(M,N,A,LDA); copy( std::min(M,N), &diag, 0, A, LDA+1); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { doublereal zero = 0; dlaset( "A", &M, &N, &zero, &diag, A, &LDA ); }
@@ -2274,7 +2438,8 @@ namespace lapack_wrapper {
   //  | |  | | (_| | |_| |  | |>  <  | |\  | (_) | |  | | | | | |
   //  |_|  |_|\__,_|\__|_|  |_/_/\_\ |_| \_|\___/|_|  |_| |_| |_|
   */
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
 
@@ -2400,13 +2565,22 @@ namespace lapack_wrapper {
     real const A[],
     integer    LDA
   )
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   { return LAPACK_F77NAME(slange)( "1", &N, &M, A, &LDA, nullptr ); }
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  { return LAPACK_F77NAME(slange)(
+      const_cast<character*>("1"), &N, &M, A, &LDA, nullptr
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { return slange( "1", &N, &M, A, &LDA, nullptr ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return real(CLAPACKNAME(slange)( const_cast<character*>("1"), &N, &M,
-                                     const_cast<real*>(A), &LDA, nullptr ) ); }
+  { return real(CLAPACKNAME(slange)(
+      const_cast<character*>("1"), &N, &M,
+      const_cast<real*>(A), &LDA, nullptr
+    ));
+  }
   #else
   #error "LapackWrapper undefined mapping!"
   #endif
@@ -2419,13 +2593,22 @@ namespace lapack_wrapper {
     doublereal const A[],
     integer          LDA
   )
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   { return LAPACK_F77NAME(dlange)( "1", &N, &M, A, &LDA, nullptr ); }
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  { return LAPACK_F77NAME(dlange)(
+      const_cast<character*>("1"), &N, &M, A, &LDA, nullptr
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { return dlange( "1", &N, &M, A, &LDA, nullptr ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return CLAPACKNAME(dlange)( const_cast<character*>("1"), &N, &M,
-                                const_cast<doublereal*>(A), &LDA, nullptr ); }
+  { return CLAPACKNAME(dlange)(
+      const_cast<character*>("1"), &N, &M,
+      const_cast<doublereal*>(A), &LDA, nullptr
+    );
+  }
   #else
   #error "LapackWrapper undefined mapping!"
   #endif
@@ -2439,17 +2622,24 @@ namespace lapack_wrapper {
     integer    M,
     real const A[],
     integer    LDA
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return CLAPACKNAME(slange)( const_cast<character*>("F"), &N, &M,
-                                const_cast<real*>(A), &LDA, nullptr ); }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-  { return return_precision(LAPACK_F77NAME(slange)( "F", &N, &M, A, &LDA, nullptr )); }
+    return CLAPACKNAME(slange)(
+      const_cast<character*>("F"), &N, &M,
+      const_cast<real*>(A), &LDA, nullptr
+    );
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    return return_precision(LAPACK_F77NAME(slange)(
+      const_cast<character*>("F"), &N, &M, A, &LDA, nullptr
+    ));
   #elif defined(LAPACK_WRAPPER_USE_MKL)
-  { return return_precision(slange( "F", &N, &M, A, &LDA, nullptr )); }
+    return return_precision(slange( "F", &N, &M, A, &LDA, nullptr ));
   #else
   #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
   inline
   doublereal
@@ -2458,17 +2648,24 @@ namespace lapack_wrapper {
     integer          M,
     doublereal const A[],
     integer          LDA
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return CLAPACKNAME(dlange)( const_cast<character*>("F"), &N, &M,
-                                const_cast<doublereal*>(A), &LDA, nullptr ); }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-  { return LAPACK_F77NAME(dlange)( "F", &N, &M, A, &LDA, nullptr ); }
+    return CLAPACKNAME(dlange)(
+      const_cast<character*>("F"), &N, &M,
+      const_cast<doublereal*>(A), &LDA, nullptr
+    );
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    return LAPACK_F77NAME(dlange)(
+      const_cast<character*>("F"), &N, &M, A, &LDA, nullptr
+    );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
-  { return dlange( "F", &N, &M, A, &LDA, nullptr ); }
+    return dlange( "F", &N, &M, A, &LDA, nullptr );
   #else
   #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
   ///////////////////
 
@@ -2479,17 +2676,24 @@ namespace lapack_wrapper {
     integer    M,
     real const A[],
     integer    LDA
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return real(CLAPACKNAME(slange)( const_cast<character*>("M"), &N, &M,
-                                     const_cast<real*>(A), &LDA, nullptr )); }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-  { return LAPACK_F77NAME(slange)( "M", &N, &M, A, &LDA, nullptr ); }
+    return real(CLAPACKNAME(slange)(
+      const_cast<character*>("M"), &N, &M,
+      const_cast<real*>(A), &LDA, nullptr
+    ));
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    return LAPACK_F77NAME(slange)(
+      const_cast<character*>("M"), &N, &M, A, &LDA, nullptr
+    );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
-  { return slange( "M", &N, &M, A, &LDA, nullptr ); }
+    return slange( "M", &N, &M, A, &LDA, nullptr );
   #else
   #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
   inline
   doublereal
@@ -2498,17 +2702,25 @@ namespace lapack_wrapper {
     integer          M,
     doublereal const A[],
     integer          LDA
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return CLAPACKNAME(dlange)( const_cast<character*>("M"), &N, &M,
-                                const_cast<doublereal*>(A), &LDA, nullptr ); }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-  { return LAPACK_F77NAME(dlange)( "M", &N, &M, A, &LDA, nullptr ); }
+    return CLAPACKNAME(dlange)(
+      const_cast<character*>("M"), &N, &M,
+      const_cast<doublereal*>(A), &LDA, nullptr
+    );
+
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    return LAPACK_F77NAME(dlange)(
+      const_cast<character*>("M"), &N, &M, A, &LDA, nullptr
+    );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
-  { return dlange( "M", &N, &M, A, &LDA, nullptr ); }
+    return dlange( "M", &N, &M, A, &LDA, nullptr );
   #else
   #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
   #ifndef LAPACK_WRAPPER_OS_WINDOWS
 
@@ -2582,7 +2794,8 @@ namespace lapack_wrapper {
    *
    *  =====================================================================
   \*/
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
     void
@@ -2630,11 +2843,21 @@ namespace lapack_wrapper {
   ) {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(slascl)( const_cast<character*>(mtype_blas[TYPE]),
-                         &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
-    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(slascl)( mtype_blas[TYPE],
-                            &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info);
+    CLAPACKNAME(slascl)(
+      const_cast<character*>(mtype_blas[TYPE]),
+      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(slascl)(
+      mtype_blas[TYPE],
+      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(slascl)(
+      const_cast<character*>(mtype_blas[TYPE]),
+      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     slascl( mtype_blas[TYPE], &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info);
     #else
@@ -2658,11 +2881,22 @@ namespace lapack_wrapper {
   ) {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dlascl)( const_cast<character*>(mtype_blas[TYPE]),
-                         &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
-    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dlascl)( mtype_blas[TYPE],
-                            &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info);
+    CLAPACKNAME(dlascl)(
+      const_cast<character*>(mtype_blas[TYPE]),
+      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dlascl)(
+      mtype_blas[TYPE], &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)  || \
+          defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dlascl)(
+      const_cast<character*>(mtype_blas[TYPE]),
+      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlascl( mtype_blas[TYPE], &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info);
     #else
@@ -2681,7 +2915,8 @@ namespace lapack_wrapper {
   //  |_____|_|\__, |\___|_| |_|\_/ \__,_|_|\__,_|\___||___/
   //           |___/
   */
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
 
@@ -2848,23 +3083,40 @@ namespace lapack_wrapper {
     integer lwork
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(sgeev)( (jobvl?"V":"N"),
-                           (jobvr?"V":"N"),
-                           &n, A, &lda, wr, wi,
-                           vl, &ldvl,
-                           vr, &ldvr, work, &lwork, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sgeev)(
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      &n, A, &lda, wr, wi,
+      vl, &ldvl,
+      vr, &ldvr, work, &lwork, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(sgeev)(
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      &n, A, &lda, wr, wi,
+      vl, &ldvl,
+      vr, &ldvr, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    sgeev( (jobvl?"V":"N"), (jobvr?"V":"N"),
-           &n, A, &lda, wr, wi, vl, &ldvl, vr, &ldvr, work, &lwork, &info );
+    sgeev(
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      &n, A, &lda, wr, wi,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sgeev)( const_cast<character*>(jobvl?"V":"N"),
-                        const_cast<character*>(jobvr?"V":"N"),
-                        &n,
-                        const_cast<real*>(A), &lda, wr, wi,
-                        vl, &ldvl,
-                        vr, &ldvr,
-                        work, &lwork, &info );
+    CLAPACKNAME(sgeev)(
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      &n,
+      const_cast<real*>(A), &lda, wr, wi,
+      vl, &ldvl,
+      vr, &ldvr,
+      work, &lwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -2889,23 +3141,40 @@ namespace lapack_wrapper {
     integer    lwork
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dgeev)( (jobvl?"V":"N"),
-                           (jobvr?"V":"N"),
-                           &n, A, &lda, wr, wi,
-                           vl, &ldvl,
-                           vr, &ldvr, work, &lwork, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dgeev)(
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      &n, A, &lda, wr, wi,
+      vl, &ldvl,
+      vr, &ldvr, work, &lwork, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(dgeev)(
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      &n, A, &lda, wr, wi,
+      vl, &ldvl,
+      vr, &ldvr, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dgeev( (jobvl?"V":"N"), (jobvr?"V":"N"),
-           &n, A, &lda, wr, wi, vl, &ldvl, vr, &ldvr, work, &lwork, &info );
+    dgeev(
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      &n, A, &lda, wr, wi,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dgeev)( const_cast<character*>(jobvl?"V":"N"),
-                        const_cast<character*>(jobvr?"V":"N"),
-                        &n,
-                        const_cast<doublereal*>(A), &lda, wr, wi,
-                        vl, &ldvl,
-                        vr, &ldvr,
-                        work, &lwork, &info );
+    CLAPACKNAME(dgeev)(
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      &n,
+      const_cast<doublereal*>(A), &lda, wr, wi,
+      vl, &ldvl,
+      vr, &ldvr,
+      work, &lwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -2914,7 +3183,8 @@ namespace lapack_wrapper {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
 
@@ -3123,23 +3393,38 @@ namespace lapack_wrapper {
     integer lwork
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(sggev)( (jobvl?"V":"N"),
-                           (jobvr?"V":"N"),
-                           &n, A, &lda, B, &ldb, alphar, alphai, beta,
-                           vl, &ldvl, vr, &ldvr, work, &lwork, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sggev)(
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      &n, A, &lda, B, &ldb, alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(sggev)(
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      &n, A, &lda, B, &ldb, alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    sggev( (jobvl?"V":"N"), (jobvr?"V":"N"),
-           &n, A, &lda, B, &ldb, alphar, alphai, beta,
-           vl, &ldvl, vr, &ldvr, work, &lwork, &info );
+    sggev(
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      &n, A, &lda, B, &ldb, alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sggev)( const_cast<character*>(jobvl?"V":"N"),
-                        const_cast<character*>(jobvr?"V":"N"),
-                        &n,
-                        const_cast<real*>(A), &lda,
-                        const_cast<real*>(B), &ldb,
-                        alphar, alphai, beta,
-                        vl, &ldvl, vr, &ldvr, work, &lwork, &info );
+    CLAPACKNAME(sggev)(
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      &n,
+      const_cast<real*>(A), &lda,
+      const_cast<real*>(B), &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -3167,23 +3452,38 @@ namespace lapack_wrapper {
     integer    lwork
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dggev)( (jobvl?"V":"N"),
-                           (jobvr?"V":"N"),
-                           &n, A, &lda, B, &ldb, alphar, alphai, beta,
-                           vl, &ldvl, vr, &ldvr, work, &lwork, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dggev)(
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      &n, A, &lda, B, &ldb, alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(dggev)(
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      &n, A, &lda, B, &ldb, alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dggev( (jobvl?"V":"N"), (jobvr?"V":"N"),
-           &n, A, &lda, B, &ldb, alphar, alphai, beta,
-           vl, &ldvl, vr, &ldvr, work, &lwork, &info );
+    dggev(
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      &n, A, &lda, B, &ldb, alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dggev)( const_cast<character*>(jobvl?"V":"N"),
-                        const_cast<character*>(jobvr?"V":"N"),
-                        &n,
-                        const_cast<doublereal*>(A), &lda,
-                        const_cast<doublereal*>(B), &ldb,
-                        alphar, alphai, beta,
-                        vl, &ldvl, vr, &ldvr, work, &lwork, &info );
+    CLAPACKNAME(dggev)(
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      &n,
+      const_cast<doublereal*>(A), &lda,
+      const_cast<doublereal*>(B), &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr, work, &lwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -3432,7 +3732,8 @@ namespace lapack_wrapper {
    *
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
 
@@ -3784,51 +4085,75 @@ namespace lapack_wrapper {
     integer             bwork[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(sggevx)( balance_blas[balanc],
-                            (jobvl?"V":"N"),
-                            (jobvr?"V":"N"),
-                            sense_blas[sense],
-                            &n,
-                            A, &lda,
-                            B, &ldb,
-                            alphar, alphai, beta,
-                            vl, &ldvl, vr, &ldvr,
-                            &ilo, &ihi,
-                            lscale, rscale,
-                            &abnrm, &bbnrm,
-                            rconde, rcondv,
-                            work, &lwork, iwork, bwork, &info);
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sggevx)(
+      balance_blas[balanc],
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      sense_blas[sense],
+      &n,
+      A, &lda,
+      B, &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr,
+      &ilo, &ihi,
+      lscale, rscale,
+      &abnrm, &bbnrm,
+      rconde, rcondv,
+      work, &lwork, iwork, bwork, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(sggevx)(
+      const_cast<character*>(balance_blas[balanc]),
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      const_cast<character*>(sense_blas[sense]),
+      &n,
+      A, &lda,
+      B, &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr,
+      &ilo, &ihi,
+      lscale, rscale,
+      &abnrm, &bbnrm,
+      rconde, rcondv,
+      work, &lwork, iwork, bwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    sggevx( balance_blas[balanc],
-            (jobvl?"V":"N"),
-            (jobvr?"V":"N"),
-            sense_blas[sense],
-            &n,
-            A, &lda,
-            B, &ldb,
-            alphar, alphai, beta,
-            vl, &ldvl, vr, &ldvr,
-            &ilo, &ihi,
-            lscale, rscale,
-            &abnrm, &bbnrm,
-            rconde, rcondv,
-            work, &lwork, iwork, bwork, &info);
+    sggevx(
+      balance_blas[balanc],
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      sense_blas[sense],
+      &n,
+      A, &lda,
+      B, &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr,
+      &ilo, &ihi,
+      lscale, rscale,
+      &abnrm, &bbnrm,
+      rconde, rcondv,
+      work, &lwork, iwork, bwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sggevx)( const_cast<character*>(balance_blas[balanc]),
-                         const_cast<character*>(jobvl?"V":"N"),
-                         const_cast<character*>(jobvr?"V":"N"),
-                         const_cast<character*>(sense_blas[sense]),
-                         &n,
-                         const_cast<real*>(A), &lda,
-                         const_cast<real*>(B), &ldb,
-                         alphar, alphai, beta,
-                         vl, &ldvl, vr, &ldvr,
-                         &ilo, &ihi,
-                         lscale, rscale,
-                         &abnrm, &bbnrm,
-                         rconde, rcondv,
-                         work, &lwork, iwork, bwork, &info );
+    CLAPACKNAME(sggevx)(
+      const_cast<character*>(balance_blas[balanc]),
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      const_cast<character*>(sense_blas[sense]),
+      &n,
+      const_cast<real*>(A), &lda,
+      const_cast<real*>(B), &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr,
+      &ilo, &ihi,
+      lscale, rscale,
+      &abnrm, &bbnrm,
+      rconde, rcondv,
+      work, &lwork, iwork, bwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -3868,51 +4193,75 @@ namespace lapack_wrapper {
     integer             bwork[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dggevx)( balance_blas[balanc],
-                            (jobvl?"V":"N"),
-                            (jobvr?"V":"N"),
-                            sense_blas[sense],
-                            &n,
-                            A, &lda,
-                            B, &ldb,
-                            alphar, alphai, beta,
-                            vl, &ldvl, vr, &ldvr,
-                            &ilo, &ihi,
-                            lscale, rscale,
-                            &abnrm, &bbnrm,
-                            rconde, rcondv,
-                            work, &lwork, iwork, bwork, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dggevx)(
+      balance_blas[balanc],
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      sense_blas[sense],
+      &n,
+      A, &lda,
+      B, &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr,
+      &ilo, &ihi,
+      lscale, rscale,
+      &abnrm, &bbnrm,
+      rconde, rcondv,
+      work, &lwork, iwork, bwork, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_F77NAME(dggevx)(
+      const_cast<character*>(balance_blas[balanc]),
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      const_cast<character*>(sense_blas[sense]),
+      &n,
+      A, &lda,
+      B, &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr,
+      &ilo, &ihi,
+      lscale, rscale,
+      &abnrm, &bbnrm,
+      rconde, rcondv,
+      work, &lwork, iwork, bwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dggevx( balance_blas[balanc],
-            (jobvl?"V":"N"),
-            (jobvr?"V":"N"),
-            sense_blas[sense],
-            &n,
-            A, &lda,
-            B, &ldb,
-            alphar, alphai, beta,
-            vl, &ldvl, vr, &ldvr,
-            &ilo, &ihi,
-            lscale, rscale,
-            &abnrm, &bbnrm,
-            rconde, rcondv,
-            work, &lwork, iwork, bwork, &info );
+    dggevx(
+      balance_blas[balanc],
+      (jobvl?"V":"N"),
+      (jobvr?"V":"N"),
+      sense_blas[sense],
+      &n,
+      A, &lda,
+      B, &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr,
+      &ilo, &ihi,
+      lscale, rscale,
+      &abnrm, &bbnrm,
+      rconde, rcondv,
+      work, &lwork, iwork, bwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dggevx)( const_cast<character*>(balance_blas[balanc]),
-                         const_cast<character*>(jobvl?"V":"N"),
-                         const_cast<character*>(jobvr?"V":"N"),
-                         const_cast<character*>(sense_blas[sense]),
-                         &n,
-                         const_cast<doublereal*>(A), &lda,
-                         const_cast<doublereal*>(B), &ldb,
-                         alphar, alphai, beta,
-                         vl, &ldvl, vr, &ldvr,
-                         &ilo, &ihi,
-                         lscale, rscale,
-                         &abnrm, &bbnrm,
-                         rconde, rcondv,
-                         work, &lwork, iwork, bwork, &info );
+    CLAPACKNAME(dggevx)(
+      const_cast<character*>(balance_blas[balanc]),
+      const_cast<character*>(jobvl?"V":"N"),
+      const_cast<character*>(jobvr?"V":"N"),
+      const_cast<character*>(sense_blas[sense]),
+      &n,
+      const_cast<doublereal*>(A), &lda,
+      const_cast<doublereal*>(B), &ldb,
+      alphar, alphai, beta,
+      vl, &ldvl, vr, &ldvr,
+      &ilo, &ihi,
+      lscale, rscale,
+      &abnrm, &bbnrm,
+      rconde, rcondv,
+      work, &lwork, iwork, bwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -4046,7 +4395,8 @@ namespace lapack_wrapper {
    *  =====================================================================
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
 
@@ -4106,26 +4456,34 @@ namespace lapack_wrapper {
     integer         LWORK
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_F77NAME(sgesvd)( job_blas[JOBU],
-                            job_blas[JOBVT],
-                            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                            WORK, &LWORK, &info );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(sgesvd)( job_blas[JOBU],
-                            job_blas[JOBVT],
-                            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                            WORK, &LWORK, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)
+    LAPACK_F77NAME(sgesvd)(
+      job_blas[JOBU],
+      job_blas[JOBVT],
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
+      WORK, &LWORK, &info
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sgesvd)(
+      const_cast<character*>(job_blas[JOBU]),
+      const_cast<character*>(job_blas[JOBVT]),
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
+      WORK, &LWORK, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    sgesvd( job_blas[JOBU], job_blas[JOBVT],
-            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-            WORK, &LWORK, &info );
+    sgesvd(
+      job_blas[JOBU], job_blas[JOBVT],
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
+      WORK, &LWORK, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sgesvd)( const_cast<character*>(job_blas[JOBU]),
-                         const_cast<character*>(job_blas[JOBVT]),
-                         &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                         WORK, &LWORK, &info );
+    CLAPACKNAME(sgesvd)(
+      const_cast<character*>(job_blas[JOBU]),
+      const_cast<character*>(job_blas[JOBVT]),
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
+      WORK, &LWORK, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -4150,26 +4508,28 @@ namespace lapack_wrapper {
     integer         LWORK
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_F77NAME(dgesvd)( job_blas[JOBU],
-                            job_blas[JOBVT],
-                            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                            WORK, &LWORK, &info );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(dgesvd)( job_blas[JOBU],
-                            job_blas[JOBVT],
-                            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                            WORK, &LWORK, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dgesvd)(
+      const_cast<character*>(job_blas[JOBU]),
+      const_cast<character*>(job_blas[JOBVT]),
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
+      WORK, &LWORK, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dgesvd( job_blas[JOBU], job_blas[JOBVT],
-            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-            WORK, &LWORK, &info );
+    dgesvd(
+      job_blas[JOBU], job_blas[JOBVT],
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
+      WORK, &LWORK, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dgesvd)( const_cast<character*>(job_blas[JOBU]),
-                         const_cast<character*>(job_blas[JOBVT]),
-                         &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                         WORK, &LWORK, &info );
+    CLAPACKNAME(dgesvd)(
+      const_cast<character*>(job_blas[JOBU]),
+      const_cast<character*>(job_blas[JOBVT]),
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
+      WORK, &LWORK, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -4313,7 +4673,8 @@ namespace lapack_wrapper {
    *  =====================================================================
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
 
@@ -4373,21 +4734,24 @@ namespace lapack_wrapper {
     integer         IWORK[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_F77NAME(sgesdd)( job_blas[JOBZ],
-                            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                            WORK, &LWORK, IWORK, &info );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(sgesdd)( job_blas[JOBZ],
-                            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                            WORK, &LWORK, IWORK, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sgesdd)(
+      const_cast<character*>(job_blas[JOBZ]),
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
+      WORK, &LWORK, IWORK, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    sgesdd( job_blas[JOBZ],
-            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info );
+    sgesdd(
+      job_blas[JOBZ],
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sgesdd)( const_cast<character*>(job_blas[JOBZ]),
-                         &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info );
+    CLAPACKNAME(sgesdd)(
+      const_cast<character*>(job_blas[JOBZ]),
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -4412,21 +4776,24 @@ namespace lapack_wrapper {
     integer         IWORK[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_F77NAME(dgesdd)( job_blas[JOBZ],
-                            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                            WORK, &LWORK, IWORK, &info );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(dgesdd)( job_blas[JOBZ],
-                            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
-                            WORK, &LWORK, IWORK, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dgesdd)(
+      const_cast<character*>(job_blas[JOBZ]),
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
+      WORK, &LWORK, IWORK, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dgesdd( job_blas[JOBZ],
-            &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info );
+    dgesdd(
+      job_blas[JOBZ],
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dgesdd)( const_cast<character*>(job_blas[JOBZ]),
-                         &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info );
+    CLAPACKNAME(dgesdd)(
+      const_cast<character*>(job_blas[JOBZ]),
+      &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -4551,7 +4918,8 @@ namespace lapack_wrapper {
    *  =====================================================================
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
 
@@ -4611,8 +4979,13 @@ namespace lapack_wrapper {
     integer   iwork[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(sgelsd)( &m, &n, &nrhs, a, &lda, b, &ldb, s, &rcond, &rank, work, &lwork, iwork, &info);
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sgelsd)(
+      &m, &n, &nrhs, a, &lda, b, &ldb,
+      s, &rcond, &rank, work, &lwork, iwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgelsd( &m, &n, &nrhs, a, &lda, b, &ldb, s, &rcond, &rank, work, &lwork, iwork, &info);
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -4641,8 +5014,13 @@ namespace lapack_wrapper {
     integer    iwork[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dgelsd)( &m, &n, &nrhs, a, &lda, b, &ldb, s, &rcond, &rank, work, &lwork, iwork, &info);
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dgelsd)(
+      &m, &n, &nrhs, a, &lda, b, &ldb,
+      s, &rcond, &rank, work, &lwork, iwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgelsd( &m, &n, &nrhs, a, &lda, b, &ldb, s, &rcond, &rank, work, &lwork, iwork, &info);
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -4748,7 +5126,8 @@ namespace lapack_wrapper {
    *  =====================================================================
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
 
@@ -4805,15 +5184,23 @@ namespace lapack_wrapper {
     integer   lwork
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(sgelss)(&m, &n, &nrhs, a, &lda, b, &ldb, s,
-                           &rcond, &rank, work, &lwork, &info);
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sgelss)(
+      &m, &n, &nrhs, a, &lda, b, &ldb, s,
+      &rcond, &rank, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    sgelss(&m, &n, &nrhs, a, &lda, b, &ldb, s,
-           &rcond, &rank, work, &lwork, &info);
+    sgelss(
+      &m, &n, &nrhs, a, &lda, b, &ldb, s,
+      &rcond, &rank, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sgelss)( &m, &n, &nrhs, a, &lda, b, &ldb, s,
-                         &rcond, &rank, work, &lwork, &info );
+    CLAPACKNAME(sgelss)(
+      &m, &n, &nrhs, a, &lda, b, &ldb, s,
+      &rcond, &rank, work, &lwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -4837,15 +5224,23 @@ namespace lapack_wrapper {
     integer    lwork
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dgelss)( &m, &n, &nrhs, a, &lda, b, &ldb, s,
-                            &rcond, &rank, work, &lwork, &info);
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dgelss)(
+      &m, &n, &nrhs, a, &lda, b, &ldb, s,
+      &rcond, &rank, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dgelss( &m, &n, &nrhs, a, &lda, b, &ldb, s,
-            &rcond, &rank, work, &lwork, &info);
+    dgelss(
+      &m, &n, &nrhs, a, &lda, b, &ldb, s,
+      &rcond, &rank, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dgelss)( &m, &n, &nrhs, a, &lda, b, &ldb, s,
-                         &rcond, &rank, work, &lwork, &info );
+    CLAPACKNAME(dgelss)(
+      &m, &n, &nrhs, a, &lda, b, &ldb, s,
+      &rcond, &rank, work, &lwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -4970,7 +5365,8 @@ namespace lapack_wrapper {
    *          < 0: If INFO = -i, the i-th argument had an illegal value.
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
 
@@ -5027,15 +5423,23 @@ namespace lapack_wrapper {
     integer   lwork
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(sgelsy)(&m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
-                           &rcond, &rank, work, &lwork, &info);
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)  || \
+       defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+       defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(sgelsy)(
+      &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
+      &rcond, &rank, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    sgelsy(&m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
-           &rcond, &rank, work, &lwork, &info);
+    sgelsy(
+      &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
+      &rcond, &rank, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(sgelsy)( &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
-                         &rcond, &rank, work, &lwork, &info );
+    CLAPACKNAME(sgelsy)(
+      &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
+      &rcond, &rank, work, &lwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -5059,15 +5463,23 @@ namespace lapack_wrapper {
     integer    lwork
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dgelsy)( &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
-                            &rcond, &rank, work, &lwork, &info);
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dgelsy)(
+      &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
+      &rcond, &rank, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dgelsy( &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
-            &rcond, &rank, work, &lwork, &info);
+    dgelsy(
+      &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
+      &rcond, &rank, work, &lwork, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dgelsy)( &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
-                         &rcond, &rank, work, &lwork, &info );
+    CLAPACKNAME(dgelsy)(
+      &m, &n, &nrhs, a, &lda, b, &ldb, jpvt,
+      &rcond, &rank, work, &lwork, &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -5310,64 +5722,10 @@ namespace lapack_wrapper {
    * =====================================================================
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   // use standard Lapack routine
   extern "C" {
-    #ifdef LAPACK_WRAPPER_OS_WINDOWS
-    void
-    LAPACK_F77NAME(sggsvd)(
-      character const JOBU[],
-      character const JOBV[],
-      character const JOBQ[],
-      integer   const * m,
-      integer   const * n,
-      integer   const * p,
-      integer         * k,
-      integer         * l,
-      real              A[],
-      integer   const * ldA,
-      real              B[],
-      integer   const * ldB,
-      real              alpha[],
-      real              beta[],
-      real              U[],
-      integer   const * ldU,
-      real              V[],
-      integer   const * ldV,
-      real              Q[],
-      integer   const * ldQ,
-      real            * work,
-      integer         * iwork,
-      integer         * info
-    );
-
-    void
-    LAPACK_F77NAME(dggsvd)(
-      character const JOBU[],
-      character const JOBV[],
-      character const JOBQ[],
-      integer   const * m,
-      integer   const * n,
-      integer   const * p,
-      integer         * k,
-      integer         * l,
-      doublereal        A[],
-      integer   const * ldA,
-      doublereal        B[],
-      integer   const * ldB,
-      doublereal        alpha[],
-      doublereal        beta[],
-      doublereal        U[],
-      integer   const * ldU,
-      doublereal        V[],
-      integer   const * ldV,
-      doublereal        Q[],
-      integer   const * ldQ,
-      doublereal      * work,
-      integer         * iwork,
-      integer         * info
-    );
-    #else
     void
     LAPACK_F77NAME(sggsvd3)(
       character const JOBU[],
@@ -5423,7 +5781,6 @@ namespace lapack_wrapper {
       integer         * iwork,
       integer         * info
     );
-    #endif
   }
   #endif
 
@@ -5455,35 +5812,11 @@ namespace lapack_wrapper {
     integer   iwork[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_OS_WINDOWS)
-    integer lw = std::max(3*n,std::max(m,p))+n;
-    if ( lwork < 0 ) {
-      work[0] = real(lw);
-    } else {
-      LAPACK_WRAPPER_ASSERT(
-        lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
-      );
-      LAPACK_F77NAME(sggsvd)(
-        const_cast<character*>( JOBU ? "U" : "N"),
-        const_cast<character*>( JOBV ? "V" : "N"),
-        const_cast<character*>( JOBQ ? "Q" : "N"),
-        &m, &n, &p, &k, &l,
-        A, &ldA,
-        B, &ldB,
-        alpha, beta,
-        U, &ldU,
-        V, &ldV,
-        Q, &ldQ,
-        work,
-        iwork,
-        &info
-      );
-    }
-    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(sggsvd3)(
-      ( JOBU ? "U" : "N"),
-      ( JOBV ? "V" : "N"),
-      ( JOBQ ? "Q" : "N"),
+      const_cast<character*>( JOBU ? "U" : "N"),
+      const_cast<character*>( JOBV ? "V" : "N"),
+      const_cast<character*>( JOBQ ? "Q" : "N"),
       &m, &n, &p, &k, &l,
       A, &ldA,
       B, &ldB,
@@ -5535,6 +5868,64 @@ namespace lapack_wrapper {
         &info
       );
     }
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+      #ifndef LAPACK_WRAPPER_OS_OSX
+      LAPACK_F77NAME(sggsvd3)(
+        const_cast<character*>( JOBU ? "U" : "N"),
+        const_cast<character*>( JOBV ? "V" : "N"),
+        const_cast<character*>( JOBQ ? "Q" : "N"),
+        &m, &n, &p, &k, &l,
+        A, &ldA,
+        B, &ldB,
+        alpha, beta,
+        U, &ldU,
+        V, &ldV,
+        Q, &ldQ,
+        work, &lwork,
+        iwork,
+        &info
+      );
+      #else
+      integer lw = std::max(3*n,std::max(m,p))+n;
+      if ( lwork < 0 ) {
+        work[0] = real(lw);
+      } else {
+        LAPACK_WRAPPER_ASSERT(
+          lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
+        );
+        LAPACK_F77NAME(sggsvd)(
+          const_cast<character*>( JOBU ? "U" : "N"),
+          const_cast<character*>( JOBV ? "V" : "N"),
+          const_cast<character*>( JOBQ ? "Q" : "N"),
+          &m, &n, &p, &k, &l,
+          A, &ldA,
+          B, &ldB,
+          alpha, beta,
+          U, &ldU,
+          V, &ldV,
+          Q, &ldQ,
+          work,
+          iwork,
+          &info
+        );
+      }
+      #endif
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
+    LAPACK_F77NAME(sggsvd3)(
+      ( JOBU ? "U" : "N"),
+      ( JOBV ? "V" : "N"),
+      ( JOBQ ? "Q" : "N"),
+      &m, &n, &p, &k, &l,
+      A, &ldA,
+      B, &ldB,
+      alpha, beta,
+      U, &ldU,
+      V, &ldV,
+      Q, &ldQ,
+      work, &lwork,
+      iwork,
+      &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -5569,35 +5960,11 @@ namespace lapack_wrapper {
     integer    iwork[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_OS_WINDOWS)
-    integer lw = std::max(3*n,std::max(m,p))+n;
-    if ( lwork < 0 ) {
-      work[0] = doublereal(lw);
-    } else {
-      LAPACK_WRAPPER_ASSERT(
-        lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
-      );
-      LAPACK_F77NAME(dggsvd)(
-        const_cast<character*>( JOBU ? "U" : "N"),
-        const_cast<character*>( JOBV ? "V" : "N"),
-        const_cast<character*>( JOBQ ? "Q" : "N"),
-        &m, &n, &p, &k, &l,
-        A, &ldA,
-        B, &ldB,
-        alpha, beta,
-        U, &ldU,
-        V, &ldV,
-        Q, &ldQ,
-        work,
-        iwork,
-        &info
-      );
-    }
-    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(dggsvd3)(
-      ( JOBU ? "U" : "N"),
-      ( JOBV ? "V" : "N"),
-      ( JOBQ ? "Q" : "N"),
+      const_cast<character*>( JOBU ? "U" : "N"),
+      const_cast<character*>( JOBV ? "V" : "N"),
+      const_cast<character*>( JOBQ ? "Q" : "N"),
       &m, &n, &p, &k, &l,
       A, &ldA,
       B, &ldB,
@@ -5611,9 +5978,9 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dggsvd3(
-      const_cast<character*>( JOBU ? "U" : "N" ),
-      const_cast<character*>( JOBV ? "V" : "N" ),
-      const_cast<character*>( JOBQ ? "Q" : "N" ),
+      const_cast<character*>( JOBU ? "U" : "N"),
+      const_cast<character*>( JOBV ? "V" : "N"),
+      const_cast<character*>( JOBQ ? "Q" : "N"),
       &m, &n, &p, &k, &l,
       A, &ldA,
       B, &ldB,
@@ -5649,6 +6016,64 @@ namespace lapack_wrapper {
         &info
       );
     }
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+      #ifndef LAPACK_WRAPPER_OS_OSX
+      LAPACK_F77NAME(dggsvd3)(
+        const_cast<character*>( JOBU ? "U" : "N"),
+        const_cast<character*>( JOBV ? "V" : "N"),
+        const_cast<character*>( JOBQ ? "Q" : "N"),
+        &m, &n, &p, &k, &l,
+        A, &ldA,
+        B, &ldB,
+        alpha, beta,
+        U, &ldU,
+        V, &ldV,
+        Q, &ldQ,
+        work, &lwork,
+        iwork,
+        &info
+      );
+      #else
+      integer lw = std::max(3*n,std::max(m,p))+n;
+      if ( lwork < 0 ) {
+        work[0] = real(lw);
+      } else {
+        LAPACK_WRAPPER_ASSERT(
+          lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
+        );
+        LAPACK_F77NAME(dggsvd)(
+          const_cast<character*>( JOBU ? "U" : "N"),
+          const_cast<character*>( JOBV ? "V" : "N"),
+          const_cast<character*>( JOBQ ? "Q" : "N"),
+          &m, &n, &p, &k, &l,
+          A, &ldA,
+          B, &ldB,
+          alpha, beta,
+          U, &ldU,
+          V, &ldV,
+          Q, &ldQ,
+          work,
+          iwork,
+          &info
+        );
+      }
+      #endif
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
+    LAPACK_F77NAME(dggsvd3)(
+      ( JOBU ? "U" : "N"),
+      ( JOBV ? "V" : "N"),
+      ( JOBQ ? "Q" : "N"),
+      &m, &n, &p, &k, &l,
+      A, &ldA,
+      B, &ldB,
+      alpha, beta,
+      U, &ldU,
+      V, &ldV,
+      Q, &ldQ,
+      work, &lwork,
+      iwork,
+      &info
+    );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif

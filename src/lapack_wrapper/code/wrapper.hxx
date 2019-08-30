@@ -97,7 +97,7 @@ namespace lapack_wrapper {
     { return this->data[i]; }
 
     DMatW const & operator = (valueType v) {
-      std::fill( this->data, this->data+this->dim, v );
+      fill( this->dim, this->data, v );
       return *this;
     }
 

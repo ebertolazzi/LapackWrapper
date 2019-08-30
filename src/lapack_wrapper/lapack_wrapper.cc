@@ -428,7 +428,8 @@ namespace lapack_wrapper {
     );
   }
 
-  #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   template <typename T>
   integer
   getc2_tmpl(
@@ -550,49 +551,6 @@ namespace lapack_wrapper {
     integer    const JPIV[]
   );
 
-  template <typename T>
-  void
-  laqge_tmpl(
-    integer             /* M      */,
-    integer             /* N      */,
-    T                   /* A      */[],
-    integer             /* LDA    */,
-    T const             /* R      */[],
-    T const             /* C      */[],
-    T                   /* ROWCND */,
-    T                   /* COLCND */,
-    T                   /* AMAX   */,
-    EquilibrationType & /* equ    */
-  ) {
-    LAPACK_WRAPPER_ERROR("NOT YET IMPLEMENTED" );
-  }
-
-  template void laqge_tmpl(
-    integer             M,
-    integer             N,
-    real                A[],
-    integer             LDA,
-    real const          R[],
-    real const          C[],
-    real                ROWCND,
-    real                COLCND,
-    real                AMAX,
-    EquilibrationType & equ
-  );
-
-  template void laqge_tmpl(
-    integer             M,
-    integer             N,
-    doublereal          A[],
-    integer             LDA,
-    doublereal const    R[],
-    doublereal const    C[],
-    doublereal          ROWCND,
-    doublereal          COLCND,
-    doublereal          AMAX,
-    EquilibrationType & equ
-  );
-
   #endif
 
   template void triTikhonov(
@@ -614,6 +572,7 @@ namespace lapack_wrapper {
     integer          ldRHS,
     doublereal       lambda
   );
+
 } // end namespace lapack_wrapper
 
 ///

@@ -5,3 +5,6 @@ DerivedData
 lib
 src/.vscode
 src/lapack_wrapper/code/.vscode
+docs
+lib3rd/include
+src/lapack_wrapper/.vscode

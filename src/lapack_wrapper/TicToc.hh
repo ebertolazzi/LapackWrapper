@@ -144,21 +144,21 @@
     inline
     bool
     getTime( long & sec, long & usec ) {
-      struct timeval now ;
-      bool ok = gettimeofday(&now, NULL) == 0 ;
+      struct timeval now;
+      bool ok = gettimeofday(&now, nullptr) == 0;
       if ( ok ) {
         sec  = now . tv_sec;
         usec = now . tv_usec;
       } else {
-        sec = usec = 0 ;
+        sec = usec = 0;
       }
-      return ok ;
+      return ok;
     }
 
     class TicToc {
 
       typedef double real_type;
-      long sec, usec ;
+      long sec, usec;
       real_type elapsed_time;
 
       TicToc( TicToc const & );
@@ -178,8 +178,8 @@
 
       void
       toc() {
-        long new_sec, new_usec ;
-        getTime( new_sec, new_usec ) ;
+        long new_sec, new_usec;
+        getTime( new_sec, new_usec );
         elapsed_time = 1e3*(new_sec-sec)+1e-3*(new_usec-usec);
       }
 

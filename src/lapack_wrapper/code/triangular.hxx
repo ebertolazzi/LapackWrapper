@@ -159,7 +159,9 @@ namespace lapack_wrapper {
       uplo_blas[UPLO], trans_blas[TRANS], diag_blas[DIAG],
       &N, A, &LDA, X, &INCX
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(strmv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -194,7 +196,9 @@ namespace lapack_wrapper {
       uplo_blas[UPLO], trans_blas[TRANS], diag_blas[DIAG],
       &N, A, &LDA, X, &INCX
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dtrmv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -348,7 +352,9 @@ namespace lapack_wrapper {
       uplo_blas[UPLO], trans_blas[TRANS], diag_blas[DIAG],
       &N, A, &LDA, X, &INCX
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(strsv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -383,7 +389,9 @@ namespace lapack_wrapper {
       uplo_blas[UPLO], trans_blas[TRANS], diag_blas[DIAG],
       &N, A, &LDA, X, &INCX
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dtrsv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -570,7 +578,9 @@ namespace lapack_wrapper {
       trans_blas[TRANSA], diag_blas[DIAG],
       &M, &N, &alpha, A, &LDA, B, &LDB
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(strmm) (
       CblasColMajor,
       side_cblas[SIDE],
@@ -612,7 +622,9 @@ namespace lapack_wrapper {
       trans_blas[TRANSA], diag_blas[DIAG],
       &M, &N, &alpha, A, &LDA, B, &LDB
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dtrmm) (
       CblasColMajor,
       side_cblas[SIDE],
@@ -804,7 +816,9 @@ namespace lapack_wrapper {
       trans_blas[TRANS], diag_blas[DIAG],
       &M, &N, &alpha, A, &LDA, B, &LDB
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(strsm)(
       CblasColMajor,
       side_cblas[SIDE],
@@ -846,7 +860,9 @@ namespace lapack_wrapper {
       trans_blas[TRANS], diag_blas[DIAG],
       &M, &N, &alpha, A, &LDA, B, &LDB
     );
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dtrsm)(
       CblasColMajor,
       side_cblas[SIDE],

@@ -50,8 +50,6 @@
 #pragma clang diagnostic ignored "-Wextra-semi"
 #endif
 
-#include "TicToc.hh"
-
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
@@ -69,7 +67,7 @@
 #endif
 
 using namespace std;
-typedef double valueType;
+typedef double real_type;
 
 using lapack_wrapper::integer;
 
@@ -77,9 +75,9 @@ static unsigned seed1 = 2;
 static std::mt19937 generator(seed1);
 
 static
-valueType
-rand( valueType xmin, valueType xmax ) {
-  valueType random = valueType(generator())/generator.max();
+real_type
+rand( real_type xmin, real_type xmax ) {
+  real_type random = real_type(generator())/generator.max();
   return xmin + (xmax-xmin)*random;
 }
 
@@ -93,15 +91,15 @@ testN() {
 
   cout << "\nSize N = " << N << "\n";
 
-  Malloc<valueType> baseValue("real");
+  Malloc<real_type> baseValue("real");
   Malloc<integer>   baseIndex("integer");
 
   baseValue.allocate(N*N*10);
   baseIndex.allocate(N*10);
 
-  valueType * M1 = baseValue(N*N);
-  valueType * M2 = baseValue(N*N);
-  valueType * M3 = baseValue(N*N);
+  real_type * M1 = baseValue(N*N);
+  real_type * M2 = baseValue(N*N);
+  real_type * M3 = baseValue(N*N);
 
   for ( int i = 0; i < N; ++i ) {
     for ( int j = 0; j < N; ++j ) {
@@ -117,11 +115,13 @@ testN() {
 
   tm.tic();
   for ( int i = 0; i < N_TIMES; ++i ) {
-    gemm( NO_TRANSPOSE, NO_TRANSPOSE,
-          N, N, N,
-          -1.0, M1, N,
-          M2, N,
-          1.0, M3, N );
+    gemm(
+      NO_TRANSPOSE, NO_TRANSPOSE,
+      N, N, N,
+      -1.0, M1, N,
+      M2, N,
+      1.0, M3, N
+    );
     copy( N*N, M3, 1, M2, 1);
   }
   tm.toc();
@@ -142,6 +142,9 @@ main() {
   testN<6>();
   testN<7>();
   testN<8>();
+  testN<16>();
+  testN<32>();
+  testN<64>();
 
   cout << "\n\nAll done!\n";
 

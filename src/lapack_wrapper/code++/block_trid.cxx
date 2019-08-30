@@ -112,7 +112,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BlockTridiagonalSymmetic<T>::zero() { // fill to 0 all the blocks
-    std::fill( D_blocks[0], D_blocks[0]+this->nnz, 0 );
+    lapack_wrapper::zero( this->nnz, D_blocks[0], 1 );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -176,7 +176,7 @@ namespace lapack_wrapper {
     integer j  = jj - row_blocks[jBlock];
     LAPACK_WRAPPER_ASSERT(
       jBlock == iBlock || jBlock+1 == iBlock,
-      "BlockTridiagonalSymmetic:find( " << ii << " , " << jj <<
+      "BlockTridiagonalSymmetic:operator () ( " << ii << " , " << jj <<
       " ) --> ( iBlock = " << iBlock << ", jBlock = " << jBlock <<
       " ) --> ( i = " << i << ", j = " << j << " ) out of range"
     );

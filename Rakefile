@@ -1,7 +1,3 @@
-#
-#
-#
-
 %w(colorize rake fileutils).each do |gem|
   begin
     require gem
@@ -19,28 +15,17 @@ task :mkl, [:year, :bits] do |t, args|
 end
 
 TESTS = [
-	"Simplex-Test1",
-	"Simplex-Test2",
-	"Simplex-Test3",
-  "Simplex-Test4",
-	"test0-FD",
-	"test1-small-factorization",
-	"test2-Threads",
-	"test3-Timing",
-	"test4-KKT",
-	"test5-ABD-Diaz",
-	"test6-ABD-Block",
-	"test7-BorderedCR",
-	"test8-Cinterface",
-	"test12-BandedMatrix",
-	"test13-BFGS",
-	"test14-BLOCKTRID",
-	"test15-EIGS"
+  "test1-small-factorization",
+  "test2-Timing",
+  "test3-BandedMatrix",
+  "test4-BFGS",
+  "test5-BLOCKTRID",
+  "test6-EIGS"
 ]
 
 desc "run tests"
 task :run do
-  TESTS.each do |cmd| 
+  TESTS.each do |cmd|
     sh "./bin/#{cmd}"
   end
 end
@@ -65,30 +50,26 @@ desc "compile for Visual Studio [default year=2017 bits=x64]"
 task :build_win, [:year, :bits, :lapack, :thread] do |t, args|
   args.with_defaults( :year   => "2017",
                       :bits   => "x64",
-                      :lapack => "LAPACK_WRAPPER_USE_LAPACK",
+                      #:lapack => "LAPACK_WRAPPER_USE_LAPACK",
                       #:lapack => "LAPACK_WRAPPER_USE_LAPACK2",
-                      #:lapack => "LAPACK_WRAPPER_USE_OPENBLAS",
+                      :lapack => "LAPACK_WRAPPER_USE_OPENBLAS",
+                      #:lapack => "LAPACK_WRAPPER_USE_MKL",
                       :thread => "LAPACK_WRAPPER_USE_THREAD" )
 
   cmd = "set path=%path%;lib3rd\\lib;lib3rd\\dll;"
 
-  FileUtils.rm_f 'src/LapackWrapperConfig.hh'
-  FileUtils.cp   'src/LapackWrapperConfig.hh.tmpl', 'src/LapackWrapperConfig.hh'
-  FileUtils.rm_f 'src/LapackWrapperSuperLU.hh'
-  FileUtils.cp   'src/LapackWrapperSuperLU.hh.tmpl', 'src/LapackWrapperSuperLU.hh'
+  FileUtils.rm_f 'src/lapack_wrapper/lapack_wrapper_config.hh'
+  FileUtils.cp   'src/lapack_wrapper/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper/lapack_wrapper_config.hh'
 
-  ChangeOnFile( 'src/LapackWrapperConfig.hh',
+  ChangeOnFile( 'src/lapack_wrapper/lapack_wrapper_config.hh',
                 '@@LAPACK_WRAPPER_USE@@',
                 "#define #{args.lapack} 1" )
-  ChangeOnFile( 'src/LapackWrapperConfig.hh',
+  ChangeOnFile( 'src/lapack_wrapper/lapack_wrapper_config.hh',
                 '@@LAPACK_WRAPPER_THREAD@@',
                 "#define #{args.thread} 1" )
-  ChangeOnFile( 'src/LapackWrapperConfig.hh',
+  ChangeOnFile( 'src/lapack_wrapper/lapack_wrapper_config.hh',
                 '@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@',
                 "#define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1" )
-  ChangeOnFile( 'src/LapackWrapperSuperLU.hh',
-                '@@VSYEARANDBITS@@',
-                "vs#{args.year}_#{args.bits}" )
 
   dir = "vs_#{args.year}_#{args.bits}"
 
@@ -124,10 +105,10 @@ task :build_win, [:year, :bits, :lapack, :thread] do |t, args|
   end
 
   sh 'cmake --build . --config Release  --target ALL_BUILD'
-  FileUtils.mkdir_p "../lib"
-  FileUtils.cp 'Release/LapackWrapper.lib', "../lib/LapackWrapper_vs#{args.year}_#{args.bits}.lib"  
+  FileUtils.mkdir_p "../lib/lib"
+  FileUtils.cp 'Release/LapackWrapper.lib', "../lib/lib/LapackWrapper_vs#{args.year}_#{args.bits}.lib"  
   sh 'cmake --build . --config Debug --target ALL_BUILD'
-  FileUtils.cp 'Debug/LapackWrapper.lib', "../lib/LapackWrapper_vs#{args.year}_#{args.bits}_debug.lib"
+  FileUtils.cp 'Debug/LapackWrapper.lib', "../lib/lib/LapackWrapper_vs#{args.year}_#{args.bits}_debug.lib"
 
   FileUtils.cd '..'
 

@@ -51,74 +51,13 @@ namespace lapack_wrapper {
 
     void load_error_string( int info ) const;
 
-    // Initialize MA48:
-    void
-    ma48i(real cntl[], int icntl[]) const;
-
-    void
-    ma48a(
-      int        nrow,
-      int        ncol,
-      int        nz,
-      int        job,
-      int        la,
-      real       a[],
-      int        irn[],
-      int        jcn[],
-      int        keep[],
-      real const cntl[10],
-      int  const icntl[20],
-      int        iw[],
-      int        info[20],
-      real       rinfo[10]
-    ) const;
-
-    void
-    ma48b(
-      int        nrow,
-      int        ncol,
-      int        nz,
-      int        job,
-      int        la,
-      real       a[],
-      int        irn[],
-      int        jcn[],
-      int  const keep[],
-      real const cntl[10],
-      int  const icntl[20],
-      real       w[],
-      int        iw[],
-      int        info[20],
-      real       rinfo[10]
-    ) const;
-
-    void
-    ma48c(
-      int        nrow,
-      int        ncol,
-      int        itrans,
-      int        job,
-      int        la,
-      real const a[],
-      int  const irn[],
-      int  const keep[],
-      real const cntl[10],
-      int  const icntl[20],
-      real const rhs[],
-      real       x[],
-      real       errors[3],
-      real const w[],
-      int  const iw[],
-      int        info[20]
-    ) const;
-
   public:
 
     /**
      * \brief MA48:
      *        Constructor of the class MA48.
      */
-    MA48() { }
+    MA48() {}
 
     /**
       * \brief ~MA48:
@@ -198,6 +137,22 @@ namespace lapack_wrapper {
       int        ldX
     ) const LAPACK_WRAPPER_OVERRIDE;
   };
+
+  #ifdef LAPACK_WRAPPER_USE_CXX11
+
+  #ifdef __clang__
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
+  #endif
+
+  extern template class MA48<float>;
+  extern template class MA48<double>;
+
+  #ifdef __clang__
+  #pragma clang diagnostic pop
+  #endif
+
+  #endif
 
 } // namespace lapack_wrapper
 

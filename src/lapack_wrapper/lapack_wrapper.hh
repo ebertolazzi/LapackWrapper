@@ -160,18 +160,10 @@
     #endif
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     // no debug version
-    #if defined(_DEBUG) || defined(DEBUG)
-      #ifdef LAPACK_WRAPPER_ARCH64
-        #pragma comment(lib, "x64_debug/openblas.lib")
-      #else
-        #pragma comment(lib, "x86_debug/openblas.lib")
-      #endif
+    #ifdef LAPACK_WRAPPER_ARCH64
+      #pragma comment(lib, "libopenblas_x64.lib")
     #else
-      #ifdef LAPACK_WRAPPER_ARCH64
-        #pragma comment(lib, "x64/openblas.lib")
-      #else
-        #pragma comment(lib, "x86/openblas.lib")
-      #endif
+      #pragma comment(lib, "libopenblas_x86.lib")
     #endif
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     #ifdef LAPACK_WRAPPER_ARCH64
@@ -268,37 +260,42 @@
     #define __STDC_VERSION__ __STDC__
   #endif
 
+  #include <complex>
+  #define lapack_complex_float  std::complex<float>
+  #define lapack_complex_double std::complex<double>
+
   #ifdef LAPACK_WRAPPER_OS_WINDOWS
     #ifdef LAPACK_WRAPPER_ARCH64
       #ifdef LAPACK_WRAPPER_USE_SYSTEM_OPENBLAS
-        #include <openblas/x64/f77blas.h>
         #include <openblas/x64/cblas.h>
+        #include <openblas/x64/lapacke.h>
       #else
-        #include "openblas/x64/f77blas.h"
         #include "openblas/x64/cblas.h"
+        #include "openblas/x64/lapacke.h"
       #endif
     #else
       #ifdef LAPACK_WRAPPER_USE_SYSTEM_OPENBLAS
-        #include <openblas/x86/f77blas.h>
         #include <openblas/x86/cblas.h>
+        #include <openblas/x86/lapacke.h>
       #else
-        #include "openblas/x86/f77blas.h"
         #include "openblas/x86/cblas.h"
+        #include "openblas/x86/lapacke.h"
       #endif
     #endif
   #else
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
-      #include "openblas/f77blas.h"
       #include "openblas/cblas.h"
+      #include "openblas/lapacke.h"
     #else
       // use -I/usr/include/openblas
-      #include <f77blas.h>
       #include <cblas.h>
+      #include <lapacke.h>
     #endif
   #endif
 
-  #define CBLASNAME(A)      cblas_##A
-  #define LAPACK_F77NAME(A) A##_
+  #define CBLASNAME(A)       cblas_##A
+  #define LAPACK_F77NAME(A)  LAPACK_##A
+  #define LAPACKE_F77NAME(A) LAPACKE_##A
 
 #elif defined(LAPACK_WRAPPER_USE_LAPACK)
 
@@ -666,7 +663,8 @@ namespace lapack_wrapper {
   //  |_|\__,_|_| |_| |_|\___|_| |_|
   */
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
     real
     LAPACK_F77NAME(slamch)( character * what );
@@ -721,8 +719,11 @@ namespace lapack_wrapper {
   inline
   real
   lamch( character const WHAT[] )
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   { return LAPACK_F77NAME(slamch)( const_cast<character*>(WHAT) ); }
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  { return BLASFUNC(slamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
   { return real(CLAPACKNAME(slamch)( const_cast<character*>(WHAT) )); }
   #else
@@ -733,8 +734,11 @@ namespace lapack_wrapper {
   inline
   doublereal
   lamch( character const WHAT[] )
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   { return LAPACK_F77NAME(dlamch)( const_cast<character*>(WHAT) ); }
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  { return BLASFUNC(dlamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
   { return CLAPACKNAME(dlamch)( const_cast<character*>(WHAT) ); }
   #else
@@ -751,10 +755,29 @@ namespace lapack_wrapper {
   //  |_|_|\__,_|\___|_| |_|\_/
   */
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
     integer
     LAPACK_F77NAME(ilaenv)(
+      integer   const * ISPEC,
+      character const   NAME[],
+      character const   OPTS[],
+      integer         * N1,
+      integer         * N2,
+      integer         * N3,
+      integer         * N4,
+      size_t          * len_NAME,
+      size_t          * len_OPTS
+    );
+  }
+  #endif
+
+  #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  // non esiste prototipo in open blas, ma supportata
+  extern "C" {
+    integer
+    BLASFUNC(ilaenv)(
       integer   const * ISPEC,
       character const   NAME[],
       character const   OPTS[],
@@ -881,10 +904,20 @@ namespace lapack_wrapper {
       const_cast<character*>(OPTS),
       &N1, &N2, &N3, &N4
     );
-    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
     size_t len_NAME = strlen( NAME );
     size_t len_OPTS = strlen( OPTS );
     return LAPACK_F77NAME(ilaenv)(
+      &ISPEC,
+      const_cast<character*>(NAME),
+      const_cast<character*>(OPTS),
+      &N1, &N2, &N3, &N4, &len_NAME, &len_OPTS
+    );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    size_t len_NAME = strlen( NAME );
+    size_t len_OPTS = strlen( OPTS );
+    return BLASFUNC(ilaenv)(
       &ISPEC,
       const_cast<character*>(NAME),
       const_cast<character*>(OPTS),
@@ -907,7 +940,8 @@ namespace lapack_wrapper {
    *
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
 
     void
@@ -925,6 +959,36 @@ namespace lapack_wrapper {
 
     void
     LAPACK_F77NAME(dlaic1)(
+      integer    const * JOB,
+      integer    const * J,
+      doublereal const   X[],
+      doublereal const * SEST,
+      doublereal const   W[],
+      doublereal const * GAMMA,
+      doublereal       * SESTPR,
+      doublereal       * S,
+      doublereal       * C
+    );
+  }
+  #endif
+
+  #ifdef LAPACK_WRAPPER_USE_OPENBLAS
+  extern "C" {
+    void
+    BLASFUNC(slaic1)(
+      integer const * JOB,
+      integer const * J,
+      real    const   X[],
+      real    const * SEST,
+      real    const   W[],
+      real    const * GAMMA,
+      real          * SESTPR,
+      real          * S,
+      real          * C
+    );
+
+    void
+    BLASFUNC(dlaic1)(
       integer    const * JOB,
       integer    const * J,
       doublereal const   X[],
@@ -1022,7 +1086,7 @@ namespace lapack_wrapper {
       &SESTPR, &S, &C
     );
   }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
   { LAPACK_F77NAME(slaic1)(
       &JOB, &J,
       const_cast<real*>(X), &SEST,
@@ -1030,8 +1094,15 @@ namespace lapack_wrapper {
       &SESTPR, &S, &C
     );
   }
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  { BLASFUNC(slaic1)(
+      &JOB, &J,
+      const_cast<real*>(X), &SEST,
+      const_cast<real*>(W), &GAMMA,
+      &SESTPR, &S, &C
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-  //@@ USE LAPACK ROUTINE @@
   { LAPACK_F77NAME(slaic1)(
       &JOB, &J,
       const_cast<real*>(X), &SEST,
@@ -1066,7 +1137,7 @@ namespace lapack_wrapper {
       &SESTPR, &S, &C
     );
   }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
   { LAPACK_F77NAME(dlaic1)(
       &JOB, &J,
       const_cast<doublereal*>(X), &SEST,
@@ -1074,8 +1145,15 @@ namespace lapack_wrapper {
       &SESTPR, &S, &C
     );
   }
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  { BLASFUNC(dlaic1)(
+      &JOB, &J,
+      const_cast<doublereal*>(X), &SEST,
+      const_cast<doublereal*>(W), &GAMMA,
+      &SESTPR, &S, &C
+    );
+  }
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-  //@@ USE LAPACK ROUTINE @@
   { LAPACK_F77NAME(dlaic1)(
       &JOB, &J,
       const_cast<doublereal*>(X), &SEST,

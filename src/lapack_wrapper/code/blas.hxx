@@ -64,7 +64,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { scopy( &N, X, &INCX, Y, &INCY ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(scopy)( N, X, INCX, Y, INCY ); }
   #else
   { BLASFUNC(scopy)( &N, const_cast<real*>(X), &INCX, Y, &INCY ); }
@@ -81,7 +83,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { dcopy( &N, X, &INCX, Y, &INCY ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(dcopy)( N, X, INCX, Y, INCY ); }
   #else
   { BLASFUNC(dcopy)( &N, const_cast<doublereal*>(X), &INCX, Y, &INCY ); }
@@ -114,7 +118,8 @@ namespace lapack_wrapper {
   //  |___/ \_/\_/ \__,_| .__/
   //                    |_|
   */
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_ATLAS) 
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS) 
   extern "C" {
     void
     BLASFUNC(sswap)(
@@ -126,7 +131,8 @@ namespace lapack_wrapper {
     );
 
     void
-    BLASFUNC(dswap)( integer const * N,
+    BLASFUNC(dswap)(
+      integer const * N,
       doublereal      X[],
       integer const * INCX,
       doublereal      Y[],
@@ -168,7 +174,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { sswap( &N, X, &INCX, Y, &INCY ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(sswap)( N, X, INCX, Y, INCY ); }
   #else
   { BLASFUNC(sswap)( &N, X, &INCX, Y, &INCY ); }
@@ -185,7 +193,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { dswap( &N, X, &INCX, Y, &INCY ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(dswap)( N, X, INCX, Y, INCY ); }
   #else
   { BLASFUNC(dswap)( &N, X, &INCX, Y, &INCY ); }
@@ -242,26 +252,23 @@ namespace lapack_wrapper {
     integer       INC
   ) {
     integer info(0);
+    integer K1 = I1+1;
+    integer K2 = I2+1;
     #if defined(LAPACK_WRAPPER_USE_MKL)
-      integer K1 = I1+1;
-      integer K2 = I2+1;
       slaswp( &NCOL, A, &LDA, &K1, &K2, IPIV, &INC );
-    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-      integer K1 = I1+1;
-      integer K2 = I2+1;
-      BLASFUNC(slaswp)( &NCOL, A, &LDA, &K1, &K2,
-                        const_cast<integer*>(IPIV), &INC );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-      //@@ USE BLAS ROUTINE @@
-      integer K1 = I1+1;
-      integer K2 = I2+1;
-      BLASFUNC(slaswp)( &NCOL, A, &LDA, &K1, &K2,
-                        const_cast<integer*>(IPIV), &INC );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+      LAPACK_F77NAME(slaswp)(
+        &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC
+      );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+      BLASFUNC(slaswp)(
+        &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC
+      );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-      integer K1 = I1+1;
-      integer K2 = I2+1;
-      info = CLAPACKNAME(slaswp)( &NCOL, A, &LDA, &K1, &K2,
-                                  const_cast<integer*>(IPIV), &INC );
+      info = CLAPACKNAME(slaswp)(
+        &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC
+      );
     #else
       #error "LapackWrapper undefined mapping!"
     #endif
@@ -280,26 +287,23 @@ namespace lapack_wrapper {
     integer       INC
   ) {
     integer info(0);
+    integer K1 = I1+1;
+    integer K2 = I2+1;
     #if defined(LAPACK_WRAPPER_USE_MKL)
-      integer K1 = I1+1;
-      integer K2 = I2+1;
       dlaswp( &NCOL, A, &LDA, &K1, &K2, IPIV, &INC );
-    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-      integer K1 = I1+1;
-      integer K2 = I2+1;
-      BLASFUNC(dlaswp)( &NCOL, A, &LDA, &K1, &K2,
-                        const_cast<integer*>(IPIV), &INC );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-      //@@ USE BLAS ROUTINE @@
-      integer K1 = I1+1;
-      integer K2 = I2+1;
-      BLASFUNC(dlaswp)( &NCOL, A, &LDA, &K1, &K2,
-                        const_cast<integer*>(IPIV), &INC );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+      LAPACK_F77NAME(dlaswp)(
+        &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC
+      );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+      BLASFUNC(dlaswp)(
+        &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC
+      );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-      integer K1 = I1+1;
-      integer K2 = I2+1;
-      info = CLAPACKNAME(dlaswp)( &NCOL, A, &LDA, &K1, &K2,
-                                  const_cast<integer*>(IPIV), &INC );
+      info = CLAPACKNAME(dlaswp)(
+        &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC
+      );
     #else
       #error "LapackWrapper undefined mapping!"
     #endif
@@ -359,7 +363,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { sscal( &N, &S, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS) || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(sscal)( N, S, X, INCX ); }
   #else
   { BLASFUNC(sscal)( &N, &S, X, &INCX ); }
@@ -375,7 +381,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { dscal( &N, &S, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(dscal)( N, S, X, INCX ); }
   #else
   { BLASFUNC(dscal)( &N, &S, X, &INCX ); }
@@ -391,10 +399,10 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { srscl( &N, &S, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { real rS = 1/S; CBLASNAME(sscal)( N, rS, X, INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-  { real rS = 1/S; BLASFUNC(sscal)( &N, &rS, X, &INCX ); }
   #else
   { BLASFUNC(srscl)( &N, &S, X, &INCX ); }
   #endif
@@ -409,10 +417,10 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { drscl( &N, &S, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { doublereal rS = 1/S; CBLASNAME(dscal)( N, rS, X, INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-  { doublereal rS = 1/S; BLASFUNC(dscal)( &N, &rS, X, &INCX ); }
   #else
   { BLASFUNC(drscl)( &N, &S, X, &INCX ); }
   #endif
@@ -460,7 +468,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { saxpy( &N, &A, X, &INCX, Y, &INCY ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(saxpy)( N, A, X, INCX, Y, INCY ); }
   #else
   { BLASFUNC(saxpy)( &N, &A, const_cast<real*>(X), &INCX, Y, &INCY ); }
@@ -478,7 +488,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { daxpy( &N, &A, X, &INCX, Y, &INCY ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(daxpy)( N, A, X, INCX, Y, INCY ); }
   #else
   { BLASFUNC(daxpy)( &N, &A, const_cast<doublereal*>(X), &INCX, Y, &INCY ); }
@@ -499,7 +511,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { real z = 0; integer iz = 0; scopy( &N, &z, &iz, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { real z = 0; CBLASNAME(scopy)( N, &z, 0, X, INCX ); }
   #else
   { real z = 0; integer iz = 0; BLASFUNC(scopy)( &N, &z, &iz, X, &INCX ); }
@@ -514,7 +528,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { doublereal z = 0; integer iz = 0; dcopy( &N, &z, &iz, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { doublereal z = 0; CBLASNAME(dcopy)( N, &z, 0, X, INCX ); }
   #else
   { doublereal z = 0; integer iz = 0; BLASFUNC(dcopy)( &N, &z, &iz, X, &INCX ); }
@@ -566,7 +582,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { srot( &N, DX, &INCX, DY, &INCY, &C, &S ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(srot)( N, DX, INCX, DY, INCY, C, S ); }
   #else
   { BLASFUNC(srot)( &N, DX, &INCX, DY, &INCY, &C, &S ); }
@@ -585,7 +603,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { drot( &N, DX, &INCX, DY, &INCY, &C, &S ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(drot)( N, DX, INCX, DY, INCY, C, S ); }
   #else
   { BLASFUNC(drot)( &N, DX, &INCX, DY, &INCY, &C, &S ); }
@@ -642,7 +662,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { srotg( &DX, &DY, &C, &S ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(srotg)( &DX, &DY, &C, &S ); }
   #else
   { BLASFUNC(srotg)( &DX, &DY, &C, &S ); }
@@ -658,7 +680,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { drotg( &DX, &DY, &C, &S ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { CBLASNAME(drotg)( &DX, &DY, &C, &S ); }
   #else
   { BLASFUNC(drotg)( &DX, &DY, &C, &S ); }
@@ -705,7 +729,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { return snrm2( &N, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { return CBLASNAME(snrm2)( N, X, INCX ); }
   #else
   { return BLASFUNC(snrm2)( &N, const_cast<real*>(X), &INCX ); }
@@ -720,7 +746,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { return dnrm2( &N, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { return CBLASNAME(dnrm2)( N, X, INCX ); }
   #else
   { return BLASFUNC(dnrm2)( &N, const_cast<doublereal*>(X), &INCX ); }
@@ -765,7 +793,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { return sasum( &N, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { return CBLASNAME(sasum)( N, X, INCX ); }
   #else
   { return BLASFUNC(sasum)( &N, const_cast<real*>(X), &INCX ); }
@@ -780,7 +810,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { return dasum( &N, X, &INCX ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { return CBLASNAME(dasum)( N, X, INCX ); }
   #else
   { return BLASFUNC(dasum)( &N, const_cast<doublereal*>(X), &INCX ); }
@@ -825,7 +857,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { return isamax( &N, X, &INCX )-1; }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { return integer(CBLASNAME(isamax)( N, X, INCX )); }
   #else
   { return BLASFUNC(isamax)( &N, const_cast<real*>(X), &INCX )-1; }
@@ -840,7 +874,9 @@ namespace lapack_wrapper {
   )
   #if defined(LAPACK_WRAPPER_USE_MKL)
   { return idamax( &N, X, &INCX )-1; }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
   { return integer(CBLASNAME(idamax)( N, X, INCX )); }
   #else
   { return BLASFUNC(idamax)( &N, const_cast<doublereal*>(X), &INCX )-1; }
@@ -908,15 +944,21 @@ namespace lapack_wrapper {
     integer    INCX,
     real const SY[],
     integer    INCY
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
-  { return sdot( &N, SX, &INCX, SY, &INCY ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
-  { return CBLASNAME(sdot)( N, SX, INCX, SY, INCY ); }
+    return sdot( &N, SX, &INCX, SY, &INCY );
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    return CBLASNAME(sdot)( N, SX, INCX, SY, INCY );
   #else
-  { return BLASFUNC(sdot)( &N, const_cast<real*>(SX), &INCX,
-                               const_cast<real*>(SY), &INCY ); }
+    return BLASFUNC(sdot)(
+      &N,
+      const_cast<real*>(SX), &INCX,
+      const_cast<real*>(SY), &INCY
+    );
   #endif
+  }
 
   inline
   doublereal
@@ -926,14 +968,20 @@ namespace lapack_wrapper {
     integer          INCX,
     doublereal const SY[],
     integer          INCY
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
-  { return ddot( &N, SX, &INCX, SY, &INCY ); }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
-  { return CBLASNAME(ddot)( N, SX, INCX, SY, INCY ); }
+    return ddot( &N, SX, &INCX, SY, &INCY );
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    return CBLASNAME(ddot)( N, SX, INCX, SY, INCY );
   #else
-  { return BLASFUNC(ddot)( &N, const_cast<doublereal*>(SX), &INCX,
-                               const_cast<doublereal*>(SY), &INCY ); }
+    return BLASFUNC(ddot)(
+      &N,
+      const_cast<doublereal*>(SX), &INCX,
+      const_cast<doublereal*>(SY), &INCY
+    );
   #endif
+  }
 
 }

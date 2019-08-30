@@ -198,7 +198,9 @@ namespace lapack_wrapper {
     real                xb[],
     integer             incx
   ) {
-    #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(stbmv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -237,7 +239,9 @@ namespace lapack_wrapper {
     doublereal          xb[],
     integer             incx
   ) {
-    #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dtbmv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -433,7 +437,9 @@ namespace lapack_wrapper {
     real                xb[],
     integer             incx
   ) {
-    #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(stbsv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -472,7 +478,9 @@ namespace lapack_wrapper {
     doublereal          xb[],
     integer             incx
   ) {
-    #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || defined(LAPACK_WRAPPER_USE_ATLAS)
+    #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dtbsv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -579,7 +587,8 @@ namespace lapack_wrapper {
    *
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
 
     void
@@ -620,10 +629,9 @@ namespace lapack_wrapper {
     integer ipiv[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_F77NAME(sgbtrf)( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(sgbtrf)( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgbtrf( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
@@ -649,10 +657,9 @@ namespace lapack_wrapper {
     integer    ipiv[]
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_F77NAME(dgbtrf)( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
-    #elif  defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(dgbtrf)( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgbtrf( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
@@ -724,7 +731,8 @@ namespace lapack_wrapper {
    *  =====================================================================
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
 
     void
@@ -774,16 +782,11 @@ namespace lapack_wrapper {
     integer       ldB
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(sgbtrs)(
-      trans_blas[TRANS],
-      &N, &KL, &KU, &nrhs,
-      AB, &ldAB, ipiv, B, &ldB, &info
-    );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(sgbtrs)(
-      trans_blas[TRANS],
+      const_cast<character*>(trans_blas[TRANS]),
       &N, &KL, &KU, &nrhs,
       AB, &ldAB, ipiv, B, &ldB, &info
     );
@@ -822,16 +825,11 @@ namespace lapack_wrapper {
     integer          ldB
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(dgbtrs)(
-      trans_blas[TRANS],
-      &N, &KL, &KU, &nrhs,
-      AB, &ldAB, ipiv, B, &ldB, &info
-    );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(dgbtrs)(
-      trans_blas[TRANS],
+      const_cast<character*>(trans_blas[TRANS]),
       &N, &KL, &KU, &nrhs,
       AB, &ldAB, ipiv, B, &ldB, &info
     );
@@ -931,7 +929,8 @@ namespace lapack_wrapper {
    *  =====================================================================
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
 
     void
@@ -966,11 +965,13 @@ namespace lapack_wrapper {
     integer          ldAB
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_F77NAME(spbtrf)( uplo_blas[UPLO], &N, &KD, AB, &ldAB, &info );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(spbtrf)( uplo_blas[UPLO], &N, &KD, AB, &ldAB, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(spbtrf)(
+      const_cast<character*>(uplo_blas[UPLO]),
+      &N, &KD, AB, &ldAB, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     spbtrf( uplo_blas[UPLO], &N, &KD, AB, &ldAB, &info );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -996,11 +997,13 @@ namespace lapack_wrapper {
     integer          ldAB
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_F77NAME(dpbtrf)( uplo_blas[UPLO], &N, &KD, AB, &ldAB, &info );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(dpbtrf)( uplo_blas[UPLO], &N, &KD, AB, &ldAB, &info );
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dpbtrf)(
+      const_cast<character*>(uplo_blas[UPLO]),
+      &N, &KD, AB, &ldAB, &info
+    );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dpbtrf( uplo_blas[UPLO], &N, &KD, AB, &ldAB, &info );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -1070,7 +1073,8 @@ namespace lapack_wrapper {
    *  =====================================================================
   \*/
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS) || defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
   extern "C" {
 
     void
@@ -1114,15 +1118,11 @@ namespace lapack_wrapper {
     integer          ldB
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(spbtrs)(
-      uplo_blas[UPLO],
-      &N, &KD, &nrhs, AB, &ldAB, B, &ldB, &info
-    );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(spbtrs)(
-      uplo_blas[UPLO],
+      const_cast<character*>(uplo_blas[UPLO]),
       &N, &KD, &nrhs, AB, &ldAB, B, &ldB, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
@@ -1155,15 +1155,11 @@ namespace lapack_wrapper {
     integer            ldB
   ) {
     integer info = 0;
-    #if defined(LAPACK_WRAPPER_USE_LAPACK) || defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(dpbtrs)(
-      uplo_blas[UPLO],
-      &N, &KD, &nrhs, AB, &ldAB, B, &ldB, &info
-    );
-    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    //@@ USE LAPACK ROUTINE @@
-    LAPACK_F77NAME(dpbtrs)(
-      uplo_blas[UPLO],
+      const_cast<character*>(uplo_blas[UPLO]),
       &N, &KD, &nrhs, AB, &ldAB, B, &ldB, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)

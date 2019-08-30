@@ -10,6 +10,15 @@
 #include "hsl.h"
 #include <iostream>
 
+// windows workaround
+#ifdef max
+  #undef max
+#endif
+
+#ifdef min
+  #undef min
+#endif
+
 namespace lapack_wrapper {
 
   /*\
@@ -18,182 +27,6 @@ namespace lapack_wrapper {
   :|:  |  _/ || | '_ \ | / _| | |\/| / -_) '  \| '_ \/ -_) '_(_-<
   :|:  |_|  \_,_|_.__/_|_\__| |_|  |_\___|_|_|_|_.__/\___|_| /__/
   \*/
-
-  template <>
-  void
-  MA48<float>::ma48i(float _cntl[], int _icntl[]) const {
-    HSL_F77NAME(ma48i)(_cntl, _icntl);
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <>
-  void
-  MA48<double>::ma48i(double _cntl[], int _icntl[]) const {
-    HSL_F77NAME(ma48id)(_cntl, _icntl);
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <>
-  void
-  MA48<float>::ma48a(
-    int         _nrow,
-    int         _ncol,
-    int         _nz,
-    int         _job,
-    int         _la,
-    float       _a[],
-    int         _irn[],
-    int         _jcn[],
-    int         _keep[],
-    float const _cntl[10],
-    int const   _icntl[20],
-    int         _iw[],
-    int         _info[20],
-    float       _rinfo[10]
-  ) const {
-    HSL_F77NAME(ma48a)(
-      &_nrow, &_ncol, &_nz, &_job, &_la, _a, _irn, _jcn, _keep,
-      _cntl, _icntl, _iw, _info, _rinfo
-    );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <>
-  void
-  MA48<double>::ma48a(
-    int          _nrow,
-    int          _ncol,
-    int          _nz,
-    int          _job,
-    int          _la,
-    double       _a[],
-    int          _irn[],
-    int          _jcn[],
-    int          _keep[],
-    double const _cntl[10],
-    int const    _icntl[20],
-    int          _iw[],
-    int          _info[20],
-    double       _rinfo[10]
-  ) const {
-    HSL_F77NAME(ma48ad)(
-      &_nrow, &_ncol, &_nz, &_job, &_la, _a, _irn, _jcn, _keep,
-      _cntl, _icntl, _iw, _info, _rinfo
-    );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <>
-  void
-  MA48<float>::ma48b(
-    int const   _nrow,
-    int const   _ncol,
-    int const   _nz,
-    int const   _job,
-    int const   _la,
-    float       _a[],
-    int         _irn[],
-    int         _jcn[],
-    int const   _keep[],
-    float const _cntl[10],
-    int const   _icntl[20],
-    float       _w[],
-    int         _iw[],
-    int         _info[20],
-    float       _rinfo[10]
-  ) const {
-    HSL_F77NAME(ma48b)(
-      &_nrow, &_ncol, &_nz, &_job, &_la, _a, _irn, _jcn, _keep,
-      _cntl, _icntl, _w, _iw, _info, _rinfo
-    );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <>
-  void
-  MA48<double>::ma48b(
-    int const    _nrow,
-    int const    _ncol,
-    int const    _nz,
-    int const    _job,
-    int const    _la,
-    double       _a[],
-    int          _irn[],
-    int          _jcn[],
-    int const    _keep[],
-    double const _cntl[10],
-    int const    _icntl[20],
-    double       _w[],
-    int          _iw[],
-    int          _info[20],
-    double       _rinfo[10]
-  ) const {
-    HSL_F77NAME(ma48bd)(
-      &_nrow, &_ncol, &_nz, &_job, &_la, _a, _irn, _jcn, _keep,
-      _cntl, _icntl, _w, _iw, _info, _rinfo
-    );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <>
-  void
-  MA48<float>::ma48c(
-    int         _nrow,
-    int         _ncol,
-    int         _itrans,
-    int         _job,
-    int         _la,
-    float const _a[],
-    int const   _irn[],
-    int const   _keep[],
-    float const _cntl[10],
-    int const   _icntl[20],
-    float const _rhs[],
-    float       _x[],
-    float       _errors[3],
-    float const _w[],
-    int const   _iw[],
-    int         _info[20]
-  ) const {
-    HSL_F77NAME(ma48c)(
-      &_nrow, &_ncol, &_itrans, &_job, &_la, _a, _irn, _keep,
-      _cntl, _icntl, _rhs, _x, _errors, _w, _iw, _info
-    );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <>
-  void
-  MA48<double>::ma48c(
-    int          _nrow,
-    int          _ncol,
-    int          _itrans,
-    int          _job,
-    int          _la,
-    double const _a[],
-    int const    _irn[],
-    int const    _keep[],
-    double const _cntl[10],
-    int const    _icntl[20],
-    double const _rhs[],
-    double       _x[],
-    double       _errors[3],
-    double const _w[],
-    int const    _iw[],
-    int          _info[20]
-  ) const {
-    HSL_F77NAME(ma48cd)(
-      &_nrow, &_ncol, &_itrans, &_job, &_la, _a, _irn, _keep,
-      _cntl, _icntl, _rhs, _x, _errors, _w, _iw, _info
-    );
-  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -284,7 +117,7 @@ namespace lapack_wrapper {
     std::copy(j_Col_stored.begin(), j_Col_stored.end(), this->jcn.begin());
 
     // Initialize MA48:
-    this->ma48i(this->cntl, this->icntl);
+    HSL::ma48i<real>(this->cntl, this->icntl);
 
     int ihlp = this->icntl[5];
     if ( ihlp <= 0 ) {
@@ -296,7 +129,7 @@ namespace lapack_wrapper {
     int N_RC_Max = std::max(this->numRows, this->numCols);
     int N_keep   = this->numRows + 5 * this->numCols + 4 * (this->numCols / ihlp) + 7;
     int N_iw     = this->numRows * 6 + this->numCols * 3;
-    int N_w      = 3 * N_RC_Max + N_RC_Max;
+    int N_w      = 4 * N_RC_Max;
     this->keep.resize(size_t(N_keep));
     this->iw.resize(size_t(N_iw));
     this->w.resize(size_t(N_w));
@@ -319,7 +152,7 @@ namespace lapack_wrapper {
     // Copy Memory:
     std::copy( ArrayA, ArrayA+this->nnz, this->a.begin() );
     // Pivoting:
-    this->ma48a(
+    HSL::ma48a<real>(
       this->numRows,
       this->numCols,
       this->nnz,
@@ -343,14 +176,18 @@ namespace lapack_wrapper {
       this->irn.resize(size_t(this->la));
       this->jcn.resize(size_t(this->la));
       std::copy(ArrayA, ArrayA+this->nnz, this->a.begin());
-      std::copy(this->i_Row_stored.begin(),
-                this->i_Row_stored.end(),
-                this->irn.begin());
-      std::copy(this->j_Col_stored.begin(),
-                this->j_Col_stored.end(),
-                this->jcn.begin());
+      std::copy(
+        this->i_Row_stored.begin(),
+        this->i_Row_stored.end(),
+        this->irn.begin()
+      );
+      std::copy(
+        this->j_Col_stored.begin(),
+        this->j_Col_stored.end(),
+        this->jcn.begin()
+      );
 
-      this->ma48a(
+      HSL::ma48a<real>(
         this->numRows,
         this->numCols,
         this->nnz,
@@ -375,7 +212,7 @@ namespace lapack_wrapper {
     if ( this->info[0] != 0 ) return false;
 
     // Factorize:
-    this->ma48b(
+    HSL::ma48b<real>(
       this->numRows,
       this->numCols,
       this->nnz,
@@ -415,7 +252,7 @@ namespace lapack_wrapper {
     }
 
     // Solve with right hand side:
-    this->ma48c(
+    HSL::ma48c<real>(
       this->numRows,
       this->numCols,
       transposed ? 1 : 0,

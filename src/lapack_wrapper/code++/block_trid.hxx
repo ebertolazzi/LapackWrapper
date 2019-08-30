@@ -57,16 +57,6 @@ namespace lapack_wrapper {
     integer   *  row_blocks;
     bool         is_factorized;
 
-    void
-    find(
-      integer   ii,
-      integer   jj,
-      integer & iBlock,
-      integer & jBlock,
-      integer & ij,
-      integer & ji
-    ) const ;
-
   public:
 
     BlockTridiagonalSymmetic()

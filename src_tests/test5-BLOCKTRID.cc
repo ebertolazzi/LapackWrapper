@@ -117,8 +117,6 @@ test2() {
     cout << "x[ " << k << "] = " << rhs[7+k] << "\n";
 }
 
-#include "TicToc.hh"
-
 int
 main() {
   cout << "test1\n";

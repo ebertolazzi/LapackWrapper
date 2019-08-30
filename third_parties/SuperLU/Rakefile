@@ -1,0 +1,159 @@
+require "rake"
+require "../common.rb"
+
+task :default => [:install]
+
+VER='5.2.1'
+
+desc "download superlu_#{VER}.tar.gz libs"
+task :download do
+  filename = "superlu_#{VER}.tar.gz"
+  url_download( "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/#{filename}", filename )
+end
+
+def superlu_CMakeLists
+  ChangeOnFile(
+    'superlu/CMakeLists.txt',
+    'enable_language (Fortran)',
+    '#enable_language (Fortran)'
+  );
+
+  ChangeOnFile(
+    'superlu/CMakeLists.txt',
+    'set(NOFORTRAN FALSE)',
+    'set(NOFORTRAN TRUE)'
+  );
+
+  ChangeOnFile(
+    'superlu/CMakeLists.txt',
+    'option(enable_tests     "Build tests" ON)',
+    'option(enable_tests     "Build tests" OFF)'
+  );
+
+  ChangeOnFile(
+    'superlu/CMakeLists.txt',
+    'CMAKE_C_FLAGS "',
+    'CMAKE_C_FLAGS "-fPIC '
+  );
+end
+
+desc "build superlu_#{VER} lib"
+task :build => [:download] do
+  filename = "superlu_#{VER}.tar.gz"
+  if File.exists?('lib/lib/libsuperlu.a') then
+    puts "SuperLU already compiled"
+  else
+    extract_tgz(filename)
+    FileUtils.rm_rf 'superlu'
+    FileUtils.mv    'SuperLU_'+VER, 'superlu'
+    superlu_CMakeLists()
+    sh "cd superlu; cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib .; make; make install; cd .."
+  end
+end
+
+task :build_win, [:year, :bits] => [:download] do |t, args|
+  args.with_defaults(:year => "2017", :bits => "x64" )
+
+  if File.exists?("libs/lib/superlu_vs#{args.year}_#{args.bits}.lib") and 
+     File.exists?("libs/lib/superlu_vs#{args.year}_#{args.bits}_debug.lib") then
+    puts "SuperLU already compiled"
+  else
+    filename = "superlu_#{VER}.tar.gz"
+    extract_tgz(filename)
+    FileUtils.rm_rf 'superlu'
+    FileUtils.mv    'SuperLU_'+VER, 'superlu'
+    superlu_CMakeLists()
+    dir = "vs_#{args.year}_#{args.bits}"
+
+    FileUtils.rm_rf   dir
+    FileUtils.mkdir_p dir
+    FileUtils.cd      dir
+
+
+    tmp = " -DBITS=#{args.bits} -DYEAR=#{args.year} " + ' -DCMAKE_INSTALL_PREFIX:PATH=..\libs ..\superlu'
+
+    win32_64 = ''
+    case args.bits
+    when /x64/
+      win32_64 = ' Win64'
+    end
+
+    case args.year
+    when "2010"
+      sh 'cmake -G "Visual Studio 10 2010' + win32_64 +'" ' + tmp
+    when "2012"
+      sh 'cmake -G "Visual Studio 11 2012' + win32_64 +'" ' + tmp
+    when "2013"
+      sh 'cmake -G "Visual Studio 12 2013' + win32_64 +'" ' + tmp
+    when "2015"
+      sh 'cmake -G "Visual Studio 14 2015' + win32_64 +'" ' + tmp
+    when "2017"
+      sh 'cmake -G "Visual Studio 15 2017' + win32_64 +'" ' + tmp
+    else
+      puts "Visual Studio year #{year} not supported!\n";
+    end
+    sh 'cmake --build . --config Release  --target install'
+    FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_vs#{args.year}_#{args.bits}.lib"
+
+    sh 'cmake --build . --config Debug --target install'
+    FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_vs#{args.year}_#{args.bits}_debug.lib"
+
+    FileUtils.cd '..'
+  end
+
+end
+
+task :install => [:build] do
+  prefix = "../../lib3rd"
+  puts "SuperLU copy files to #{prefix}"
+  FileUtils.rm_rf   "#{prefix}/include/superlu"
+  FileUtils.mkdir_p "#{prefix}/include/superlu"
+  FileUtils.mkdir_p "#{prefix}/lib"
+  Dir['lib/include/*'].each do |f|
+    FileUtils.cp f, prefix+'/include/superlu/'+File.basename(f)
+  end
+  Dir['lib/lib/*'].each do |f|
+    FileUtils.cp f, prefix+'/lib/'+File.basename(f)
+  end
+end
+
+task :install_linux => [:install] do
+end
+
+task :install_osx => [:install] do
+end
+
+task :install_win, [:year, :bits] do |t, args|
+  args.with_defaults(:year => "2017", :bits => "x64" )
+
+  Rake::Task[:build_win].invoke(args.year, args.bits)
+
+  include = '..\\..\\lib3rd\\include\\superlu\\'
+  lib     = '..\\..\\lib3rd\\lib\\'
+
+  FileUtils.mkdir_p include
+  FileUtils.mkdir_p lib
+
+  puts "SuperLU copy files to #{include}"
+  Dir['libs/include/*'].each do |f|
+    FileUtils.cp f, include+File.basename(f)
+  end
+
+  puts "SuperLU copy files to #{lib}"
+  Dir['libs/lib/*'].each do |f|
+    FileUtils.cp f, lib+File.basename(f)
+  end
+
+end
+
+task :clean_linux do
+  FileUtils.rm_rf "lib"
+end
+
+task :clean_osx do
+  FileUtils.rm_rf "lib"
+end
+
+task :clean_windows do
+  FileUtils.rm_rf "lib"
+end

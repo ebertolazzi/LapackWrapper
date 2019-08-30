@@ -75,82 +75,6 @@ namespace lapack_wrapper {
       return ret;
     }
 
-    void
-    ma57i( real cntl[], int icntl[] ) const;
-
-    void
-    ma57a(
-      int       n,
-      int       nz,
-      int const irn[],
-      int const jcn[],
-      int       lkeep,
-      int       keep[],
-      int       iw[],
-      int const icntl[20],
-      int       info[40],
-      real      rinfo[20]
-    ) const;
-
-    void
-    ma57b(
-      int        n,
-      int        nz,
-      real const a[],
-      real       fact[],
-      int        lfact,
-      int        ifact[],
-      int        lifact,
-      int        lkeep,
-      int const  keep[],
-      int        iw[],
-      int const  icntl[20],
-      real const cntl[5],
-      int        info[40],
-      real       rinfo[20]
-    ) const;
-
-    void
-    ma57c(
-      int        job,
-      int        n,
-      real const fact[],
-      int        lfact,
-      int const  ifact[],
-      int        lifact,
-      int        nrhs,
-      real       rhs[],
-      int        lrhs,
-      real       w[],
-      int        lw,
-      int        iw[],
-      int const  icntl[20],
-      int        info[40]
-    ) const;
-
-    void
-    ma57d(
-      int        job,
-      int        n,
-      int        ne,
-      real const a[],
-      int const  irn[],
-      int const  jcn[],
-      real const fact[],
-      int        lfact,
-      int const  ifact[],
-      int        lifact,
-      real const rhs[],
-      real       x[],
-      real       resid[],
-      real       w[],
-      int        iw[],
-      int const  icntl[20],
-      real const cntl[5],
-      int        info[40],
-      real       rinfo[20]
-    ) const;
-
   public:
 
     /**
@@ -258,6 +182,23 @@ namespace lapack_wrapper {
       this->MaxRefinements = maxRefinements;
     }
   };
+
+  #ifdef LAPACK_WRAPPER_USE_CXX11
+
+  #ifdef __clang__
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
+  #endif
+
+  extern template class MA57<float>;
+  extern template class MA57<double>;
+
+  #ifdef __clang__
+  #pragma clang diagnostic pop
+  #endif
+
+  #endif
+
 } // namespace lapack_wrapper
 
 #endif // MA57_WRAPPER_HH

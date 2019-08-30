@@ -171,8 +171,8 @@ endif
 SRCS = \
 src/lapack_wrapper/lapack_wrapper++.cc \
 src/lapack_wrapper/lapack_wrapper.cc \
-src/lapack_wrapper/HSL/ma48_wrapper.cc \
-src/lapack_wrapper/HSL/ma57_wrapper.cc
+src/HSL/ma48_wrapper.cc \
+src/HSL/ma57_wrapper.cc
 
 OBJS = $(SRCS:.cc=.o)
 
@@ -215,8 +215,7 @@ MKDIR = mkdir -p
 
 # prefix for installation, use make PREFIX=/new/prefix install
 # to override
-PREFIX    = /usr/local
-FRAMEWORK = lapack_wrapper
+PREFIX = /usr/local
 
 all: config lib $(OBJS_TESTS)
 	mkdir -p bin
@@ -247,23 +246,27 @@ lib/liblapack_wrapper.so: $(OBJS)
 	$(MKDIR) lib
 	$(CXX) -shared -o lib/liblapack_wrapper.so $(OBJS)
 
-install_local: lib/$(LIB_LAPACK_WRAPPER)
+install_local:
+	$(MKDIR) ./lib
 	$(MKDIR) ./lib/include
-	cp -f -P src/*.h*        ./lib/include
-	cp -rf lib3rd/include/*  ./lib/include
+	$(MKDIR) ./lib/include/lapack_wrapper
+	$(MKDIR) ./lib/include/lapack_wrapper/code
+	$(MKDIR) ./lib/include/lapack_wrapper/code++
+	$(MKDIR) ./lib/include/HSL
+	$(MKDIR) ./lib/include/sparse_tool
+	$(MKDIR) ./lib/include/zstream
+	cp -f -P src/lapack_wrapper/*.h*        ./lib/include/lapack_wrapper
+	cp -f -P src/lapack_wrapper/code/*.h*   ./lib/include/lapack_wrapper/code
+	cp -f -P src/lapack_wrapper/code++/*.h* ./lib/include/lapack_wrapper/code++
+	cp -f -P src/HSL/*.h*                   ./lib/include/HSL
+	cp -rf src/sparse_tool/*                ./lib/include/sparse_tool
+	cp -rf src/zstream/*.h*                 ./lib/include/zstream
+	cp -rf lib3rd/include/*                 ./lib/include
 
 install: lib/$(LIB_LAPACK_WRAPPER)
 	$(MKDIR) $(PREFIX)/include
-	cp -f -P src/*.h*          $(PREFIX)/include
-	#cp -f -P lib3rd/include/*  $(PREFIX)/include
-	cp -f -P lib/$(LIB_LAPACK_WRAPPER) $(PREFIX)/lib
-
-install_as_framework: lib/$(LIB_LAPACK_WRAPPER)
-	$(MKDIR) $(PREFIX)/include/$(FRAMEWORK)
-	$(MKDIR) $(PREFIX)/lib
-	cp -f -P src/*.h*          $(PREFIX)/include/$(FRAMEWORK)
-	cp -rf lib3rd/include/*    $(PREFIX)/include/$(FRAMEWORK)
-	cp -f -P lib/$(LIB_LAPACK_WRAPPER) $(PREFIX)/lib/$(LIB_LAPACK_WRAPPER)
+	cp -rf lib/include/* $(PREFIX)/include
+	cp -f -P lib/lib/*   $(PREFIX)/lib
 
 config:
 	rm -f src/lapack_wrapper/lapack_wrapper_config.hh

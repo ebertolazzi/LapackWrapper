@@ -95,13 +95,14 @@ test3() {
 
   lapack_wrapper::GeneralizedSVD<real_type> E;
   E.setup( A, B );
-  E.info( cout, 1e-10 ) ;
+  E.info( cout, 1e-10 );
 
   lapack_wrapper::gemm(
     1.0,
     lapack_wrapper::TRANSPOSE,    E.getU(),
     lapack_wrapper::NO_TRANSPOSE, A,
-    0.0, TMP );
+    0.0, TMP
+  );
   lapack_wrapper::gemm(
     1.0,
     lapack_wrapper::NO_TRANSPOSE, TMP,
@@ -148,7 +149,7 @@ test4() {
 
   lapack_wrapper::GeneralizedSVD<real_type> E;
   E.setup( A, B );
-  E.info( cout, 1e-12) ;
+  E.info( cout, 1e-12);
 
   lapack_wrapper::gemm(
     1.0,
@@ -205,14 +206,14 @@ test5() {
   vector<vector< lapack_wrapper::Eigenvectors<real_type>::complexType > > vecs;
   E.getLeftEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
-    cout << "vL[" << n << "] = ";
+    cout << "vL[" << n << "] = ";
     for ( size_t i = 0; i < 4; ++i )
       cout << ' ' << vecs[n][i];
     cout << '\n';
   }
   E.getRightEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
-    cout << "vR[" << n << "] = ";
+    cout << "vR[" << n << "] = ";
     for ( size_t i = 0; i < 4; ++i )
       cout << ' ' << vecs[n][i];
     cout << '\n';
@@ -246,14 +247,14 @@ test6() {
   vector<vector< lapack_wrapper::GeneralizedEigenvectors<real_type>::complexType > > vecs;
   E.getLeftEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
-    cout << "vL[" << n << "] = ";
+    cout << "vL[" << n << "] = ";
     for ( size_t i = 0; i < 4; ++i )
       cout << ' ' << vecs[n][i];
     cout << '\n';
   }
   E.getRightEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
-    cout << "vR[" << n << "] = ";
+    cout << "vR[" << n << "] = ";
     for ( size_t i = 0; i < 4; ++i )
       cout << ' ' << vecs[n][i];
     cout << '\n';

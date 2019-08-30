@@ -10,7 +10,7 @@
 #define HSLSOLVER_H
 
 #include "hsl.h"
-#include "../lapack_wrapper_config.hh"
+#include "../lapack_wrapper/lapack_wrapper_config.hh"
 #include <string>
 #include <algorithm>
 
@@ -34,19 +34,15 @@ namespace lapack_wrapper {
      * \brief HSLsolver:
      *        Constructor of the class HSLsolver.
      */
-    HSLsolver()
-    : isInitialized(false)
-    , isFactorized(false)
-    , last_error("")
-    { }
+    HSLsolver();
 
   public:
+
     /**
      * \brief ~HSLsolver:
      *        Virtual destructor of the class HSLsolver.
      */
-    virtual ~HSLsolver()
-    { }
+    virtual ~HSLsolver();
 
     /*\
     :|:   ___      _    _ _      __  __           _
@@ -199,6 +195,21 @@ namespace lapack_wrapper {
     { return this->isFactorized; }
   };
 
+  #ifdef LAPACK_WRAPPER_USE_CXX11
+
+  #ifdef __clang__
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
+  #endif
+
+  extern template class HSLsolver<float>;
+  extern template class HSLsolver<double>;
+
+  #ifdef __clang__
+  #pragma clang diagnostic pop
+  #endif
+
+  #endif
 } // namespace lapack_wrapper
 
 #endif // HSLSOLVER_H
