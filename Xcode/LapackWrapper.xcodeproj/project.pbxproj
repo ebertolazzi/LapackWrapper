@@ -39,15 +39,7 @@
 		D9A1A90A23192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
 		D9A1A90B23192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
 		D9A1A90C23192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
-		D9A1A90E2319304F002C8826 /* libHSL_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90D2319304F002C8826 /* libHSL_static.a */; };
-		D9A1A90F2319304F002C8826 /* libHSL_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90D2319304F002C8826 /* libHSL_static.a */; };
-		D9A1A9102319304F002C8826 /* libHSL_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90D2319304F002C8826 /* libHSL_static.a */; };
-		D9A1A9112319304F002C8826 /* libHSL_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90D2319304F002C8826 /* libHSL_static.a */; };
-		D9A1A9122319304F002C8826 /* libHSL_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90D2319304F002C8826 /* libHSL_static.a */; };
-		D9A1A9132319304F002C8826 /* libHSL_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90D2319304F002C8826 /* libHSL_static.a */; };
-		D9A1A9142319304F002C8826 /* libHSL_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90D2319304F002C8826 /* libHSL_static.a */; };
-		D9A1A9152319304F002C8826 /* libHSL_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90D2319304F002C8826 /* libHSL_static.a */; };
-		D9A1A9162319304F002C8826 /* libHSL_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90D2319304F002C8826 /* libHSL_static.a */; };
+		D9AC749D231C341E00CA37B4 /* hsl_solver.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9AC749C231C341E00CA37B4 /* hsl_solver.cc */; };
 		D9BB56F52319C6B200DBED80 /* libumfpack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BB56F42319C6B200DBED80 /* libumfpack.a */; };
 		D9CFB440230CA26500FB2DD8 /* sparse_tool_matrix_market.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9CFB422230CA26500FB2DD8 /* sparse_tool_matrix_market.hh */; };
 		D9CFB442230CA26500FB2DD8 /* sparse_tool.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9CFB424230CA26500FB2DD8 /* sparse_tool.hh */; };
@@ -168,7 +160,7 @@
 		D992160922F1BB6D00B9C5FC /* test6-EIGS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test6-EIGS"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D992161022F1BB7900B9C5FC /* test6-EIGS.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test6-EIGS.cc"; path = "../src_tests/test6-EIGS.cc"; sourceTree = "<group>"; };
 		D9A1A90323192FFF002C8826 /* libsuperlu.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsuperlu.a; path = ../lib3rd/lib/libsuperlu.a; sourceTree = "<group>"; };
-		D9A1A90D2319304F002C8826 /* libHSL_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHSL_static.a; path = ../lib3rd/lib/libHSL_static.a; sourceTree = "<group>"; };
+		D9AC749C231C341E00CA37B4 /* hsl_solver.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hsl_solver.cc; sourceTree = "<group>"; };
 		D9BB56F42319C6B200DBED80 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = "../../../../../../../usr/local/Cellar/suite-sparse/5.4.0_1/lib/libumfpack.a"; sourceTree = "<group>"; };
 		D9CFB422230CA26500FB2DD8 /* sparse_tool_matrix_market.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sparse_tool_matrix_market.hh; sourceTree = "<group>"; };
 		D9CFB424230CA26500FB2DD8 /* sparse_tool.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sparse_tool.hh; sourceTree = "<group>"; };
@@ -203,7 +195,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9A1A90423192FFF002C8826 /* libsuperlu.a in Frameworks */,
-				D9A1A90E2319304F002C8826 /* libHSL_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,7 +205,6 @@
 				D94090D222F1A44700EB3EBD /* Accelerate.framework in Frameworks */,
 				D94090D022F1A2DC00EB3EBD /* libLapackWrapperLib.a in Frameworks */,
 				D9A1A90523192FFF002C8826 /* libsuperlu.a in Frameworks */,
-				D9A1A90F2319304F002C8826 /* libHSL_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,7 +215,6 @@
 				D94090E222F1A56C00EB3EBD /* libLapackWrapperLib.a in Frameworks */,
 				D9A1A90623192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D94090E322F1A56C00EB3EBD /* Accelerate.framework in Frameworks */,
-				D9A1A9102319304F002C8826 /* libHSL_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,7 +225,6 @@
 				D94090F122F1A62C00EB3EBD /* libLapackWrapperLib.a in Frameworks */,
 				D9A1A90723192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D94090F222F1A62C00EB3EBD /* Accelerate.framework in Frameworks */,
-				D9A1A9112319304F002C8826 /* libHSL_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,7 +235,6 @@
 				D940910022F1A7AF00EB3EBD /* libLapackWrapperLib.a in Frameworks */,
 				D9A1A90823192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D940910122F1A7AF00EB3EBD /* Accelerate.framework in Frameworks */,
-				D9A1A9122319304F002C8826 /* libHSL_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,7 +245,6 @@
 				D992160322F1BA6D00B9C5FC /* libLapackWrapperLib.a in Frameworks */,
 				D9A1A90923192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D992160422F1BA6D00B9C5FC /* Accelerate.framework in Frameworks */,
-				D9A1A9132319304F002C8826 /* libHSL_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,7 +255,6 @@
 				D992161222F1BC5400B9C5FC /* libLapackWrapperLib.a in Frameworks */,
 				D9A1A90A23192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D992161322F1BC5400B9C5FC /* Accelerate.framework in Frameworks */,
-				D9A1A9142319304F002C8826 /* libHSL_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,7 +266,6 @@
 				D9CFB45B230CA29100FB2DD8 /* libLapackWrapperLib.a in Frameworks */,
 				D9CFB45C230CA29100FB2DD8 /* Accelerate.framework in Frameworks */,
 				D9A1A90B23192FFF002C8826 /* libsuperlu.a in Frameworks */,
-				D9A1A9152319304F002C8826 /* libHSL_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,7 +276,6 @@
 				D9CFB466230CA2A300FB2DD8 /* libLapackWrapperLib.a in Frameworks */,
 				D9CFB467230CA2A300FB2DD8 /* Accelerate.framework in Frameworks */,
 				D9A1A90C23192FFF002C8826 /* libsuperlu.a in Frameworks */,
-				D9A1A9162319304F002C8826 /* libHSL_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +285,6 @@
 		D91E109522F18EFE00315DDB = {
 			isa = PBXGroup;
 			children = (
-				D9A1A90D2319304F002C8826 /* libHSL_static.a */,
 				D9A1A90323192FFF002C8826 /* libsuperlu.a */,
 				D91E109F22F18EFE00315DDB /* Products */,
 				D94090D322F1A49300EB3EBD /* test1-small-factorization.cc */,
@@ -402,6 +384,7 @@
 			children = (
 				D9FDAD4F23100C3A0092DF2A /* hsl.h */,
 				D9FDAD4C23100C3A0092DF2A /* hsl_solver.hh */,
+				D9AC749C231C341E00CA37B4 /* hsl_solver.cc */,
 				D9FDAD4D23100C3A0092DF2A /* ma48_wrapper.cc */,
 				D9FDAD4E23100C3A0092DF2A /* ma48_wrapper.hh */,
 				D9FDAD5023100C3A0092DF2A /* ma57_wrapper.hh */,
@@ -655,6 +638,7 @@
 			files = (
 				D958BCC022F32F0B00D41FCA /* lapack_wrapper.cc in Sources */,
 				D9FDAD5A2310575A0092DF2A /* ma57_wrapper.cc in Sources */,
+				D9AC749D231C341E00CA37B4 /* hsl_solver.cc in Sources */,
 				D9FDAD5323100C3A0092DF2A /* ma48_wrapper.cc in Sources */,
 				D958BCC222F32F0B00D41FCA /* lapack_wrapper++.cc in Sources */,
 			);
@@ -795,6 +779,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lopenblas";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -860,6 +845,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-lopenblas";
 				SDKROOT = macosx;
 			};
 			name = Release;

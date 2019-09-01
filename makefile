@@ -2,9 +2,6 @@
 OS=$(shell uname)
 PWD=$(shell pwd)
 
-LIB3RD=$(PWD)/lib3rd/lib
-INC3RD=lib3rd/include
-
 CC    = gcc
 CXX   = g++
 F90   = gfortran
@@ -14,8 +11,8 @@ CLIBS = -lc++
 DEFS  =
 
 CXXFLAGS = -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC
-override INC  += -I./src -I$(INC3RD)
-override LIBS += -L$(LIB3RD)
+override INC  += -I./src -Ilib3rd/include
+override LIBS += -Llib3rd/lib -Llib3rd/dll
 
 #
 # select which version of BLAS/LAPACK use
@@ -178,5 +175,5 @@ doc:
 	doxygen
 
 clean:
-	rm -rf lib/liblapack_wrapper.* src/*.o src/*/*.o src/*/*/*.o src_tests/*.o
+	rm -rf lib/* src/*.o src/*/*.o src/*/*/*.o src_tests/*.o src/*.obj src/*/*.obj src/*/*/*.obj src_tests/*.obj
 	rm -rf bin

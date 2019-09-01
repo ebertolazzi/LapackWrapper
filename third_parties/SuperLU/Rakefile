@@ -54,8 +54,8 @@ end
 task :build_win, [:year, :bits] => [:download] do |t, args|
   args.with_defaults(:year => "2017", :bits => "x64" )
 
-  if File.exists?("libs/lib/superlu_vs#{args.year}_#{args.bits}.lib") and
-     File.exists?("libs/lib/superlu_vs#{args.year}_#{args.bits}_debug.lib") then
+  if File.exists?("libs/lib/superlu_#{args.bits}.lib") and
+     File.exists?("libs/lib/superlu_#{args.bits}_debug.lib") then
     puts "SuperLU already compiled"
   else
     filename = "superlu_#{VER}.tar.gz"
@@ -92,10 +92,10 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
       puts "Visual Studio year #{year} not supported!\n";
     end
     sh 'cmake --build . --config Release  --target install'
-    FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_vs#{args.year}_#{args.bits}.lib"
+    FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_#{args.bits}.lib"
 
     sh 'cmake --build . --config Debug --target install'
-    FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_vs#{args.year}_#{args.bits}_debug.lib"
+    FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_#{args.bits}_debug.lib"
 
     FileUtils.cd '..'
   end

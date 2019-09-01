@@ -76,6 +76,11 @@
 #include <limits>
 #include <algorithm>
 
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <stdexcept>
+
 #ifdef LAPACK_WRAPPER_USE_LAPACK2
   #define LAPACK_WRAPPER_USE_LAPACK 1
 #endif
@@ -164,7 +169,7 @@
       #ifdef LAPACK_WRAPPER_ARCH64
         #pragma comment(lib, "libopenblas_x64.lib")
       #else
-        #pragma comment(lib, "libopenblas_x86.lib")
+        #pragma comment(lib, "libopenblas.lib")
       #endif
     #elif defined(LAPACK_WRAPPER_USE_MKL)
       #ifdef LAPACK_WRAPPER_ARCH64
@@ -262,6 +267,7 @@
   #endif
 
   #include <complex>
+  #define FORCE_OPENBLAS_COMPLEX_STRUCT
   #define lapack_complex_float  std::complex<float>
   #define lapack_complex_double std::complex<double>
 
@@ -296,7 +302,6 @@
 
   #define CBLASNAME(A)       cblas_##A
   #define LAPACK_F77NAME(A)  LAPACK_##A
-  #define LAPACKE_F77NAME(A) LAPACKE_##A
 
 #elif defined(LAPACK_WRAPPER_USE_LAPACK)
 
@@ -319,11 +324,6 @@
 #else
   #error "You must select the linear algebra packages used!"
 #endif
-
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <stdexcept>
 
 #ifndef LAPACK_WRAPPER_ERROR
   #define LAPACK_WRAPPER_ERROR(MSG) {                    \

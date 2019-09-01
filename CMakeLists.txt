@@ -11,12 +11,42 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-SET( TARGET lapack_wrapper )
+if (CMAKE_BUILD_TYPE EQUAL "DEBUG")
+  IF(APPLE)
+    SET( TARGET    lapack_wrapper_osx_debug )
+    SET( TARGETS   lapack_wrapper_osx_debug_static )
+    SET( TARGETHSL HSL_osx_debug )
+  ELSEIF( UNIX )
+    SET( TARGET    lapack_wrapper_linux_debug )
+    SET( TARGETS   lapack_wrapper_linux_debug_static )
+    SET( TARGETHSL HSL_linux_debug )
+  ELSE()
+    SET( TARGET    "lapack_wrapper_${BITS}_debug" )
+    SET( TARGETS   "lapack_wrapper_${BITS}_debug_static" )
+    SET( TARGETHSL "HSL_${BITS}" )
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+  ENDIF()
+else()
+  IF(APPLE)
+    SET( TARGET    lapack_wrapper_osx )
+    SET( TARGETS   lapack_wrapper_osx_static )
+    SET( TARGETHSL HSL_osx )
+  ELSEIF( UNIX )
+    SET( TARGET    lapack_wrapper_linux )
+    SET( TARGETS   lapack_wrapper_linux_static )
+    SET( TARGETHSL HSL_linux )
+  ELSE()
+    SET( TARGET    "lapack_wrapper_${BITS}" )
+    SET( TARGETS   "lapack_wrapper_${BITS}_static" )
+    SET( TARGETHSL "HSL_${BITS}" )
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+  ENDIF()
+endif()
 
 PROJECT( ${TARGET} CXX C )
 enable_testing()
 
-SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/../lib")
+SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/lib")
 
 FILE( GLOB S ./CMakeLists-cflags.txt )
 IF(EXISTS ${S})
@@ -50,7 +80,12 @@ SET( SOURCES )
 FILE( GLOB S ./src/*/*.cc )
 FOREACH (F ${S})
   FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-  LIST( APPEND SOURCES ${RF} )
+  IF ( F MATCHES "hsl_fake.cc")
+    MESSAGE( STATUS "skip ${F}" )
+  ELSE()
+    MESSAGE( STATUS "add ${F}" )
+    LIST( APPEND SOURCES ${RF} )
+  ENDIF()
 ENDFOREACH (F ${S})
 
 SET( HEADERS )
@@ -65,7 +100,25 @@ FOREACH (F ${S})
   LIST( APPEND HEADERS ${RF} )
 ENDFOREACH (F ${S})
 
-add_library( ${TARGET} STATIC ${SOURCES} ${HEADERS} )
+IF( APPLE OR UNIX )
+  FIND_PACKAGE(BLAS)
+  FIND_PACKAGE(LAPACK)
+  if(LAPACK_FOUND AND BLAS_FOUND)
+    SET( lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} )
+  endif()
+ELSE()
+  IF ( BITS MATCHES "x64")
+    FIND_LIBRARY( lapackblas_libraries libopenblas_x64.lib HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib )
+  ELSE()
+  FIND_LIBRARY( lapackblas_libraries libopenblas.lib HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib )
+  ENDIF()
+ENDIF()
+
+add_library( HSL_${BITS} SHARED src/HSL/hsl_fake.cc )
+
+add_library( ${TARGETS} STATIC ${SOURCES} ${HEADERS})
+add_library( ${TARGET}  SHARED  ${SOURCES} ${HEADERS} )
+TARGET_LINK_LIBRARIES( ${TARGET} ${TARGETHSL} ${lapackblas_libraries} )
 
 SET(
   EXELISTCPP
@@ -75,6 +128,8 @@ SET(
   test4-BFGS
   test5-BLOCKTRID
   test6-EIGS
+  #test7-SparseTool
+  #test6-SparseToolComplex
 )
 
 MESSAGE( STATUS "YEAR = ${YEAR}" )
@@ -82,20 +137,11 @@ MESSAGE( STATUS "BITS = ${BITS}" )
 
 SET(LLPATH ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd )
 
-#
-# setup search path for DLL
-#
-# openblas linked with #pragma
-set(CMAKE_MSVCIDE_RUN_PATH ${LLPATH}/dll/)
-SET(LOCLIBS openblas )
-FOREACH( S ${LOCLIBS} )
-	FILE( GLOB SS ${LLPATH}/lib/${S} )
-	LINK_DIRECTORIES( ${SS} )
-	FILE( GLOB SS ${LLPATH}/dll/${S} )
-	LINK_DIRECTORIES( ${SS} )
-ENDFOREACH( S ${LOCLIBS} )
-
 INCLUDE_DIRECTORIES( src ${LLPATH}/include )
+
+IF(APPLE)
+  INCLUDE_DIRECTORIES( /usr/local/opt/openblas/include )
+ENDIF()
 
 IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
   INCLUDE_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include" )
@@ -108,19 +154,34 @@ IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
   ENDIF()
 ENDIF()
 
+IF(APPLE)
+  LINK_DIRECTORIES(
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/bin
+  )
+ELSEIF( UNIX )
+  LINK_DIRECTORIES(
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/bin
+  )
+ELSE()
+  LINK_DIRECTORIES(
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/bin/$(BITS)
+  )
+ENDIF()
+
 SET( BUILD_EXECUTABLE TRUE )
 IF( BUILD_EXECUTABLE )
 
-  LINK_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll )
-
-  #ENABLE_TESTING()
-
-  FIND_PACKAGE(BLAS)
-  FIND_PACKAGE(LAPACK)
-
-  if(LAPACK_FOUND AND BLAS_FOUND)
-    SET(lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} )
-  endif()
+  #FIND_PACKAGE(BLAS)
+  #FIND_PACKAGE(LAPACK)
+  #if(LAPACK_FOUND AND BLAS_FOUND)
+  #  SET(lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} )
+  #endif()
 
   ADD_CUSTOM_TARGET( all_tests ALL )
 
@@ -128,14 +189,14 @@ IF( BUILD_EXECUTABLE )
   FILE(MAKE_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/bin )
   FOREACH( S ${EXELISTCPP} )
   	ADD_EXECUTABLE( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc ${HEADERS} )
-  	TARGET_LINK_LIBRARIES( ${S} ${TARGET} ${lapackblas_libraries} )
+  	TARGET_LINK_LIBRARIES( ${S} ${TARGETS} ${lapackblas_libraries} )
   	ADD_TEST( ${S} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/bin/${S} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} )
     ADD_DEPENDENCIES( all_tests ${S} )
   ENDFOREACH( S $(EXELIST) )
 
   FOREACH( S ${EXELISTC} )
   	ADD_EXECUTABLE( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.c ${HEADERS} )
-  	TARGET_LINK_LIBRARIES( ${S} ${TARGET} ${lapackblas_libraries} )
+  	TARGET_LINK_LIBRARIES( ${S} ${TARGETS} ${lapackblas_libraries} )
   	ADD_TEST( ${S} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/bin/${S} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} )
     ADD_DEPENDENCIES( all_tests ${S} )
   ENDFOREACH( S $(EXELIST) )
@@ -157,10 +218,10 @@ FILE( GLOB HDR_ST   ./src/sparse_tool/*.h* )
 FILE( GLOB HDR_ZS   ./src/zstream/*.h* )
 
 INSTALL(
-  TARGETS ${TARGET}
+  TARGETS ${TARGETHSL} ${TARGET} ${TARGETS}
   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
   LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/dll
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
 )
 
 INSTALL(FILES ${HDR_HSL} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/HSL )
@@ -242,6 +303,4 @@ IF(APPLE)
   MESSAGE( STATUS "CMAKE_OSX_DEPLOYMENT_TARGET = ${CMAKE_OSX_DEPLOYMENT_TARGET}" )
 ENDIF()
 
-IF( BUILD_EXECUTABLE )
-  MESSAGE( STATUS "lapackblas_libraries        = ${lapackblas_libraries}" )
-ENDIF()
+MESSAGE( STATUS "lapackblas_libraries        = ${lapackblas_libraries}" )

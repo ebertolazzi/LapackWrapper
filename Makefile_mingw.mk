@@ -11,7 +11,7 @@ endif
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_OPENBLAS,$(USED_LIB)))
   FPATH=$(dir $(shell gfortran -print-libgcc-file-name))
-  override LIBS += -L$(LIB3RD) -Wl,-rpath,$(LIB3RD) -lopenblas_$(BITS) -L$(FPATH)/../../.. -Wl,-rpath,$(LIB3RD)/../../.. -lgfortran
+  override LIBS += lib3rd/lib/libopenblas_$(BITS).lib -Llib3rd/lib -Llib3rd/dll/$(BITS) -L$(FPATH)/../../.. -lgfortran
 endif
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_ATLAS,$(USED_LIB)))
@@ -35,14 +35,34 @@ ifneq (,$(findstring LAPACK_WRAPPER_USE_ACCELERATE,$(USED_LIB)))
   $(error error is "Accelerate is supported only on Darwin!")
 endif
 
-ALL_LIBS = $(LIBS) -Llib -llapack_wrapper_win_$(BITS)
+ALL_LIBS = $(LIBS) -Llib/lib  -Llib/dll -llapack_wrapper_mingw_$(BITS).dll
+# -lHSL_mingw_$(BITS)
 
-all_libs: config lib/liblapack_wrapper_win_$(BITS)_static.lib lib/liblapack_wrapper_win_$(BITS).dll
+override DEFS += -DMINGW
 
-lib/liblapack_wrapper_$(BITS).dll: $(OBJS)
+all_libs: config lib/dll/liblapack_wrapper_mingw_$(BITS).dll.a lib/lib/liblapack_wrapper_mingw_$(BITS)_static.a lib/dll/libHSL_mingw_$(BITS).dll.a
+#all_libs: config lib/liblapack_wrapper_mingw_$(BITS)_static.lib
+
+lib/dll/liblapack_wrapper_mingw_$(BITS).dll.a: $(OBJS) lib/dll/libHSL_mingw_$(BITS).dll.a
 	@$(MKDIR) lib
-	$(CXX) -shared -o lib/liblapack_wrapper_win_$(BITS).dll $(OBJS) -Wl,--out-implib=lib/liblapack_wrapper_win_$(BITS).lib -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--no-whole-archive $(LIBS)
+	@$(MKDIR) lib/lib
+	@$(MKDIR) lib/bin
+	@$(MKDIR) lib/dll
+	$(CXX) -shared -o lib/bin/liblapack_wrapper_mingw_$(BITS).dll $(OBJS) \
+	-Wl,--out-implib=lib/dll/liblapack_wrapper_mingw_$(BITS).dll.a \
+	-Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--no-whole-archive \
+	$(LIBS) lib/dll/libHSL_mingw_$(BITS).dll.a
 
-lib/liblapack_wrapper_win_$(BITS)_static.lib: $(OBJS)
+lib/lib/liblapack_wrapper_mingw_$(BITS)_static.a: $(OBJS)
 	@$(MKDIR) lib
-	$(AR) lib/liblapack_wrapper_win_$(BITS)_static.lib $(OBJS)
+	$(AR) lib/lib/liblapack_wrapper_mingw_$(BITS)_static.a $(OBJS)
+
+lib/dll/libHSL_mingw_$(BITS).dll.a: $(OBJS)
+	@$(MKDIR) lib
+	@$(MKDIR) lib/lib
+	@$(MKDIR) lib/bin
+	@$(MKDIR) lib/dll
+	$(CXX) src/HSL/hsl_fake.cc -shared -o lib/bin/libHSL_mingw_$(BITS).dll \
+	-Wl,--out-implib=lib/dll/libHSL_mingw_$(BITS).dll.a \
+	-Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--no-whole-archive \
+	$(LIBS)

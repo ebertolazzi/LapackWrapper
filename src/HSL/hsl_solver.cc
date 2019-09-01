@@ -18,8 +18,8 @@ namespace lapack_wrapper {
   { }
 
   template <typename real>
-  HSLsolver<real>::~HSLsolver() {
-  }
+  HSLsolver<real>::~HSLsolver()
+  { }
 
   template class HSLsolver<float>;
   template class HSLsolver<double>;

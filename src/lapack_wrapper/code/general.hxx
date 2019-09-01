@@ -5869,21 +5869,47 @@ namespace lapack_wrapper {
       );
     }
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    info = LAPACKE_F77NAME(sggsvd3_work)(
-      LAPACK_COL_MAJOR,
-      ( JOBU ? 'U' : 'N'),
-      ( JOBV ? 'V' : 'N'),
-      ( JOBQ ? 'Q' : 'N'),
-      m, n, p, &k, &l,
-      A, ldA,
-      B, ldB,
-      alpha, beta,
-      U, ldU,
-      V, ldV,
-      Q, ldQ,
-      work, lwork,
-      iwork
-    );
+      #if 0
+      LAPACK_F77NAME(sggsvd3)(
+        const_cast<character*>( JOBU ? "U" : "N"),
+        const_cast<character*>( JOBV ? "V" : "N"),
+        const_cast<character*>( JOBQ ? "Q" : "N"),
+        &m, &n, &p, &k, &l,
+        A, &ldA,
+        B, &ldB,
+        alpha, beta,
+        U, &ldU,
+        V, &ldV,
+        Q, &ldQ,
+        work, &lwork,
+        iwork,
+        &info
+      );
+      #else
+      integer lw = std::max(3*n,std::max(m,p))+n;
+      if ( lwork < 0 ) {
+        work[0] = real(lw);
+      } else {
+        LAPACK_WRAPPER_ASSERT(
+          lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
+        );
+        LAPACK_F77NAME(sggsvd)(
+          const_cast<character*>( JOBU ? "U" : "N"),
+          const_cast<character*>( JOBV ? "V" : "N"),
+          const_cast<character*>( JOBQ ? "Q" : "N"),
+          &m, &n, &p, &k, &l,
+          A, &ldA,
+          B, &ldB,
+          alpha, beta,
+          U, &ldU,
+          V, &ldV,
+          Q, &ldQ,
+          work,
+          iwork,
+          &info
+        );
+      }
+      #endif
     #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     LAPACK_F77NAME(sggsvd3)(
       ( JOBU ? "U" : "N"),
@@ -5991,21 +6017,47 @@ namespace lapack_wrapper {
       );
     }
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    info = LAPACKE_F77NAME(dggsvd3_work)(
-      LAPACK_COL_MAJOR,
-      ( JOBU ? 'U' : 'N'),
-      ( JOBV ? 'V' : 'N'),
-      ( JOBQ ? 'Q' : 'N'),
-      m, n, p, &k, &l,
-      A, ldA,
-      B, ldB,
-      alpha, beta,
-      U, ldU,
-      V, ldV,
-      Q, ldQ,
-      work, lwork,
-      iwork
-    );
+      #if 0
+      LAPACK_F77NAME(dggsvd3)(
+        const_cast<character*>( JOBU ? "U" : "N"),
+        const_cast<character*>( JOBV ? "V" : "N"),
+        const_cast<character*>( JOBQ ? "Q" : "N"),
+        &m, &n, &p, &k, &l,
+        A, &ldA,
+        B, &ldB,
+        alpha, beta,
+        U, &ldU,
+        V, &ldV,
+        Q, &ldQ,
+        work, &lwork,
+        iwork,
+        &info
+      );
+      #else
+      integer lw = std::max(3*n,std::max(m,p))+n;
+      if ( lwork < 0 ) {
+        work[0] = doublereal(lw);
+      } else {
+        LAPACK_WRAPPER_ASSERT(
+          lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
+        );
+        LAPACK_F77NAME(dggsvd)(
+          const_cast<character*>( JOBU ? "U" : "N"),
+          const_cast<character*>( JOBV ? "V" : "N"),
+          const_cast<character*>( JOBQ ? "Q" : "N"),
+          &m, &n, &p, &k, &l,
+          A, &ldA,
+          B, &ldB,
+          alpha, beta,
+          U, &ldU,
+          V, &ldV,
+          Q, &ldQ,
+          work,
+          iwork,
+          &info
+        );
+      }
+      #endif
     #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     LAPACK_F77NAME(dggsvd3)(
       ( JOBU ? "U" : "N"),

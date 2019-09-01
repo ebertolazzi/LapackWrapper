@@ -89,7 +89,7 @@ template <int N>
 void
 testN() {
 
-  cout << "\nSize N = " << N << "\n";
+  cout << "\nSize N = " << N << "\n" << flush;
 
   Malloc<real_type> baseValue("real");
   Malloc<integer>   baseIndex("integer");
@@ -127,7 +127,7 @@ testN() {
   tm.toc();
   cout << "MULT = " << tm.elapsed_ms() << " [ms] (lapack)\n";
 
-  cout << "All done!\n";
+  cout << "All done!\n" << flush;
 }
 
 
@@ -146,7 +146,7 @@ main() {
   testN<32>();
   testN<64>();
 
-  cout << "\n\nAll done!\n";
+  cout << "\n\nAll done!\n" << flush;
 
   return 0;
 }

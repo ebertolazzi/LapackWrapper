@@ -1,6 +1,6 @@
 WARN   = -Wall
-CC     = gcc
-CXX    = g++ -std=c++11 -pthread
+CC     = gcc -fPIC
+CXX    = g++ -fPIC -std=c++11 -pthread
 #
 # activate C++11 for g++ >= 4.9
 #
@@ -16,7 +16,8 @@ endif
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_OPENBLAS,$(USED_LIB)))
   FPATH=$(dir $(shell gfortran -print-libgcc-file-name))
-  override LIBS += -L$(LIB3RD) -Wl,-rpath,$(LIB3RD) -lopenblas -L$(FPATH)/../../.. -Wl,-rpath,$(LIB3RD)/../../..  -lgfortran
+  override LIBS += -Llib3rd/dll -Llib3rd/lib -Wl,-rpath,./lib/dll -lopenblas -L$(FPATH)/../../.. -lgfortran
+  override INC  += -I/usr/include/x86_64-linux-gnu/
 endif
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_ATLAS,$(USED_LIB)))
@@ -40,14 +41,24 @@ ifneq (,$(findstring LAPACK_WRAPPER_USE_ACCELERATE,$(USED_LIB)))
   $(error error is "Accelerate is supported only on Darwin!")
 endif
 
-ALL_LIBS = $(LIBS) -Llib -llapack_wrapper_linux
+ALL_LIBS = $(LIBS) -Llib/lib -Llib/dll -llapack_wrapper_linux -lHSL_linux
 
-all_libs: config lib/liblapack_wrapper_linux.so lib/liblapack_wrapper_linux_static.a
+all_libs: config lib/dll/liblapack_wrapper_linux.so lib/lib/liblapack_wrapper_linux_static.a lib/dll/libHSL_linux.so
 
-lib/liblapack_wrapper_linux.so: $(OBJS)
+lib/dll/liblapack_wrapper_linux.so: lib/dll/libHSL_linux.so $(OBJS)
 	@$(MKDIR) lib
-	$(CXX) -shared -o lib/liblapack_wrapper_linux.so $(OBJS) $(LIBS)
+	@$(MKDIR) lib/lib
+	@$(MKDIR) lib/dll
+	$(CXX) -shared -o lib/dll/liblapack_wrapper_linux.so $(OBJS) $(LIBS) -Llib/dll -Llib/lib -lHSL_linux
 
-lib/liblapack_wrapper_linux_static.a: $(OBJS)
+lib/lib/liblapack_wrapper_linux_static.a: $(OBJS)
 	@$(MKDIR) lib
-	$(AR) lib/liblapack_wrapper_linux_static.a $(OBJS)
+	@$(MKDIR) lib/lib
+	@$(MKDIR) lib/dll
+	$(AR) lib/lib/liblapack_wrapper_linux_static.a $(OBJS)
+
+lib/dll/libHSL_linux.so:
+	@$(MKDIR) lib
+	@$(MKDIR) lib/lib
+	@$(MKDIR) lib/dll
+	$(CXX) -shared -o lib/dll/libHSL_linux.so src/HSL/hsl_fake.cc $(LIBS)
