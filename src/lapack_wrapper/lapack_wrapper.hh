@@ -122,61 +122,62 @@
     #pragma comment(lib, "legacy_stdio_definitions.lib")
   #endif
 
-  #if defined(LAPACK_WRAPPER_USE_LAPACK2)
-    #if defined(_DEBUG) || defined(DEBUG)
-      #ifdef LAPACK_WRAPPER_ARCH64
-        #pragma comment(lib, "cbia.lib.blas.dyn.dbg.x64.12.lib")
-        #pragma comment(lib, "cbia.lib.lapack.dyn.dbg.x64.12.lib")
+  #ifndef MINGW
+    #if defined(LAPACK_WRAPPER_USE_LAPACK2)
+      #if defined(_DEBUG) || defined(DEBUG)
+        #ifdef LAPACK_WRAPPER_ARCH64
+          #pragma comment(lib, "cbia.lib.blas.dyn.dbg.x64.12.lib")
+          #pragma comment(lib, "cbia.lib.lapack.dyn.dbg.x64.12.lib")
+        #else
+          #pragma comment(lib, "cbia.lib.blas.dyn.dbg.x86.12.lib")
+          #pragma comment(lib, "cbia.lib.lapack.dyn.dbg.x86.12.lib")
+        #endif
       #else
-        #pragma comment(lib, "cbia.lib.blas.dyn.dbg.x86.12.lib")
-        #pragma comment(lib, "cbia.lib.lapack.dyn.dbg.x86.12.lib")
+        #ifdef LAPACK_WRAPPER_ARCH64
+          #pragma comment(lib, "cbia.lib.blas.dyn.rel.x64.12.lib")
+          #pragma comment(lib, "cbia.lib.lapack.dyn.rel.x64.12.lib")
+        #else
+          #pragma comment(lib, "cbia.lib.blas.dyn.rel.x86.12.lib")
+          #pragma comment(lib, "cbia.lib.lapack.dyn.rel.x86.12.lib")
+        #endif
       #endif
-    #else
-      #ifdef LAPACK_WRAPPER_ARCH64
-        #pragma comment(lib, "cbia.lib.blas.dyn.rel.x64.12.lib")
-        #pragma comment(lib, "cbia.lib.lapack.dyn.rel.x64.12.lib")
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
+      #if defined(_DEBUG) || defined(DEBUG)
+        #ifdef LAPACK_WRAPPER_ARCH64
+          #pragma comment(lib, "blas_win64_MTd.lib")
+          #pragma comment(lib, "lapack_win64_MTd.lib")
+        #else
+          #pragma comment(lib, "blas_win32_MTd.lib")
+          #pragma comment(lib, "lapack_win32_MTd.lib")
+        #endif
       #else
-        #pragma comment(lib, "cbia.lib.blas.dyn.rel.x86.12.lib")
-        #pragma comment(lib, "cbia.lib.lapack.dyn.rel.x86.12.lib")
+        #ifdef LAPACK_WRAPPER_ARCH64
+          #pragma comment(lib, "blas_win64_MT.lib")
+          #pragma comment(lib, "lapack_win64_MT.lib")
+        #else
+          #pragma comment(lib, "blas_win32_MT.lib")
+          #pragma comment(lib, "lapack_win32_MT.lib")
+        #endif
       #endif
-    #endif
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-    #if defined(_DEBUG) || defined(DEBUG)
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+      // no debug version
       #ifdef LAPACK_WRAPPER_ARCH64
-        #pragma comment(lib, "blas_win64_MTd.lib")
-        #pragma comment(lib, "lapack_win64_MTd.lib")
+        #pragma comment(lib, "libopenblas_x64.lib")
       #else
-        #pragma comment(lib, "blas_win32_MTd.lib")
-        #pragma comment(lib, "lapack_win32_MTd.lib")
+        #pragma comment(lib, "libopenblas_x86.lib")
       #endif
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_MKL)
       #ifdef LAPACK_WRAPPER_ARCH64
-        #pragma comment(lib, "blas_win64_MT.lib")
-        #pragma comment(lib, "lapack_win64_MT.lib")
+        #pragma comment(lib, "mkl_intel_lp64_dll.lib")
       #else
-        #pragma comment(lib, "blas_win32_MT.lib")
-        #pragma comment(lib, "lapack_win32_MT.lib")
+        #pragma comment(lib, "mkl_intel_c_dll.lib")
       #endif
-    #endif
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    // no debug version
-    #ifdef LAPACK_WRAPPER_ARCH64
-      #pragma comment(lib, "libopenblas_x64.lib")
+      #pragma comment(lib, "mkl_sequential_dll.lib")
+      #pragma comment(lib, "mkl_core_dll.lib")
     #else
-      #pragma comment(lib, "libopenblas_x86.lib")
+      #error "Only standard Lapack, Openblas, and MKL are supported for WINDOWS!"
     #endif
-  #elif defined(LAPACK_WRAPPER_USE_MKL)
-    #ifdef LAPACK_WRAPPER_ARCH64
-      #pragma comment(lib, "mkl_intel_lp64_dll.lib")
-    #else
-      #pragma comment(lib, "mkl_intel_c_dll.lib")
-    #endif
-    #pragma comment(lib, "mkl_sequential_dll.lib")
-    #pragma comment(lib, "mkl_core_dll.lib")
-  #else
-    #error "Only standard Lapack, Openblas, and MKL are supported for WINDOWS!"
   #endif
-
 #else
   #ifdef LAPACK_WRAPPER_USE_CXX11
     #include <cstdint>

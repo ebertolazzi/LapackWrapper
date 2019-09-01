@@ -59,7 +59,7 @@ FOREACH (F ${S})
   FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
   LIST( APPEND HEADERS ${RF} )
 ENDFOREACH (F ${S})
-FILE( GLOB S ./src/lapack_wrapper/*/*.h* )
+FILE( GLOB S ./src/*/*/*.h* )
 FOREACH (F ${S})
   FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
   LIST( APPEND HEADERS ${RF} )
@@ -95,7 +95,7 @@ FOREACH( S ${LOCLIBS} )
 	LINK_DIRECTORIES( ${SS} )
 ENDFOREACH( S ${LOCLIBS} )
 
-INCLUDE_DIRECTORIES( src ${LLPATH}/include ${LLPATH}/include/eigen3 )
+INCLUDE_DIRECTORIES( src ${LLPATH}/include )
 
 IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
   INCLUDE_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include" )
@@ -149,10 +149,12 @@ IF( BUILD_EXECUTABLE )
 
 ENDIF()
 
-FILE( GLOB HDR_HSL ./src/HSL/*.h* )
-FILE( GLOB HDR_LW  ./src/lapack_wrapper/*.h* )
-FILE( GLOB HDR_ST  ./src/sparse_tool/*.h* )
-FILE( GLOB HDR_ZS  ./src/zstream/*.h* )
+FILE( GLOB HDR_HSL  ./src/HSL/*.h* )
+FILE( GLOB HDR_LW   ./src/lapack_wrapper/*.h* )
+FILE( GLOB HDR_LW1  ./src/lapack_wrapper/code/*.h* )
+FILE( GLOB HDR_LW2  ./src/lapack_wrapper/code++/*.h* )
+FILE( GLOB HDR_ST   ./src/sparse_tool/*.h* )
+FILE( GLOB HDR_ZS   ./src/zstream/*.h* )
 
 INSTALL(
   TARGETS ${TARGET}
@@ -163,6 +165,8 @@ INSTALL(
 
 INSTALL(FILES ${HDR_HSL} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/HSL )
 INSTALL(FILES ${HDR_LW}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper )
+INSTALL(FILES ${HDR_LW1} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper/code )
+INSTALL(FILES ${HDR_LW2} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper/code++ )
 INSTALL(FILES ${HDR_ST}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool )
 INSTALL(FILES ${HDR_ZS}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/zstream )
 

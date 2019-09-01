@@ -59,7 +59,7 @@
 #endif
 
 // automatic library inclusion
-#ifdef LAPACK_WRAPPER_OS_WINDOWS
+#if defined(LAPACK_WRAPPER_OS_WINDOWS) && !defined(MINGW)
   #if defined(_DEBUG) || defined(DEBUG)
     #ifdef LAPACK_WRAPPER_ARCH64
       #pragma comment(lib, "superlu_x64_debug.lib")
