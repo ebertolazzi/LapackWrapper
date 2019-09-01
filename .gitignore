@@ -8,3 +8,4 @@ src/lapack_wrapper/code/.vscode
 docs
 lib3rd/include
 src/lapack_wrapper/.vscode
+.lapack_wrapper_config
