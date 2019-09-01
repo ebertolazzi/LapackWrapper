@@ -42,7 +42,7 @@ endif
 
 ALL_LIBS = $(LIBS) -Llib -llapack_wrapper_linux
 
-all_libs: lib/liblapack_wrapper_linux.so lib/liblapack_wrapper_linux_static.a
+all_libs: config lib/liblapack_wrapper_linux.so lib/liblapack_wrapper_linux_static.a
 
 lib/liblapack_wrapper_linux.so: $(OBJS)
 	@$(MKDIR) lib

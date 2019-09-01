@@ -9,3 +9,4 @@ docs
 lib3rd/include
 src/lapack_wrapper/.vscode
 .lapack_wrapper_config
+src/lapack_wrapper/lapack_wrapper_config.hh

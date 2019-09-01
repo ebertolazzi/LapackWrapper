@@ -284,8 +284,8 @@
     #endif
   #else
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
-        #include <openblas/cblas.h>
-        #include <openblas/lapacke.h>
+      #include <openblas/cblas.h>
+      #include <openblas/lapacke.h>
     #else
       // use -I/usr/include/openblas
       #include <cblas.h>

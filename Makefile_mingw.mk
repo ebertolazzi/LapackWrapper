@@ -37,7 +37,7 @@ endif
 
 ALL_LIBS = $(LIBS) -Llib -llapack_wrapper_win_$(BITS)
 
-all_libs: lib/liblapack_wrapper_win_$(BITS)_static.lib lib/liblapack_wrapper_win_$(BITS).dll
+all_libs: config lib/liblapack_wrapper_win_$(BITS)_static.lib lib/liblapack_wrapper_win_$(BITS).dll
 
 lib/liblapack_wrapper_$(BITS).dll: $(OBJS)
 	@$(MKDIR) lib

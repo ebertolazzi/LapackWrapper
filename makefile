@@ -124,7 +124,7 @@ MKDIR = mkdir -p
 # to override
 PREFIX = /usr/local
 
-tests: config all_libs $(OBJS_TESTS)
+tests: all_libs $(OBJS_TESTS)
 	mkdir -p bin
 	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test1-small-factorization src_tests/test1-small-factorization.o  $(ALL_LIBS) $(LIBSGCC)
 	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test2-Timing              src_tests/test2-Timing.o               $(ALL_LIBS) $(LIBSGCC)

@@ -17,6 +17,8 @@ endif
 ifneq (,$(findstring LAPACK_WRAPPER_USE_OPENBLAS,$(USED_LIB)))
   FPATH=$(dir $(shell gfortran -print-libgcc-file-name))
   override LIBS += -L$(LIB3RD) -Wl,-rpath,$(LIB3RD) -lopenblas -L$(FPATH)/../../.. -Wl,-rpath,$(LIB3RD)/../../..  -lgfortran
+  override LIBS += -L/usr/local/opt/openblas/lib
+  override INC  += -I/usr/local/opt/openblas/include
 endif
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_ATLAS,$(USED_LIB)))
@@ -39,7 +41,7 @@ endif
 ALL_LIBS = $(LIBS) -Llib -llapack_wrapper_osx_static
 
 ##all_libs: lib/liblapack_wrapper_osx.dylib lib/liblapack_wrapper_osx_static.a
-all_libs: lib/liblapack_wrapper_osx_static.a
+all_libs: config lib/liblapack_wrapper_osx_static.a
 
 lib/liblapack_wrapper_osx.dylib: $(OBJS)
 	@$(MKDIR) lib
