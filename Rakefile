@@ -42,19 +42,19 @@ task :build  do
 end
 
 def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
-  text= File.read file
+  text = File.read file
   File.open(file, 'w+'){|f| f << text.gsub(text_to_replace, text_to_put_in_place)}
 end
 
 desc "compile for Visual Studio [default year=2017 bits=x64]"
-task :build_win, [:year, :bits, :lapack, :thread] do |t, args|
-  args.with_defaults( :year   => "2017",
-                      :bits   => "x64",
-                      #:lapack => "LAPACK_WRAPPER_USE_LAPACK",
-                      #:lapack => "LAPACK_WRAPPER_USE_LAPACK2",
-                      :lapack => "LAPACK_WRAPPER_USE_OPENBLAS",
-                      #:lapack => "LAPACK_WRAPPER_USE_MKL",
-                      :thread => "LAPACK_WRAPPER_USE_THREAD" )
+task :build_win, [:year, :bits, :lapack] do |t, args|
+  args.with_defaults(
+    :year   => "2017",
+    :bits   => "x64",
+    :lapack => "LAPACK_WRAPPER_USE_OPENBLAS"
+    #:lapack => "LAPACK_WRAPPER_USE_LAPACK",
+    #:lapack => "LAPACK_WRAPPER_USE_MKL"
+  )
 
   cmd = "set path=%path%;lib3rd\\lib;lib3rd\\dll;"
 
@@ -106,9 +106,9 @@ task :build_win, [:year, :bits, :lapack, :thread] do |t, args|
 
   sh 'cmake --build . --config Release  --target ALL_BUILD'
   FileUtils.mkdir_p "../lib/lib"
-  FileUtils.cp dir+'/Release/lapack_wrapper.lib', "../lib/lib/lapack_wrapper_vs#{args.year}_#{args.bits}.lib"  
+  FileUtils.cp 'Release/lapack_wrapper.lib', "../lib/lib/lapack_wrapper_vs#{args.year}_#{args.bits}.lib"  
   sh 'cmake --build . --config Debug --target ALL_BUILD'
-  FileUtils.cp dir+'/Debug/lapack_wrapper.lib', "../lib/lib/lapack_wrapper_vs#{args.year}_#{args.bits}_debug.lib"
+  FileUtils.cp 'Debug/lapack_wrapper.lib', "../lib/lib/lapack_wrapper_vs#{args.year}_#{args.bits}_debug.lib"
 
   FileUtils.cd '..'
 
