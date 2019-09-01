@@ -10,8 +10,9 @@ task :install_osx do
 end
 
 desc "install locally OpenBlas for Windows"
-task :install_win do
-  bits = "x64"
+task :install_win, [:year, :bits]  do |t, args|
+  args.with_defaults(:year => "2017", :bits => "x64" )
+  bits = args.bits;
   FileUtils.mkdir_p "../../lib3rd/lib"
   FileUtils.mkdir_p "../../lib3rd/dll"
   FileUtils.mkdir_p "../../lib3rd/include/openblas/"+bits+"/"
@@ -26,5 +27,5 @@ end
 task :clean_osx do
 end
 
-task :clean_windows do
+task :clean_win do
 end

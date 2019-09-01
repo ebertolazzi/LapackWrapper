@@ -1,7 +1,8 @@
 require "rake"
 require "./common.rb"
 
-task :default => [:install_osx]
+task :default => [:install_osx] do
+end
 
 desc "install 3rd parties for OSX"
 task :install_osx do
@@ -18,7 +19,7 @@ task :install_linux do
 end
 
 desc "install 3rd parties for WINDOWS"
-task :install_win do |t, args|
+task :install_win, [:year, :bits] do |t,args|
   args.with_defaults(:year => "2017", :bits => "x64" )
   FileUtils.cd "SuperLU"
   sh "rake install_win[#{args.year},#{args.bits}]"

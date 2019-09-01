@@ -3,9 +3,7 @@ OS=$(shell uname)
 PWD=$(shell pwd)
 
 LIB3RD=$(PWD)/lib3rd/lib
-INC3RD=$(PWD)/lib3rd/include
-
-LIB_LAPACK_WRAPPER = liblapack_wrapper.a
+INC3RD=lib3rd/include
 
 CC    = gcc
 CXX   = g++
@@ -16,8 +14,8 @@ CLIBS = -lc++
 DEFS  =
 
 CXXFLAGS = -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC
-override LIBS += -L./lib -llapack_wrapper -L$(LIB3RD)
 override INC  += -I./src -I$(INC3RD)
+override LIBS += -L$(LIB3RD)
 
 #
 # select which version of BLAS/LAPACK use
@@ -51,7 +49,7 @@ ifeq (,$(wildcard .lapack_wrapper_config))
 ifneq (,$(findstring Darwin, $(OS)))
   USED_LIB = LAPACK_WRAPPER_USE_ACCELERATE
 else
-  USED_LIB = LAPACK_WRAPPER_USE_LAPACK
+  USED_LIB = LAPACK_WRAPPER_USE_OPENBLAS
 endif
 else
   USED_LIB = $(shell cat .lapack_wrapper_config)
@@ -61,116 +59,10 @@ endif
 $(shell echo "$(USED_LIB)" > .lapack_wrapper_config )
 $(info $(USED_LIB))
 
-#      # #    # #    # #    #
-#      # ##   # #    #  #  #
-#      # # #  # #    #   ##
-#      # #  # # #    #   ##
-#      # #   ## #    #  #  #
-###### # #    #  ####  #    #
-
-# check if the OS string contains 'Linux'
-ifneq (,$(findstring Linux, $(OS)))
-  WARN   = -Wall
-  CC     = gcc
-  CXX    = g++ -std=c++11 -pthread
-  THREAD = LAPACK_WRAPPER_USE_THREAD
-  #
-  # activate C++11 for g++ >= 4.9
-  #
-  VERSION  = $(shell $(CC) -dumpversion)
-  CC     += $(WARN)
-  CXX    += $(WARN)
-  AR      = ar rcs
-  LIBSGCC = -lstdc++ -lm -pthread
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
-  override LIBS += -llapack -lblas
-endif
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_OPENBLAS,$(USED_LIB)))
-  FPATH=$(dir $(shell gfortran -print-libgcc-file-name))
-  override LIBS += -L$(LIB3RD) -Wl,-rpath,$(LIB3RD) -lopenblas -L$(FPATH)/../../.. -Wl,-rpath,$(LIB3RD)/../../..  -lgfortran
-endif
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_ATLAS,$(USED_LIB)))
-  ATLAS_PATH = /usr/lib/atlas-base
-  ATLAS_LIBS = -llapack -lf77blas -lcblas -latlas -lgfortran
-  override LIBS += -L$(ATLAS_PATH) $(ATLAS_LIBS) -Wl,-rpath,$(ATLAS_PATH)
-endif
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_MKL,$(USED_LIB)))
-  # for MKL
-  MKL_PATH = /opt/intel/mkl
-  MKL_ARCH = intel64
-  #MKL_LIB = -lmkl_tbb_thread -lmkl_rt -lmkl_core
-  MKL_LIB = -lmkl_sequential -lmkl_rt -lmkl_core
-  override LIBS += -L$(MKL_PATH)/lib/$(MKL_ARCH) -Wl,-rpath,$(MKL_PATH)/lib/$(MKL_ARCH) $(MKL_LIB)
-  override INC  += -I$(MKL_PATH)/include
-endif
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_ACCELERATE,$(USED_LIB)))
-  $(error error is "Accelerate is supported only on Darwin!")
-endif
-
-  #
-  override INC  += -I/usr/include/eigen3 -I/usr/include/atlas/
-endif
-
-#######  #####  #     #
-#     # #     #  #   #
-#     # #         # #
-#     #  #####     #
-#     #       #   # #
-#     # #     #  #   #
-#######  #####  #     #
-
-# check if the OS string contains 'Darwin'
-ifneq (,$(findstring Darwin, $(OS)))
-  WARN     = -Weverything -Wno-reserved-id-macro -Wno-padded
-  CC       = clang
-  CXX      = clang++
-  VERSION  = $(shell $(CC) --version 2>&1 | grep -o "Apple LLVM version [0-9]\.[0-9]\.[0-9]" | grep -o " [0-9]\.")
-  #---------
-  CXX     += -std=c++11 -stdlib=libc++
-  THREAD   = LAPACK_WRAPPER_USE_THREAD
-  #---------
-  CC     += $(WARN)
-  CXX    += $(WARN)
-  AR      = libtool -static -o
-  LIBSGCC = -lstdc++ -lm
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
-  override LIBS += -llapack -lblas
-endif
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_OPENBLAS,$(USED_LIB)))
-  FPATH=$(dir $(shell gfortran -print-libgcc-file-name))
-  override LIBS += -L$(LIB3RD) -Wl,-rpath,$(LIB3RD) -lopenblas -L$(FPATH)/../../.. -Wl,-rpath,$(LIB3RD)/../../..  -lgfortran
-endif
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_ATLAS,$(USED_LIB)))
-  $(error error is "Atlas is supported only on Linux!")
-endif
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_MKL,$(USED_LIB)))
-  # for MKL
-  MKL_PATH = /opt/intel/mkl
-  #MKL_LIB = -lmkl_tbb_thread -lmkl_intel -lmkl_core
-  MKL_LIB = -lmkl_sequential -lmkl_intel -lmkl_core
-  override LIBS += -L$(MKL_PATH)/lib -Xlinker -rpath -Xlinker $(MKL_PATH)/lib $(MKL_LIB)
-  override INC  += -I$(MKL_PATH)/include
-endif
-
-ifneq (,$(findstring LAPACK_WRAPPER_USE_ACCELERATE,$(USED_LIB)))
-  override LIBS += -L./lib -llapack_wrapper -framework Accelerate
-endif
-
-  override INC += -I/usr/local/include/eigen3
-endif
-
 SRCS = \
 src/lapack_wrapper/lapack_wrapper++.cc \
 src/lapack_wrapper/lapack_wrapper.cc \
+src/HSL/hsl_solver.cc \
 src/HSL/ma48_wrapper.cc \
 src/HSL/ma57_wrapper.cc
 
@@ -208,6 +100,21 @@ src/lapack_wrapper/HSL/hsl_solver.h \
 src/lapack_wrapper/HSL/ma48_wrapper.h \
 src/lapack_wrapper/HSL/ma57_wrapper.h
 
+# check if the OS string contains 'Linux'
+ifneq (,$(findstring Linux, $(OS)))
+include Makefile_linux.mk
+endif
+
+# check if the OS string contains 'MINGW'
+ifneq (,$(findstring MINGW, $(OS)))
+include Makefile_mingw.mk
+endif
+
+# check if the OS string contains 'Darwin'
+ifneq (,$(findstring Darwin, $(OS)))
+include Makefile_osx.mk
+endif
+
 MKDIR = mkdir -p
 
 .SUFFIXES:           # Delete the default suffixes
@@ -217,16 +124,14 @@ MKDIR = mkdir -p
 # to override
 PREFIX = /usr/local
 
-all: config lib $(OBJS_TESTS)
+tests: config all_libs $(OBJS_TESTS)
 	mkdir -p bin
-	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test1-small-factorization src_tests/test1-small-factorization.o  $(LIBS) $(LIBSGCC)
-	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test2-Timing              src_tests/test2-Timing.o               $(LIBS) $(LIBSGCC)
-	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test3-BandedMatrix        src_tests/test3-BandedMatrix.o         $(LIBS) $(LIBSGCC)
-	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test4-BFGS                src_tests/test4-BFGS.o                 $(LIBS) $(LIBSGCC)
-	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test5-BLOCKTRID           src_tests/test5-BLOCKTRID.o            $(LIBS) $(LIBSGCC)
-	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test6-EIGS                src_tests/test6-EIGS.o                 $(LIBS) $(LIBSGCC)
-
-lib: config lib/$(LIB_LAPACK_WRAPPER)
+	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test1-small-factorization src_tests/test1-small-factorization.o  $(ALL_LIBS) $(LIBSGCC)
+	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test2-Timing              src_tests/test2-Timing.o               $(ALL_LIBS) $(LIBSGCC)
+	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test3-BandedMatrix        src_tests/test3-BandedMatrix.o         $(ALL_LIBS) $(LIBSGCC)
+	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test4-BFGS                src_tests/test4-BFGS.o                 $(ALL_LIBS) $(LIBSGCC)
+	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test5-BLOCKTRID           src_tests/test5-BLOCKTRID.o            $(ALL_LIBS) $(LIBSGCC)
+	$(CXX) $(INC) $(DEFS) $(CXXFLAGS) -o bin/test6-EIGS                src_tests/test6-EIGS.o                 $(ALL_LIBS) $(LIBSGCC)
 
 .cc.o:
 	$(CXX) $(INC) $(CXXFLAGS) $(DEFS) -c $< -o $@
@@ -234,19 +139,7 @@ lib: config lib/$(LIB_LAPACK_WRAPPER)
 .c.o:
 	$(CC) $(INC) $(CFLAGS) $(DEFS) -c -o $@ $<
 
-lib/liblapack_wrapper.a: $(OBJS)
-	$(MKDIR) lib
-	$(AR) lib/liblapack_wrapper.a $(OBJS)
-
-lib/liblapack_wrapper.dylib: $(OBJS)
-	$(MKDIR) lib
-	$(CXX) -shared -o lib/liblapack_wrapper.dylib $(OBJS)
-
-lib/liblapack_wrapper.so: $(OBJS)
-	$(MKDIR) lib
-	$(CXX) -shared -o lib/liblapack_wrapper.so $(OBJS)
-
-install_local:
+install_local: all_libs
 	$(MKDIR) ./lib
 	$(MKDIR) ./lib/include
 	$(MKDIR) ./lib/include/lapack_wrapper
@@ -263,7 +156,7 @@ install_local:
 	cp -rf src/zstream/*.h*                 ./lib/include/zstream
 	cp -rf lib3rd/include/*                 ./lib/include
 
-install: lib/$(LIB_LAPACK_WRAPPER)
+install: all_libs
 	$(MKDIR) $(PREFIX)/include
 	cp -rf lib/include/* $(PREFIX)/include
 	cp -f -P lib/lib/*   $(PREFIX)/lib
@@ -271,10 +164,9 @@ install: lib/$(LIB_LAPACK_WRAPPER)
 config:
 	rm -f src/lapack_wrapper/lapack_wrapper_config.hh
 	sed 's/@@LAPACK_WRAPPER_USE@@/#define $(USED_LIB) 1/' <src/lapack_wrapper/lapack_wrapper_config.hh.tmpl | \
-	sed 's/@@LAPACK_WRAPPER_THREAD@@/#define $(THREAD) 1/' | \
 	sed 's/@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@/$(SYSTEMOPENBLAS)#define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1/' >src/lapack_wrapper/lapack_wrapper_config.hh
 
-run:
+run: tests
 	./bin/test1-small-factorization
 	./bin/test2-Timing
 	./bin/test3-BandedMatrix

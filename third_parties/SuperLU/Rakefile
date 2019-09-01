@@ -54,7 +54,7 @@ end
 task :build_win, [:year, :bits] => [:download] do |t, args|
   args.with_defaults(:year => "2017", :bits => "x64" )
 
-  if File.exists?("libs/lib/superlu_vs#{args.year}_#{args.bits}.lib") and 
+  if File.exists?("libs/lib/superlu_vs#{args.year}_#{args.bits}.lib") and
      File.exists?("libs/lib/superlu_vs#{args.year}_#{args.bits}_debug.lib") then
     puts "SuperLU already compiled"
   else
@@ -68,7 +68,6 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
     FileUtils.rm_rf   dir
     FileUtils.mkdir_p dir
     FileUtils.cd      dir
-
 
     tmp = " -DBITS=#{args.bits} -DYEAR=#{args.year} " + ' -DCMAKE_INSTALL_PREFIX:PATH=..\libs ..\superlu'
 
@@ -148,12 +147,17 @@ end
 
 task :clean_linux do
   FileUtils.rm_rf "lib"
+  FileUtils.rm_rf "superlu"
 end
 
 task :clean_osx do
   FileUtils.rm_rf "lib"
+  FileUtils.rm_rf "superlu"
 end
 
-task :clean_windows do
-  FileUtils.rm_rf "lib"
+task :clean_win do
+  FileUtils.rm_rf "libs"
+  Dir['vs_*'].each do |f|
+    FileUtils.rm_rf f
+  end
 end

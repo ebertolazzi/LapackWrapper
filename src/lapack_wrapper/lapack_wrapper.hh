@@ -267,25 +267,25 @@
   #ifdef LAPACK_WRAPPER_OS_WINDOWS
     #ifdef LAPACK_WRAPPER_ARCH64
       #ifdef LAPACK_WRAPPER_USE_SYSTEM_OPENBLAS
+        #include <openblas/cblas.h>
+        #include <openblas/lapacke.h>
+      #else
         #include <openblas/x64/cblas.h>
         #include <openblas/x64/lapacke.h>
-      #else
-        #include "openblas/x64/cblas.h"
-        #include "openblas/x64/lapacke.h"
       #endif
     #else
       #ifdef LAPACK_WRAPPER_USE_SYSTEM_OPENBLAS
+        #include <openblas/cblas.h>
+        #include <openblas/lapacke.h>
+      #else
         #include <openblas/x86/cblas.h>
         #include <openblas/x86/lapacke.h>
-      #else
-        #include "openblas/x86/cblas.h"
-        #include "openblas/x86/lapacke.h"
       #endif
     #endif
   #else
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
-      #include "openblas/cblas.h"
-      #include "openblas/lapacke.h"
+        #include <openblas/cblas.h>
+        #include <openblas/lapacke.h>
     #else
       // use -I/usr/include/openblas
       #include <cblas.h>

@@ -106,9 +106,9 @@ task :build_win, [:year, :bits, :lapack, :thread] do |t, args|
 
   sh 'cmake --build . --config Release  --target ALL_BUILD'
   FileUtils.mkdir_p "../lib/lib"
-  FileUtils.cp 'Release/LapackWrapper.lib', "../lib/lib/LapackWrapper_vs#{args.year}_#{args.bits}.lib"  
+  FileUtils.cp dir+'/Release/lapack_wrapper.lib', "../lib/lib/lapack_wrapper_vs#{args.year}_#{args.bits}.lib"  
   sh 'cmake --build . --config Debug --target ALL_BUILD'
-  FileUtils.cp 'Debug/LapackWrapper.lib', "../lib/lib/LapackWrapper_vs#{args.year}_#{args.bits}_debug.lib"
+  FileUtils.cp dir+'/Debug/lapack_wrapper.lib', "../lib/lib/lapack_wrapper_vs#{args.year}_#{args.bits}_debug.lib"
 
   FileUtils.cd '..'
 

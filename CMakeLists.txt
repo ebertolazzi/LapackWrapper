@@ -11,10 +11,12 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-SET( TARGET LapackWrapper )
+SET( TARGET lapack_wrapper )
 
 PROJECT( ${TARGET} CXX C )
 enable_testing()
+
+SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/../lib")
 
 FILE( GLOB S ./CMakeLists-cflags.txt )
 IF(EXISTS ${S})
@@ -57,6 +59,11 @@ FOREACH (F ${S})
   FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
   LIST( APPEND HEADERS ${RF} )
 ENDFOREACH (F ${S})
+FILE( GLOB S ./src/lapack_wrapper/*/*.h* )
+FOREACH (F ${S})
+  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
+  LIST( APPEND HEADERS ${RF} )
+ENDFOREACH (F ${S})
 
 add_library( ${TARGET} STATIC ${SOURCES} ${HEADERS} )
 
@@ -72,11 +79,6 @@ SET(
 
 MESSAGE( STATUS "YEAR = ${YEAR}" )
 MESSAGE( STATUS "BITS = ${BITS}" )
-
-#SET( SUPERLU_NAME "superlu_vs${YEAR}_${BITS}" )
-#SET( OPENBLAS_NAME "libopenblas_${BITS}" )
-#SET( LAPACK_NAME "lapack_${BITS}" )
-#SET( BLAS_NAME "blas_${BITS}" )
 
 SET(LLPATH ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd )
 
