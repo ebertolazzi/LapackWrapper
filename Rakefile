@@ -217,8 +217,9 @@ task :build_linux, [:lapack] do |t, args|
   FileUtils.mkdir_p "../lib"
   FileUtils.mkdir_p "../lib/lib"
   FileUtils.mkdir_p "../lib/bin"
+  FileUtils.mkdir_p "../lib/dll"
   FileUtils.cp_r    './lib/lib',     '../lib/'
-  FileUtils.cp_r    './lib/bin',     '../lib/'
+  FileUtils.cp_r    './lib/dll',     '../lib/'
   FileUtils.cp_r    './lib/include', '../lib/'
   FileUtils.cd '..'
 

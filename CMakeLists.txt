@@ -116,8 +116,9 @@ ENDIF()
 
 add_library( HSL_${BITS} SHARED src/HSL/hsl_fake.cc )
 
-add_library( ${TARGETS} STATIC ${SOURCES} ${HEADERS})
-add_library( ${TARGET}  SHARED  ${SOURCES} ${HEADERS} )
+add_library( ${TARGETS}   STATIC ${SOURCES} ${HEADERS} )
+add_library( ${TARGET}    SHARED  ${SOURCES} ${HEADERS} )
+add_library( ${TARGETHSL} SHARED  src/HSL/hsl_fake.cc )
 TARGET_LINK_LIBRARIES( ${TARGET} ${TARGETHSL} ${lapackblas_libraries} )
 
 SET(
