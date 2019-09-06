@@ -23,22 +23,31 @@ TESTS = [
   "test6-EIGS"
 ]
 
-desc "run tests"
+desc "run tests on linux/osx"
 task :run do
   TESTS.each do |cmd|
     sh "./bin/#{cmd}"
   end
 end
 
+desc "run tests (Release) on windows"
 task :run_win do
   TESTS.each do |cmd|
     sh "bin\\Release\\#{cmd}.exe"
   end
 end
 
+desc "run tests (Debug) on windows"
+task :run_win_debug do
+  TESTS.each do |cmd|
+    sh "bin\\Debug\\#{cmd}.exe"
+  end
+end
+
 desc "build lib"
-task :build  do
-  sh "make"
+task :build do
+  sh "make config"
+  sh "make all"
 end
 
 def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
@@ -46,7 +55,7 @@ def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
   File.open(file, 'w+'){|f| f << text.gsub(text_to_replace, text_to_put_in_place)}
 end
 
-desc "compile for Visual Studio [default year=2017 bits=x64]"
+desc "compile for Visual Studio [default year=2017, bits=x64, lapack=LAPACK_WRAPPER_USE_OPENBLAS]"
 task :build_win, [:year, :bits, :lapack] do |t, args|
   args.with_defaults(
     :year   => "2017",
@@ -65,11 +74,6 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
     'src/lapack_wrapper/lapack_wrapper_config.hh',
     '@@LAPACK_WRAPPER_USE@@',
     "#define #{args.lapack} 1"
-  )
-  ChangeOnFile(
-    'src/lapack_wrapper/lapack_wrapper_config.hh',
-    '@@LAPACK_WRAPPER_THREAD@@',
-    "#define #{args.thread} 1"
   )
   ChangeOnFile(
     'src/lapack_wrapper/lapack_wrapper_config.hh',
@@ -223,4 +227,54 @@ task :build_linux, [:lapack] do |t, args|
   FileUtils.cp_r    './lib/include', '../lib/'
   FileUtils.cd '..'
 
+end
+
+desc 'install third parties for osx'
+task :osx_3rd do
+  FileUtils.cd 'third_parties'
+  sh "rake install_osx"
+  FileUtils.cd '..'
+end
+
+desc 'install third parties for linux'
+task :linux_3rd do
+  FileUtils.cd 'third_parties'
+  sh "rake install_linux"
+  FileUtils.cd '..'
+end
+
+desc "compile for Visual Studio [default year=2017, bits=x64, lapack=LAPACK_WRAPPER_USE_OPENBLAS]"
+task :win_3rd, [:year, :bits, :lapack] do |t, args|
+  args.with_defaults(
+    :year   => "2017",
+    :bits   => "x64",
+    :lapack => "LAPACK_WRAPPER_USE_OPENBLAS"
+  )
+  FileUtils.cd 'third_parties'
+  sh "rake install_win[#{args.year},#{args.bits},#{args.lapack}]"
+  FileUtils.cd '..'
+end
+
+desc "clean for OSX"
+task :clean_osx do
+  sh "make clean"
+  FileUtils.cd 'third_parties'
+  sh "rake clean_osx"
+  FileUtils.cd '..'
+end
+
+desc "clean for LINUX"
+task :clean_linux do
+  sh "make clean"
+  FileUtils.cd 'third_parties'
+  sh "rake clean_linux"
+  FileUtils.cd '..'
+end
+
+desc "clean for WINDOWS"
+task :clean_win do
+  FileUtils.rm_rf 'vs_*'
+  FileUtils.cd 'third_parties'
+  sh "rake clean_win"
+  FileUtils.cd '..'
 end

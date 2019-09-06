@@ -37,7 +37,7 @@ def superlu_CMakeLists
   );
 end
 
-desc "build superlu_#{VER} lib"
+desc "build superlu lib for linux/osx"
 task :build => [:download] do
   filename = "superlu_#{VER}.tar.gz"
   if File.exists?('lib/lib/libsuperlu.a') then
@@ -51,6 +51,7 @@ task :build => [:download] do
   end
 end
 
+desc "build superlu lib for windows"
 task :build_win, [:year, :bits] => [:download] do |t, args|
   args.with_defaults(:year => "2017", :bits => "x64" )
 
@@ -99,9 +100,9 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
 
     FileUtils.cd '..'
   end
-
 end
 
+desc "install locally superlu lib for windows"
 task :install => [:build] do
   prefix = "../../lib3rd"
   puts "SuperLU copy files to #{prefix}"
@@ -116,12 +117,15 @@ task :install => [:build] do
   end
 end
 
+desc "install locally superlu lib for linux"
 task :install_linux => [:install] do
 end
 
+desc "install locally superlu lib for osx"
 task :install_osx => [:install] do
 end
 
+desc "install locally superlu lib for windows"
 task :install_win, [:year, :bits] do |t, args|
   args.with_defaults(:year => "2017", :bits => "x64" )
 
@@ -145,16 +149,19 @@ task :install_win, [:year, :bits] do |t, args|
 
 end
 
+desc "clean superlu for linux"
 task :clean_linux do
   FileUtils.rm_rf "lib"
   FileUtils.rm_rf "superlu"
 end
 
+desc "clean superlu for osx"
 task :clean_osx do
   FileUtils.rm_rf "lib"
   FileUtils.rm_rf "superlu"
 end
 
+desc "clean superlu for windows"
 task :clean_win do
   FileUtils.rm_rf "libs"
   Dir['vs_*'].each do |f|

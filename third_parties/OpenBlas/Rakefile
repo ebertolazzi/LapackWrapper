@@ -24,11 +24,14 @@ task :install_win, [:year, :bits]  do |t, args|
   Dir[bits+'/include/*.h'].each{ |f| FileUtils.cp(f,'../../lib3rd/include/openblas/'+bits+'/'+File.basename(f)) }
 end
 
+desc "clean Openblas for linux"
 task :clean_linux do
 end
 
+desc "clean Openblas forosx"
 task :clean_osx do
 end
 
+desc "clean Openblas for windows"
 task :clean_win do
 end
