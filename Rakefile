@@ -23,6 +23,8 @@ TESTS = [
   "test6-EIGS"
 ]
 
+PARALLEL = ' --parallel 8'
+
 desc "run tests on linux/osx"
 task :run do
   TESTS.each do |cmd|
@@ -47,7 +49,7 @@ end
 desc "build lib"
 task :build do
   sh "make config"
-  sh "make all"
+  sh "make --jobs=8 install_local"
 end
 
 def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
@@ -114,7 +116,7 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
     puts "Visual Studio year #{year} not supported!\n";
   end
 
-  sh 'cmake --build . --config Release  --target install'
+  sh 'cmake  --build . --config Release  --target install'+PARALLEL
   FileUtils.mkdir_p "../lib/lib"
   FileUtils.mkdir_p "../lib/bin"
   FileUtils.mkdir_p "../lib/dll"
@@ -127,7 +129,7 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
 
   FileUtils.cp_r "lib/include", "../lib/"
 
-  sh 'cmake --build . --config Debug --target install'
+  sh 'cmake --build . --config Debug --target install'+PARALLEL
   FileUtils.cp "lib/bin/HSL_#{args.bits}.dll",            "../lib/bin/libHSL_#{args.bits}_debug.dll"
   FileUtils.cp "lib/lib/HSL_#{args.bits}.lib",            "../lib/dll/libHSL_#{args.bits}.lib"
   FileUtils.cp "lib/bin/lapack_wrapper_#{args.bits}.dll", "../lib/bin/liblapack_wrapper_#{args.bits}_debug.dll"
@@ -156,11 +158,6 @@ task :build_osx, [:lapack] do |t, args|
   )
   ChangeOnFile(
     'src/lapack_wrapper/lapack_wrapper_config.hh',
-    '@@LAPACK_WRAPPER_THREAD@@',
-    "#define #{args.thread} 1"
-  )
-  ChangeOnFile(
-    'src/lapack_wrapper/lapack_wrapper_config.hh',
     '@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@',
     "// #define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1"
   )
@@ -173,10 +170,10 @@ task :build_osx, [:lapack] do |t, args|
 
   # do not build executable
   sh 'cmake ..'
-  sh 'cmake --build . --config Release --target install'
+  sh 'cmake --build . --config Release --target install'+PARALLEL
   FileUtils.mkdir_p "../lib"
   FileUtils.cp_r    './lib/lib',     '../lib/'
-  #FileUtils.cp_r    './lib/bin',     '../lib/'
+  FileUtils.cp_r    './lib/dll',     '../lib/'
   FileUtils.cp_r    './lib/include', '../lib/'
   FileUtils.cd '..'
 
@@ -200,11 +197,6 @@ task :build_linux, [:lapack] do |t, args|
   )
   ChangeOnFile(
     'src/lapack_wrapper/lapack_wrapper_config.hh',
-    '@@LAPACK_WRAPPER_THREAD@@',
-    "#define #{args.thread} 1"
-  )
-  ChangeOnFile(
-    'src/lapack_wrapper/lapack_wrapper_config.hh',
     '@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@',
     "// #define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1"
   )
@@ -217,7 +209,7 @@ task :build_linux, [:lapack] do |t, args|
 
   # do not build executable
   sh 'cmake ..'
-  sh 'cmake --build . --config Release --target install'
+  sh 'cmake --build . --config Release --target install'+PARALLEL
   FileUtils.mkdir_p "../lib"
   FileUtils.mkdir_p "../lib/lib"
   FileUtils.mkdir_p "../lib/bin"

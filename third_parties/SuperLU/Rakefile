@@ -1,9 +1,11 @@
 require "rake"
 require "../common.rb"
 
-task :default => [:install]
+task :default => [:install_osx]
 
 VER='5.2.1'
+
+PARALLEL = ' --parallel 8'
 
 desc "download superlu_#{VER}.tar.gz libs"
 task :download do
@@ -47,7 +49,12 @@ task :build => [:download] do
     FileUtils.rm_rf 'superlu'
     FileUtils.mv    'SuperLU_'+VER, 'superlu'
     superlu_CMakeLists()
-    sh "cd superlu; cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib .; make; make install; cd .."
+    FileUtils.cd 'superlu'
+    sh 'cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib'+PARALLEL+' .'
+    sh "make; make install"
+    #sh "cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib -DBUILD_SHARED_LIBS=true ."
+    #sh "make; make install"
+    FileUtils.cd '..'
   end
 end
 
@@ -92,18 +99,18 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
     else
       puts "Visual Studio year #{year} not supported!\n";
     end
-    sh 'cmake --build . --config Release  --target install'
+    sh 'cmake --build . --config Release  --target install'+PARALLEL
     FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_#{args.bits}.lib"
 
-    sh 'cmake --build . --config Debug --target install'
+    sh 'cmake --build . --config Debug --target install'+PARALLEL
     FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_#{args.bits}_debug.lib"
 
     FileUtils.cd '..'
   end
 end
 
-desc "install locally superlu lib for windows"
-task :install => [:build] do
+task :install_common, [:os] => [:build] do |t, args|
+  args.with_defaults(:os => "_osx" )
   prefix = "../../lib3rd"
   puts "SuperLU copy files to #{prefix}"
   FileUtils.rm_rf   "#{prefix}/include/superlu"
@@ -112,17 +119,19 @@ task :install => [:build] do
   Dir['lib/include/*'].each do |f|
     FileUtils.cp f, prefix+'/include/superlu/'+File.basename(f)
   end
-  Dir['lib/lib/*'].each do |f|
-    FileUtils.cp f, prefix+'/lib/'+File.basename(f)
+  Dir['lib/lib/*.a'].each do |f|
+    FileUtils.cp f, prefix+'/lib/'+File.basename(f,".a")+args.os+".a"
   end
 end
 
 desc "install locally superlu lib for linux"
-task :install_linux => [:install] do
+task :install_linux => [:build] do
+  Rake::Task[:install_common].invoke('_linux')
 end
 
 desc "install locally superlu lib for osx"
-task :install_osx => [:install] do
+task :install_osx => [:build] do
+  Rake::Task[:install_common].invoke('_osx')
 end
 
 desc "install locally superlu lib for windows"
@@ -144,7 +153,7 @@ task :install_win, [:year, :bits] do |t, args|
 
   puts "SuperLU copy files to #{lib}"
   Dir['libs/lib/*'].each do |f|
-    FileUtils.cp f, lib+File.basename(f)
+    FileUtils.cp f, lib+File.basename(f,".lib")+"_win.lib"
   end
 
 end
