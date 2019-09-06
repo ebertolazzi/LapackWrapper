@@ -13,32 +13,6 @@ task :download do
   url_download( "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/#{filename}", filename )
 end
 
-def superlu_CMakeLists
-  ChangeOnFile(
-    'superlu/CMakeLists.txt',
-    'enable_language (Fortran)',
-    '#enable_language (Fortran)'
-  );
-
-  ChangeOnFile(
-    'superlu/CMakeLists.txt',
-    'set(NOFORTRAN FALSE)',
-    'set(NOFORTRAN TRUE)'
-  );
-
-  ChangeOnFile(
-    'superlu/CMakeLists.txt',
-    'option(enable_tests     "Build tests" ON)',
-    'option(enable_tests     "Build tests" OFF)'
-  );
-
-  ChangeOnFile(
-    'superlu/CMakeLists.txt',
-    'CMAKE_C_FLAGS "',
-    'CMAKE_C_FLAGS "-fPIC '
-  );
-end
-
 desc "build superlu lib for linux/osx"
 task :build => [:download] do
   filename = "superlu_#{VER}.tar.gz"
@@ -48,12 +22,11 @@ task :build => [:download] do
     extract_tgz(filename)
     FileUtils.rm_rf 'superlu'
     FileUtils.mv    'SuperLU_'+VER, 'superlu'
-    superlu_CMakeLists()
-    FileUtils.cd 'superlu'
-    sh 'cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib'+PARALLEL+' .'
+    FileUtils.rm_rf 'build'
+    FileUtils.mkdir 'build'
+    FileUtils.cd    'build'
+    sh 'cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib'+PARALLEL+' ..'
     sh "make; make install"
-    #sh "cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib -DBUILD_SHARED_LIBS=true ."
-    #sh "make; make install"
     FileUtils.cd '..'
   end
 end
@@ -70,14 +43,13 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
     extract_tgz(filename)
     FileUtils.rm_rf 'superlu'
     FileUtils.mv    'SuperLU_'+VER, 'superlu'
-    superlu_CMakeLists()
     dir = "vs_#{args.year}_#{args.bits}"
 
     FileUtils.rm_rf   dir
     FileUtils.mkdir_p dir
     FileUtils.cd      dir
 
-    tmp = " -DBITS=#{args.bits} -DYEAR=#{args.year} " + ' -DCMAKE_INSTALL_PREFIX:PATH=..\libs ..\superlu'
+    tmp = " -DBITS=#{args.bits} -DYEAR=#{args.year} " + ' -DCMAKE_INSTALL_PREFIX:PATH=..\libs ..'
 
     win32_64 = ''
     case args.bits

@@ -63,8 +63,6 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
     :year   => "2017",
     :bits   => "x64",
     :lapack => "LAPACK_WRAPPER_USE_OPENBLAS"
-    #:lapack => "LAPACK_WRAPPER_USE_LAPACK",
-    #:lapack => "LAPACK_WRAPPER_USE_MKL"
   )
 
   cmd = "set path=%path%;lib3rd\\lib;lib3rd\\dll;"
@@ -142,11 +140,7 @@ end
 
 desc 'compile for OSX [default lapack="LAPACK_WRAPPER_USE_ACCELERATE"]'
 task :build_osx, [:lapack] do |t, args|
-  args.with_defaults(
-    :lapack => "LAPACK_WRAPPER_USE_ACCELERATE"
-    #:lapack => "LAPACK_WRAPPER_USE_LAPACK",
-    #:lapack => "LAPACK_WRAPPER_USE_MKL"
-  )
+  args.with_defaults( :lapack => "LAPACK_WRAPPER_USE_ACCELERATE" )
 
   FileUtils.rm_f 'src/lapack_wrapper/lapack_wrapper_config.hh'
   FileUtils.cp   'src/lapack_wrapper/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper/lapack_wrapper_config.hh'
@@ -169,7 +163,7 @@ task :build_osx, [:lapack] do |t, args|
   FileUtils.cd      dir
 
   # do not build executable
-  sh 'cmake ..'
+  sh 'cmake -D' + args.lapack + '=true -DBUILD_EXECUTABLE:VAR=true ..'
   sh 'cmake --build . --config Release --target install'+PARALLEL
   FileUtils.mkdir_p "../lib"
   FileUtils.cp_r    './lib/lib',     '../lib/'
