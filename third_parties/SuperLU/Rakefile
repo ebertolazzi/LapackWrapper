@@ -5,7 +5,12 @@ task :default => [:install_osx]
 
 VER='5.2.1'
 
-PARALLEL = ' --parallel 8'
+cmakeversion = %x( cmake --version ).scan(/\d+\.\d+/).last
+if cmakeversion >= "3.12" then
+  PARALLEL = '--parallel 8 '
+else
+  PARALLEL = ''
+end
 
 desc "download superlu_#{VER}.tar.gz libs"
 task :download do
@@ -25,7 +30,7 @@ task :build => [:download] do
     FileUtils.rm_rf 'build'
     FileUtils.mkdir 'build'
     FileUtils.cd    'build'
-    sh 'cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib'+PARALLEL+' ..'
+    sh 'cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib '+PARALLEL+'..'
     sh "make; make install"
     FileUtils.cd '..'
   end
@@ -71,10 +76,10 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
     else
       puts "Visual Studio year #{year} not supported!\n";
     end
-    sh 'cmake --build . --config Release  --target install'+PARALLEL
+    sh 'cmake --build . --config Release  --target install '+PARALLEL
     FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_#{args.bits}.lib"
 
-    sh 'cmake --build . --config Debug --target install'+PARALLEL
+    sh 'cmake --build . --config Debug --target install '+PARALLEL
     FileUtils.mv '../libs/lib/superlu.lib', "../libs/lib/superlu_#{args.bits}_debug.lib"
 
     FileUtils.cd '..'
