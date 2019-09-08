@@ -137,18 +137,16 @@ ELSEIF( UNIX )
 ELSE()
   IF ( BITS MATCHES "x64")
     FIND_LIBRARY(
-      lapackblas_libraries libopenblas_x64.lib 
-      HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
+      lapackblas_libraries libopenblas_x64.lib
+      HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll
     )
   ELSE()
     FIND_LIBRARY(
       lapackblas_libraries libopenblas.lib
-      HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
+      HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll
     )
   ENDIF()
 ENDIF()
-
-add_library( HSL_${BITS} SHARED src/HSL/hsl_fake.cc )
 
 add_library( ${TARGET}     SHARED ${SOURCES} ${HEADERS} )
 add_library( ${TARGETS}    STATIC ${SOURCES} ${HEADERS} )
