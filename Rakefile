@@ -124,20 +124,20 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
   FileUtils.mkdir_p "../lib/bin"
   FileUtils.mkdir_p "../lib/dll"
   FileUtils.mkdir_p "../lib/include"
-  FileUtils.cp "lib/bin/HSL_#{args.bits}.dll",                   "../lib/bin/libHSL_#{args.bits}.dll"
-  FileUtils.cp "lib/lib/HSL_#{args.bits}.lib",                   "../lib/dll/libHSL_#{args.bits}.lib"
-  FileUtils.cp "lib/bin/lapack_wrapper_#{args.bits}.dll",        "../lib/bin/liblapack_wrapper_#{args.bits}.dll"
-  FileUtils.cp "lib/lib/lapack_wrapper_#{args.bits}.lib",        "../lib/dll/liblapack_wrapper_#{args.bits}.lib"
-  FileUtils.cp "lib/lib/lapack_wrapper_#{args.bits}_static.lib", "../lib/lib/liblapack_wrapper_#{args.bits}_static.lib"
+  FileUtils.cp "lib/bin/HSL_win_#{args.bits}.dll",                   "../lib/bin/libHSL_win_#{args.bits}.dll"
+  FileUtils.cp "lib/lib/HSL_win_#{args.bits}.lib",                   "../lib/dll/libHSL_win_#{args.bits}.lib"
+  FileUtils.cp "lib/bin/lapack_wrapper_win_#{args.bits}.dll",        "../lib/bin/liblapack_wrapper_win_#{args.bits}.dll"
+  FileUtils.cp "lib/lib/lapack_wrapper_win_#{args.bits}.lib",        "../lib/dll/liblapack_wrapper_win_#{args.bits}.lib"
+  FileUtils.cp "lib/lib/lapack_wrapper_win_#{args.bits}_static.lib", "../lib/lib/liblapack_wrapper_win_#{args.bits}_static.lib"
 
   FileUtils.cp_r "lib/include", "../lib/"
 
   sh 'cmake --build . --config Debug --target install '+PARALLEL
-  FileUtils.cp "lib/bin/HSL_#{args.bits}.dll",            "../lib/bin/libHSL_#{args.bits}_debug.dll"
-  FileUtils.cp "lib/lib/HSL_#{args.bits}.lib",            "../lib/dll/libHSL_#{args.bits}.lib"
-  FileUtils.cp "lib/bin/lapack_wrapper_#{args.bits}.dll", "../lib/bin/liblapack_wrapper_#{args.bits}_debug.dll"
-  FileUtils.cp "lib/lib/lapack_wrapper_#{args.bits}.lib", "../lib/dll/liblapack_wrapper_#{args.bits}_debug.lib"
-  FileUtils.cp "lib/lib/lapack_wrapper_#{args.bits}_static.lib", "../lib/lib/liblapack_wrapper_#{args.bits}_static_debug.lib"
+  FileUtils.cp "lib/bin/HSL_win_#{args.bits}.dll",                   "../lib/bin/libHSL_win_#{args.bits}_debug.dll"
+  FileUtils.cp "lib/lib/HSL_win_#{args.bits}.lib",                   "../lib/dll/libHSL_win_#{args.bits}.lib"
+  FileUtils.cp "lib/bin/lapack_wrapper_win_#{args.bits}.dll",        "../lib/bin/liblapack_wrapper_win_#{args.bits}_debug.dll"
+  FileUtils.cp "lib/lib/lapack_wrapper_win_#{args.bits}.lib",        "../lib/dll/liblapack_wrapper_win_#{args.bits}_debug.lib"
+  FileUtils.cp "lib/lib/lapack_wrapper_win_#{args.bits}_static.lib", "../lib/lib/liblapack_wrapper_win_#{args.bits}_static_debug.lib"
 
   FileUtils.cd '..'
 
