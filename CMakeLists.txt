@@ -11,7 +11,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-IF ( CMAKE_BUILD_TYPE EQ "DEBUG" )
+IF ( (CMAKE_BUILD_TYPE STREQUAL "DEBUG") OR (CMAKE_BUILD_TYPE STREQUAL "Debug") )
   IF(APPLE)
     SET( TARGET     lapack_wrapper_osx_debug )
     SET( TARGETS    lapack_wrapper_osx_static_debug )
