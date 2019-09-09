@@ -21,7 +21,7 @@ end
 desc "build superlu lib for osx"
 task :build_osx => [:download] do
   filename = "superlu_#{VER}.tar.gz"
-  if File.exists?('lib/lib/libsuperlu_osx.a') then
+  if File.exists?('lib/lib/libsuperlu_osx_static.a') then
     puts "SuperLU already compiled"
   else
     extract_tgz(filename)
@@ -32,7 +32,7 @@ task :build_osx => [:download] do
     FileUtils.cd    'build'
     sh 'cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib '+PARALLEL+'..'
     sh "make; make install"
-    FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_osx.a"
+    FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_osx_static.a"
     FileUtils.cd '..'
   end
   Rake::Task[:install_common].invoke()
@@ -41,7 +41,7 @@ end
 desc "build superlu lib for linux"
 task :build_linux => [:download] do
   filename = "superlu_#{VER}.tar.gz"
-  if File.exists?('lib/lib/libsuperlu_linux.a') then
+  if File.exists?('lib/lib/libsuperlu_linux_static.a') then
     puts "SuperLU already compiled"
   else
     extract_tgz(filename)
@@ -52,7 +52,7 @@ task :build_linux => [:download] do
     FileUtils.cd    'build'
     sh 'cmake -DCMAKE_INSTALL_PREFIX:PATH=../lib '+PARALLEL+'..'
     sh "make; make install"
-    FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_linux.a"
+    FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_linux_static.a"
     FileUtils.cd '..'
   end
   Rake::Task[:install_common].invoke()
