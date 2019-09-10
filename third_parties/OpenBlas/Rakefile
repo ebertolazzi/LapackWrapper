@@ -1,5 +1,5 @@
 require "rake"
-require "../common.rb"
+require "../../Rakefile_common.rb"
 
 desc "install locally OpenBlas for Linux (do nothing)"
 task :install_linux do

@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 # Project Version
-project(SuperLU NONE)
+PROJECT( SuperLU C )
 set(VERSION_MAJOR "5")
 set(VERSION_MINOR "2")
 set(VERSION_BugFix "1")
@@ -19,13 +19,17 @@ set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix})
 # Usual initialization stuff
 #
 ######################################################################
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)    ## ????
-set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)    ## ????
+SET(CMAKE_INSTALL_PREFIX     "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+SET(CMAKE_INSTALL_LIBDIR     "${CMAKE_INSTALL_PREFIX}/lib")
+SET(CMAKE_INSTALL_BINDIR     "${CMAKE_INSTALL_PREFIX}/bin")
+SET(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include")
 
 IF ( APPLE OR UNIX )
-  set(PROJECT_NAME_LIB_EXPORT libsuperlu.a)
+  SET(PROJECT_NAME_LIB_EXPORT libsuperlu.a)
 ELSE()
-  set(PROJECT_NAME_LIB_EXPORT libsuperlu.lib)
+  ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
+  SET(PROJECT_NAME_LIB_EXPORT libsuperlu.lib)
 ENDIF()
 
 enable_language(C)

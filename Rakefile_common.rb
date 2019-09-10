@@ -10,6 +10,15 @@
   end
 end
 
+cmakeversion = %x( cmake --version ).scan(/\d+\.\d+/).last
+if cmakeversion >= "3.12" then
+  PARALLEL = '--parallel 8 '
+else
+  PARALLEL = ''
+end
+
+COMPILE_DEBUG = true
+
 if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil then
   #linux
   task :default => [:install_linux]
@@ -133,7 +142,30 @@ def extract_zip( filename, destination_path='.' )
 end
 
 
-def ChangeOnFile(file, text_to_replace, text_to_put_in_place)
-  text = File.read file
-  File.open(file, 'w+'){|f| f << text.gsub(text_to_replace, text_to_put_in_place)}
+def win_vs( bits, year )
+
+  tmp = " -DBITS=#{bits} -DYEAR=#{year} "
+
+  win32_64 = ''
+  case bits
+  when /x64/
+    win32_64 = ' Win64'
+  end
+
+  case year
+  when "2010"
+    tmp = 'cmake -G "Visual Studio 10 2010' + win32_64 +'" ' + tmp
+  when "2012"
+    tmp = 'cmake -G "Visual Studio 11 2012' + win32_64 +'" ' + tmp
+  when "2013"
+    tmp = 'cmake -G "Visual Studio 12 2013' + win32_64 +'" ' + tmp
+  when "2015"
+    tmp = 'cmake -G "Visual Studio 14 2015' + win32_64 +'" ' + tmp
+  when "2017"
+    tmp = 'cmake -G "Visual Studio 15 2017' + win32_64 +'" ' + tmp
+  else
+    puts "Visual Studio year #{year} not supported!\n";
+    return ""
+  end
+  return tmp
 end
