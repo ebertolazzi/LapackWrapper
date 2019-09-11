@@ -97,6 +97,15 @@
   #define LAPACK_WRAPPER_CONSTEXPR
 #endif
 
+#if defined(LAPACK_WRAPPER_OS_WINDOWS) && defined(_MSC_VER)
+  // automatically include windows libs in visual studio
+  #pragma comment(lib, "shell32.lib")
+  #pragma comment(lib, "kernel32.lib")
+  #pragma comment(lib, "advapi32.lib")
+  #pragma comment(lib, "ws2_32.lib")
+  #pragma comment(lib, "IPHLPAPI.lib")
+  #pragma comment(lib, "Shlwapi.lib")
+  #pragma comment(lib, "iphlpapi.lib")
 #endif
 
 ///
