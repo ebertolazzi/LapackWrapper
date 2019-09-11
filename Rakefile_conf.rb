@@ -1,0 +1,2 @@
+COMPILE_DEBUG      = false
+COMPILE_EXECUTABLE = false

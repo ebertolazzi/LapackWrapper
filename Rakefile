@@ -7,7 +7,7 @@
   end
 end
 
-require "./Rakefile_common.rb"
+require_relative "./Rakefile_common.rb"
 
 task :default => [:build]
 
@@ -90,7 +90,11 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
   FileUtils.cd      dir
 
   cmake_cmd = win_vs(args.bits,args.year)
-  cmake_cmd += ' -DBUILD_EXECUTABLE:VAR=true '
+  if COMPILE_EXECUTABLE then
+    cmake_cmd += ' -DBUILD_EXECUTABLE:VAR=true '
+  else
+    cmake_cmd += ' -DBUILD_EXECUTABLE:VAR=false '
+  end
 
   FileUtils.mkdir_p "../lib/lib"
   FileUtils.mkdir_p "../lib/bin"
@@ -158,12 +162,18 @@ task :build_osx, [:lapack] do |t, args|
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
+  if COMPILE_EXECUTABLE then
+    cmd1 = ' -DBUILD_EXECUTABLE:VAR=true '
+  else
+    cmd1 = ' -DBUILD_EXECUTABLE:VAR=false '
+  end
+
   if COMPILE_DEBUG then
-    sh 'cmake -D' + args.lapack + '=true -DBUILD_EXECUTABLE:VAR=true  -DCMAKE_BUILD_TYPE:VAR=Debug ..'
+    sh 'cmake -D' + args.lapack + '=true ' + cmd1 + ' -DCMAKE_BUILD_TYPE:VAR=Debug ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL
     FileUtils.cp_r './lib', '../'
   end
-  sh 'cmake -D' + args.lapack + '=true -DBUILD_EXECUTABLE:VAR=true  -DCMAKE_BUILD_TYPE:VAR=Release ..'
+  sh 'cmake -D' + args.lapack + '=true ' + cmd1 + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
   sh 'cmake --build . --config Release --target install '+PARALLEL
   FileUtils.cp_r './lib', '../'
   FileUtils.cd '..'
@@ -200,12 +210,18 @@ task :build_linux, [:lapack] do |t, args|
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
+  if COMPILE_EXECUTABLE then
+    cmd1 += ' -DBUILD_EXECUTABLE:VAR=true '
+  else
+    cmd1 += ' -DBUILD_EXECUTABLE:VAR=false '
+  end
+
   if COMPILE_DEBUG then
-    sh 'cmake -D' + args.lapack + '=true -DBUILD_EXECUTABLE:VAR=true  -DCMAKE_BUILD_TYPE:VAR=Debug ..'
+    sh 'cmake -D' + args.lapack + '=true ' + cmd1 + ' -DCMAKE_BUILD_TYPE:VAR=Debug ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL
     FileUtils.cp_r './lib', '../'
   end
-  sh 'cmake -D' + args.lapack + '=true -DBUILD_EXECUTABLE:VAR=true  -DCMAKE_BUILD_TYPE:VAR=Release ..'
+  sh 'cmake -D' + args.lapack + '=true ' + cmd1 + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
   sh 'cmake --build . --config Release --target install '+PARALLEL
   FileUtils.cp_r './lib', '../'
   FileUtils.cd '..'
