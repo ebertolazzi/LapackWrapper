@@ -272,29 +272,27 @@
   #define lapack_complex_double std::complex<double>
 
   #ifdef LAPACK_WRAPPER_OS_WINDOWS
-    #ifdef LAPACK_WRAPPER_ARCH64
-      #ifdef LAPACK_WRAPPER_USE_SYSTEM_OPENBLAS
-        #include <openblas/cblas.h>
-        #include <openblas/lapacke.h>
-      #else
-        #include <openblas/x64/cblas.h>
-        #include <openblas/x64/lapacke.h>
-      #endif
-    #else
-      #ifdef LAPACK_WRAPPER_USE_SYSTEM_OPENBLAS
-        #include <openblas/cblas.h>
-        #include <openblas/lapacke.h>
-      #else
-        #include <openblas/x86/cblas.h>
-        #include <openblas/x86/lapacke.h>
-      #endif
-    #endif
-  #else
-    #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
+    // on windows the defaul is too use local openblas
+    #ifdef LAPACK_WRAPPER_USE_SYSTEM_OPENBLAS
       #include <openblas/cblas.h>
       #include <openblas/lapacke.h>
     #else
-      // use -I/usr/include/openblas
+      #ifdef LAPACK_WRAPPER_ARCH64
+        #include "../openblas/x64/cblas.h"
+        #include "../openblas/x64/lapacke.h"
+      #else
+        #include "../openblas/x86/cblas.h"
+        #include "../openblas/x86/lapacke.h"
+      #endif
+    #endif
+  #else
+    // on linux/osx the defaul is too use SYSTEM openblas
+    #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
+      #include "../openblas/cblas.h"
+      #include "../openblas/lapacke.h"
+    #else
+      // LINUX -I/usr/include/openblas
+      // OSX   -I/usr/local/opt/openblas/include/
       #include <cblas.h>
       #include <lapacke.h>
     #endif
