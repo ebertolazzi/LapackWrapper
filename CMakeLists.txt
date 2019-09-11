@@ -218,15 +218,17 @@ IF( BUILD_EXECUTABLE )
 
 ENDIF()
 
-FILE( GLOB HDR_HSL  ./src/HSL/*.h* )
-FILE( GLOB HDR_LW   ./src/lapack_wrapper/*.h* )
-FILE( GLOB HDR_LW1  ./src/lapack_wrapper/code/*.h* )
-FILE( GLOB HDR_LW2  ./src/lapack_wrapper/code++/*.h* )
-FILE( GLOB HDR_ST   ./src/sparse_tool/*.h* )
-FILE( GLOB HDR_ST1  ./src/sparse_tool/interfaces/*.h* )
-FILE( GLOB HDR_ST2  ./src/sparse_tool/iterative/*.h* )
-FILE( GLOB HDR_ST3  ./src/sparse_tool/preconditioner/*.h* )
-FILE( GLOB HDR_ZS   ./src/zstream/*.h* )
+FILE( GLOB HDR_HSL   ./src/HSL/*.h* )
+FILE( GLOB HDR_LW    ./src/lapack_wrapper/*.h* )
+FILE( GLOB HDR_LW1   ./src/lapack_wrapper/code/*.h* )
+FILE( GLOB HDR_LW2   ./src/lapack_wrapper/code++/*.h* )
+FILE( GLOB HDR_ST    ./src/sparse_tool/*.h* )
+FILE( GLOB HDR_ST1   ./src/sparse_tool/interfaces/*.h* )
+FILE( GLOB HDR_ST2   ./src/sparse_tool/iterative/*.h* )
+FILE( GLOB HDR_ST3   ./src/sparse_tool/preconditioner/*.h* )
+FILE( GLOB HDR_ZS    ./src/zstream/*.h* )
+FILE( GLOB HDR_OBx64 ./src/openblas/x64/*.h* )
+FILE( GLOB HDR_OBx86 ./src/openblas/x66/*.h* )
 
 INSTALL(
   TARGETS ${TARGETHSL} ${TARGETHSLS} ${TARGET} ${TARGETS}
@@ -235,71 +237,17 @@ INSTALL(
   ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
 )
 
-INSTALL(FILES ${HDR_HSL} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/HSL )
-INSTALL(FILES ${HDR_LW}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper )
-INSTALL(FILES ${HDR_LW1} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper/code )
-INSTALL(FILES ${HDR_LW2} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper/code++ )
-INSTALL(FILES ${HDR_ST}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool )
-INSTALL(FILES ${HDR_ST1} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/interfaces )
-INSTALL(FILES ${HDR_ST2} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/iterative )
-INSTALL(FILES ${HDR_ST3} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/preconditioner )
-INSTALL(FILES ${HDR_ZS}  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/zstream )
-
-# do the copying
-foreach( file_glob ${HDR_HSL})
-  get_filename_component( file_loc "${file_glob}" NAME)
-  add_custom_command(
-    TARGET ${TARGET}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${file_glob}
-            ${CMAKE_INSTALL_PREFIX}/include/HSL/${file_loc}
-)
-endforeach( file_glob )
-
-foreach( file_glob ${HDR_LW})
-  get_filename_component( file_loc "${file_glob}" NAME)
-  add_custom_command(
-    TARGET ${TARGET}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${file_glob}
-            ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper/${file_loc}
-)
-endforeach( file_glob )
-
-foreach( file_glob ${HDR_LW})
-  get_filename_component( file_loc "${file_glob}" NAME)
-  add_custom_command(
-    TARGET ${TARGET}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${file_glob}
-            ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper/${file_loc}
-)
-endforeach( file_glob )
-
-foreach( file_glob ${HDR_ST})
-  get_filename_component( file_loc "${file_glob}" NAME)
-  add_custom_command(
-    TARGET ${TARGET}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${file_glob}
-            ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/${file_loc}
-)
-endforeach( file_glob )
-
-foreach( file_glob ${HDR_ZS})
-  get_filename_component( file_loc "${file_glob}" NAME)
-  add_custom_command(
-    TARGET ${TARGET}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${file_glob}
-            ${CMAKE_INSTALL_PREFIX}/include/zstream/${file_loc}
-)
-endforeach( file_glob )
+INSTALL(FILES ${HDR_HSL}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/HSL )
+INSTALL(FILES ${HDR_LW}    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper )
+INSTALL(FILES ${HDR_LW1}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper/code )
+INSTALL(FILES ${HDR_LW2}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper/code++ )
+INSTALL(FILES ${HDR_ST}    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool )
+INSTALL(FILES ${HDR_ST1}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/interfaces )
+INSTALL(FILES ${HDR_ST2}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/iterative )
+INSTALL(FILES ${HDR_ST3}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/preconditioner )
+INSTALL(FILES ${HDR_ZS}    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/zstream )
+INSTALL(FILES ${HDR_OBx64} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/openblas/x64 )
+INSTALL(FILES ${HDR_OBx86} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/openblas/x86 )
 
 MESSAGE( STATUS "Using ${SSE_FLAGS} extensions")
 MESSAGE( STATUS "C compiler                  = ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER}" )
