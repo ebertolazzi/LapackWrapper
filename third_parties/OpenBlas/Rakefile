@@ -16,8 +16,6 @@ task :install_win, [:year, :bits]  do |t, args|
   FileUtils.mkdir_p "../../lib3rd/lib"
   FileUtils.mkdir_p "../../lib3rd/dll"
   FileUtils.mkdir_p "../../lib3rd/bin/"+bits
-  #FileUtils.mkdir_p "../../lib3rd/include/openblas/"
-  #FileUtils.mkdir_p "../../lib3rd/include/openblas/"+bits+"/"
   FileUtils.mkdir_p "../../src/openblas/"+bits+"/"
   Dir[bits+'/dll/*'].each{ |f| FileUtils.cp(f,'../../lib3rd/dll/'+File.basename(f)) }
   Dir[bits+'/lib/*'].each{ |f| FileUtils.cp(f,'../../lib3rd/lib/'+File.basename(f)) }
@@ -25,7 +23,6 @@ task :install_win, [:year, :bits]  do |t, args|
     FileUtils.cp(f,'../../lib3rd/bin/'+bits+'/'+File.basename(f))
   end
   Dir[bits+'/include/*.h'].each do |f|
-    #FileUtils.cp(f,'../../lib3rd/include/openblas/'+bits+'/'+File.basename(f))
     FileUtils.cp(f,'../../src/openblas/'+bits+'/'+File.basename(f))
   end
 end

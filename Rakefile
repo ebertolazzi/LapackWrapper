@@ -105,33 +105,11 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
   if COMPILE_DEBUG then
     sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL
-    FileUtils.cp_r './lib/dll', '../lib/' if Dir.exist?('./lib/dll')
-    Dir['./lib/bin/*'].each do |f|
-      FileUtils.cp f, '../lib/bin/'+args.bits+'/'+File.basename(f)
-    end
-    Dir['./lib/lib/*'].each do |f|
-      if /\_static.*\.lib$/.match(f) then
-        FileUtils.cp f, '../lib/lib/'+File.basename(f)
-      else
-        FileUtils.cp f, '../lib/dll/'+File.basename(f)
-      end
-    end
   end
 
   sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
   sh 'cmake  --build . --config Release  --target install '+PARALLEL
-  FileUtils.cp_r './lib/dll', '../lib/' if Dir.exist?('./lib/dll')
-  Dir['./lib/bin/*'].each do |f|
-    FileUtils.cp f, '../lib/bin/'+args.bits+'/'+File.basename(f)
-  end
-  Dir['./lib/lib/*'].each do |f|
-    if /\_static.*\.lib$/.match(f) then
-      FileUtils.cp f, '../lib/lib/'+File.basename(f)
-    else
-      FileUtils.cp f, '../lib/dll/'+File.basename(f)
-    end
-  end
-  FileUtils.cp_r './lib/include', '../lib/' if Dir.exist?('./lib/include')
+
   FileUtils.cd '..'
 
 end
@@ -162,20 +140,21 @@ task :build_osx, [:lapack] do |t, args|
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
+  cmd_cmake = 'cmake -DBUILD_EXECUTABLE:VAR='
   if COMPILE_EXECUTABLE then
-    cmd1 = ' -DBUILD_EXECUTABLE:VAR=true '
+    cmd_cmake += 'true '
   else
-    cmd1 = ' -DBUILD_EXECUTABLE:VAR=false '
+    cmd_cmake += 'false '
   end
+  cmd_cmake += '-D' + args.lapack + '=true '
 
   if COMPILE_DEBUG then
-    sh 'cmake -D' + args.lapack + '=true ' + cmd1 + ' -DCMAKE_BUILD_TYPE:VAR=Debug ..'
+    sh cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL
-    FileUtils.cp_r './lib', '../'
   end
-  sh 'cmake -D' + args.lapack + '=true ' + cmd1 + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
+  sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
   sh 'cmake --build . --config Release --target install '+PARALLEL
-  FileUtils.cp_r './lib', '../'
+
   FileUtils.cd '..'
 
 end
@@ -210,20 +189,21 @@ task :build_linux, [:lapack] do |t, args|
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
+  cmd_cmake = 'cmake -DBUILD_EXECUTABLE:VAR='
   if COMPILE_EXECUTABLE then
-    cmd1 += ' -DBUILD_EXECUTABLE:VAR=true '
+    cmd_cmake += 'true '
   else
-    cmd1 += ' -DBUILD_EXECUTABLE:VAR=false '
+    cmd_cmake += 'false '
   end
+  cmd_cmake += '-D' + args.lapack + '=true '
 
   if COMPILE_DEBUG then
-    sh 'cmake -D' + args.lapack + '=true ' + cmd1 + ' -DCMAKE_BUILD_TYPE:VAR=Debug ..'
+    sh cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL
-    FileUtils.cp_r './lib', '../'
   end
-  sh 'cmake -D' + args.lapack + '=true ' + cmd1 + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
+  sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
   sh 'cmake --build . --config Release --target install '+PARALLEL
-  FileUtils.cp_r './lib', '../'
+
   FileUtils.cd '..'
 end
 
