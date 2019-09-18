@@ -6,6 +6,8 @@
 
 # Required version
 cmake_minimum_required(VERSION 2.8.12)
+SET( CMAKE_VERBOSE_MAKEFILE OFF )
+SET( CMAKE_INSTALL_MESSAGE NEVER )
 
 # Project Version
 PROJECT( SuperLU C )
