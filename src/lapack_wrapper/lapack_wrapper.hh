@@ -169,7 +169,7 @@
       #ifdef LAPACK_WRAPPER_ARCH64
         #pragma comment(lib, "libopenblas_x64.lib")
       #else
-        #pragma comment(lib, "libopenblas.lib")
+        #pragma comment(lib, "libopenblas_x86.lib")
       #endif
     #elif defined(LAPACK_WRAPPER_USE_MKL)
       #ifdef LAPACK_WRAPPER_ARCH64

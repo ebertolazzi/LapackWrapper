@@ -34,21 +34,25 @@
 #ifndef _LAPACKE_CONFIG_H_
 #define _LAPACKE_CONFIG_H_
 
+// For Android prior to API 21 (no <complex> include)
+#if defined(__ANDROID__)
+#if __ANDROID_API__ < 21
+#define LAPACK_COMPLEX_STRUCTURE
+#endif
+#endif
+
 #ifdef __cplusplus
 #if defined(LAPACK_COMPLEX_CPP)
 #include <complex>
 #endif
+extern "C" {
 #endif /* __cplusplus */
 
 #include <stdlib.h>
 
 #ifndef lapack_int
 #if defined(LAPACK_ILP64)
-#if defined(OPENBLAS_OS_WINDOWS)
-#define lapack_int              long long
-#else
 #define lapack_int              long
-#endif
 #else
 #define lapack_int              int
 #endif
@@ -62,14 +66,8 @@
 
 #if defined(LAPACK_COMPLEX_STRUCTURE)
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 typedef struct { float real, imag; } _lapack_complex_float;
 typedef struct { double real, imag; } _lapack_complex_double;
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #define lapack_complex_float  _lapack_complex_float
 #define lapack_complex_double _lapack_complex_double
 #define lapack_complex_float_real(z)  ((z).real)
@@ -108,14 +106,8 @@ typedef struct { double real, imag; } _lapack_complex_double;
 
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 lapack_complex_float lapack_make_complex_float( float re, float im );
 lapack_complex_double lapack_make_complex_double( double re, double im );
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 
 #endif
 
@@ -126,5 +118,9 @@ lapack_complex_double lapack_make_complex_double( double re, double im );
 #ifndef LAPACK_free
 #define LAPACK_free( p )        free( p )
 #endif
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _LAPACKE_CONFIG_H_ */
