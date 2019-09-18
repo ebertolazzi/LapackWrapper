@@ -103,12 +103,12 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
   FileUtils.mkdir_p "../lib/include"
 
   if COMPILE_DEBUG then
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --quiet ..'
-    sh 'cmake --build . --config Debug --target install --quiet '+PARALLEL
+    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug ..'
+    sh 'cmake --build . --config Debug --target install '+PARALLEL
   end
 
   sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
-  sh 'cmake  --build . --config Release  --target install --quiet '+PARALLEL
+  sh 'cmake  --build . --config Release  --target install '+PARALLEL
 
   FileUtils.cd '..'
 
@@ -149,11 +149,11 @@ task :build_osx, [:lapack] do |t, args|
   cmd_cmake += '-D' + args.lapack + '=true '
 
   if COMPILE_DEBUG then
-    sh cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug --quiet ..'
-    sh 'cmake --build . --config Debug --target install --quiet '+PARALLEL
+    sh cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug ..'
+    sh 'cmake --build . --config Debug --target install '+PARALLEL
   end
-  sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --quiet ..'
-  sh 'cmake --build . --config Release --target install --quiet '+PARALLEL
+  sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
+  sh 'cmake --build . --config Release --target install '+PARALLEL
 
   FileUtils.cd '..'
 
