@@ -24,12 +24,12 @@ task :build_osx => [:download] do
     FileUtils.mkdir 'build'
     FileUtils.cd    'build'
     if COMPILE_DEBUG then
-      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib '+PARALLEL+'..'
-      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL
+      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
+      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
       FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_osx_static_debug.a"
     end
-    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib '+PARALLEL+'..'
-    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL
+    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
+    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
     FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_osx_static.a"
     FileUtils.cd '..'
   end
@@ -49,12 +49,12 @@ task :build_linux => [:download] do
     FileUtils.mkdir 'build'
     FileUtils.cd    'build'
     if COMPILE_DEBUG then
-      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib '+PARALLEL+'..'
-      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL
+      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
+      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
       FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_linux_static_debug.a"
     end
-    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib '+PARALLEL+'..'
-    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL
+    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
+    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
     FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_linux_static.a"
     FileUtils.cd '..'
   end
@@ -85,13 +85,13 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
     tmp = win_vs(args.bits,args.year)
 
     if COMPILE_DEBUG then
-      sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Debug ..'
-      sh 'cmake --build . --clean-first --config Debug --target INSTALL '+PARALLEL
+      sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
+      sh 'cmake --build . --clean-first --config Debug --target INSTALL '+PARALLEL+QUIET
       FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{args.bits}_static_debug.lib"
     end
 
-    sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
-    sh 'cmake --build . --clean-first --config Release  --target INSTALL '+PARALLEL
+    sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
+    sh 'cmake --build . --clean-first --config Release --target INSTALL '+PARALLEL+QUIET
     FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{args.bits}_static.lib"
 
     FileUtils.cd '..'
