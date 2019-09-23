@@ -200,6 +200,7 @@ namespace lapack_wrapper {
   #ifdef __clang__
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
+  #pragma clang diagnostic ignored "-Wweak-template-vtables"
   #endif
 
   extern template class HSLsolver<float>;

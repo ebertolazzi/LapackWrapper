@@ -105,7 +105,7 @@ namespace lapack_wrapper {
      * \brief init:
      *        Initializes the HSL solver and does a symbolic solve.
      *
-     * \param[in] nnz               Number of non zeros.
+     * \param[in] Nnz               Number of non zeros.
      * \param[in] N_Row             Row dimension of the matrix.
      * \param[in] N_Col             Col dimension of the matrix.
      * \param[in] i_Row             Rows of the matrix.
@@ -118,7 +118,7 @@ namespace lapack_wrapper {
     virtual
     bool
     init(
-      int       nnz,
+      int       Nnz,
       int       N_Row,
       int       N_Col,
       int const i_Row[],
@@ -188,6 +188,7 @@ namespace lapack_wrapper {
   #ifdef __clang__
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
+  #pragma clang diagnostic ignored "-Wweak-template-vtables"
   #endif
 
   extern template class MA57<float>;

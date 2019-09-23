@@ -10,7 +10,7 @@ SET( CMAKE_VERBOSE_MAKEFILE OFF )
 SET( CMAKE_INSTALL_MESSAGE NEVER )
 
 # Project Version
-PROJECT( SuperLU C )
+PROJECT( SuperLU C CXX )
 set(VERSION_MAJOR "5")
 set(VERSION_MINOR "2")
 set(VERSION_BugFix "1")
@@ -50,10 +50,14 @@ option(enable_complex   "Enable complex precision library" ON)
 option(enable_complex16 "Enable complex16 precision library" ON)
 
 # setup required compiler defines and options.
+
+INCLUDE( ../../CMakeLists-cflags.txt )
 ## add_definitions(-DPRNTlevel=0 -DAdd_)
 ## get_directory_property( DirDefs COMPILE_DEFINITIONS )
-set(CMAKE_C_FLAGS         "-fPIC -DPRNTlevel=0 -DAdd_ ${CMAKE_C_FLAGS}")
-set(CMAKE_C_FLAGS_RELEASE "-O3" CACHE STRING "")
+ADD_DEFINITIONS( -DPRNTlevel=0 -DAdd_ )
+# suppress all warnings
+SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything" )
+
 
 ######################################################################
 #

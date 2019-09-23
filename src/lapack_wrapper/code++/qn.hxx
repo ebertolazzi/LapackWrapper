@@ -185,8 +185,8 @@ namespace lapack_wrapper {
     virtual
     void
     update(
-      valueType const y[],
-      valueType const s[]
+      valueType const _y[],
+      valueType const _s[]
     ) LAPACK_WRAPPER_OVERRIDE;
 
   };
@@ -227,8 +227,8 @@ namespace lapack_wrapper {
     virtual
     void
     update(
-      valueType const y[],
-      valueType const s[]
+      valueType const _y[],
+      valueType const _s[]
     ) LAPACK_WRAPPER_OVERRIDE;
   };
 
