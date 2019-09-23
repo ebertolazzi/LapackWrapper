@@ -56,8 +56,13 @@ INCLUDE( ../../CMakeLists-cflags.txt )
 ## get_directory_property( DirDefs COMPILE_DEFINITIONS )
 ADD_DEFINITIONS( -DPRNTlevel=0 -DAdd_ )
 # suppress all warnings
-SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything" )
-
+IF ( APPLE )
+  SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything" )
+ELSEIF( UNIX OR LINUX )
+  SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w" )
+ELSE()
+  SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w" )
+ENDIF()
 
 ######################################################################
 #
