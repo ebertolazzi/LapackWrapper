@@ -285,13 +285,21 @@
         #include "../openblas/x86/lapacke.h"
       #endif
     #endif
+  #elif defined(LAPACK_WRAPPER_OS_LINUX)
+    // on linux/osx the defaul is too use SYSTEM openblas
+    #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
+      #include "../openblas/cblas.h"
+      #include "../openblas/lapacke.h"
+    #else
+      #include <openblas/cblas.h>
+      #include <lapacke.h>
+    #endif
   #else
     // on linux/osx the defaul is too use SYSTEM openblas
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
       #include "../openblas/cblas.h"
       #include "../openblas/lapacke.h"
     #else
-      // LINUX -I/usr/include/openblas
       // OSX   -I/usr/local/opt/openblas/include/
       #include <cblas.h>
       #include <lapacke.h>
