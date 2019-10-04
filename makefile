@@ -10,7 +10,8 @@ LIBS  =
 CLIBS = -lc++
 DEFS  =
 
-CXXFLAGS = -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC
+#CXXFLAGS = -m64 -O3 -funroll-loops -fPIC
+CXXFLAGS = -O2 -funroll-loops -fPIC
 override INC  += -I./src -Ilib3rd/include
 override LIBS += -Llib3rd/lib -Llib3rd/dll
 
