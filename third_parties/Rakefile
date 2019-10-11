@@ -44,17 +44,19 @@ task :clean_linux do
   FileUtils.cd "../OpenBlas"
   sh "rake clean_linux"
   FileUtils.cd ".."
-  arch = `uname -m`
+  arch = `uname -m`.chomp #elimina a capo
   begin
-    FileUtils.ln_sf "/usr/include/#{arch}-linux-gcc",
-                    "/usr/local/include/openblas",
-                    force: true
+    unless Dir.exist?( "/usr/local/include/openblas" ) then
+      FileUtils.ln_sf "/usr/include/#{arch}-linux-gcc",
+                      "/usr/local/include/openblas",
+                      force: true
+    end
   rescue
     puts "Failed to link /usr/include/#{arch}-linux-gcc".yellow
     puts "with /usr/local/include/openblas".yellow
     puts "lapack may fails".yellow
     puts "press return to continue".yellow
-    gets
+    input = STDIN.gets.strip
   end
 end
 
