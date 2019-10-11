@@ -291,7 +291,7 @@
       #include "../openblas/cblas.h"
       #include "../openblas/lapacke.h"
     #else
-      #include <openblas/cblas.h>
+      #include <cblas.h>
       #include <lapacke.h>
     #endif
   #else

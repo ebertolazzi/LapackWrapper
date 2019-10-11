@@ -116,7 +116,8 @@ ELSEIF( UNIX )
     SET( lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} )
   ENDIF()
   EXECUTE_PROCESS(COMMAND uname -m OUTPUT_VARIABLE ARCH)
-  INCLUDE_DIRECTORIES( /usr/local/${ARCH}-linux-gcc )
+  INCLUDE_DIRECTORIES( /usr/local/${ARCH}-linux-gcc ) # for ubuntu
+  INCLUDE_DIRECTORIES( /usr/local/openblas ) # for ARM
 ELSE()
   IF ( BITS MATCHES "x64")
     FIND_LIBRARY(
