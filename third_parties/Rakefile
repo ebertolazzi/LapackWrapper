@@ -45,9 +45,17 @@ task :clean_linux do
   sh "rake clean_linux"
   FileUtils.cd ".."
   arch = `uname -m`
-  FileUtils.ln_s "/usr/include/#{arch}-linux-gcc",
-                 "/usr/local/include/openblas",
-                 force: true
+  begin
+    FileUtils.ln_sf "/usr/include/#{arch}-linux-gcc",
+                    "/usr/local/include/openblas",
+                    force: true
+  rescue
+    puts "Failed to link /usr/include/#{arch}-linux-gcc".yellow
+    puts "with /usr/local/include/openblas".yellow
+    puts "lapack may fails".yellow
+    puts "press return to continue".yellow
+    gets
+  end
 end
 
 desc "clean 3rd parties for WINDOWS"
