@@ -291,7 +291,8 @@
       #include "../openblas/cblas.h"
       #include "../openblas/lapacke.h"
     #else
-      #include <cblas.h>
+      // must use subdirectory to avoid conflict with atlas/lapack...
+      #include <openblas/cblas.h>
       #include <lapacke.h>
     #endif
   #else
