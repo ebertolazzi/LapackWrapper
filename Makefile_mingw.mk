@@ -31,6 +31,11 @@ ifneq (,$(findstring LAPACK_WRAPPER_USE_MKL,$(USED_LIB)))
   override INC  += -I$(MKL_PATH)/include
 endif
 
+ifneq (,$(findstring LAPACK_WRAPPER_USE_BLASFEO,$(USED_LIB)))
+  override LIBS += -L/opt/blasfeo/lib -Wl,-rpath,/opt/blasfeo/lib -lblasfeo
+  override INC  += -I/opt/blasfeo/include
+endif
+
 ifneq (,$(findstring LAPACK_WRAPPER_USE_ACCELERATE,$(USED_LIB)))
   $(error error is "Accelerate is supported only on Darwin!")
 endif

@@ -200,7 +200,8 @@ namespace lapack_wrapper {
   ) {
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(stbmv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -241,7 +242,8 @@ namespace lapack_wrapper {
   ) {
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(dtbmv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -439,7 +441,8 @@ namespace lapack_wrapper {
   ) {
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(stbsv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -480,7 +483,8 @@ namespace lapack_wrapper {
   ) {
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)
+        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(dtbsv)(
       CblasColMajor,
       uplo_cblas[UPLO],
@@ -631,7 +635,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sgbtrf)( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgbtrf( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
@@ -659,7 +664,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dgbtrf)( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgbtrf( &M, &N, &KL, &KU, AB, &ldAB, ipiv, &info );
@@ -784,7 +790,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sgbtrs)(
       const_cast<character*>(trans_blas[TRANS]),
       &N, &KL, &KU, &nrhs,
@@ -827,7 +834,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dgbtrs)(
       const_cast<character*>(trans_blas[TRANS]),
       &N, &KL, &KU, &nrhs,
@@ -967,7 +975,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(spbtrf)(
       const_cast<character*>(uplo_blas[UPLO]),
       &N, &KD, AB, &ldAB, &info
@@ -999,7 +1008,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dpbtrf)(
       const_cast<character*>(uplo_blas[UPLO]),
       &N, &KD, AB, &ldAB, &info
@@ -1120,7 +1130,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(spbtrs)(
       const_cast<character*>(uplo_blas[UPLO]),
       &N, &KD, &nrhs, AB, &ldAB, B, &ldB, &info
@@ -1157,7 +1168,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dpbtrs)(
       const_cast<character*>(uplo_blas[UPLO]),
       &N, &KD, &nrhs, AB, &ldAB, B, &ldB, &info

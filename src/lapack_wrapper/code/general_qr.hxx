@@ -107,7 +107,8 @@ namespace lapack_wrapper {
   #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
   { LAPACK_F77NAME(slartg)( &F, &G, &C, &S, &R ); }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { LAPACK_F77NAME(slartgp)( &F, &G, &C, &S, &R ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { slartgp( &F, &G, &C, &S, &R ); }
@@ -129,7 +130,8 @@ namespace lapack_wrapper {
   #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
   { LAPACK_F77NAME(dlartg)( &F, &G, &C, &S, &R ); }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { LAPACK_F77NAME(dlartgp)( &F, &G, &C, &S, &R ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { dlartgp( &F, &G, &C, &S, &R ); }
@@ -213,7 +215,8 @@ namespace lapack_wrapper {
   { return real(CLAPACKNAME(slapy2)( &x, &y )); }
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { return LAPACK_F77NAME(slapy2)( &x, &y ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { return slapy2( &x, &y ); }
@@ -228,7 +231,8 @@ namespace lapack_wrapper {
   { return real(CLAPACKNAME(slapy3)( &x, &y, &z )); }
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { return LAPACK_F77NAME(slapy3)( &x, &y, &z ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { return slapy3( &x, &y, &z ); }
@@ -243,7 +247,8 @@ namespace lapack_wrapper {
   { return CLAPACKNAME(dlapy2)( &x, &y ); }
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { return LAPACK_F77NAME(dlapy2)( &x, &y ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { return dlapy2( &x, &y ); }
@@ -258,7 +263,8 @@ namespace lapack_wrapper {
   { return CLAPACKNAME(dlapy3)( &x, &y, &z ); }
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { return LAPACK_F77NAME(dlapy3)( &x, &y, &z ); }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
   { return dlapy3( &x, &y, &z ); }
@@ -418,7 +424,8 @@ namespace lapack_wrapper {
   { integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sormqr)(
       const_cast<character*>(side_blas[SIDE]),
       const_cast<character*>(trans_blas[TRANS]),
@@ -464,7 +471,8 @@ namespace lapack_wrapper {
   { integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dormqr)(
       const_cast<character*>(side_blas[SIDE]),
       const_cast<character*>(trans_blas[TRANS]),
@@ -604,7 +612,8 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-          defined(LAPACK_WRAPPER_USE_ATLAS)
+          defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+          defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sormqr)(
       const_cast<character*>(side_blas[SIDE]),
       const_cast<character*>(trans_blas[TRANS]),
@@ -651,7 +660,8 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_LAPACK)   || \
-          defined(LAPACK_WRAPPER_USE_ATLAS)
+          defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+          defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dormqr)(
       const_cast<character*>(side_blas[SIDE]),
       const_cast<character*>(trans_blas[TRANS]),
@@ -803,7 +813,8 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
       defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-      defined(LAPACK_WRAPPER_USE_ATLAS)
+      defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slarft)(
       const_cast<character*>(direct_blas[DIRECT]),
       const_cast<character*>(store_blas[STOREV]),
@@ -842,7 +853,8 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
       defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-      defined(LAPACK_WRAPPER_USE_ATLAS)
+      defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlarft)(
       const_cast<character*>(direct_blas[DIRECT]),
       const_cast<character*>(store_blas[STOREV]),
@@ -942,7 +954,8 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
       defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-      defined(LAPACK_WRAPPER_USE_ATLAS)
+      defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slarfg)( &N, &ALPHA, X, &INCX, TAU );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     slarfg( &N, &ALPHA, X, &INCX, TAU );
@@ -964,9 +977,10 @@ namespace lapack_wrapper {
     integer      INCX,
     doublereal   TAU[]
   ) {
-  #if defined(LAPACK_WRAPPER_USE_LAPACK)  || \
-     defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-     defined(LAPACK_WRAPPER_USE_ATLAS)
+  #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+      defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlarfg)( &N, &ALPHA, X, &INCX, TAU );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlarfg( &N, &ALPHA, X, &INCX, TAU );
@@ -1103,7 +1117,8 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
       defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-      defined(LAPACK_WRAPPER_USE_ATLAS)
+      defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slarfb)(
       const_cast<character*>(side_blas[SIDE]),
       const_cast<character*>(trans_blas[TRANS]),
@@ -1155,7 +1170,8 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
       defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-      defined(LAPACK_WRAPPER_USE_ATLAS)
+      defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlarfb)(
       const_cast<character*>(side_blas[SIDE]),
       const_cast<character*>(trans_blas[TRANS]),
@@ -1311,6 +1327,8 @@ namespace lapack_wrapper {
     //#elif defined(LAPACK_WRAPPER_USE_ATLAS)
     //if ( LWORK == -1 ) { info = 0; WORK[0] = 1; }
     //else info = CLAPACKNAME(sgeqrf)( CblasColMajor, M, N, A, LDA, TAU );
+    #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+    sgeqrf_( &M, &N, A, &LDA, TAU, WORK, &LWORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgeqrf( &M, &N, A, &LDA, TAU, WORK, &LWORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -1340,6 +1358,8 @@ namespace lapack_wrapper {
     //#elif defined(LAPACK_WRAPPER_USE_ATLAS)
     //if ( LWORK == -1 ) { info = 0; WORK[0] = 1; }
     //else info = CLAPACKNAME(dgeqrf)( CblasColMajor, M, N, A, LDA, TAU );
+    #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+    dgeqrf_( &M, &N, A, &LDA, TAU, WORK, &LWORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgeqrf( &M, &N, A, &LDA, TAU, WORK, &LWORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -1443,6 +1463,8 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(sgeqr2)( &M, &N, A, &LDA, TAU, WORK, &info );
+    #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+    sgeqr2_( &M, &N, A, &LDA, TAU, WORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgeqr2( &M, &N, A, &LDA, TAU, WORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -1468,6 +1490,8 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(dgeqr2)( &M, &N, A, &LDA, TAU, WORK, &info );
+    #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+    dgeqr2_( &M, &N, A, &LDA, TAU, WORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgeqr2( &M, &N, A, &LDA, TAU, WORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -1610,7 +1634,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sgeqp3)( &M, &N, A, &LDA, JPVT, TAU, WORK, &LWORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgeqp3( &M, &N, A, &LDA, JPVT, TAU, WORK, &LWORK, &info );
@@ -1639,7 +1664,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dgeqp3)( &M, &N, A, &LDA, JPVT, TAU, WORK, &LWORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgeqp3( &M, &N, A, &LDA, JPVT, TAU, WORK, &LWORK, &info );
@@ -1794,7 +1820,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(stzrzf)( &M, &N, A, &LDA, TAU, WORK, &LWORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     stzrzf( &M, &N, A, &LDA, TAU, WORK, &LWORK, &info );
@@ -1822,7 +1849,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dtzrzf)( &M, &N, A, &LDA, TAU, WORK, &LWORK, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dtzrzf( &M, &N, A, &LDA, TAU, WORK, &LWORK, &info );
@@ -2002,7 +2030,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sormrz)(
       const_cast<character*>(side_blas[SIDE]),
       const_cast<character*>(trans_blas[TRANS]),
@@ -2052,7 +2081,8 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dormrz)(
       const_cast<character*>(side_blas[SIDE]),
       const_cast<character*>(trans_blas[TRANS]),

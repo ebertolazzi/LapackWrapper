@@ -39,6 +39,10 @@ ifeq ($(ACCELERATE),1)
   USED_LIB = LAPACK_WRAPPER_USE_ACCELERATE
 endif
 #
+ifeq ($(BLASFEO),1)
+  USED_LIB = LAPACK_WRAPPER_USE_BLASFEO
+endif
+#
 # if missig setup default
 #
 ifeq ($(USED_LIB), "")

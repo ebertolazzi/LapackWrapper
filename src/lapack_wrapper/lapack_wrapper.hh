@@ -89,6 +89,7 @@
 #if !defined(LAPACK_WRAPPER_USE_ACCELERATE) && \
     !defined(LAPACK_WRAPPER_USE_ATLAS)      && \
     !defined(LAPACK_WRAPPER_USE_OPENBLAS)   && \
+    !defined(LAPACK_WRAPPER_USE_BLASFEO)    && \
     !defined(LAPACK_WRAPPER_USE_LAPACK)     && \
     !defined(LAPACK_WRAPPER_USE_MKL)
   #error "linear algebra package NOT selected"
@@ -164,7 +165,8 @@
           #pragma comment(lib, "lapack_win32_MT.lib")
         #endif
       #endif
-    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_BLASFEO)
       // no debug version
       #ifdef LAPACK_WRAPPER_ARCH64
         #pragma comment(lib, "libopenblas_x64.lib")
@@ -219,6 +221,12 @@
   #else
     #define LAPACK_WRAPPER_LAPACK_NAME "OPENBLAS (x86,RELEASE)"
   #endif
+#elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+  #ifdef LAPACK_WRAPPER_ARCH64
+    #define LAPACK_WRAPPER_LAPACK_NAME "BLASFEO (x64,RELEASE)"
+  #else
+    #define LAPACK_WRAPPER_LAPACK_NAME "BLASFEO (x86,RELEASE)"
+  #endif
 #elif defined(LAPACK_WRAPPER_USE_MKL)
   #ifdef LAPACK_WRAPPER_ARCH64
     #define LAPACK_WRAPPER_LAPACK_NAME "MKL (x64)"
@@ -257,7 +265,8 @@
     #define BLASFUNC(A) LAPACK_F77NAME(A)
   #endif
 
-#elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+#elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
   // workaround for OPENBLAS on OSX
   #ifdef LAPACK_WRAPPER_OS_OSX
     #ifdef __clang__
@@ -310,6 +319,11 @@
   #define CBLASNAME(A)       cblas_##A
   #define LAPACK_F77NAME(A)  LAPACK_##A
 
+  #ifdef LAPACK_WRAPPER_USE_BLASFEO
+    #include <s_blas.h>
+    #include <d_blas.h>
+  #endif
+
 #elif defined(LAPACK_WRAPPER_USE_LAPACK)
 
   #ifndef lapack_int
@@ -333,7 +347,7 @@
 #endif
 
 #ifndef LAPACK_WRAPPER_ERROR
-  #define LAPACK_WRAPPER_ERROR(MSG) {                    \
+  #define LAPACK_WRAPPER_ERROR(MSG) {            \
     std::ostringstream ost;                      \
     ost << "in file: " << __FILE__ << "\nline: " \
         << __LINE__ << '\n' << MSG << '\n';      \
@@ -439,7 +453,8 @@ namespace lapack_wrapper {
     typedef double     doublereal;
     typedef char       character;
     typedef doublereal return_precision;
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     typedef blasint    integer;
     typedef float      real;
     typedef double     doublereal;
@@ -463,7 +478,8 @@ namespace lapack_wrapper {
 
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
       defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-      defined(LAPACK_WRAPPER_USE_OPENBLAS)
+      defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
     extern CBLAS_TRANSPOSE trans_cblas[3];
     extern CBLAS_UPLO      uplo_cblas[2];
     extern CBLAS_DIAG      diag_cblas[2];
@@ -730,7 +746,8 @@ namespace lapack_wrapper {
   #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
       defined(LAPACK_WRAPPER_USE_ATLAS)
   { return LAPACK_F77NAME(slamch)( const_cast<character*>(WHAT) ); }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { return BLASFUNC(slamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
   { return real(CLAPACKNAME(slamch)( const_cast<character*>(WHAT) )); }
@@ -745,7 +762,8 @@ namespace lapack_wrapper {
   #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
       defined(LAPACK_WRAPPER_USE_ATLAS)
   { return LAPACK_F77NAME(dlamch)( const_cast<character*>(WHAT) ); }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { return BLASFUNC(dlamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
   { return CLAPACKNAME(dlamch)( const_cast<character*>(WHAT) ); }
@@ -781,7 +799,8 @@ namespace lapack_wrapper {
   }
   #endif
 
-  #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
   // non esiste prototipo in open blas, ma supportata
   extern "C" {
     integer
@@ -922,7 +941,8 @@ namespace lapack_wrapper {
       const_cast<character*>(OPTS),
       &N1, &N2, &N3, &N4, &len_NAME, &len_OPTS
     );
-    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_BLASFEO)
     size_t len_NAME = strlen( NAME );
     size_t len_OPTS = strlen( OPTS );
     return BLASFUNC(ilaenv)(
@@ -980,7 +1000,8 @@ namespace lapack_wrapper {
   }
   #endif
 
-  #ifdef LAPACK_WRAPPER_USE_OPENBLAS
+  #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO) 
   extern "C" {
     void
     BLASFUNC(slaic1)(
@@ -1102,7 +1123,8 @@ namespace lapack_wrapper {
       &SESTPR, &S, &C
     );
   }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { BLASFUNC(slaic1)(
       &JOB, &J,
       const_cast<real*>(X), &SEST,
@@ -1153,7 +1175,8 @@ namespace lapack_wrapper {
       &SESTPR, &S, &C
     );
   }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
   { BLASFUNC(dlaic1)(
       &JOB, &J,
       const_cast<doublereal*>(X), &SEST,
@@ -1236,7 +1259,8 @@ namespace lapack_wrapper {
   ) {
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slarnv)( &IDIST, ISEED, &N, X ); // return void in openblas
     return 0;
     #elif defined(LAPACK_WRAPPER_USE_MKL)
@@ -1261,7 +1285,8 @@ namespace lapack_wrapper {
   ) {
     #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)
+        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlarnv)( &IDIST, ISEED, &N, X ); // return void in openblas
     return 0;
     #elif defined(LAPACK_WRAPPER_USE_MKL)

@@ -71,7 +71,8 @@ namespace lapack_wrapper {
 
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
       defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-      defined(LAPACK_WRAPPER_USE_OPENBLAS)
+      defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLAS_TRANSPOSE trans_cblas[3] = { CblasNoTrans, CblasTrans, CblasConjTrans };
     CBLAS_UPLO      uplo_cblas[2]  = { CblasUpper, CblasLower };
     CBLAS_DIAG      diag_cblas[2]  = { CblasUnit, CblasNonUnit };
@@ -430,7 +431,8 @@ namespace lapack_wrapper {
   }
 
   #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-      defined(LAPACK_WRAPPER_USE_ATLAS)
+      defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
   template <typename T>
   integer
   getc2_tmpl(
