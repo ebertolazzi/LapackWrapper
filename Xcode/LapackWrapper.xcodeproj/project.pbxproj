@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D93526DF236AEC5800EC9AC6 /* libsuperlu_osx_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D93526DE236AEC5800EC9AC6 /* libsuperlu_osx_static.a */; };
 		D94090D022F1A2DC00EB3EBD /* libLapackWrapperLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D940909622F195B600EB3EBD /* libLapackWrapperLib.a */; };
 		D94090D222F1A44700EB3EBD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D94090D122F1A44600EB3EBD /* Accelerate.framework */; };
 		D94090D422F1A49300EB3EBD /* test1-small-factorization.cc in Sources */ = {isa = PBXBuildFile; fileRef = D94090D322F1A49300EB3EBD /* test1-small-factorization.cc */; };
@@ -30,17 +31,7 @@
 		D992161122F1BB7900B9C5FC /* test6-EIGS.cc in Sources */ = {isa = PBXBuildFile; fileRef = D992161022F1BB7900B9C5FC /* test6-EIGS.cc */; };
 		D992161222F1BC5400B9C5FC /* libLapackWrapperLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D940909622F195B600EB3EBD /* libLapackWrapperLib.a */; };
 		D992161322F1BC5400B9C5FC /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D94090D122F1A44600EB3EBD /* Accelerate.framework */; };
-		D9A1A90423192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
-		D9A1A90523192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
-		D9A1A90623192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
-		D9A1A90723192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
-		D9A1A90823192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
-		D9A1A90923192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
-		D9A1A90A23192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
-		D9A1A90B23192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
-		D9A1A90C23192FFF002C8826 /* libsuperlu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9A1A90323192FFF002C8826 /* libsuperlu.a */; };
 		D9AC749D231C341E00CA37B4 /* hsl_solver.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9AC749C231C341E00CA37B4 /* hsl_solver.cc */; };
-		D9BB56F52319C6B200DBED80 /* libumfpack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BB56F42319C6B200DBED80 /* libumfpack.a */; };
 		D9CFB440230CA26500FB2DD8 /* sparse_tool_matrix_market.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9CFB422230CA26500FB2DD8 /* sparse_tool_matrix_market.hh */; };
 		D9CFB442230CA26500FB2DD8 /* sparse_tool.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9CFB424230CA26500FB2DD8 /* sparse_tool.hh */; };
 		D9CFB446230CA26500FB2DD8 /* sparse_tool_iterative.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9CFB428230CA26500FB2DD8 /* sparse_tool_iterative.hh */; };
@@ -139,6 +130,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D93526DE236AEC5800EC9AC6 /* libsuperlu_osx_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsuperlu_osx_static.a; path = ../lib3rd/lib/libsuperlu_osx_static.a; sourceTree = "<group>"; };
 		D940909622F195B600EB3EBD /* libLapackWrapperLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libLapackWrapperLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94090C622F1A2A700EB3EBD /* test1-smallfactorization */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test1-smallfactorization"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94090D122F1A44600EB3EBD /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -159,9 +151,7 @@
 		D992160122F1BA6500B9C5FC /* test5-BLOCKTRID.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test5-BLOCKTRID.cc"; path = "../src_tests/test5-BLOCKTRID.cc"; sourceTree = "<group>"; };
 		D992160922F1BB6D00B9C5FC /* test6-EIGS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test6-EIGS"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D992161022F1BB7900B9C5FC /* test6-EIGS.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test6-EIGS.cc"; path = "../src_tests/test6-EIGS.cc"; sourceTree = "<group>"; };
-		D9A1A90323192FFF002C8826 /* libsuperlu.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsuperlu.a; path = ../lib3rd/lib/libsuperlu.a; sourceTree = "<group>"; };
 		D9AC749C231C341E00CA37B4 /* hsl_solver.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hsl_solver.cc; sourceTree = "<group>"; };
-		D9BB56F42319C6B200DBED80 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = "../../../../../../../usr/local/Cellar/suite-sparse/5.4.0_1/lib/libumfpack.a"; sourceTree = "<group>"; };
 		D9CFB422230CA26500FB2DD8 /* sparse_tool_matrix_market.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sparse_tool_matrix_market.hh; sourceTree = "<group>"; };
 		D9CFB424230CA26500FB2DD8 /* sparse_tool.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sparse_tool.hh; sourceTree = "<group>"; };
 		D9CFB428230CA26500FB2DD8 /* sparse_tool_iterative.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sparse_tool_iterative.hh; sourceTree = "<group>"; };
@@ -194,7 +184,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D9A1A90423192FFF002C8826 /* libsuperlu.a in Frameworks */,
+				D93526DF236AEC5800EC9AC6 /* libsuperlu_osx_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +194,6 @@
 			files = (
 				D94090D222F1A44700EB3EBD /* Accelerate.framework in Frameworks */,
 				D94090D022F1A2DC00EB3EBD /* libLapackWrapperLib.a in Frameworks */,
-				D9A1A90523192FFF002C8826 /* libsuperlu.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,7 +202,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D94090E222F1A56C00EB3EBD /* libLapackWrapperLib.a in Frameworks */,
-				D9A1A90623192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D94090E322F1A56C00EB3EBD /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -223,7 +211,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D94090F122F1A62C00EB3EBD /* libLapackWrapperLib.a in Frameworks */,
-				D9A1A90723192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D94090F222F1A62C00EB3EBD /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -233,7 +220,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D940910022F1A7AF00EB3EBD /* libLapackWrapperLib.a in Frameworks */,
-				D9A1A90823192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D940910122F1A7AF00EB3EBD /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -243,7 +229,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D992160322F1BA6D00B9C5FC /* libLapackWrapperLib.a in Frameworks */,
-				D9A1A90923192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D992160422F1BA6D00B9C5FC /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,7 +238,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D992161222F1BC5400B9C5FC /* libLapackWrapperLib.a in Frameworks */,
-				D9A1A90A23192FFF002C8826 /* libsuperlu.a in Frameworks */,
 				D992161322F1BC5400B9C5FC /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -262,10 +246,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D9BB56F52319C6B200DBED80 /* libumfpack.a in Frameworks */,
 				D9CFB45B230CA29100FB2DD8 /* libLapackWrapperLib.a in Frameworks */,
 				D9CFB45C230CA29100FB2DD8 /* Accelerate.framework in Frameworks */,
-				D9A1A90B23192FFF002C8826 /* libsuperlu.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,7 +257,6 @@
 			files = (
 				D9CFB466230CA2A300FB2DD8 /* libLapackWrapperLib.a in Frameworks */,
 				D9CFB467230CA2A300FB2DD8 /* Accelerate.framework in Frameworks */,
-				D9A1A90C23192FFF002C8826 /* libsuperlu.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +266,6 @@
 		D91E109522F18EFE00315DDB = {
 			isa = PBXGroup;
 			children = (
-				D9A1A90323192FFF002C8826 /* libsuperlu.a */,
 				D91E109F22F18EFE00315DDB /* Products */,
 				D94090D322F1A49300EB3EBD /* test1-small-factorization.cc */,
 				D94090E022F1A4D200EB3EBD /* test2-Timing.cc */,
@@ -319,7 +299,7 @@
 		D94090CF22F1A2DC00EB3EBD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D9BB56F42319C6B200DBED80 /* libumfpack.a */,
+				D93526DE236AEC5800EC9AC6 /* libsuperlu_osx_static.a */,
 				D94090D122F1A44600EB3EBD /* Accelerate.framework */,
 			);
 			name = Frameworks;
@@ -580,7 +560,7 @@
 		D91E109622F18EFE00315DDB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1030;
+				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Enrico Bertolazzi";
 				TargetAttributes = {
 					D940909522F195B600EB3EBD = {
@@ -612,6 +592,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = D91E109522F18EFE00315DDB;
 			productRefGroup = D91E109F22F18EFE00315DDB /* Products */;
@@ -873,6 +854,7 @@
 		D94090CA22F1A2A700EB3EBD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -881,6 +863,7 @@
 		D94090CB22F1A2A700EB3EBD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -889,6 +872,7 @@
 		D94090DE22F1A4B900EB3EBD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -897,6 +881,7 @@
 		D94090DF22F1A4B900EB3EBD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -905,6 +890,7 @@
 		D94090ED22F1A5E800EB3EBD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -913,6 +899,7 @@
 		D94090EE22F1A5E800EB3EBD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -921,6 +908,7 @@
 		D94090FC22F1A77100EB3EBD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -929,6 +917,7 @@
 		D94090FD22F1A77100EB3EBD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -937,6 +926,7 @@
 		D99215FE22F1BA5800B9C5FC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -945,6 +935,7 @@
 		D99215FF22F1BA5800B9C5FC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -953,6 +944,7 @@
 		D992160E22F1BB6D00B9C5FC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -961,6 +953,7 @@
 		D992160F22F1BB6D00B9C5FC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -969,6 +962,7 @@
 		D9CFB45F230CA29100FB2DD8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -988,6 +982,7 @@
 		D9CFB460230CA29100FB2DD8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1007,6 +1002,7 @@
 		D9CFB46A230CA2A300FB2DD8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				OTHER_LDFLAGS = (
 					"-lmkl_intel",
@@ -1022,6 +1018,7 @@
 		D9CFB46B230CA2A300FB2DD8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				OTHER_LDFLAGS = (
 					"-lmkl_intel",

@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D9CFB462230CA2A300FB2DD8"
-               BuildableName = "test8-SparseToolComplex"
-               BlueprintName = "test8-SparseToolComplex"
+               BlueprintIdentifier = "D992160822F1BB6D00B9C5FC"
+               BuildableName = "test6-EIGS"
+               BlueprintName = "test6-EIGS"
                ReferencedContainer = "container:LapackWrapper.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -27,25 +27,15 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D9CFB462230CA2A300FB2DD8"
-            BuildableName = "test8-SparseToolComplex"
-            BlueprintName = "test8-SparseToolComplex"
-            ReferencedContainer = "container:LapackWrapper.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <Testables>
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
-      useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "$SOURCE_ROOT/.."
+      useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -54,19 +44,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D9CFB462230CA2A300FB2DD8"
-            BuildableName = "test8-SparseToolComplex"
-            BlueprintName = "test8-SparseToolComplex"
+            BlueprintIdentifier = "D992160822F1BB6D00B9C5FC"
+            BuildableName = "test6-EIGS"
+            BlueprintName = "test6-EIGS"
             ReferencedContainer = "container:LapackWrapper.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "LD_LIBRARY_PATH"
-            value = "/opt/intel/mkl/lib"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -78,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D9CFB462230CA2A300FB2DD8"
-            BuildableName = "test8-SparseToolComplex"
-            BlueprintName = "test8-SparseToolComplex"
+            BlueprintIdentifier = "D992160822F1BB6D00B9C5FC"
+            BuildableName = "test6-EIGS"
+            BlueprintName = "test6-EIGS"
             ReferencedContainer = "container:LapackWrapper.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
