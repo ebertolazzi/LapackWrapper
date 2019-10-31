@@ -1,0 +1,72 @@
+require "rake"
+require_relative "../../Rakefile_common.rb"
+
+task :default => [:install_osx]
+
+desc "download rang lib"
+task :download do
+  cmd = "git clone --depth=1 git@github.com:agauniyal/rang.git"
+  system( cmd );
+end
+
+desc "build rang lib for osx"
+task :build_osx => [:download] do
+  Rake::Task[:install_common].invoke()
+end
+
+desc "build rang lib for linux"
+task :build_linux => [:download] do
+  Rake::Task[:install_common].invoke()
+end
+
+desc "build rang lib for windows"
+task :build_win, [:year, :bits] => [:download] do |t, args|
+  args.with_defaults(:year => "2017", :bits => "x64" )
+  Rake::Task[:install_common].invoke()
+end
+
+task :install_common do |t, args|
+  prefix = "../../lib3rd"
+  puts "rang copy files to #{prefix}"
+  FileUtils.mkdir_p "#{prefix}/include"
+  FileUtils.mkdir_p "#{prefix}/lib"
+  Dir['rang/include/*'].each do |f|
+    if File.file?(f) then
+      puts "Copy header #{File.basename(f)}".green
+      FileUtils.cp f, prefix+'/include/'+File.basename(f)
+    end
+  end
+  FileUtils.cp 'rang/LICENSE', '../../license/rang_license.txt'
+end
+
+desc "install locally rang lib for linux"
+task :install_linux => [:build_linux] do
+end
+
+desc "install locally rang lib for osx"
+task :install_osx => [:build_osx] do
+end
+
+desc "install locally rang lib for windows"
+task :install_win, [:year, :bits] do |t, args|
+  args.with_defaults(:year => "2017", :bits => "x64" )
+  Rake::Task[:build_win].invoke(args.year, args.bits)
+end
+
+desc "clean rang for linux"
+task :clean_linux do
+  FileUtils.rm_rf "lib"
+  FileUtils.rm_rf "rang"
+end
+
+desc "clean rang for osx"
+task :clean_osx do
+  FileUtils.rm_rf "lib"
+  FileUtils.rm_rf "rang"
+end
+
+desc "clean rang for windows"
+task :clean_win do
+  FileUtils.rm_rf "lib"
+  FileUtils.rm_rf "rang"
+end

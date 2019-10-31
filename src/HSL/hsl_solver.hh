@@ -10,7 +10,7 @@
 #define HSLSOLVER_H
 
 #include "hsl.h"
-#include "../lapack_wrapper/lapack_wrapper_config.hh"
+#include "../lapack_wrapper_config.hh"
 #include <string>
 #include <algorithm>
 

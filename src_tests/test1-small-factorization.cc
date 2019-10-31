@@ -23,6 +23,9 @@
 #include <lapack_wrapper/lapack_wrapper++.hh>
 #include <lapack_wrapper/TicToc.hh>
 
+#include <fmt/format.h>
+#include <rang.hpp>
+
 #ifdef __GNUC__ 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
@@ -48,21 +51,21 @@ test1() {
   integer const LDA = 3;
   valueType A[] = {
     0.001,      2,     3,
-    0.001,  0.001, 0,
-    0,      0.001, 0,
+    0.001,  0.001,     0,
+    0,      0.001,     0,
     0.001,     -1,     0,
-    0.000001,      5,     3
+    0.000001,   5,     3
   };
 
-  cout << "\n\n\nTest1:\n\nInitial A\n";
+  cout << rang::fg::green << "\n\n\nTest1:\n\nInitial A\n" << rang::fg::reset;
   lapack_wrapper::print_matrix( cout, M, N, A, M );
 
-  cout << "Do QR factorization of A^T\n";
+  cout << "\nDo QR factorization of A^T\n";
   qr.t_factorize( "qr", M, N, A, LDA );
 
   valueType R[M*M];
   qr.getR( R, M );
-  cout << "R=\n";
+  cout << "\nR=\n";
   lapack_wrapper::print_matrix( cout, M, M, R, M );
 
   valueType rhs[M], b[M];
@@ -74,24 +77,28 @@ test1() {
     lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, b, 1
   );
 
-  cout << "LS solution of A x = b, \nb=\n";
-  lapack_wrapper::print_matrix( cout, M, 1, b, M );
+  cout
+    << "\nLS solution of A x = b\n"
+    << "b^T      = ";
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 );
 
   qr.invRt_mul( rhs, 1 );
   lapack_wrapper::copy( M, rhs, 1, x, 1 );
   lapack_wrapper::zero( N-M, x+3, 1 );
   qr.Q_mul( x );
 
-  cout << "x=\n";
-  lapack_wrapper::print_matrix( cout, 5, 1, x, 5 );
+  cout << "x^T      = ";
+  lapack_wrapper::print_matrix( cout, 1, M, x, 1 );
 
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
-  cout << "residual=\n";
-  lapack_wrapper::print_matrix( cout, M, 1, b, M );
+  cout << "residual = ";
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 );
   cout << "done test1\n";
 }
+
+
 
 static
 void
@@ -102,21 +109,21 @@ test2() {
   integer const LDA = 3;
   valueType A[] = {
     0.001,      2,     3,
-    0.001,  0.001, 0,
-    0,      0.001, 0,
+    0.001,  0.001,     0,
+    0,      0.001,     0,
     0.001,     -1,     0,
-    0.000001,      5,     3
+    0.000001,   5,     3
   };
 
   cout << "\n\n\nTest2:\n\nInitial A\n";
   lapack_wrapper::print_matrix( cout, M, N, A, M );
 
-  cout << "Do QR factorization of A^T\n";
+  cout << "\nDo QR factorization of A^T\n";
   qr.t_factorize( "qr", M, N, A, LDA );
 
   valueType R[M*M];
   qr.getR( R, M );
-  cout << "R=\n";
+  cout << "\nR=\n";
   lapack_wrapper::print_matrix( cout, M, M, R, M );
 
   valueType rhs[M], b[M];
@@ -128,8 +135,10 @@ test2() {
     lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, b, 1
   );
 
-  cout << "LS solution of A x = b, \nb=\n";
-  lapack_wrapper::print_matrix( cout, M, 1, b, M );
+  cout
+    << "\nLS solution of A x = b\n\n"
+    << "b^T =      ";
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 );
 
   qr.inv_permute( rhs ); // da aggiungere!
   qr.invRt_mul( rhs, 1 );
@@ -137,14 +146,14 @@ test2() {
   lapack_wrapper::zero( N-M, x+3, 1 );
   qr.Q_mul( x );
 
-  cout << "x=\n";
-  lapack_wrapper::print_matrix( cout, 5, 1, x, 5 );
+  cout << "x^T =      ";
+  lapack_wrapper::print_matrix( cout, 1, M, x, 1 );
 
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
-  cout << "residual=\n";
-  lapack_wrapper::print_matrix( cout, M, 1, b, M );
+  cout << "residual = ";
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 );
   cout << "done test2\n";
 }
 
@@ -166,12 +175,12 @@ test3() {
   cout << "\n\n\nTest3:\n\nInitial A\n";
   lapack_wrapper::print_matrix( cout, M, N, A, M );
 
-  cout << "Do QR factorization of A^T\n";
+  cout << "\nDo QR factorization of A^T\n";
   qr.t_factorize( "qr", M, N, A, LDA );
 
   valueType R[M*M];
   qr.getR( R, M );
-  cout << "R=\n";
+  cout << "\nR=\n";
   lapack_wrapper::print_matrix( cout, M, M, R, M );
 
   valueType rhs[M], b[M];
@@ -183,8 +192,10 @@ test3() {
     lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, b, 1
   );
 
-  cout << "LS solution of A x = b, \nb=\n";
-  lapack_wrapper::print_matrix( cout, M, 1, b, M );
+  cout
+    << "\nLS solution of A x = b\n\n"
+    << "b^T =      ";
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 );
 
   qr.inv_permute( rhs ); // da aggiungere!
   qr.invRt_mul( rhs, 1 );
@@ -192,14 +203,14 @@ test3() {
   lapack_wrapper::zero( 2, x+3, 1 );
   qr.Q_mul( x );
 
-  cout << "x=\n";
-  lapack_wrapper::print_matrix( cout, 5, 1, x, 5 );
+  cout << "x^T =      ";
+  lapack_wrapper::print_matrix( cout, 1, M, x, 1 );
 
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
-  cout << "residual=\n";
-  lapack_wrapper::print_matrix( cout, M, 1, b, M );
+  cout << "residual = ";
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 );
   cout << "done test3\n";
 }
 
@@ -207,17 +218,17 @@ test3() {
   cout << "\n\nDo " << NAME << " factorization of A\n"; \
   F.factorize( NAME, M, M, A, LDA ); \
   \
-  cout << NAME << " solution of A x = b"; \
+  cout << NAME << " solution of A x = b\n"; \
   lapack_wrapper::copy( M, rhs, 1, x, 1 ); \
   lapack_wrapper::copy( M, rhs, 1, b, 1 ); \
   /* L.solve( x ); */ \
   F.solve( 1, x, M); \
-  cout << "x=\n"; \
-  lapack_wrapper::print_matrix( cout, M, 1, x, M ); \
+  cout << "x^T      ="; \
+  lapack_wrapper::print_matrix( cout, 1, M, x, 1 ); \
   \
   lapack_wrapper::gemv( lapack_wrapper::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1 ); \
-  cout << "residual=\n"; \
-  lapack_wrapper::print_matrix( cout, M, 1, b, M ); \
+  cout << "residual ="; \
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 ); \
   res = lapack_wrapper::nrm2( M, b, 1 ); \
   cout << "||res||_2 = " << res << '\n'; \
   LAPACK_WRAPPER_ASSERT( res < 1e-6, "test failed!" );
@@ -240,7 +251,7 @@ test4() {
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
     0.001,     -1, 1e-6+1,     -1, -1e-12,
-    0.000001,   5,     3,  1e-6+5,      3+1
+    0.000001,   5,     3,  1e-6+5,    3+1
   };
 
   valueType rhs[M], b[M], res;
@@ -270,17 +281,17 @@ test4() {
   cout << "\n\nDo " << NAME << " factorization of A\n"; \
   F.factorize( NAME, M, M, A, LDA ); \
   \
-  cout << NAME << " solution of A x = b"; \
+  cout << NAME << " solution of A x = b\n"; \
   lapack_wrapper::copy( M, rhs, 1, x, 1 ); \
   lapack_wrapper::copy( M, rhs, 1, b, 1 ); \
   /* F.t_solve( x ); */ \
   F.t_solve( 1, x, M); \
-  cout << "x=\n"; \
-  lapack_wrapper::print_matrix( cout, M, 1, x, M ); \
+  cout << "x^T      = "; \
+  lapack_wrapper::print_matrix( cout, 1, M, x, 1 ); \
   \
   lapack_wrapper::gemv( lapack_wrapper::TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1 ); \
-  cout << "residual=\n"; \
-  lapack_wrapper::print_matrix( cout, M, 1, b, M ); \
+  cout << "residual = "; \
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 ); \
   res = lapack_wrapper::nrm2( M, b, 1 ); \
   cout << "||res||_2 = " << res << '\n'; \
   LAPACK_WRAPPER_ASSERT( res < 1e-6, "test failed!" );
@@ -304,7 +315,7 @@ test5() {
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
     0.001,     -1, 1e-6+1,     -1, -1e-12,
-    0.000001,   5,     3,  1e-6+5,      3+1
+    0.000001,   5,     3,  1e-6+5,     3+1
   };
 
   valueType rhs[M], b[M], res;
@@ -327,8 +338,7 @@ test5() {
   TEST5("LSS",lss);
   TEST5("LSY",lsy);
 
-  cout << "done test5\n";
-
+  cout << "\ndone test5\n";
 }
 
 
@@ -358,13 +368,12 @@ test6() {
   lapack_wrapper::copy( N, rhs, 1, b, 1 );
   lu.solve( x );
   //qr.t_solve( 1, x, M);
-  cout << "x=\n";
-  lapack_wrapper::print_matrix( cout, N, 1, x, N );
+  cout << "x^T =      ";
+  lapack_wrapper::print_matrix( cout, 1, N, x, 1 );
 
   lu.axpy( N, -1.0, L, D, U, x, 1.0, b );
-  cout << "residual=\n";
-  lapack_wrapper::print_matrix( cout, N, 1, b, N );
-
+  cout << "residual = ";
+  lapack_wrapper::print_matrix( cout, 1, N, b, 1 );
 
 
   cout << "\n\nDo (trid) QR  factorization of A\n";
@@ -375,14 +384,13 @@ test6() {
   lapack_wrapper::copy( N, rhs, 1, b, 1 );
   qr.solve( x );
   //qr.t_solve( 1, x, M);
-  cout << "x=\n";
-  lapack_wrapper::print_matrix( cout, N, 1, x, N );
+  cout << "x^T      = ";
+  lapack_wrapper::print_matrix( cout, 1, N, x, 1 );
 
   qr.axpy( N, -1.0, L, D, U, x, 1.0, b );
-  cout << "residual=\n";
-  lapack_wrapper::print_matrix( cout, N, 1, b, N );
-  cout << "done test6\n";
-
+  cout << "residual = ";
+  lapack_wrapper::print_matrix( cout, 1, N, b, 1 );
+  cout << "\ndone test6\n";
 }
 
 static
@@ -397,7 +405,7 @@ test7() {
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
     0.001,     -1, 1e-6+1,     -1, -1e-12,
-    0.000001,   5,     3,  1e-6+5,      3+1
+    0.000001,   5,     3,  1e-6+5,    3+1
   };
 
   valueType rhs[M], b[M];
@@ -415,19 +423,19 @@ test7() {
   cout << "\n\nDo QRP factorization of A\n";
   qrp.factorize( "qrp", M, M, A, LDA );
 
-  cout << "QRP solution of A x = b";
+  cout << "QRP solution of A x = b\n";
   lapack_wrapper::copy( M, rhs, 1, x, 1 );
   lapack_wrapper::copy( M, rhs, 1, b, 1 );
   qrp.t_solve( x );
   //qrp.t_solve( 1, x, M );
-  cout << "x=\n";
-  lapack_wrapper::print_matrix( cout, 5, 1, x, 5 );
+  cout << "x^T      = ";
+  lapack_wrapper::print_matrix( cout, 1, M, x, 1 );
 
   lapack_wrapper::gemv(
     lapack_wrapper::TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
-  cout << "residual=\n";
-  lapack_wrapper::print_matrix( cout, M, 1, b, M );
+  cout << "residual = ";
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 );
 
 
 
@@ -437,18 +445,18 @@ test7() {
   qrp.load_block( 3, 5, A+2, LDA, 2, 0 );
   qrp.factorize( "qrp" );
 
-  cout << "QRP solution of A x = b";
+  cout << "QRP solution of A x = b\n";
   lapack_wrapper::copy( M, rhs, 1, x, 1 );
   lapack_wrapper::copy( M, rhs, 1, b, 1 );
   qrp.t_solve( x );
   //qrp.t_solve( 1, x, M );
-  cout << "x=\n";
-  lapack_wrapper::print_matrix( cout, 5, 1, x, 5 );
+  cout << "x^T      = ";
+  lapack_wrapper::print_matrix( cout, 1, M, x, 1 );
 
   lapack_wrapper::gemv( lapack_wrapper::TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1 );
-  cout << "residual=\n";
-  lapack_wrapper::print_matrix( cout, M, 1, b, M );
-  cout << "done test7\n";
+  cout << "residual = ";
+  lapack_wrapper::print_matrix( cout, 1, M, b, 1 );
+  cout << "\ndone test7\n";
 
 }
 

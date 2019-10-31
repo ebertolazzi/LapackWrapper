@@ -81,10 +81,10 @@ OBJS_TESTS = $(SRCS_TESTS:.cc=.o)
 
 #src/AlglinConfig.hh
 DEPS = \
+src/lapack_wrapper_config.hh \
 src/lapack_wrapper/TicToc.hh \
 src/lapack_wrapper/lapack_wrapper++.hh \
 src/lapack_wrapper/lapack_wrapper.hh \
-src/lapack_wrapper/lapack_wrapper_config.hh \
 src/lapack_wrapper/code/banded.hxx \
 src/lapack_wrapper/code/blas.hxx \
 src/lapack_wrapper/code/general.hxx \
@@ -163,9 +163,9 @@ install: all_libs
 	cp -f -P lib/lib/*   $(PREFIX)/lib
 
 config:
-	rm -f src/lapack_wrapper/lapack_wrapper_config.hh
-	sed 's/@@LAPACK_WRAPPER_USE@@/#define $(USED_LIB) 1/' <src/lapack_wrapper/lapack_wrapper_config.hh.tmpl | \
-	sed 's/@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@/$(SYSTEMOPENBLAS)#define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1/' >src/lapack_wrapper/lapack_wrapper_config.hh
+	rm -f src/lapack_wrapper_config.hh
+	sed 's/@@LAPACK_WRAPPER_USE@@/#define $(USED_LIB) 1/' <src/lapack_wrapper_config.hh.tmpl | \
+	sed 's/@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@/$(SYSTEMOPENBLAS)#define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1/' >src/lapack_wrapper_config.hh
 
 run: tests
 	./bin/test1-small-factorization

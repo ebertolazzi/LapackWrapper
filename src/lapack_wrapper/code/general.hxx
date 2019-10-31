@@ -2180,27 +2180,30 @@ namespace lapack_wrapper {
     integer    LDA,
     real       B[],
     integer    LDB
-  )
-  #if defined(LAPACK_WRAPPER_USE_LAPACK)
-  { LAPACK_F77NAME(slacpy)( "A", &M, &N, A, &LDA, B, &LDB ); return 0; }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
-        defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { LAPACK_F77NAME(slacpy)(
+  ) {
+    integer ier = 0;
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)
+    LAPACK_F77NAME(slacpy)( "A", &M, &N, A, &LDA, B, &LDB );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
+          defined(LAPACK_WRAPPER_USE_BLASFEO)
+    LAPACK_F77NAME(slacpy)(
       const_cast<character*>("A"), &M, &N, A, &LDA, B, &LDB
     );
-    return 0;
+    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
+    for ( integer j = 0; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
+    #elif defined(LAPACK_WRAPPER_USE_MKL)
+    slacpy( "A", &M, &N, A, &LDA, B, &LDB );
+    #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    //ier = ACCELERATE RETURN WRONG VALUE
+    CLAPACKNAME(slacpy)(
+      const_cast<character*>("A"), &M, &N,
+      const_cast<real*>(A), &LDA, B, &LDB
+    );
+    #else
+      #error "LapackWrapper undefined mapping!"
+    #endif
+    return ier;
   }
-  #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-  { for ( integer j = 0; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
-    return 0; }
-  #elif defined(LAPACK_WRAPPER_USE_MKL)
-  { slacpy( "A", &M, &N, A, &LDA, B, &LDB ); return 0; }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return CLAPACKNAME(slacpy)( const_cast<character*>("A"), &M, &N,
-                                const_cast<real*>(A), &LDA, B, &LDB ); }
-  #else
-    #error "LapackWrapper undefined mapping!"
-  #endif
 
   inline
   integer
@@ -2211,27 +2214,30 @@ namespace lapack_wrapper {
     integer          LDA,
     doublereal       B[],
     integer          LDB
-  )
-  #if defined(LAPACK_WRAPPER_USE_LAPACK)
-  { LAPACK_F77NAME(dlacpy)( "A", &M, &N, A, &LDA, B, &LDB ); return 0; }
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
-        defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { LAPACK_F77NAME(dlacpy)(
+  ) {
+    integer ier = 0;
+    #if defined(LAPACK_WRAPPER_USE_LAPACK)
+    LAPACK_F77NAME(dlacpy)( "A", &M, &N, A, &LDA, B, &LDB );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
+          defined(LAPACK_WRAPPER_USE_BLASFEO)
+    LAPACK_F77NAME(dlacpy)(
       const_cast<character*>("A"), &M, &N, A, &LDA, B, &LDB
     );
-    return 0;
+    #elif defined(LAPACK_WRAPPER_USE_ATLAS)
+    for ( integer j = 0; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
+    #elif defined(LAPACK_WRAPPER_USE_MKL)
+    dlacpy( "A", &M, &N, A, &LDA, B, &LDB );
+    #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    //ier = ACCELERATE RETURN WRONG VALUE
+    CLAPACKNAME(dlacpy)(
+      const_cast<character*>("A"), &M, &N,
+      const_cast<doublereal*>(A), &LDA, B, &LDB
+    );
+    #else
+    #error "LapackWrapper undefined mapping!"
+    #endif
+    return ier;
   }
-  #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-  { for ( integer j = 0; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
-    return 0; }
-  #elif defined(LAPACK_WRAPPER_USE_MKL)
-  { dlacpy( "A", &M, &N, A, &LDA, B, &LDB ); return 0; }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return CLAPACKNAME(dlacpy)( const_cast<character*>("A"), &M, &N,
-                                const_cast<doublereal*>(A), &LDA, B, &LDB ); }
-  #else
-  #error "LapackWrapper undefined mapping!"
-  #endif
 
   /*
   //    __ _  ___ _______ _ __ ___

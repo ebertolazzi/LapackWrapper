@@ -20,11 +20,12 @@
 		D94090FF22F1A77F00EB3EBD /* test4-BFGS.cc in Sources */ = {isa = PBXBuildFile; fileRef = D94090FE22F1A77F00EB3EBD /* test4-BFGS.cc */; };
 		D940910022F1A7AF00EB3EBD /* libLapackWrapperLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D940909622F195B600EB3EBD /* libLapackWrapperLib.a */; };
 		D940910122F1A7AF00EB3EBD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D94090D122F1A44600EB3EBD /* Accelerate.framework */; };
+		D94F8A6B236B1DDC00FCB06D /* libfmt_osx_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D94F8A6A236B1DDB00FCB06D /* libfmt_osx_static.a */; };
+		D9521D5A236B8A3E00C89BFB /* lapack_wrapper_config.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9521D59236B8A3E00C89BFB /* lapack_wrapper_config.hh */; };
 		D958BCB322F32F0B00D41FCA /* lapack_wrapper.hh in Headers */ = {isa = PBXBuildFile; fileRef = D958BC9C22F32F0B00D41FCA /* lapack_wrapper.hh */; };
 		D958BCC022F32F0B00D41FCA /* lapack_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = D958BCAC22F32F0B00D41FCA /* lapack_wrapper.cc */; };
 		D958BCC122F32F0B00D41FCA /* lapack_wrapper++.hh in Headers */ = {isa = PBXBuildFile; fileRef = D958BCAE22F32F0B00D41FCA /* lapack_wrapper++.hh */; };
 		D958BCC222F32F0B00D41FCA /* lapack_wrapper++.cc in Sources */ = {isa = PBXBuildFile; fileRef = D958BCAF22F32F0B00D41FCA /* lapack_wrapper++.cc */; };
-		D958BCC322F32F0B00D41FCA /* lapack_wrapper_config.hh in Headers */ = {isa = PBXBuildFile; fileRef = D958BCB022F32F0B00D41FCA /* lapack_wrapper_config.hh */; };
 		D992160222F1BA6500B9C5FC /* test5-BLOCKTRID.cc in Sources */ = {isa = PBXBuildFile; fileRef = D992160122F1BA6500B9C5FC /* test5-BLOCKTRID.cc */; };
 		D992160322F1BA6D00B9C5FC /* libLapackWrapperLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D940909622F195B600EB3EBD /* libLapackWrapperLib.a */; };
 		D992160422F1BA6D00B9C5FC /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D94090D122F1A44600EB3EBD /* Accelerate.framework */; };
@@ -141,12 +142,13 @@
 		D94090EF22F1A5F300EB3EBD /* test3-BandedMatrix.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test3-BandedMatrix.cc"; path = "../src_tests/test3-BandedMatrix.cc"; sourceTree = "<group>"; };
 		D94090F722F1A77100EB3EBD /* test4-BFGS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test4-BFGS"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94090FE22F1A77F00EB3EBD /* test4-BFGS.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test4-BFGS.cc"; path = "../src_tests/test4-BFGS.cc"; sourceTree = "<group>"; };
+		D94F8A6A236B1DDB00FCB06D /* libfmt_osx_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfmt_osx_static.a; path = ../lib3rd/lib/libfmt_osx_static.a; sourceTree = "<group>"; };
+		D9521D58236B8A3E00C89BFB /* lapack_wrapper_config.hh.tmpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lapack_wrapper_config.hh.tmpl; sourceTree = "<group>"; };
+		D9521D59236B8A3E00C89BFB /* lapack_wrapper_config.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lapack_wrapper_config.hh; sourceTree = "<group>"; };
 		D958BC9C22F32F0B00D41FCA /* lapack_wrapper.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lapack_wrapper.hh; sourceTree = "<group>"; };
 		D958BCAC22F32F0B00D41FCA /* lapack_wrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lapack_wrapper.cc; sourceTree = "<group>"; };
-		D958BCAD22F32F0B00D41FCA /* lapack_wrapper_config.hh.tmpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lapack_wrapper_config.hh.tmpl; sourceTree = "<group>"; };
 		D958BCAE22F32F0B00D41FCA /* lapack_wrapper++.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = "lapack_wrapper++.hh"; sourceTree = "<group>"; };
 		D958BCAF22F32F0B00D41FCA /* lapack_wrapper++.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "lapack_wrapper++.cc"; sourceTree = "<group>"; };
-		D958BCB022F32F0B00D41FCA /* lapack_wrapper_config.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lapack_wrapper_config.hh; sourceTree = "<group>"; };
 		D99215FA22F1BA5800B9C5FC /* test5-BLOCKTRID */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test5-BLOCKTRID"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D992160122F1BA6500B9C5FC /* test5-BLOCKTRID.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test5-BLOCKTRID.cc"; path = "../src_tests/test5-BLOCKTRID.cc"; sourceTree = "<group>"; };
 		D992160922F1BB6D00B9C5FC /* test6-EIGS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test6-EIGS"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -184,6 +186,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D94F8A6B236B1DDC00FCB06D /* libfmt_osx_static.a in Frameworks */,
 				D93526DF236AEC5800EC9AC6 /* libsuperlu_osx_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,6 +302,7 @@
 		D94090CF22F1A2DC00EB3EBD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D94F8A6A236B1DDB00FCB06D /* libfmt_osx_static.a */,
 				D93526DE236AEC5800EC9AC6 /* libsuperlu_osx_static.a */,
 				D94090D122F1A44600EB3EBD /* Accelerate.framework */,
 			);
@@ -308,6 +312,8 @@
 		D958BC9A22F32F0B00D41FCA /* src */ = {
 			isa = PBXGroup;
 			children = (
+				D9521D59236B8A3E00C89BFB /* lapack_wrapper_config.hh */,
+				D9521D58236B8A3E00C89BFB /* lapack_wrapper_config.hh.tmpl */,
 				D9FDAD4B23100C3A0092DF2A /* HSL */,
 				D9CFB471230CA3A500FB2DD8 /* zstream */,
 				D9CFB41A230CA26500FB2DD8 /* sparse_tool */,
@@ -322,8 +328,6 @@
 			children = (
 				D9DE0B3E22F3827B00C08382 /* code++ */,
 				D9DE0B3C22F3811C00C08382 /* code */,
-				D958BCAD22F32F0B00D41FCA /* lapack_wrapper_config.hh.tmpl */,
-				D958BCB022F32F0B00D41FCA /* lapack_wrapper_config.hh */,
 				D9DE0B3D22F381FE00C08382 /* TicToc.hh */,
 				D958BC9C22F32F0B00D41FCA /* lapack_wrapper.hh */,
 				D958BCAC22F32F0B00D41FCA /* lapack_wrapper.cc */,
@@ -387,12 +391,12 @@
 				D9FDAD5523100C3A0092DF2A /* hsl.h in Headers */,
 				D9FDAD5623100C3A0092DF2A /* ma57_wrapper.hh in Headers */,
 				D9F9C5582313DAF700764E6C /* ozstream_impl.hh in Headers */,
-				D958BCC322F32F0B00D41FCA /* lapack_wrapper_config.hh in Headers */,
 				D9CFB450230CA26500FB2DD8 /* sparse_tool_extra.hh in Headers */,
 				D958BCB322F32F0B00D41FCA /* lapack_wrapper.hh in Headers */,
 				D9FDAD5223100C3A0092DF2A /* hsl_solver.hh in Headers */,
 				D9F9C5572313DAF700764E6C /* ozstream.hh in Headers */,
 				D958BCC122F32F0B00D41FCA /* lapack_wrapper++.hh in Headers */,
+				D9521D5A236B8A3E00C89BFB /* lapack_wrapper_config.hh in Headers */,
 				D9F9C5562313DAF700764E6C /* izstream.hh in Headers */,
 				D9FDAD5423100C3A0092DF2A /* ma48_wrapper.hh in Headers */,
 			);
@@ -752,7 +756,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					$SOURCE_ROOT/../lib3rd/lib,
-					/usr/local/Cellar/gcc/9.2.0/lib/gcc/9/,
+					/usr/local/Cellar/gcc/9.2.0_1/lib/gcc/9/,
 					/opt/intel/mkl/lib,
 					/usr/local/opt/openblas/lib,
 				);
@@ -819,7 +823,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					$SOURCE_ROOT/../lib3rd/lib,
-					/usr/local/Cellar/gcc/9.2.0/lib/gcc/9/,
+					/usr/local/Cellar/gcc/9.2.0_1/lib/gcc/9/,
 					/opt/intel/mkl/lib,
 					/usr/local/opt/openblas/lib,
 				);

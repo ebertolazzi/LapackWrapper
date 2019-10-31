@@ -47,95 +47,89 @@ namespace SparseTool {
 
     void
     msg_info() const {
-      std::cout
-        << "\nEstimated minimum space needed for factors = " << INFO[2]
-        << "\nEstimated space needed for factor          = " << INFO[3]
-        << "\nEstimate of the rank of the matrix         = " << INFO[4]
-        << "\nEntries dropped from the data structure    = " << INFO[5]
-        << "\nOrder of the largest non-triangular block  = " << INFO[6]
-        << "\nSum of orders of non-triangular blocks     = " << INFO[7]
-        << "\n# of entries in the non-triangular blocks  = " << INFO[8]
-        << "\nstructural rank of the matrix.             = " << INFO[9]
-        << "\n# of multiple entries in the input matrix  = " << INFO[10]
-        << "\n# of entries with out-of-range indices     = " << INFO[11]
-        << "\n";
+      fmt::print( "Estimated minimum space needed for factors = {}\n", INFO[2]);
+      fmt::print( "Estimated space needed for factor          = {}\n", INFO[3]);
+      fmt::print( "Estimate of the rank of the matrix         = {}\n", INFO[4]);
+      fmt::print( "Entries dropped from the data structure    = {}\n", INFO[5]);
+      fmt::print( "Order of the largest non-triangular block  = {}\n", INFO[6]);
+      fmt::print( "Sum of orders of non-triangular blocks     = {}\n", INFO[7]);
+      fmt::print( "# of entries in the non-triangular blocks  = {}\n", INFO[8]);
+      fmt::print( "structural rank of the matrix.             = {}\n", INFO[9]);
+      fmt::print( "# of multiple entries in the input matrix  = {}\n", INFO[10]);
+      fmt::print( "# of entries with out-of-range indices     = {}\n", INFO[11]);
     }
 
     void
     msg_infor() const {
-      std::cout
-        << "\nNFLOPs for LU factorization    = " << RINFO[0]
-        << "\nNFLOPs for assembly process    = " << RINFO[1]
-        << "\nNFLOPs for elimination process = " << RINFO[2];
-      if ( ICNTL[10] > 0 )
-        std::cout
-          << "\nInfinity norm of the matrix    = " << RINFO[3]
-          << "\nInfinity norm of the solution  = " << RINFO[4]
-          << "\nNorm of scaled residual        = " << RINFO[5];
-      std::cout << "\n";
+      fmt::print("NFLOPs for LU factorization    = {}\n", RINFO[0]);
+      fmt::print("NFLOPs for assembly process    = {}\n", RINFO[1]);
+      fmt::print("NFLOPs for elimination process = {}\n", RINFO[2]);
+      if ( ICNTL[10] > 0 ) {
+        fmt::print("Infinity norm of the matrix    = {}\n", RINFO[3]);
+        fmt::print("Infinity norm of the solution  = {}\n", RINFO[4]);
+        fmt::print("Norm of scaled residual        = {}\n", RINFO[5]);
+      }
     }
 
     void
     msg_error() const {
       if ( INFO[0] >= 0 ) return;
-      std::cerr
-        << "\n***** ERROR *****"
-        << "\nnRow = " << this->nRow
-        << "\nnCol = " << this->nCol
-        << "\nnnz  = " << this->nnz
-        << "\n";
+      fmt::print(stderr,"***** ERROR *****\n");
+      fmt::print(stderr,"nRow = {}\n", this->nRow);
+      fmt::print(stderr,"nCol = {}\n", this->nCol);
+      fmt::print(stderr,"nnz  = {}\n", this->nnz);
       switch ( INFO[0] ) {
       case -1:
-        std::cerr << "Value of N is out of range N = " << INFO[1] << "\n";
+        fmt::print(stderr,"Value of N is out of range N = {}\n", INFO[1]);
         break;
       case -2:
-        std::cerr << "Value of NE is out of range NE = " << INFO[1] << "\n";
+        fmt::print(stderr,"Value of NE is out of range NE = {}\n", INFO[1]);
         break;
       case -3:
-        std::cerr << "JOB has wrong value or analisys was not performed prior to factorization. JOB = " << INFO[1] << "\n";
+        fmt::print(stderr,"JOB has wrong value or analisys was not performed prior to factorization. JOB = {}\n", INFO[1]);
         break;
       case -4:
-        std::cerr << "Error in permutation error\n";
+        fmt::print(stderr,"Error in permutation error\n");
         break;
       case -5:
-        std::cerr << "Not enought space to preprocess the input matrix\n"
-                  << "MAXS should be increased to at least " << INFO[1] << "\n";
+        fmt::print(stderr,"Not enought space to preprocess the input matrix\n");
+        fmt::print(stderr,"MAXS should be increased to at least {}\n",INFO[1]);
         break;
       case -6:
-        std::cerr << "The matrix is structurally singular\n"
-                  << "Estimated rank = " << INFO[1] << "\n";
+        fmt::print(stderr,"The matrix is structurally singular\n");
+        fmt::print(stderr,"Estimated rank = {}\n",INFO[1]);
         break;
       case -7:
-        std::cerr << "Error from analysis\n"
-                  << "MAXIS should be increased to at least " << INFO[1] << "\n";
+        fmt::print(stderr,"Error from analysis\n");
+        fmt::print(stderr,"MAXIS should be increased to at least {}\n",INFO[1]);
         break;
       case -8:
-        std::cerr << "Error from numerical factorization\n"
-                  << "MAXIS should be increased to at least " << INFO[1] << "\n";
+        fmt::print(stderr,"Error from numerical factorization\n");
+        fmt::print(stderr,"MAXIS should be increased to at least {}\n",INFO[1]);
         break;
       case -9:
-        std::cerr << "Error from numerical factorization\n"
-                  << "MAXS should be increased to at least " << INFO[1] << "\n";
+        fmt::print(stderr,"Error from numerical factorization\n");
+        fmt::print(stderr,"MAXS should be increased to at least {}\n", INFO[1]);
         break;
       case -10:
-        std::cerr << "The matrix is numerically singular\n"
-                  << "Estimated rank = " << INFO[1] << "\n";
+        fmt::print(stderr,"The matrix is numerically singular\n");
+        fmt::print(stderr,"Estimated rank = {}\n",INFO[1]);
         break;
       case -11:
-        std::cerr << "Error from the solution phase\n"
-                  << "MAXS should be increased to at least " << INFO[1] << "\n";
+        fmt::print(stderr,"Error from the solution phase\n");
+        fmt::print(stderr,"MAXS should be increased to at least {}\n",INFO[1]);
         break;
       case -12:
-        std::cerr << "Not enought space to postprocess the solution\n"
-                  << "MAXS should be increased to at least " << INFO[1] << "\n";
+        fmt::print(stderr,"Not enought space to postprocess the solution\n");
+        fmt::print(stderr,"MAXS should be increased to at least {}\n",INFO[1]);
         break;
       }
-      std::cerr << "***** ERROR *****\n";
+      fmt::print(stderr,"***** ERROR *****\n");
     }
 
     int
     factorize() {
-      if ( this->verbose ) std::cout << "ma48::factorize() perform analisys\n";
+      if ( this->verbose ) fmt::print("ma48::factorize() perform analisys\n");
 
       // analysis phase
       A_work.resize( 3*A.size() );
@@ -204,7 +198,7 @@ namespace SparseTool {
       if ( this->verbose ) {
         msg_info();
         msg_error();
-        std::cout << "done\n";
+        fmt::print("done\n");
       }
       return this->INFO[0];
     }
@@ -239,14 +233,14 @@ namespace SparseTool {
     int
     setup( bool v ) {
       this->verbose = v;
-      if ( this->verbose ) std::cout << "ma48::setup()\n";
+      if ( this->verbose ) fmt::print("ma48::setup()\n");
       // set pars
       HSL::ma48i<real_type>(this->CNTL, this->ICNTL);
       //this->ICNTL[6] = 0; // handle structurally rank deficient matrices.
       this->KEEP.resize(this->nRow+9*this->nCol+7);
       this->IW.resize(6*this->nRow+3*this->nCol);
       this->W.resize(this->nRow);
-      if ( this->verbose ) std::cout << "ma48::setup() done\n";
+      if ( this->verbose ) fmt::print("ma48::setup() done\n");
       return factorize();
     }
 

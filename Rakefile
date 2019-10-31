@@ -69,16 +69,16 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
 
   cmd = "set path=%path%;lib3rd\\lib;lib3rd\\dll;"
 
-  FileUtils.rm_f 'src/lapack_wrapper/lapack_wrapper_config.hh'
-  FileUtils.cp   'src/lapack_wrapper/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper/lapack_wrapper_config.hh'
+  FileUtils.rm_f 'src/lapack_wrapper_config.hh'
+  FileUtils.cp   'src/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper_config.hh'
 
   ChangeOnFile(
-    'src/lapack_wrapper/lapack_wrapper_config.hh',
+    'src/lapack_wrapper_config.hh',
     '@@LAPACK_WRAPPER_USE@@',
     "#define #{args.lapack} 1"
   )
   ChangeOnFile(
-    'src/lapack_wrapper/lapack_wrapper_config.hh',
+    'src/lapack_wrapper_config.hh',
     '@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@',
     "#define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1"
   )
@@ -118,18 +118,18 @@ desc 'compile for OSX [default lapack="LAPACK_WRAPPER_USE_ACCELERATE"]'
 task :build_osx, [:lapack] do |t, args|
   args.with_defaults( :lapack => "LAPACK_WRAPPER_USE_ACCELERATE" )
 
-  FileUtils.rm_f 'src/lapack_wrapper/lapack_wrapper_config.hh'
-  FileUtils.cp   'src/lapack_wrapper/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper/lapack_wrapper_config.hh'
+  FileUtils.rm_f 'src/lapack_wrapper_config.hh'
+  FileUtils.cp   'src/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper_config.hh'
 
   Rake::Task[:osx_3rd].invoke(args.lapack)
 
   ChangeOnFile(
-    'src/lapack_wrapper/lapack_wrapper_config.hh',
+    'src/lapack_wrapper_config.hh',
     '@@LAPACK_WRAPPER_USE@@',
     "#define #{args.lapack} 1"
   )
   ChangeOnFile(
-    'src/lapack_wrapper/lapack_wrapper_config.hh',
+    'src/lapack_wrapper_config.hh',
     '@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@',
     "// #define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1"
   )
@@ -169,16 +169,16 @@ task :build_linux, [:lapack] do |t, args|
 
   Rake::Task[:linux_3rd].invoke(args.lapack)
 
-  FileUtils.rm_f 'src/lapack_wrapper/lapack_wrapper_config.hh'
-  FileUtils.cp   'src/lapack_wrapper/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper/lapack_wrapper_config.hh'
+  FileUtils.rm_f 'src/lapack_wrapper_config.hh'
+  FileUtils.cp   'src/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper_config.hh'
 
   ChangeOnFile(
-    'src/lapack_wrapper/lapack_wrapper_config.hh',
+    'src/lapack_wrapper_config.hh',
     '@@LAPACK_WRAPPER_USE@@',
     "#define #{args.lapack} 1"
   )
   ChangeOnFile(
-    'src/lapack_wrapper/lapack_wrapper_config.hh',
+    'src/lapack_wrapper_config.hh',
     '@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@',
     "// #define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1"
   )

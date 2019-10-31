@@ -71,7 +71,6 @@ end
 task :install_common do |t, args|
   prefix = "../../lib3rd"
   puts "{fmt} copy files to #{prefix}"
-  FileUtils.rm_rf   "#{prefix}/include/fmt"
   FileUtils.mkdir_p "#{prefix}/include/fmt"
   FileUtils.mkdir_p "#{prefix}/lib"
   Dir['fmt/lib/include/fmt/*'].each do |f|

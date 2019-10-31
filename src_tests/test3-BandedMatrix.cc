@@ -64,8 +64,8 @@ main() {
   BLU.solve(rhs);
 
   for ( int i = 0; i < N; ++i )
-    cout << "x[ " << i << " ] = " << rhs[i] << '\n';
+    fmt::print("x[{}] = {}\n", i, rhs[i]);
 
-  cout << "All done!\n";
+  fmt::print("All done!\n");
   return 0;
 }

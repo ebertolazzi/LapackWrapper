@@ -69,6 +69,28 @@
 
 namespace lapack_wrapper {
 
+  void
+  backtrace( ostream_type & ost ) {
+    backward::Printer       printer;
+    backward::StackTrace    stack_trace;
+    backward::TraceResolver trace_resolver;
+    stack_trace.load_here(32);
+    printer.object     = true;
+    printer.color_mode = backward::ColorMode::always;
+    printer.address    = true;
+    /* printer.print(stack_trace); */
+    trace_resolver.load_stacktrace(stack_trace);
+    ost << "\nSTACK TRACE\n\n";
+    for ( size_t i = 3; i < stack_trace.size(); ++i ) {
+      backward::ResolvedTrace trace = trace_resolver.resolve(stack_trace[i]);
+      ost
+        << "#" << i-2
+        << " " << trace.object_filename
+        << "\n" << trace.object_function
+        << "\n[" << trace.addr << "]\n\n";
+    }
+  }
+
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
       defined(LAPACK_WRAPPER_USE_ATLAS)      || \
       defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \

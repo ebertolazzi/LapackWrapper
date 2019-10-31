@@ -167,9 +167,7 @@ namespace lapack_wrapper {
         if (counter >= this->MaxRefinements - 1) {
           this->last_error = "Refinement of HSL MA57 failed (Maxiter)";
           if ( residual > real(1e-5) ) return false;
-          std::cout
-            << std::scientific << "Residual: " << residual
-            << std::fixed << std::endl;
+          fmt::print("Residual: {:g}\n", residual);
         }
       }
     } else {

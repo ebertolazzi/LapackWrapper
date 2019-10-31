@@ -21,7 +21,7 @@
 /// file: lapack_wrapper.hh
 ///
 
-#include "lapack_wrapper_config.hh"
+#include "../lapack_wrapper_config.hh"
 
 #ifndef LAPACK_WRAPPER_HH
 #define LAPACK_WRAPPER_HH
@@ -75,11 +75,6 @@
 #include <cstring>
 #include <limits>
 #include <algorithm>
-
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <stdexcept>
 
 #ifdef LAPACK_WRAPPER_USE_LAPACK2
   #define LAPACK_WRAPPER_USE_LAPACK 1
@@ -346,20 +341,6 @@
   #error "You must select the linear algebra packages used!"
 #endif
 
-#ifndef LAPACK_WRAPPER_ERROR
-  #define LAPACK_WRAPPER_ERROR(MSG) {            \
-    std::ostringstream ost;                      \
-    ost << "in file: " << __FILE__ << "\nline: " \
-        << __LINE__ << '\n' << MSG << '\n';      \
-    throw std::runtime_error(ost.str());         \
-  }
-#endif
-
-#ifndef LAPACK_WRAPPER_ASSERT
-  #define LAPACK_WRAPPER_ASSERT(COND,MSG) \
-    if ( !(COND) ) LAPACK_WRAPPER_ERROR( "in lapack_wrapper::" << MSG )
-#endif
-
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundefined-func-template"
@@ -373,6 +354,8 @@ namespace lapack_wrapper {
   // using namespace std;
 
   typedef std::basic_ostream<char> ostream_type;
+
+  void backtrace( ostream_type & );
 
   typedef enum {
     NO_TRANSPOSE        = 0,

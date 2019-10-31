@@ -60,9 +60,9 @@ testSparseTool( istream & mm_file ) {
   SparsePattern              SP;
   Vector<double>             x, rhs, exact, resid;
 
-  cout << "read matrix..." << flush;
+  fmt::print("read matrix...");
   mm.read( mm_file, A );
-  cout << "done\n" << mm << flush;
+  fmt::print("done\n{}",mm);
   
   SP . resize( A );
   B  . resize( SP );
@@ -79,13 +79,12 @@ testSparseTool( istream & mm_file ) {
 #if 1
 
   x = 0;
-  cout << "factorize (ildu) ..." << flush;
+  fmt::print("factorize (ildu) ...");
   tm.tic();
   ildu.build(A);
   tm.toc();
-  cout << " " << tm.elapsed_ms() << "[ms] done\n"  << flush;
-
-  cout << "solve (bicgstab) ... " << flush;
+  fmt::print(" {} [ms] done\n", tm.elapsed_ms());
+  fmt::print("solve (bicgstab) ... ");
   tm.tic();
 
   double   epsi       = 1e-15;
@@ -96,45 +95,42 @@ testSparseTool( istream & mm_file ) {
   //double   res = gmres( A, rhs, x, ildu, epsi, maxSubIter, maxIter, iter, &cout );
 
   tm.toc();
-  cout << " " << tm.elapsed_ms()  << "[ms] done\n" << flush;
+  fmt::print(" {} [ms] done\n",tm.elapsed_ms());
   
   resid = rhs - A*x;
 
-  cout
-    << "error    (bicgstab) = " << dist2( x, exact ) << '\n'
-    << "residual (bicgstab) = " << normi( resid )    << '\n';
+  fmt::print("error    (bicgstab) = {}\n", dist2( x, exact ) );
+  fmt::print("residual (bicgstab) = {}\n", normi( resid ) );
 #endif
 
 #if 1
   x = 0;
   MA41<double> ma41;
   ma41.load( A );
-  cout << "\nsolve    (MA41) ... " << flush;
+  fmt::print("\nsolve    (MA41) ... ");
   tm.tic();
   ma41.solve( rhs, x );
   tm.toc();
-  cout << " " << tm.elapsed_ms()  << "[ms] done\n" << flush;
+  fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   resid = rhs - A*x;
-  cout
-    << "error    (MA41) = " << dist2( x, exact ) << '\n'
-    << "residual (MA41) = " << normi( resid )    << '\n';
+  fmt::print("error    (MA41) = {}\n", dist2( x, exact ) );
+  fmt::print("residual (MA41) = {}\n", normi( resid ) );
 #endif
 
 #if 0
   x = 0;
   MA48<double> ma48;
   ma48.load( A );
-  cout << "\nsolve    (MA48) ... " << flush;
+  fmt::print("\nsolve    (MA48) ... ");
   tm.tic();
   ma48.solve( rhs, x );
   tm.toc();
-  cout << " " << tm.elapsed_ms()  << "[ms] done\n" << flush;
+  fmt::print(" {} [ms] done\n", tm.elapsed_ms() );
 
   resid = rhs - A*x;
-  cout
-    << "error    (MA48) = " << dist2( x, exact ) << '\n'
-    << "residual (MA48) = " << normi( resid )    << '\n';
+  fmt::print("error    (MA48) = {}\n", dist2( x, exact ) );
+  fmt::print("residual (MA48) = {}\n", normi( resid ) );
 #endif
 
 #if 1
@@ -143,54 +139,49 @@ testSparseTool( istream & mm_file ) {
   pardiso.load( A );
   //pardiso.check_matrix();
   pardiso.factorize();
-  cout << "\nsolve    (pardiso) ... " << flush;
+  fmt::print("\nsolve    (pardiso) ... ");
   tm.tic();
   pardiso.solve( rhs, x );
   tm.toc();
-  cout << " " << tm.elapsed_ms()  << "[ms] done\n" << flush;
+  fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   resid = rhs - A*x;
-  cout
-    << "error    (pardiso) = " << dist2( x, exact ) << '\n'
-    << "residual (pardiso) = " << normi( resid )    << '\n';
+  fmt::print("error    (pardiso) = {}\n", dist2( x, exact ) );
+  fmt::print("residual (pardiso) = {}\n", normi( resid ) );
 #endif
 
 #if 1
   x = 0;
   SuperLU<double> superlu;
   superlu.load( A );
-  cout << "\nsolve    (superlu) ... " << flush;
+  fmt::print("\nsolve    (superlu) ... ");
   tm.tic();
   superlu.solve( rhs, x );
   tm.toc();
-  cout << " " << tm.elapsed_ms()  << "[ms] done\n" << flush;
+  fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   resid = rhs - A*x;
-  cout
-    << "error    (superlu) = " << dist2( x, exact ) << '\n'
-    << "residual (superlu) = " << normi( resid )    << '\n';
+  fmt::print("error    (superlu) = {}\n", dist2( x, exact ) );
+  fmt::print("residual (superlu) = {}\n", normi( resid ) );
 #endif
 
 #if 1
   x = 0;
   UMF<double> umf;
   umf.load( A );
-  cout << "\nsolve    (UMF) ... " << flush;
+  fmt::print("\nsolve    (UMF) ... ");
   tm.tic();
   umf.solve( rhs, x );
   tm.toc();
-  cout << " " << tm.elapsed_ms()  << "[ms] done\n" << flush;
+  fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   resid = rhs - A*x;
-  cout
-    << "error    (UMF) = " << dist2( x, exact ) << '\n'
-    << "residual (UMF) = " << normi( resid )    << '\n';
+  fmt::print("error    (UMF) = {}\n", dist2( x, exact ) );
+  fmt::print("residual (UMF) = {}\n", normi( resid ) );
 #endif
 
   resid = rhs - A*exact;
-  cout
-    << "\n\nresidual (exact) = " << normi( resid )
-    << "\n\n";
+  fmt::print( "\n\nresidual (exact) = {}\n\n", normi( resid ) );
 }
 
 int
@@ -235,6 +226,6 @@ main() {
     testSparseTool( gz );
     file.close();
   }
-  cout << "\nAll Done Folks\n\n";
+  fmt::print("\nAll Done Folks\n\n");
   return 0;
 }

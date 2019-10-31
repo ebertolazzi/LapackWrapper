@@ -58,11 +58,11 @@ testSparseTool( istream & mm_file ) {
   CCoorMatrix<cplx>        A;
   Vector<cplx>             x, rhs, exact, resid;
 
-  cout << "read matrix..." << flush;
+  fmt::print("read matrix...");
   tm.tic();
   mm.read( mm_file, A );
   tm.toc();
-  cout << " " << tm.elapsed_ms() << "[ms] done\n"  << flush;
+  fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   //Spy( mm_file + ".eps" , A, 15.0 );
   
@@ -71,16 +71,16 @@ testSparseTool( istream & mm_file ) {
   rhs   . resize( A.numRows() );
   resid . resize( A.numRows() );
 
-  cout << "factorize (ildu) ..." << flush;
+  fmt::print("factorize (ildu) ...");
   tm.tic();
   ildu.build(A);
   tm.toc();
-  cout << " " << tm.elapsed_ms() << "[ms] done\n"  << flush;
+  fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   exact = cplx(1);
   rhs   = A * exact;
 
-  cout << "solve (ildu) ... " << flush;
+  fmt::print("solve (ildu) ... ");
   tm.tic();
 
   double   epsi    = 1e-15;
@@ -91,14 +91,12 @@ testSparseTool( istream & mm_file ) {
   //double   res = gmres( A, rhs, x, ildu, epsi, maxSubIter, maxIter, iter, &cout );
 
   tm.toc();
-  cout << " " << tm.elapsed_s()  << "[s] done\n"  << flush;
+  fmt::print( " {} [s] done\n", tm.elapsed_s());
   
   resid = rhs - A*x;
 
-  cout
-    << "\nerror    (ildu) = " << dist2( x, exact )
-    << "\nresidual (ildu) = " << normi( resid )
-    << "\n";
+  fmt::print("\nerror    (ildu) = {}\n", dist2( x, exact ) );
+  fmt::print("\nresidual (ildu) = {}\n", normi( resid ) );
 
 #if 1
 
@@ -112,11 +110,9 @@ testSparseTool( istream & mm_file ) {
 
   resid = rhs - A*x;
 
-  cout
-    << "\nerror    (pardiso) = " << dist2( x, exact )
-    << "\nresidual (pardiso) = " << normi( resid )
-    << "\nelapsed time " << tm.elapsed_s()  << "[s]\n"
-    << "\n";
+  fmt::print("error    (pardiso) = {}\n", dist2( x, exact ) );
+  fmt::print("residual (pardiso) = {}\n", normi( resid ) );
+  fmt::print("elapsed time {} [s]\n", tm.elapsed_s() );
 #endif
 
 }
@@ -146,7 +142,7 @@ main() {
     string fname = string("mmc/")+*p;
     ifstream file( fname.c_str() );
     if ( !file.good() ) {
-      cerr << "Cannot open file: " << fname << "\n";
+      fmt::print("Cannot open file: {}\n", fname);
       exit(0);
     }
     igzstream gz(file);
@@ -156,6 +152,6 @@ main() {
     testSparseTool( gz );
     file.close();
   }
-  cout << "\nAll Done Folks\n\n";
+  fmt::print("\nAll Done Folks\n\n");
   return 0;
 }

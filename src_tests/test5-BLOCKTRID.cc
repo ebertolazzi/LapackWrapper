@@ -64,7 +64,7 @@ test1() {
   BT.solve( 2, rhs, 7 );
 
   for ( integer k = 0; k < rBlocks[3]; ++k )
-    cout << "x[ " << k << "] = " << rhs[7+k] << "\n";
+    fmt::print("x[{}] = {}\n", k, rhs[7+k]);
 }
 
 static
@@ -114,15 +114,15 @@ test2() {
   BT.solve( 2, rhs, 7 );
 
   for ( integer k = 0; k < rBlocks[3]; ++k )
-    cout << "x[ " << k << "] = " << rhs[7+k] << "\n";
+    fmt::print("x[{}] = {}\n", k, rhs[7+k]);
 }
 
 int
 main() {
-  cout << "test1\n";
+  fmt::print( "test1\n" );
   test1();
-  cout << "\n\ntest2\n";
+  fmt::print( "\n\ntest2\n" );
   test2();
-  cout << "All done!\n";
+  fmt::print( "All done!\n" );
   return 0;
 }

@@ -21,7 +21,7 @@
 #ifndef TIC_TOC_HH
 #define TIC_TOC_HH
 
-#include "lapack_wrapper_config.hh"
+#include "../lapack_wrapper_config.hh"
 
 #ifdef LAPACK_WRAPPER_OS_WINDOWS
   #include <windows.h>

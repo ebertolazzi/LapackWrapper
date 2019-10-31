@@ -91,7 +91,9 @@ namespace lapack_wrapper {
     integer info = gecopy( nRow, nCol, A, LDA, Amat, nRow );
     LAPACK_WRAPPER_ASSERT(
       info == 0,
-      "LU::factorize[" << who << "] gecopy INFO = " << info
+      "LU::factorize[" << who << "] gecopy(nRow=" << nRow <<
+      ", nCol=" << nCol << ", A, LDA=" << LDA << ", B, LDB=" << nRow <<
+      ") : INFO = " << info
     );
     factorize( who );
   }
