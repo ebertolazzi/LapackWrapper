@@ -46,7 +46,7 @@
   #include <cstdlib>
   static
   char *
-  basename(char *path) {
+  basename(char const path[] ) {
     static char drive[100];
     static char dir[1024];
     static char fname[256];
@@ -59,37 +59,152 @@
       ext,   128
     );
     LAPACK_WRAPPER_ASSERT( e == 0, "lapack_wrapper, basename failed!" );
-    return dir;
+    return fname;
   }
+/*
+  #include "StackWalker.h"
+  static
+  inline
+  void
+  printStackTrace( FILE *out = stderr ) {
+    fprintf( out, "stack trace:\n" );
+    StackWalker sw;
+    sw.ShowCallstack();
+  }
+*/
 #else
   #include <libgen.h>
 #endif
 
 #include <algorithm>
+#include <string>
+#include <sstream>
+
+#include <execinfo.h> // for backtrace
+#include <dlfcn.h>    // for dladdr
+#ifndef LAPACK_WRAPPER_OS_WINDOWS
+#include <cxxabi.h>   // for __cxa_demangle
+#endif
 
 namespace lapack_wrapper {
 
-  void
-  backtrace( ostream_type & ost ) {
-    backward::Printer       printer;
-    backward::StackTrace    stack_trace;
-    backward::TraceResolver trace_resolver;
-    stack_trace.load_here(32);
-    printer.object     = true;
-    printer.color_mode = backward::ColorMode::always;
-    printer.address    = true;
-    /* printer.print(stack_trace); */
-    trace_resolver.load_stacktrace(stack_trace);
-    ost << "\nSTACK TRACE\n\n";
-    for ( size_t i = 3; i < stack_trace.size(); ++i ) {
-      backward::ResolvedTrace trace = trace_resolver.resolve(stack_trace[i]);
-      ost
-        << "#" << i-2
-        << " " << trace.object_filename
-        << "\n" << trace.object_function
-        << "\n[" << trace.addr << "]\n\n";
-    }
+  #ifndef LAPACK_WRAPPER_OS_WINDOWS
+  static
+  inline
+  std::string
+  demang( char const mangled_name[] ) {
+    int status = 0 ;
+    std::string retval = mangled_name;
+    char * name = abi::__cxa_demangle( mangled_name, nullptr, nullptr, &status );
+    if ( status == 0 ) retval = name;
+    if ( name != nullptr ) std::free(name) ;
+    return retval;
   }
+  #endif // __linux__
+
+  std::string
+  Runtime_Error::grab_backtrace(
+    std::string const & reason,
+    char const          file[],
+    int                 line
+  ) const {
+
+    char filename[MAXPATHLEN];
+    basename_r( file, filename );
+    std::ostringstream ost;
+    fmt::print(
+      ost, "\n{}\nOn File:{}:{}\n",
+      reason, filename, line
+    );
+
+    #ifndef LAPACK_WRAPPER_OS_WINDOWS
+    fmt::print(ost, "stack trace:\n");
+
+    //  record stack trace upto 128 frames
+    void *callstack[128] = {};
+
+    // collect stack frames
+    int frames = backtrace( callstack, 128);
+
+    // get the human-readable symbols (mangled)
+    char** strs = backtrace_symbols( callstack, frames);
+
+    for ( int i = 1; i < frames; ++i) {
+      char functionSymbol[1024] = {};
+      char moduleName[1024]     = {};
+      int  offset               = 0;
+      char addr[48]             = {};
+
+      /*
+
+      Typically this is how the backtrace looks like:
+
+      0   <app/lib-name>     0x0000000100000e98 _Z5tracev + 72
+      1   <app/lib-name>     0x00000001000015c1 _ZNK7functorclEv + 17
+      2   <app/lib-name>     0x0000000100000f71 _Z3fn0v + 17
+      3   <app/lib-name>     0x0000000100000f89 _Z3fn1v + 9
+      4   <app/lib-name>     0x0000000100000f99 _Z3fn2v + 9
+      5   <app/lib-name>     0x0000000100000fa9 _Z3fn3v + 9
+      6   <app/lib-name>     0x0000000100000fb9 _Z3fn4v + 9
+      7   <app/lib-name>     0x0000000100000fc9 _Z3fn5v + 9
+      8   <app/lib-name>     0x0000000100000fd9 _Z3fn6v + 9
+      9   <app/lib-name>     0x0000000100001018 main + 56
+      10  libdyld.dylib      0x00007fff91b647e1 start + 0
+
+      */
+
+      // split the string, take out chunks out of stack trace
+      // we are primarily interested in module, function and address
+      sscanf(
+        strs[i], "%*s %s %s %s %*s %d",
+        moduleName, addr, functionSymbol, &offset
+      );
+
+      //  if this is a C++ library, symbol will be demangled
+      //  on success function returns 0
+      //
+      fmt::print( ost, "{:2} ({:30})  {} — {} + {}\n",
+        i, moduleName, addr, demang( functionSymbol ), offset
+      );
+    }
+    free(strs);
+    #endif
+    return ost.str();
+  }
+
+  #if 0
+  std::string
+  Runtime_Error::grab_backtrace(
+    std::string const & reason,
+    char const          file[],
+    int                 line
+  ) const {
+    char filename[MAXPATHLEN];
+    basename_r( file, filename );
+    std::ostringstream ost;
+    ost << reason << "\nOn File: " << filename << ":" << line << "\nStack Trace:\n";
+    void *callstack[32];
+    int const nMaxFrames = 32;
+    int       nFrames    = ::backtrace( callstack, nMaxFrames );
+    char **   symbols    = backtrace_symbols(callstack, nFrames);
+    for ( int i = 0; i < nFrames; ++i ) {
+      Dl_info info;
+      if ( dladdr(callstack[i], &info) && info.dli_sname ) {
+        unsigned offs = unsigned((char *)callstack[i] - (char *)info.dli_saddr);
+        ost << symbols[i] << "\n";
+        fmt::print(
+          ost, "{:2} +{:04X} {}\n",
+          i, offs, demang(info.dli_sname)
+        );
+      } else {
+        ost << symbols[i] << "\n";
+      }
+    }
+    free(symbols);
+    if ( nFrames == nMaxFrames ) ost << "[truncated]\n";
+    return ost.str();
+  }
+  #endif
 
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
       defined(LAPACK_WRAPPER_USE_ATLAS)      || \

@@ -3,12 +3,14 @@ CC       = clang
 CXX      = clang++
 VERSION  = $(shell $(CC) --version 2>&1 | grep -o "Apple LLVM version [0-9]\.[0-9]\.[0-9]" | grep -o " [0-9]\.")
 #---------
-CXX     += -std=c++11 -stdlib=libc++
+CXX     += -std=c++11 -stdlib=libc++ -g
 #---------
 CC     += $(WARN)
 CXX    += $(WARN)
 AR      = libtool -static -o
 LIBSGCC = -lstdc++ -lm
+
+override LIBS += -lfort_osx_static -lfmt_osx_static
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
   override LIBS += -llapack -lblas
@@ -17,7 +19,7 @@ endif
 ifneq (,$(findstring LAPACK_WRAPPER_USE_OPENBLAS,$(USED_LIB)))
   FPATH=$(dir $(shell gfortran -print-libgcc-file-name))
   override LIBS += -Llib3rd/lib -Llib3rd/dll -Wl,-rpath,lib3rd/dll -Wl,-rpath,lib/lib -L$(FPATH)/../../..  -lgfortran
-  override LIBS += -L/usr/local/opt/openblas/lib -lopenblas 
+  override LIBS += -L/usr/local/opt/openblas/lib -lopenblas
   override INC  += -I/usr/local/opt/openblas/include
 endif
 

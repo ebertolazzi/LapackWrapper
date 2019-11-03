@@ -26,7 +26,7 @@
 
 /*\
  ! values
- !  LAPACK_WRAPPER_USE_ACCELERATE, LAPACK_WRAPPER_USE_ATLAS, LAPACK_WRAPPER_USE_OPENBLAS, 
+ !  LAPACK_WRAPPER_USE_ACCELERATE, LAPACK_WRAPPER_USE_ATLAS, LAPACK_WRAPPER_USE_OPENBLAS,
  !  LAPACK_WRAPPER_USE_LAPACK, LAPACK_WRAPPER_USE_MKL, lAPACK_WRAPPER_USE_BLASFEO
 \*/
 @@LAPACK_WRAPPER_USE@@
@@ -130,18 +130,6 @@
 #include "fmt/format.h"
 #include "fmt/printf.h"
 
-#ifndef BACKWARD_HAS_UNWIND
-  #define BACKWARD_HAS_UNWIND 0
-#endif
-#ifndef BACKWARD_HAS_BACKTRACE
-  #define BACKWARD_HAS_BACKTRACE 0
-#endif
-#ifndef BACKWARD_HAS_BACKTRACE_SYMBOL
-  #define BACKWARD_HAS_BACKTRACE_SYMBOL 0
-#endif
-
-#include "backward.hpp"
-
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -151,14 +139,28 @@
 #include <sstream>
 #include <stdexcept>
 
+#include <execinfo.h>
+#include <string>
+#include <stdexcept>
+#include <cstdlib>
+#include <iostream>
+
+namespace lapack_wrapper {
+  class Runtime_Error : public std::runtime_error {
+  private:
+    std::string grab_backtrace( std::string const & reason, char const file[], int line ) const;
+  public:
+    explicit
+    Runtime_Error( std::string const & reason, char const file[], int line )
+    : std::runtime_error( grab_backtrace( reason, file, line ) )
+    { }
+  };
+}
+
 #ifndef LAPACK_WRAPPER_ERROR
-  #define LAPACK_WRAPPER_ERROR(MSG) {      \
-    std::ostringstream ost;                \
-    ost << "On line: " << __LINE__         \
-        << " file: " << __FILE__           \
-        << '\n' << MSG << '\n';            \
-    lapack_wrapper::backtrace( ost );      \
-    throw std::runtime_error( ost.str() ); \
+  #define LAPACK_WRAPPER_ERROR(MSG) {   \
+    std::ostringstream ost; ost << MSG; \
+    throw lapack_wrapper::Runtime_Error( ost.str(), __FILE__, __LINE__ ); \
   }
 #endif
 

@@ -58,11 +58,11 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
   if COMPILE_DEBUG then
     sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
     sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
-    FileUtils.mv '../lib/lib/libfmt.lib', "../lib/lib/fmt_win_#{args.bits}_static_debug.lib"
+    FileUtils.mv './Debug/fmt.lib', "../lib/lib/fmt_win_#{args.bits}_static_debug.lib"
   end
   sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
   sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-  FileUtils.mv '../lib/lib/libfmt.lib', "../lib/lib/fmt_win_#{args.bits}_static.lib"
+  FileUtils.mv './Release/fmt.lib', "../lib/lib/fmt_win_#{args.bits}_static.lib"
   FileUtils.cd '../..'
   Rake::Task[:install_common].invoke()
 end

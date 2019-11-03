@@ -355,8 +355,6 @@ namespace lapack_wrapper {
 
   typedef std::basic_ostream<char> ostream_type;
 
-  void backtrace( ostream_type & );
-
   typedef enum {
     NO_TRANSPOSE        = 0,
     TRANSPOSE           = 1,
