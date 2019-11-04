@@ -8,7 +8,7 @@ make DYNAMIC_ARCH=1 BINARY=64 BINARY64=1
 make DYNAMIC_ARCH=1 BINARY=64 BINARY64=1 \
      HOSTCC=gcc CC=x86_64-w64-mingw32-gcc \
      FC=x86_64-w64-mingw32-gfortran \
-     CFLAGS="-static-libgcc -static-libstdc++ -static -g0" \
+     CFLAGS="-static-libgcc -static-libstdc++ -static -g" \
      FFLAGS="-static"
 
 make clean
