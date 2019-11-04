@@ -80,9 +80,9 @@
 #include <string>
 #include <sstream>
 
+#ifndef LAPACK_WRAPPER_OS_WINDOWS
 #include <execinfo.h> // for backtrace
 #include <dlfcn.h>    // for dladdr
-#ifndef LAPACK_WRAPPER_OS_WINDOWS
 #include <cxxabi.h>   // for __cxa_demangle
 #endif
 

@@ -10,8 +10,6 @@ CXX    += $(WARN)
 AR      = libtool -static -o
 LIBSGCC = -lstdc++ -lm
 
-override LIBS += -lfort_osx_static -lfmt_osx_static
-
 ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
   override LIBS += -llapack -lblas
 endif

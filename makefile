@@ -63,9 +63,13 @@ $(info $(USED_LIB))
 SRCS = \
 src/lapack_wrapper/lapack_wrapper++.cc \
 src/lapack_wrapper/lapack_wrapper.cc \
+\
 src/HSL/hsl_solver.cc \
 src/HSL/ma48_wrapper.cc \
-src/HSL/ma57_wrapper.cc
+src/HSL/ma57_wrapper.cc \
+\
+src/fmt/format.cc \
+src/fmt/posix.cc
 
 OBJS = $(SRCS:.cc=.o)
 
@@ -83,6 +87,7 @@ OBJS_TESTS = $(SRCS_TESTS:.cc=.o)
 DEPS = \
 src/lapack_wrapper_config.hh \
 src/lapack_wrapper/TicToc.hh \
+\
 src/lapack_wrapper/lapack_wrapper++.hh \
 src/lapack_wrapper/lapack_wrapper.hh \
 src/lapack_wrapper/code/banded.hxx \
@@ -96,10 +101,35 @@ src/lapack_wrapper/code/triangular.hxx \
 src/lapack_wrapper/code/tridiagonal.hxx \
 src/lapack_wrapper/code/wrapper.cxx \
 src/lapack_wrapper/code/wrapper.hxx \
+\
 src/lapack_wrapper/HSL/hsl.h \
 src/lapack_wrapper/HSL/hsl_solver.h \
 src/lapack_wrapper/HSL/ma48_wrapper.h \
-src/lapack_wrapper/HSL/ma57_wrapper.h
+src/lapack_wrapper/HSL/ma57_wrapper.h \
+\
+src/fmt/chrono.h \
+src/fmt/color.h \
+src/fmt/compile.h \
+src/fmt/core.h \
+src/fmt/format-inl.h \
+src/fmt/format.h \
+src/fmt/locale.h \
+src/fmt/ostream.h \
+src/fmt/posix.h \
+src/fmt/printf.h \
+src/fmt/ranges.h \
+src/fmt/safe-duration-cast.h \
+\
+src/fort/cell.h \
+src/fort/fort.h \
+src/fort/fort_utils.h \
+src/fort/properties.h \
+src/fort/row.h \
+src/fort/string_buffer.h \
+src/fort/table.h \
+src/fort/utf8.h \
+src/fort/vector.h \
+src/fort/wcwidth.h
 
 # check if the OS string contains 'Linux'
 ifneq (,$(findstring Linux, $(OS)))

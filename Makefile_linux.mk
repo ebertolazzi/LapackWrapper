@@ -10,8 +10,6 @@ CXX    += $(WARN)
 AR      = ar rcs
 LIBSGCC = -lstdc++ -lm -pthread
 
-override LIBS += -lfort_linux_static -lfmt_linux_static
-
 ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
   override LIBS += -llapack -lblas
 endif

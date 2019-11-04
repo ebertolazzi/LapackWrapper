@@ -123,16 +123,13 @@
 #pragma clang diagnostic ignored "-Wundefined-func-template"
 #pragma clang diagnostic ignored "-Wdouble-promotion"
 #pragma clang diagnostic ignored "-Wsigned-enum-bitfield"
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#pragma clang diagnostic ignored "-Wweak-vtables"
 #endif
 
-#include "fort.hpp"
 #include "rang.hpp"
 #include "fmt/format.h"
 #include "fmt/printf.h"
-
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
 
 #include <iostream>
 #include <iomanip>
@@ -156,6 +153,10 @@ namespace lapack_wrapper {
     { }
   };
 }
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 #ifndef LAPACK_WRAPPER_ERROR
   #define LAPACK_WRAPPER_ERROR(MSG) {   \
