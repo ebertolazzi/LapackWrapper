@@ -115,12 +115,20 @@ namespace lapack_wrapper {
       reason, file, line
     );
     #else
-    char filename[MAXPATHLEN];
-    basename_r( file, filename );
-    fmt::print(
-      ost, "\n{}\nOn File:{}:{}\n",
-      reason, filename, line
-    );
+
+    #ifdef LAPACK_WRAPPER_OS_LINUX
+      fmt::print(
+        ost, "\n{}\nOn File:{}:{}\n",
+        reason, file, line
+      );
+    #else
+      char filename[MAXPATHLEN];
+      basename_r( file, filename );
+      fmt::print(
+        ost, "\n{}\nOn File:{}:{}\n",
+        reason, filename, line
+      );
+    #endif
 
     fmt::print(ost, "stack trace:\n");
 
