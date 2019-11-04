@@ -108,16 +108,20 @@ namespace lapack_wrapper {
     char const          file[],
     int                 line
   ) const {
-
+    std::ostringstream ost;
+    #ifdef LAPACK_WRAPPER_OS_WINDOWS
+    fmt::print(
+      ost, "\n{}\nOn File:{}:{}\n",
+      reason, file, line
+    );
+    #else
     char filename[MAXPATHLEN];
     basename_r( file, filename );
-    std::ostringstream ost;
     fmt::print(
       ost, "\n{}\nOn File:{}:{}\n",
       reason, filename, line
     );
 
-    #ifndef LAPACK_WRAPPER_OS_WINDOWS
     fmt::print(ost, "stack trace:\n");
 
     //  record stack trace upto 128 frames

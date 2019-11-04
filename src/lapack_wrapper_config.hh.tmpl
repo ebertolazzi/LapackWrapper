@@ -67,7 +67,13 @@
     #define WIN32_LEAN_AND_MEAN
   #endif
   #include <windows.h>
-#else
+  // workaround for windows that may define min and max as macros
+  #ifdef min
+    #undef min
+  #endif
+  #ifdef max
+    #undef max
+  #endif#else
   #error "unsupported OS!"
 #endif
 
@@ -131,16 +137,12 @@
 #include "fmt/format.h"
 #include "fmt/printf.h"
 
+#include <string>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <stdexcept>
-
-#include <execinfo.h>
-#include <string>
-#include <stdexcept>
 #include <cstdlib>
-#include <iostream>
+#include <stdexcept>
 
 namespace lapack_wrapper {
   class Runtime_Error : public std::runtime_error {
