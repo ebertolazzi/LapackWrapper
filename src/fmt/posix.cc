@@ -44,6 +44,14 @@
 #  include <io.h>
 #  include <windows.h>
 
+// workaround for windows that may define min and max as macros
+#ifdef min
+  #undef min
+#endif
+#ifdef max
+  #undef max
+#endif
+
 #  define O_CREAT _O_CREAT
 #  define O_TRUNC _O_TRUNC
 
