@@ -12,3 +12,4 @@ src/lapack_wrapper/.vscode
 src/lapack_wrapper_config.hh
 Testing
 .vscode
+lapack_wrapper_config.hh
