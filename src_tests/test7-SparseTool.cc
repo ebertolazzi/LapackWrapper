@@ -39,7 +39,7 @@
 #pragma clang diagnostic ignored "-Wshorten-64-to-32"
 #endif
 
-#include "izstream.hh"
+#include "zstream/izstream.hh"
 
 #ifdef __clang__
 #pragma clang diagnostic pop

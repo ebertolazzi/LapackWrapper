@@ -8,16 +8,12 @@ desc "install 3rd parties for OSX"
 task :install_osx do
   FileUtils.cd "SuperLU"
   sh "rake install_osx"
-  FileUtils.cd "../rang"
-  sh "rake install_osx"
   FileUtils.cd ".."
 end
 
 desc "install 3rd parties for LINUX"
 task :install_linux do
   FileUtils.cd "SuperLU"
-  sh "rake install_linux"
-  FileUtils.cd "../rang"
   sh "rake install_linux"
   FileUtils.cd ".."
 end
@@ -26,8 +22,6 @@ desc "install 3rd parties for WINDOWS"
 task :install_win, [:year, :bits] do |t,args|
   args.with_defaults(:year => "2017", :bits => "x64" )
   FileUtils.cd "SuperLU"
-  sh "rake install_win[#{args.year},#{args.bits}]"
-  FileUtils.cd "../rang"
   sh "rake install_win[#{args.year},#{args.bits}]"
   FileUtils.cd "../OpenBlas"
   sh "rake install_win[#{args.year},#{args.bits}]"
@@ -38,8 +32,6 @@ desc "clean 3rd parties for OSX"
 task :clean_osx do
   FileUtils.cd "SuperLU"
   sh "rake clean_osx"
-  FileUtils.cd "../rang"
-  sh "rake clean_osx"
   FileUtils.cd "../OpenBlas"
   sh "rake clean_osx"
   FileUtils.cd ".."
@@ -48,8 +40,6 @@ end
 desc "clean 3rd parties for LINUX"
 task :clean_linux do
   FileUtils.cd "SuperLU"
-  sh "rake clean_linux"
-  FileUtils.cd "../rang"
   sh "rake clean_linux"
   FileUtils.cd "../OpenBlas"
   sh "rake clean_linux"
@@ -73,8 +63,6 @@ end
 desc "clean 3rd parties for WINDOWS"
 task :clean_win do
   FileUtils.cd "SuperLU"
-  sh "rake clean_win"
-  FileUtils.cd "../rang"
   sh "rake clean_win"
   FileUtils.cd "../OpenBlas"
   sh "rake clean_win"

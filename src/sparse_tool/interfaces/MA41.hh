@@ -106,7 +106,7 @@ namespace SparseTool {
         fmt::print(stderr,"Estimated rank = {}\n", INFO[1]);
         break;
       case -7:
-        fmt::print(stderr,"Error from analysis\n")
+        fmt::print(stderr,"Error from analysis\n");
         fmt::print(stderr,"MAXIS should be increased to at least {}\n", INFO[1]);
         break;
       case -8:

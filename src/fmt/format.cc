@@ -26,7 +26,7 @@
 #pragma clang diagnostic ignored "-Wmissing-variable-declarations"
 #endif
 
-#include "fmt/format-inl.h"
+#include "format-inl.h"
 
 FMT_BEGIN_NAMESPACE
 template struct FMT_API internal::basic_data<void>;
