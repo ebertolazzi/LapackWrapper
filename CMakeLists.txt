@@ -236,7 +236,7 @@ IF( BUILD_EXECUTABLE )
 
 ENDIF()
 
-FILE( GLOB HDR       ./src/*.hh )
+FILE( GLOB HDR       ./src/*.h* )
 FILE( GLOB HDR_FMT   ./src/fmt/*.h* )
 FILE( GLOB HDR_HSL   ./src/HSL/*.h* )
 FILE( GLOB HDR_LW    ./src/lapack_wrapper/*.h* )
