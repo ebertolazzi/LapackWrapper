@@ -242,20 +242,20 @@ namespace lapack_wrapper {
       integer info = geqrf(
         nRow, nCol, Amat, nRow, Tau, Work, Lwork
       );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "QR::factorize[" << who <<
-        "] call lapack_wrapper::geqrf return info = " << info
+        "QR::factorize[{}] call lapack_wrapper::geqrf return info = {}",
+        who, info
       );
     }
 
     /*!
-    :|:  Do QR factorization of a rectangular matrix
-    :|:  \param NR  number of rows of the matrix
-    :|:  \param NC  number of columns of the matrix
-    :|:  \param A   pointer to the matrix
-    :|:  \param LDA Leading dimension of the matrix
-    \*/
+     * Do QR factorization of a rectangular matrix
+     * \param NR  number of rows of the matrix
+     * \param NC  number of columns of the matrix
+     * \param A   pointer to the matrix
+     * \param LDA Leading dimension of the matrix
+     */
     virtual
     void
     factorize(
@@ -267,28 +267,28 @@ namespace lapack_wrapper {
     ) LAPACK_WRAPPER_OVERRIDE {
       allocate( NR, NC );
       integer info = gecopy( NR, NC, A, LDA, Amat, nRow );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "QR::factorize[" << who <<
-        "] call lapack_wrapper::gecopy return info = " << info
+        "QR::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+        who, info
       );
       factorize( who );
     }
 
     /*!
-    :|:  In case of QR factorization of a square matrix solve the
-    :|:  linear system \f$ QR x = b \f$
-    :|:  \param xb on input the rhs of linear system on output the solution
-    \*/
+     *   In case of QR factorization of a square matrix solve the
+     *   linear system \f$ QR x = b \f$
+     * param xb on input the rhs of linear system on output the solution
+     */
     virtual
     void
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     /*!
-     |  In case of QR factorization of a square matrix solve the
-     |  linear system \f$ (QR)^T x = b \f$
-     |  \param xb on input the rhs of linear system on output the solution
-    \*/
+     *  In case of QR factorization of a square matrix solve the
+     *  linear system \f$ (QR)^T x = b \f$
+     *  \param xb on input the rhs of linear system on output the solution
+     */
     virtual
     void
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
@@ -377,10 +377,9 @@ namespace lapack_wrapper {
       valueType C[],
       integer   ldC
     ) const {
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         nr == nRow,
-        "QRP::permute_rows, bad number of row, expected " <<
-        nRow << " find " << nr
+        "QRP::permute_rows, bad number of row, expected {} found {}", nRow, nr
       );
       for ( integer j = 0; j < nc; ++j ) permute( C + ldC*j );
     }
@@ -392,10 +391,9 @@ namespace lapack_wrapper {
       valueType C[],
       integer   ldC
     ) const {
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         nr == nRow,
-        "QRP::permute_rows, bad number of row, expected " <<
-        nRow << " find " << nr
+        "QRP::permute_rows, bad number of row, expected {} found {}", nRow, nr
       );
       for ( integer j = 0; j < nc; ++j ) inv_permute( C + ldC*j );
     }
@@ -409,12 +407,12 @@ namespace lapack_wrapper {
     }
 
     /*!
-    :|:  Do QR factorization with column pivoting of the transpose of a rectangular matrix
-    :|:  \param NR  number of rows of the matrix
-    :|:  \param NC  number of columns of the matrix
-    :|:  \param A   pointer to the matrix
-    :|:  \param LDA Leading dimension of the matrix
-    \*/
+     *  Do QR factorization with column pivoting of the transpose of a rectangular matrix
+     *  \param NR  number of rows of the matrix
+     *  \param NC  number of columns of the matrix
+     *  \param A   pointer to the matrix
+     *  \param LDA Leading dimension of the matrix
+     */
     void
     t_factorize(
       char const      who[],
@@ -449,20 +447,20 @@ namespace lapack_wrapper {
       integer info = geqp3(
         nRow, nCol, Amat, nRow, JPVT, Tau, Work, Lwork
       );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "QRP::factorize[" << who <<
-        "] call lapack_wrapper::geqrf return info = " << info
+        "QRP::factorize[{}] call lapack_wrapper::geqrf return info = {}",
+        who, info
       );
     }
 
     /*!
-    :|:  Do QR factorization with column pivoting of a rectangular matrix
-    :|:  \param NR  number of rows of the matrix
-    :|:  \param NC  number of columns of the matrix
-    :|:  \param A   pointer to the matrix
-    :|:  \param LDA Leading dimension of the matrix
-    \*/
+     *  Do QR factorization with column pivoting of a rectangular matrix
+     *  \param NR  number of rows of the matrix
+     *  \param NC  number of columns of the matrix
+     *  \param A   pointer to the matrix
+     *  \param LDA Leading dimension of the matrix
+     */
     virtual
     void
     factorize(
@@ -475,28 +473,28 @@ namespace lapack_wrapper {
       // calcolo fattorizzazione QR della matrice A
       allocate( NC, NR );
       integer info = gecopy( NR, NC, A, LDA, Amat, nRow );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "QR::factorize[" << who <<
-        "] call lapack_wrapper::gecopy return info = " << info
+        "QR::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+        who, info
       );
       factorize( who );
     }
 
     /*!
-    :|:  In case of QR factorization of a square matrix solve the
-    :|:  linear system \f$ QR x = b \f$
-    :|:  \param xb on input the rhs of linear system on output the solution
-    \*/
+     *  In case of QR factorization of a square matrix solve the
+     *  linear system \f$ QR x = b \f$
+     *  \param xb on input the rhs of linear system on output the solution
+     */
     virtual
     void
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     /*!
-    :|:  In case of QR factorization of a square matrix solve the
-    :|:  linear system \f$ (QR)^T x = b \f$
-    :|:  \param xb on input the rhs of linear system on output the solution
-    \*/
+     *  In case of QR factorization of a square matrix solve the
+     *  linear system \f$ (QR)^T x = b \f$
+     *  \param xb on input the rhs of linear system on output the solution
+     */
     virtual
     void
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;

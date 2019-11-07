@@ -156,19 +156,20 @@ namespace lapack_wrapper {
 
   template <typename t_Value>
   inline
-  void
+  std::string
   print_matrix(
-    ostream_type & stream,
-    integer        nr,
-    integer        nc,
-    t_Value const  A[],
-    integer        ldA
+    integer       nr,
+    integer       nc,
+    t_Value const A[],
+    integer       ldA
   ) {
+    std::string out;
     for ( integer i = 0; i < nr; ++i ) {
       for ( integer j = 0; j < nc; ++j )
-        stream << std::setw(14) << A[i+j*ldA] << " ";
-      stream << '\n';
+        out += fmt::format("{:14.5} ",A[i+j*ldA]);
+      out += '\n';
     }
+    return out;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -336,14 +337,14 @@ namespace lapack_wrapper {
     { gezero( this->nRow, this->nCol, this->Amat, this->nRow ); }
 
     /*!
-    :|:  Zeroes a rectangular block of the stored matrix
-    :|:  staring at `(irow,icol)` position
-    :|:
-    :|:  \param[in] nr    number of rows of the block to be zeroed
-    :|:  \param[in] nc    number of columns of the block to be zeroed
-    :|:  \param[in] irow  starting row
-    :|:  \param[in] icol  stating column
-    \*/
+     *  Zeroes a rectangular block of the stored matrix
+     *  staring at `(irow,icol)` position
+     *
+     *  \param[in] nr    number of rows of the block to be zeroed
+     *  \param[in] nc    number of columns of the block to be zeroed
+     *  \param[in] irow  starting row
+     *  \param[in] icol  stating column
+     */
     void
     zero_block(
       integer nr,
@@ -355,11 +356,11 @@ namespace lapack_wrapper {
     }
 
     /*!
-    :|:  Copy a matrix to a rectangular block of the stored matrix
-    :|:  staring at `(irow,icol)` position
-    :|:
-    :|:  \param[in] B     matrix wrapper of the input matrix `B`
-    \*/
+     *  Copy a matrix to a rectangular block of the stored matrix
+     *  staring at `(irow,icol)` position
+     *
+     *  \param[in] B     matrix wrapper of the input matrix `B`
+     */
     void
     load( MatrixWrapper<T> const & B ) {
       allocate( B.numRows(), B.numCols() );
@@ -368,23 +369,23 @@ namespace lapack_wrapper {
         B.get_data(), B.lDim(),
         Amat, nRow
       );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "block_load call lapack_wrapper::gecopy return info = " << info
+        "block_load call lapack_wrapper::gecopy return info = {}", info
       );
     }
 
     /*!
-    :|:  Copy a matrix to a rectangular block of the stored matrix
-    :|:  staring at `(irow,icol)` position
-    :|:
-    :|:  \param[in] nr    number of rows of the block to be zeroed
-    :|:  \param[in] nc    number of columns of the block to be zeroed
-    :|:  \param[in] B     pointer to memory storing the input matrix `B`
-    :|:  \param[in] ldB   leading dimension of the matrix `B`
-    :|:  \param[in] irow  starting row
-    :|:  \param[in] icol  stating column
-    \*/
+     *  Copy a matrix to a rectangular block of the stored matrix
+     *  staring at `(irow,icol)` position
+     *
+     *  \param[in] nr    number of rows of the block to be zeroed
+     *  \param[in] nc    number of columns of the block to be zeroed
+     *  \param[in] B     pointer to memory storing the input matrix `B`
+     *  \param[in] ldB   leading dimension of the matrix `B`
+     *  \param[in] irow  starting row
+     *  \param[in] icol  stating column
+     */
     void
     load_block(
       integer         nr,
@@ -399,39 +400,39 @@ namespace lapack_wrapper {
         B, ldB,
         Amat + irow + icol * nRow, nRow
       );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "load_block call lapack_wrapper::gecopy return info = " << info
+        "load_block call lapack_wrapper::gecopy return info = {}", info
       );
     }
 
     /*!
-    :|:  Copy vector `column` to the `icol`th column of the internal stored matrix
-    :|:  \param[in] column the column vector
-    :|:  \param[in] icol   the column to be changed
-    \*/
+     *  Copy vector `column` to the `icol`th column of the internal stored matrix
+     *  \param[in] column the column vector
+     *  \param[in] icol   the column to be changed
+     */
     void
     load_column( valueType const column[], integer icol )
     { copy( this->nRow, column, 1, this->Amat + icol * this->nRow, 1 ); }
 
     /*!
-    :|:  Copy vector `row` to the `irow`th row of the internal stored matrix
-    :|:  \param[in] row  the row vector
-    :|:  \param[in] irow the row to be changed
-    \*/
+     *  Copy vector `row` to the `irow`th row of the internal stored matrix
+     *  \param[in] row  the row vector
+     *  \param[in] irow the row to be changed
+     */
     void
     load_row( valueType const row[], integer irow )
     { copy( this->nCol, row, 1, this->Amat + irow, this->nRow ); }
 
     /*!
-    :|:  Copy vector element of a sparse vector to a column of
-    :|:  the internal stored matrix
-    :|:  \param[in] nnz    number of nonzeros of the columns
-    :|:  \param[in] values the values of the sparse vector
-    :|:  \param[in] row    index position of the values of the sparse vector
-    :|:  \param[in] icol   the column to be changed
-    :|:  \param[in] offs   offset for the index, 0 for C based vector -1 for FORTRAN based vector
-    \*/
+     *  Copy vector element of a sparse vector to a column of
+     *  the internal stored matrix
+     *  \param[in] nnz    number of nonzeros of the columns
+     *  \param[in] values the values of the sparse vector
+     *  \param[in] row    index position of the values of the sparse vector
+     *  \param[in] icol   the column to be changed
+     *  \param[in] offs   offset for the index, 0 for C based vector -1 for FORTRAN based vector
+     */
     void
     load_sparse_column(
       integer         nnz,
@@ -446,14 +447,14 @@ namespace lapack_wrapper {
     }
 
     /*!
-    :|:  Copy vector element of a sparse vector to a row of the
-    :|:  internal stored matrix
-    :|:  \param[in] nnz    number of nonzeros of the columns
-    :|:  \param[in] values the values of the sparse vector
-    :|:  \param[in] col    index position of the values of the sparse vector
-    :|:  \param[in] irow   the column to be changed
-    :|:  \param[in] offs   offset for the index, 0 for C based vector -1 for FORTRAN based vector
-    \*/
+     *  Copy vector element of a sparse vector to a row of the
+     *  internal stored matrix
+     *  \param[in] nnz    number of nonzeros of the columns
+     *  \param[in] values the values of the sparse vector
+     *  \param[in] col    index position of the values of the sparse vector
+     *  \param[in] irow   the column to be changed
+     *  \param[in] offs   offset for the index, 0 for C based vector -1 for FORTRAN based vector
+     */
     void
     load_sparse_row(
       integer         nnz,
@@ -468,12 +469,12 @@ namespace lapack_wrapper {
     }
 
     /*!
-    :|:  Copy a sparse matrix into the internal stored matrix
-    :|:  \param[in] nnz    number of nonzeros of the columns
-    :|:  \param[in] values the values of the sparse vector
-    :|:  \param[in] row    index row position of the values of the sparse vector
-    :|:  \param[in] col    index column position of the values of the sparse vector
-    \*/
+     *  Copy a sparse matrix into the internal stored matrix
+     *  \param[in] nnz    number of nonzeros of the columns
+     *  \param[in] values the values of the sparse vector
+     *  \param[in] row    index row position of the values of the sparse vector
+     *  \param[in] col    index column position of the values of the sparse vector
+     */
     void
     load_sparse(
       integer         nnz,
@@ -487,14 +488,14 @@ namespace lapack_wrapper {
     }
 
     /*!
-    :|:  Copy a sparse matrix into the internal stored matrix
-    :|:  \param[in] nnz    number of nonzeros of the columns
-    :|:  \param[in] values the values of the sparse vector
-    :|:  \param[in] row    index row position of the values of the sparse vector
-    :|:  \param[in] r_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
-    :|:  \param[in] col    index column position of the values of the sparse vector
-    :|:  \param[in] c_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
-    \*/
+     *  Copy a sparse matrix into the internal stored matrix
+     *  \param[in] nnz    number of nonzeros of the columns
+     *  \param[in] values the values of the sparse vector
+     *  \param[in] row    index row position of the values of the sparse vector
+     *  \param[in] r_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
+     *  \param[in] col    index column position of the values of the sparse vector
+     *  \param[in] c_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
+     */
     void
     load_sparse(
       integer         nnz,
@@ -508,15 +509,15 @@ namespace lapack_wrapper {
     }
 
     /*!
-    :|:  Copy a sparse matrix into the internal stored matrix.
-    :|:  The matrix is assumed symmetric and only the lower or upper
-    :|:  part is passed.
-    :|:
-    :|:  \param[in] nnz    number of nonzeros of the columns
-    :|:  \param[in] values the values of the sparse vector
-    :|:  \param[in] row    index row position of the values of the sparse vector
-    :|:  \param[in] col    index column position of the values of the sparse vector
-    \*/
+     *  Copy a sparse matrix into the internal stored matrix.
+     *  The matrix is assumed symmetric and only the lower or upper
+     *  part is passed.
+     *
+     *  \param[in] nnz    number of nonzeros of the columns
+     *  \param[in] values the values of the sparse vector
+     *  \param[in] row    index row position of the values of the sparse vector
+     *  \param[in] col    index column position of the values of the sparse vector
+     */
     void
     load_sparse_sym(
       integer         nnz,
@@ -534,17 +535,17 @@ namespace lapack_wrapper {
     }
 
     /*!
-    :|:  Copy a sparse matrix into the internal stored matrix.
-    :|:  The matrix is assumed symmetric and only the lower or upper
-    :|:  part is passed.
-    :|:
-    :|:  \param[in] nnz    number of nonzeros of the columns
-    :|:  \param[in] values the values of the sparse vector
-    :|:  \param[in] row    index row position of the values of the sparse vector
-    :|:  \param[in] r_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
-    :|:  \param[in] col    index column position of the values of the sparse vector
-    :|:  \param[in] c_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
-    \*/
+     *  Copy a sparse matrix into the internal stored matrix.
+     *  The matrix is assumed symmetric and only the lower or upper
+     *  part is passed.
+     *
+     *  \param[in] nnz    number of nonzeros of the columns
+     *  \param[in] values the values of the sparse vector
+     *  \param[in] row    index row position of the values of the sparse vector
+     *  \param[in] r_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
+     *  \param[in] col    index column position of the values of the sparse vector
+     *  \param[in] c_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
+     */
     void
     load_sparse_sym(
       integer         nnz,

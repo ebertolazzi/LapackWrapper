@@ -70,9 +70,9 @@ namespace lapack_wrapper {
   void
   LU<T>::factorize( char const who[] ) {
     integer info = getrf( nRow, nCol, Amat, nRow, i_pivot );
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       info == 0,
-      "LU::factorize[" << who << "] getrf INFO = " << info
+      "LU::factorize[{}] getrf INFO = {}", who, info
     );
   }
 
@@ -89,11 +89,10 @@ namespace lapack_wrapper {
   ) {
     allocate( NR, NC );
     integer info = gecopy( nRow, nCol, A, LDA, Amat, nRow );
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       info == 0,
-      "LU::factorize[" << who << "] gecopy(nRow=" << nRow <<
-      ", nCol=" << nCol << ", A, LDA=" << LDA << ", B, LDB=" << nRow <<
-      ") : INFO = " << info
+      "LU::factorize[{}] gecopy(nRow={}, nCol={}, A, LDA={}, B, LDB={}) : INFO = {}",
+      who, nRow, nCol, LDA, nRow, info
     );
     factorize( who );
   }
@@ -103,10 +102,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LU<T>::check_ls( char const who[] ) const {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       nRow == nCol,
-      "LU<T>::" << who << ", rectangular matrix " <<
-      nRow << " x " << nCol
+      "LU<T>::{}, rectangular matrix {} x {}", who, nRow, nCol
     );
   }
 
@@ -119,7 +117,7 @@ namespace lapack_wrapper {
     integer info = getrs(
       NO_TRANSPOSE, nRow, 1, Amat, nRow, i_pivot, xb, nRow
     );
-    LAPACK_WRAPPER_ASSERT( info == 0, "LU::solve getrs INFO = " << info );
+    LW_ASSERT( info == 0, "LU::solve getrs INFO = {}", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -131,7 +129,7 @@ namespace lapack_wrapper {
     integer info = getrs(
       TRANSPOSE, nRow, 1, Amat, nRow, i_pivot, xb, nRow
     );
-    LAPACK_WRAPPER_ASSERT( info == 0, "LU::t_solve getrs INFO = " << info );
+    LW_ASSERT( info == 0, "LU::t_solve getrs INFO = {}", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -143,7 +141,7 @@ namespace lapack_wrapper {
     integer info = getrs(
       NO_TRANSPOSE, nRow, nrhs, Amat, nRow, i_pivot, B, ldB
     );
-    LAPACK_WRAPPER_ASSERT( info == 0, "LU::solve getrs INFO = " << info );
+    LW_ASSERT( info == 0, "LU::solve getrs INFO = {}", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -155,7 +153,7 @@ namespace lapack_wrapper {
     integer info = getrs(
       TRANSPOSE, nRow, nrhs, Amat, nRow, i_pivot, B, ldB
     );
-    LAPACK_WRAPPER_ASSERT( info >= 0, "LU::t_solve getrs INFO = " << info );
+    LW_ASSERT( info >= 0, "LU::t_solve getrs INFO = {}", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -167,7 +165,7 @@ namespace lapack_wrapper {
     integer info = gecon1(
       nRow, Amat, nRow, norm1, rcond, Work, Iwork
     );
-    LAPACK_WRAPPER_ASSERT( info == 0, "LU::cond1, gecon1 return info = " << info );
+    LW_ASSERT( info == 0, "LU::cond1, gecon1 return info = {}", info );
     return rcond;
   }
 
@@ -180,7 +178,7 @@ namespace lapack_wrapper {
     integer info = geconInf(
       nRow, Amat, nRow, normInf, rcond, Work, Iwork
     );
-    LAPACK_WRAPPER_ASSERT( info == 0, "LU::condInf, geconInf return info = " << info );
+    LW_ASSERT( info == 0, "LU::condInf, geconInf return info = {}", info );
     return rcond;
   }
 
@@ -213,10 +211,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LUPQ<T>::allocate( integer NR, integer NC ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       NR == NC,
-      "LUPQ<T>::allocate, cannot allocate rectangular matrix " <<
-      NR << " x " << NC
+      "LUPQ<T>::allocate, cannot allocate rectangular matrix {} x {}",
+      NR, NC
     );
     if ( nRow != NR || nCol != NC ) {
       nRow = NR;
@@ -234,10 +232,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LUPQ<T>::check_ls( char const who[] ) const {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       nRow == nCol,
-      "LUPQ<T>::" << who << ", rectangular matrix " <<
-      nRow << " x " << nCol
+      "LUPQ<T>::{}, rectangular matrix {} x {}",
+      who, nRow, nCol
     );
   }
 
@@ -247,9 +245,9 @@ namespace lapack_wrapper {
   void
   LUPQ<T>::factorize( char const who[] ) {
     integer info = getc2( nRow, Amat, nRow, ipiv, jpiv );
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       info == 0,
-      "LUPQ::factorize[" << who << "] getrf INFO = " << info
+      "LUPQ::factorize[{}] getrf INFO = {}", who, info
     );
   }
 
@@ -264,17 +262,16 @@ namespace lapack_wrapper {
     valueType const A[],
     integer         LDA
   ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       NR == NC,
-      "LUPQ<T>::factorize[" << who <<
-      "], cannot factorize rectangular matrix " <<
-      NR << " x " << NC
+      "LUPQ<T>::factorize[{}], cannot factorize rectangular matrix {} x {}",
+      who, NR, NC
     );
     allocate( NR, NC );
     integer info = gecopy( nRow, nCol, A, LDA, Amat, nRow );
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       info == 0,
-      "LUPQ::factorize[" << who << "] gecopy INFO = " << info
+      "LUPQ::factorize[{}] gecopy INFO = {}", who, info
     );
     factorize( who );
   }

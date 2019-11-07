@@ -128,10 +128,10 @@ namespace lapack_wrapper {
     ) LAPACK_WRAPPER_OVERRIDE {
       allocate( NR, NC );
       integer info = gecopy( nRow, nCol, A, LDA, Amat, nRow );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "LSY::factorize[" << who <<
-        "] call lapack_wrapper::gecopy return info = " << info
+        "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+        who, info
       );
       factorize( who );
     }

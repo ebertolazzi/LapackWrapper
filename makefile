@@ -61,6 +61,7 @@ $(shell echo "$(USED_LIB)" > .lapack_wrapper_config )
 $(info $(USED_LIB))
 
 SRCS = \
+src/lapack_wrapper/lapack_wrapper_utils.cc \
 src/lapack_wrapper/lapack_wrapper++.cc \
 src/lapack_wrapper/lapack_wrapper.cc \
 \
@@ -168,7 +169,7 @@ tests: all_libs $(OBJS_TESTS)
 	$(CXX) $(INC) $(CXXFLAGS) $(DEFS) -c $< -o $@
 
 .c.o:
-	$(CC) $(INC) $(CFLAGS) $(DEFS) -c -o $@ $<
+	$(CC) $(INC) $(CFLAGS) $(DEFS) -c $< -o $@
 
 install_local: all_libs
 	$(MKDIR) ./lib
@@ -211,3 +212,93 @@ doc:
 clean:
 	rm -rf lib/* src/*.o src/*/*.o src/*/*/*.o src_tests/*.o src/*.obj src/*/*.obj src/*/*/*.obj src_tests/*.obj
 	rm -rf bin
+
+depend:
+	makedepend -- $(INC) $(CXXFLAGS) $(DEFS) -- $(SRCS)
+# DO NOT DELETE
+
+src/lapack_wrapper/lapack_wrapper_utils.o: src/lapack_wrapper_config.hh
+src/lapack_wrapper/lapack_wrapper_utils.o: src/rang.hpp src/fmt/format.h
+src/lapack_wrapper/lapack_wrapper_utils.o: src/fmt/core.h src/fmt/printf.h
+src/lapack_wrapper/lapack_wrapper_utils.o: src/fmt/ostream.h src/fmt/format.h
+src/lapack_wrapper/lapack_wrapper_utils.o: src/lapack_wrapper_utils.hh
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/lapack_wrapper++.hh
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/lapack_wrapper.hh
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper_config.hh
+src/lapack_wrapper/lapack_wrapper++.o: src/rang.hpp src/fmt/format.h
+src/lapack_wrapper/lapack_wrapper++.o: src/fmt/core.h src/fmt/printf.h
+src/lapack_wrapper/lapack_wrapper++.o: src/fmt/ostream.h src/fmt/format.h
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper_utils.hh
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/blas.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/general.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/general_qr.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/triangular.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/tridiagonal.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/banded.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/symmetric.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/sparse.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/wrapper.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/TicToc.hh
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/lu.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/qr.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/svd.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/ls.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/trid.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/band.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/qn.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/eig.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/block_trid.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/wrapper.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/sparse.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/lu.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/qr.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/svd.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/ls.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/trid.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/band.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/qn.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/eig.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/block_trid.cxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/lapack_wrapper.hh
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper_config.hh
+src/lapack_wrapper/lapack_wrapper.o: src/rang.hpp src/fmt/format.h
+src/lapack_wrapper/lapack_wrapper.o: src/fmt/core.h src/fmt/printf.h
+src/lapack_wrapper/lapack_wrapper.o: src/fmt/ostream.h src/fmt/format.h
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper_utils.hh
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/blas.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/general.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/general_qr.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/triangular.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/tridiagonal.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/banded.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/symmetric.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/sparse.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/wrapper.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/lapack_wrapper++.hh
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/TicToc.hh
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/lu.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/qr.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/svd.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/ls.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/trid.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/band.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/qn.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/eig.hxx
+src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/block_trid.hxx
+src/HSL/hsl_solver.o: src/HSL/hsl_solver.hh src/HSL/hsl.h
+src/HSL/hsl_solver.o: src/lapack_wrapper_config.hh src/rang.hpp
+src/HSL/hsl_solver.o: src/fmt/format.h src/fmt/core.h src/fmt/printf.h
+src/HSL/hsl_solver.o: src/fmt/ostream.h src/fmt/format.h
+src/HSL/hsl_solver.o: src/lapack_wrapper_utils.hh
+src/HSL/ma48_wrapper.o: src/HSL/ma48_wrapper.hh src/HSL/hsl_solver.hh
+src/HSL/ma48_wrapper.o: src/HSL/hsl.h src/lapack_wrapper_config.hh
+src/HSL/ma48_wrapper.o: src/rang.hpp src/fmt/format.h src/fmt/core.h
+src/HSL/ma48_wrapper.o: src/fmt/printf.h src/fmt/ostream.h src/fmt/format.h
+src/HSL/ma48_wrapper.o: src/lapack_wrapper_utils.hh
+src/HSL/ma57_wrapper.o: src/HSL/ma57_wrapper.hh src/HSL/hsl_solver.hh
+src/HSL/ma57_wrapper.o: src/HSL/hsl.h src/lapack_wrapper_config.hh
+src/HSL/ma57_wrapper.o: src/rang.hpp src/fmt/format.h src/fmt/core.h
+src/HSL/ma57_wrapper.o: src/fmt/printf.h src/fmt/ostream.h src/fmt/format.h
+src/HSL/ma57_wrapper.o: src/lapack_wrapper_utils.hh
+src/fmt/format.o: src/fmt/format-inl.h src/fmt/format.h
+src/fmt/posix.o: src/fmt/posix.h src/fmt/format.h

@@ -5978,9 +5978,7 @@ namespace lapack_wrapper {
     if ( lwork < 0 ) {
       work[0] = real(lw);
     } else {
-      LAPACK_WRAPPER_ASSERT(
-        lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
-      );
+      LW_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}", lwork, lw );
       CLAPACKNAME(sggsvd)(
         const_cast<character*>( JOBU ? "U" : "N"),
         const_cast<character*>( JOBV ? "V" : "N"),
@@ -6127,9 +6125,7 @@ namespace lapack_wrapper {
     if ( lwork < 0 ) {
       work[0] = doublereal(lw);
     } else {
-      LAPACK_WRAPPER_ASSERT(
-        lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
-      );
+      LW_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}", lwork, lw );
       CLAPACKNAME(dggsvd)(
         const_cast<character*>( JOBU ? "U" : "N"),
         const_cast<character*>( JOBV ? "V" : "N"),

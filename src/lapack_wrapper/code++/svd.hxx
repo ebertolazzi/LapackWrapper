@@ -180,12 +180,12 @@ namespace lapack_wrapper {
     factorize( char const who[] ) LAPACK_WRAPPER_OVERRIDE;
 
     /*!
-    :|:  Do SVD factorization of a rectangular matrix
-    :|:  \param NR  number of rows of the matrix
-    :|:  \param NC  number of columns of the matrix
-    :|:  \param A   pointer to the matrix
-    :|:  \param LDA Leading dimension of the matrix
-    \*/
+     *  Do SVD factorization of a rectangular matrix
+     *  \param NR  number of rows of the matrix
+     *  \param NC  number of columns of the matrix
+     *  \param A   pointer to the matrix
+     *  \param LDA Leading dimension of the matrix
+     */
     virtual
     void
     factorize(
@@ -197,10 +197,10 @@ namespace lapack_wrapper {
     ) LAPACK_WRAPPER_OVERRIDE {
       allocate( NR, NC );
       integer info = gecopy( nRow, nCol, A, LDA, Amat, nRow );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "SVD::factorize[" << who <<
-        "] call lapack_wrapper::gecopy return info = " << info
+        "SVD::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+        who, info
       );
       factorize( who );
     }
@@ -307,12 +307,13 @@ namespace lapack_wrapper {
     }
 
     /*!
-    :|:  Do SVD factorization of a rectangular matrix
-    :|:  \param NR  number of rows of the matrix
-    :|:  \param NC  number of columns of the matrix
-    :|:  \param A   pointer to the matrix
-    :|:  \param LDA Leading dimension of the matrix
-    \*/
+     *  Do SVD factorization of a rectangular matrix
+     *  \param who  string with the name of the calling routine
+     *  \param NR   number of rows of the matrix
+     *  \param NC   number of columns of the matrix
+     *  \param A     pointer to the matrix
+     *  \param LDA Leading dimension of the matrix
+     */
     virtual
     void
     factorize(
@@ -324,10 +325,10 @@ namespace lapack_wrapper {
     ) LAPACK_WRAPPER_OVERRIDE {
       allocate( NR, NC );
       integer info = gecopy( nRow, nCol, A, LDA, Amat, nRow );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "LSS::factorize[" << who <<
-        "] call lapack_wrapper::gecopy return info = " << info
+        "LSS::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+        who, info
       );
       factorize( who );
     }

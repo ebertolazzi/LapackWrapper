@@ -46,11 +46,10 @@ namespace lapack_wrapper {
   , data(_data)
   {
   #ifndef LAPACK_WRAPPER_NO_DEBUG
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       nr >= 0 && nc >= 0 && this->ldData >= nr,
-      "MatrixWrapper( data, nr=" << nr <<
-      ", nc=" << nc << ", ld=" << ld <<
-      ") bad dimensions"
+      "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions",
+      nr, nc, ld
     );
   #endif
   }
@@ -70,11 +69,10 @@ namespace lapack_wrapper {
     this->nCols  = nc;
     this->ldData = ld;
     #ifndef LAPACK_WRAPPER_NO_DEBUG
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       nr >= 0 && nc >= 0 && this->ldData >= nr,
-      "MatrixWrapper( data, nr=" << nr <<
-      ", nc=" << nc << ", ld=" << ld <<
-      ") bad dimensions"
+      "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions",
+      nr, nc, ld
     );
     #endif
   }
@@ -98,11 +96,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::check( MatW const & A ) const {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       A.numRows() == this->nRows && A.numCols() == this->nCols,
-      "MatrixWrapper::check(A) size(A) = " <<
-      A.numRows() << " x " << A.numRows() << " expected " <<
-      this->nRows << " x " << this->nCols
+      "MatrixWrapper::check(A) size(A) = {} x {} expected {} x {}",
+      A.numRows(), A.numCols(), this->nRows, this->nCols
     );
   }
 
@@ -111,11 +108,12 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::check( Sparse const & sp ) const {
-    LAPACK_WRAPPER_ASSERT(
-      sp.get_number_of_rows() <= this->nRows && sp.get_number_of_cols() <= this->nCols,
-      "MatrixWrapper::check(sp) size(sp) = " <<
-      sp.get_number_of_rows() << " x " << sp.get_number_of_cols() <<
-      " mus be contained in " << this->nRows << " x " << this->nCols
+    LW_ASSERT(
+      sp.get_number_of_rows() <= this->nRows &&
+      sp.get_number_of_cols() <= this->nCols,
+      "MatrixWrapper::check(sp) size(sp) = {} x {} must be contained in {} x {}",
+      sp.get_number_of_rows(), sp.get_number_of_cols(),
+      this->nRows, this->nCols
     );
   }
 
@@ -127,9 +125,9 @@ namespace lapack_wrapper {
     integer info = gecopy(
       this->nRows, this->nCols, data_in, ldData_in, this->data, this->ldData
     );
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       info == 0,
-      "MatrixWrapper::load call lapack_wrapper::gecopy return info = " << info
+      "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}", info
     );
   }
 
@@ -145,9 +143,9 @@ namespace lapack_wrapper {
       A.numRows(), A.numCols(), A.get_data(), A.lDim(),
       this->data, this->ldData
     );
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       info == 0,
-      "MatrixWrapper::load call lapack_wrapper::gecopy return info = " << info
+      "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}", info
     );
   }
 

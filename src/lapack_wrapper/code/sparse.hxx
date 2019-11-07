@@ -405,7 +405,7 @@ namespace lapack_wrapper {
     virtual
     void
     get_full_view( MatrixWrapper<valueType> & ) {
-      LAPACK_WRAPPER_ERROR( "get_full_view not defined");
+      LW_ERROR0( "get_full_view not defined");
     }
 
     /*!
@@ -670,7 +670,7 @@ namespace lapack_wrapper {
 
     void
     get_full_view( MatrixWrapper<valueType> & MW ) LAPACK_WRAPPER_OVERRIDE {
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT0(
         this->matrix_is_full,
         "get_full_view, matrix is sparse"
       );

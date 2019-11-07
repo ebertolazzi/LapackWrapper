@@ -35,9 +35,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR<T>::setMaxNrhs( integer mnrhs ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       mnrhs > 0,
-      "lapack_wrapper::QR::setMaxNrhs, maxNrhs = " << mnrhs
+      "lapack_wrapper::QR::setMaxNrhs, maxNrhs = {}", mnrhs
     );
     maxNrhs = mnrhs;
   }
@@ -63,9 +63,9 @@ namespace lapack_wrapper {
     if ( nRow != NR || nCol != NC || Lwork < maxNrhs ) {
       valueType tmp; // get optimal allocation
       integer info = geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "QR::allocate call lapack_wrapper::geqrf return info = " << info
+        "QR::allocate call lapack_wrapper::geqrf return info = {}", info
       );
       integer L = std::max( integer(tmp), maxNrhs );
       if ( L < NR ) L = NR;
@@ -87,10 +87,11 @@ namespace lapack_wrapper {
     valueType     C[],
     integer       ldC
   ) const {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       (SIDE == lapack_wrapper::LEFT  && NR == nRow) ||
       (SIDE == lapack_wrapper::RIGHT && NC == nRow),
-      "QR::applyQ NR = " << NR << " NC = " << NC << " nRow = " << nRow
+      "QR::applyQ NR = {} NC = {} nRow = {}",
+      NR, NC, nRow
     );
     integer info = ormqr(
       SIDE, TRANS,
@@ -101,10 +102,10 @@ namespace lapack_wrapper {
       C, ldC,
       Work, Lwork
     );
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       info == 0,
-      "QR::applyQ call lapack_wrapper::ormqr return info = " << info <<
-      " Lwork = " << Lwork
+      "QR::applyQ call lapack_wrapper::ormqr return info = {} Lwork = {}",
+      info, Lwork
     );
   }
 
@@ -125,10 +126,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR<T>::solve( valueType xb[] ) const {
-    LAPACK_WRAPPER_ASSERT(
-      nRow == nCol,
-      "in QR::solve, factored matrix must be square"
-    );
+    LW_ASSERT0( nRow == nCol, "in QR::solve, factored matrix must be square" );
     Qt_mul(xb);
     invR_mul(xb);
   }
@@ -138,10 +136,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR<T>::t_solve( valueType xb[] ) const {
-    LAPACK_WRAPPER_ASSERT(
-      nRow == nCol,
-      "in QR::solve_t, factored matrix must be square"
-    );
+    LW_ASSERT0( nRow == nCol, "in QR::solve_t, factored matrix must be square" );
     invRt_mul(xb);
     Q_mul(xb);
   }
@@ -151,10 +146,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LAPACK_WRAPPER_ASSERT(
-      nRow == nCol,
-      "in QR::solve, factored matrix must be square"
-    );
+    LW_ASSERT0( nRow == nCol, "in QR::solve, factored matrix must be square" );
     Qt_mul( nRow, nrhs, XB, ldXB );
     invR_mul( nRow, nrhs, XB, ldXB );
   }
@@ -164,10 +156,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LAPACK_WRAPPER_ASSERT(
-      nRow == nCol,
-      "in QR::solve_t, factored matrix must be square"
-    );
+    LW_ASSERT0( nRow == nCol, "in QR::solve_t, factored matrix must be square" );
     invRt_mul( nRow, nrhs, XB, ldXB );
     Q_mul( nRow, nrhs, XB, ldXB );
   }
@@ -187,9 +176,9 @@ namespace lapack_wrapper {
     if ( nRow != NR || nCol != NC || Lwork < maxNrhs ) {
       valueType tmp; // get optimal allocation
       integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT(
         info == 0,
-        "QRP::allocate call lapack_wrapper::geqp3 return info = " << info
+        "QRP::allocate call lapack_wrapper::geqp3 return info = {}", info
       );
       integer L = std::max( integer(tmp), maxNrhs );
       if ( L < NR ) L = NR;
@@ -223,10 +212,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QRP<T>::solve( valueType xb[] ) const {
-    LAPACK_WRAPPER_ASSERT(
-      nRow == nCol,
-      "in QRP::solve, factored matrix must be square"
-    );
+    LW_ASSERT0( nRow == nCol, "in QRP::solve, factored matrix must be square" );
     Qt_mul(xb);
     invR_mul(xb);
     permute(xb); // da aggiungere!
@@ -237,10 +223,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QRP<T>::t_solve( valueType xb[] ) const {
-    LAPACK_WRAPPER_ASSERT(
-      nRow == nCol,
-      "in QRP::solve_t, factored matrix must be square"
-    );
+    LW_ASSERT0( nRow == nCol, "in QRP::solve_t, factored matrix must be square" );
     inv_permute(xb); // da aggiungere!
     invRt_mul(xb);
     Q_mul(xb);
@@ -251,10 +234,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QRP<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LAPACK_WRAPPER_ASSERT(
-      nRow == nCol,
-      "in QRP::solve, factored matrix must be square"
-    );
+    LW_ASSERT0( nRow == nCol, "in QRP::solve, factored matrix must be square" );
     Qt_mul( nRow, nrhs, XB, ldXB );
     invR_mul( nRow, nrhs, XB, ldXB );
     permute_rows( nRow, nrhs, XB, ldXB ); // da aggiungere!
@@ -265,10 +245,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QRP<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LAPACK_WRAPPER_ASSERT(
-      nRow == nCol,
-      "in QRP::solve_t, factored matrix must be square"
-    );
+    LW_ASSERT0( nRow == nCol, "in QRP::solve_t, factored matrix must be square" );
     inv_permute_rows( nRow, nrhs, XB, ldXB ); // da aggiungere!
     invRt_mul( nRow, nrhs, XB, ldXB );
     Q_mul( nRow, nrhs, XB, ldXB );

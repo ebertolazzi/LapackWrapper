@@ -34,9 +34,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QN<T>::allocate( integer N ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       N > 0 && N <= 1000,
-      "QN<T>::allocate, N = " << N << " must be > 0 and <= 1000"
+      "QN<T>::allocate, N = {} must be > 0 and <= 1000", N
     );
     n = N;
     allocReals.allocate( size_t(n*(n+3)) );

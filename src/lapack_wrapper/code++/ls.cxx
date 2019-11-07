@@ -35,10 +35,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LSS<T>::setMaxNrhs( integer mnrhs ) {
-    LAPACK_WRAPPER_ASSERT(
-      mnrhs > 0,
-      "LSS::setMaxNrhs, maxNrhs = " << mnrhs
-    );
+    LW_ASSERT( mnrhs > 0, "LSS::setMaxNrhs, maxNrhs = {}", mnrhs );
     maxNrhs         = mnrhs;
     maxNrhs_changed = true;
   }
@@ -56,9 +53,7 @@ namespace lapack_wrapper {
         nullptr, NR, nullptr, NR, nullptr,
         rcond, rank, &tmp, -1
       );
-      LAPACK_WRAPPER_ASSERT(
-        info == 0, "LSS::allocate, in gelss info = " << info
-      );
+      LW_ASSERT( info == 0, "LSS::allocate, in gelss info = {}", info );
 
       Lwork = integer(tmp);
       if ( NR != NC ) {
@@ -67,9 +62,7 @@ namespace lapack_wrapper {
           nullptr, NC, nullptr, NC, nullptr,
           rcond, rank, &tmp, -1
         );
-        LAPACK_WRAPPER_ASSERT(
-          info == 0, "LSS::allocate, in gelss info = " << info
-        );
+        LW_ASSERT( info == 0, "LSS::allocate, in gelss info = {}", info );
         if ( Lwork < integer(tmp) ) Lwork = integer(tmp);
       }
 
@@ -99,9 +92,7 @@ namespace lapack_wrapper {
       sigma, rcond, rank,
       Work, Lwork
     );
-    LAPACK_WRAPPER_ASSERT(
-      info == 0, "LSS::solve (rhs=1), in gelss info = " << info
-    );
+    LW_ASSERT( info == 0, "LSS::solve (rhs=1), in gelss info = {}", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -119,9 +110,7 @@ namespace lapack_wrapper {
       sigma, rcond, rank,
       Work, Lwork
     );
-    LAPACK_WRAPPER_ASSERT(
-      info == 0, "LSS::t_solve (rhs=1), in gelss info = " << info
-    );
+    LW_ASSERT( info == 0, "LSS::t_solve (rhs=1), in gelss info = {}", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -142,10 +131,7 @@ namespace lapack_wrapper {
       sigma, rcond, rank,
       Work, Lwork
     );
-    LAPACK_WRAPPER_ASSERT(
-      info == 0,
-      "LSS::solve (rhs=" << nrhs << "), in gelss info = " << info
-    );
+    LW_ASSERT( info == 0, "LSS::solve (rhs={}), in gelss info = {}", nrhs, info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -167,10 +153,7 @@ namespace lapack_wrapper {
       sigma, rcond, rank,
       Work, Lwork
     );
-    LAPACK_WRAPPER_ASSERT(
-      info == 0,
-      "LSS::t_solve (rhs=" << nrhs << "), in gelss info = " << info
-    );
+    LW_ASSERT( info == 0,"LSS::t_solve (rhs={}), in gelss info = {}", nrhs, info );
   }
 
   /*\
@@ -185,9 +168,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LSY<T>::setMaxNrhs( integer mnrhs ) {
-    LAPACK_WRAPPER_ASSERT(
-      mnrhs > 0, "LSY::setMaxNrhs, maxNrhs = " << mnrhs
-    );
+    LW_ASSERT( mnrhs > 0, "LSY::setMaxNrhs, maxNrhs = {}", mnrhs );
     maxNrhs         = mnrhs;
     maxNrhs_changed = true;
   }
@@ -206,9 +187,7 @@ namespace lapack_wrapper {
         NR, NC, maxNrhs, nullptr, NR, nullptr, NR, nullptr,
         rcond, rank, &tmp, -1
       );
-      LAPACK_WRAPPER_ASSERT(
-        info == 0, "LSY::allocate, in gelss info = " << info
-      );
+      LW_ASSERT( info == 0, "LSY::allocate, in gelss info = {}", info );
 
       Lwork = integer(tmp);
       if ( NR != NC ) {
@@ -216,9 +195,7 @@ namespace lapack_wrapper {
           NC, NR, maxNrhs, nullptr, NC, nullptr, NC, nullptr,
           rcond, rank, &tmp, -1
         );
-        LAPACK_WRAPPER_ASSERT(
-          info == 0, "LSY::allocate, in gelss info = " << info
-        );
+        LW_ASSERT( info == 0, "LSY::allocate, in gelss info = {}", info );
         if ( Lwork < integer(tmp) ) Lwork = integer(tmp);
       }
 
@@ -247,9 +224,7 @@ namespace lapack_wrapper {
       rcond, rank,
       Work, Lwork
     );
-    LAPACK_WRAPPER_ASSERT(
-      info == 0, "LSS::solve (rhs=1), in gelss info = " << info
-    );
+    LW_ASSERT( info == 0, "LSS::solve (rhs=1), in gelss info = {}", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -267,9 +242,7 @@ namespace lapack_wrapper {
       rcond, rank,
       Work, Lwork
     );
-    LAPACK_WRAPPER_ASSERT(
-      info == 0, "LSS::t_solve (rhs=1), in gelss info = " << info
-    );
+    LW_ASSERT( info == 0, "LSS::t_solve (rhs=1), in gelss info = {}", info  );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -290,10 +263,7 @@ namespace lapack_wrapper {
       rcond, rank,
       Work, Lwork
     );
-    LAPACK_WRAPPER_ASSERT(
-      info == 0,
-      "LSD::solve (rhs=" << nrhs << "), in gelsd info = " << info
-    );
+    LW_ASSERT( info == 0, "LSD::solve (rhs={}), in gelsd info = {}", nrhs, info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -315,10 +285,7 @@ namespace lapack_wrapper {
       rcond, rank,
       Work, Lwork
     );
-    LAPACK_WRAPPER_ASSERT(
-      info == 0,
-      "LSD::t_solve (rhs=" << nrhs << "), in gelsd info = " << info
-    );
+    LW_ASSERT( info == 0, "LSD::t_solve (rhs={}), in gelsd info = {}", nrhs, info );
   }
 
 }
