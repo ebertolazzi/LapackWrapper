@@ -28,26 +28,9 @@
   #include <mutex> // std::mutex
 #endif
 
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wc++98-compat-pedantic"
-#endif
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
 #endif
-
-/*
-#ifndef LAPACK_WRAPPER_ERROR
-  #define LAPACK_WRAPPER_ERROR(MSG) {   \
-    std::ostringstream ost; ost << MSG; \
-    throw lapack_wrapper::Runtime_Error( ost.str(), __FILE__, __LINE__ ); \
-  }
-#endif
-
-#ifndef LAPACK_WRAPPER_ASSERT
-  #define LAPACK_WRAPPER_ASSERT(COND,MSG) \
-    if ( !(COND) ) LAPACK_WRAPPER_ERROR( "in lapack_wrapper::" << MSG )
-#endif
-*/
 
 #ifndef LW_ERROR0
   #define LW_ERROR0(MSG) throw lapack_wrapper::Runtime_Error( MSG, __FILE__, __LINE__ )
@@ -62,8 +45,7 @@
 #endif
 
 #ifndef LW_ASSERT
-  #define LW_ASSERT(COND,...) \
-    if ( !(COND) ) LW_ERROR( __VA_ARGS__ )
+  #define LW_ASSERT(COND,...) if ( !(COND) ) LW_ERROR( __VA_ARGS__ )
 #endif
 
 namespace lapack_wrapper {

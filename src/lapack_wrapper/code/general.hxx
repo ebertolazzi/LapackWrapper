@@ -2492,7 +2492,7 @@ namespace lapack_wrapper {
   #else
   {
     integer ierr = gecopy( M, N, B, LDB, C, LDC );
-    LAPACK_WRAPPER_ASSERT( ierr == 0, "geadd, ierr = " << ierr );
+    LW_ASSERT( ierr == 0, "geadd, ierr = {}", ierr );
     real const * Aj = A;
     real       * Cj = C;
     for ( integer j = 0; j < N; ++j, Aj += LDA, Cj += LDC ) {
@@ -2522,7 +2522,7 @@ namespace lapack_wrapper {
   #else
   {
     integer ierr = gecopy( M, N, B, LDB, C, LDC );
-    LAPACK_WRAPPER_ASSERT( ierr == 0, "geadd, ierr = " << ierr );
+    LW_ASSERT( ierr == 0, "geadd, ierr = {}", ierr );
     doublereal const * Aj = A;
     doublereal       * Cj = C;
     for ( integer j = 0; j < N; ++j, Aj += LDA, Cj += LDC ) {
@@ -6018,8 +6018,8 @@ namespace lapack_wrapper {
       if ( lwork < 0 ) {
         work[0] = real(lw);
       } else {
-        LAPACK_WRAPPER_ASSERT(
-          lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
+        LW_ASSERT(
+          lwork >= lw, "ggsvd, lwork = {} must be >= {}", lwork, lw
         );
         LAPACK_F77NAME(sggsvd)(
           const_cast<character*>( JOBU ? "U" : "N"),
@@ -6165,8 +6165,8 @@ namespace lapack_wrapper {
       if ( lwork < 0 ) {
         work[0] = doublereal(lw);
       } else {
-        LAPACK_WRAPPER_ASSERT(
-          lwork >= lw, "ggsvd, lwork = " << lwork << " must be >= " << lw
+        LW_ASSERT(
+          lwork >= lw, "ggsvd, lwork = {} must be >= {}", lwork, lw
         );
         LAPACK_F77NAME(dggsvd)(
           const_cast<character*>( JOBU ? "U" : "N"),

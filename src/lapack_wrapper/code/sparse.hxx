@@ -608,7 +608,7 @@ namespace lapack_wrapper {
       r_type  val[],
       bool    fi
     ) {
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT0(
         NNZ == this->rows.size() &&
         NNZ == this->cols.size() &&
         NNZ == this->vals.size(),

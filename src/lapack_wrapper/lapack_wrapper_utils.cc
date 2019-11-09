@@ -45,7 +45,7 @@
       fname, 256,
       ext,   128
     );
-    LAPACK_WRAPPER_ASSERT( e == 0, "lapack_wrapper, basename failed!" );
+    LW_ASSERT0( e == 0, "lapack_wrapper, basename failed!" );
     return fname;
   }
 #else

@@ -101,7 +101,7 @@ namespace lapack_wrapper {
     }
 
     DMatW & operator = ( DMatW const & COPY ) {
-      LAPACK_WRAPPER_ASSERT(
+      LW_ASSERT0(
         this->dim == COPY.dim,
         "DiagMatrixWrapper operator = bad matrix dimensions"
       );
@@ -980,7 +980,7 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       A.numCols() == B.numRows() &&
       A.numRows() == C.numRows() &&
       B.numCols() == C.numCols(),
@@ -1131,10 +1131,10 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       A.numRows() == A.numCols(),
-      "trmv, matrix is " << A.numRows() << " x " <<
-      A.numRows() << " expected square"
+      "trmv, matrix is {} x {} expected square",
+      A.numRows(), A.numCols(),
     );
     lapack_wrapper::trmv(
       UPLO, TRANS, DIAG, A.numRows(), A.get_data(), A.lDim(), x, incx
@@ -1201,10 +1201,10 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       A.numRows() == A.numCols(),
-      "trsv, matrix is " << A.numRows() << " x " <<
-      A.numRows() << " expected square"
+      "trsv, matrix is {} x {} expected square",
+      A.numRows(), A.numCols(),
     );
     lapack_wrapper::trsv(
       UPLO, TRANS, DIAG, A.numRows(), A.get_data(), A.lDim(), x, incx
@@ -1237,7 +1237,7 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       A.numRows() == A.numCols(),
       "trsv at `{}` matrix is {} x {} expected square",
       where, A.numRows(), A.numRows()
@@ -1275,10 +1275,10 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       A.numRows() == A.numCols(),
-      "trmm, matrix is " << A.numRows() << " x " <<
-      A.numRows() << " expected square"
+      "trmm, matrix is {} x {} expected square",
+      A.numRows(), A.numCols(),
     );
     lapack_wrapper::trmm(
       SIDE, UPLO, TRANS, DIAG,
@@ -1318,7 +1318,7 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       A.numRows() == A.numCols(),
       "trmm, at `{}` matrix is {} x {} expected square",
       where, A.numRows(), A.numRows()
@@ -1359,10 +1359,10 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LAPACK_WRAPPER_ASSERT(
+    LW_ASSERT(
       A.numRows() == A.numCols(),
-      "trsm, matrix is " << A.numRows() << " x " <<
-      A.numRows() << " expected square"
+      "trsm, matrix is {} x {} expected square",
+      A.numRows(), A.numCols(),
     );
     lapack_wrapper::trsm(
       SIDE, UPLO, TRANS, DIAG,
