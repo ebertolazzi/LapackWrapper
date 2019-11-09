@@ -1134,7 +1134,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       A.numRows() == A.numCols(),
       "trmv, matrix is {} x {} expected square",
-      A.numRows(), A.numCols(),
+      A.numRows(), A.numCols()
     );
     lapack_wrapper::trmv(
       UPLO, TRANS, DIAG, A.numRows(), A.get_data(), A.lDim(), x, incx
@@ -1204,7 +1204,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       A.numRows() == A.numCols(),
       "trsv, matrix is {} x {} expected square",
-      A.numRows(), A.numCols(),
+      A.numRows(), A.numCols()
     );
     lapack_wrapper::trsv(
       UPLO, TRANS, DIAG, A.numRows(), A.get_data(), A.lDim(), x, incx
@@ -1278,7 +1278,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       A.numRows() == A.numCols(),
       "trmm, matrix is {} x {} expected square",
-      A.numRows(), A.numCols(),
+      A.numRows(), A.numCols()
     );
     lapack_wrapper::trmm(
       SIDE, UPLO, TRANS, DIAG,
@@ -1362,7 +1362,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       A.numRows() == A.numCols(),
       "trsm, matrix is {} x {} expected square",
-      A.numRows(), A.numCols(),
+      A.numRows(), A.numCols()
     );
     lapack_wrapper::trsm(
       SIDE, UPLO, TRANS, DIAG,
