@@ -59,6 +59,8 @@ namespace lapack_wrapper {
 
   public:
 
+    using LinearSystemSolver<T>::factorize;
+
     BlockTridiagonalSymmetic()
     : allocReals("BlockTridiagonalSymmetic-allocReals")
     , allocIntegers("BlockTridiagonalSymmetic-allocIntegers")

@@ -36,16 +36,32 @@
   #define LW_ERROR0(MSG) throw lapack_wrapper::Runtime_Error( MSG, __FILE__, __LINE__ )
 #endif
 
-#ifndef LW_ASSERT0
-  #define LW_ASSERT0(COND,MSG) if ( !(COND) ) LW_ERROR0( MSG )
-#endif
-
 #ifndef LW_ERROR
   #define LW_ERROR(...) LW_ERROR0( fmt::format(__VA_ARGS__) )
 #endif
 
+#ifndef LW_ASSERT0
+  #define LW_ASSERT0(COND,MSG) if ( !(COND) ) LW_ERROR0( MSG )
+#endif
+
 #ifndef LW_ASSERT
   #define LW_ASSERT(COND,...) if ( !(COND) ) LW_ERROR( __VA_ARGS__ )
+#endif
+
+#ifdef LAPACK_WRAPPER_NO_DEBUG
+  #ifndef LW_ASSERT0_DEBUG
+    #define LW_ASSERT0_DEBUG(COND,MSG)
+  #endif
+  #ifndef LW_ASSERT_DEBUG
+    #define LW_ASSERT_DEBUG(COND,...)
+  #endif
+#else
+  #ifndef LW_ASSERT0_DEBUG
+    #define LW_ASSERT0_DEBUG(COND,MSG) LW_ASSERT0(COND,MSG)
+  #endif
+  #ifndef LW_ASSERT_DEBUG
+    #define LW_ASSERT_DEBUG(COND,...) LW_ASSERT(COND,__VA_ARGS__)
+  #endif
 #endif
 
 namespace lapack_wrapper {

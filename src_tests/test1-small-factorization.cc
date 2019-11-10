@@ -61,28 +61,24 @@ test1() {
     0.000001,   5,     3
   };
 
+  lapack_wrapper::MatrixWrapper<valueType> Amat( A, M, N, LDA );
+
   msg.green(
     "\n\n\nTest1:\n\nInitial A\n" +
-    lapack_wrapper::print_matrix( M, N, A, M )
+    lapack_wrapper::print_matrix( Amat )
   );
 
   msg.green( "\nDo QR factorization of A^T\n" );
-  qr.t_factorize( "qr", M, N, A, LDA );
+  qr.t_factorize( "qr", Amat );
 
   valueType R[M*M];
   qr.getR( R, M );
-  msg.green(
-    "\nR=\n"+lapack_wrapper::print_matrix( M, M, R, M )
-  );
+  msg.green( "\nR=\n"+lapack_wrapper::print_matrix( M, M, R, M ) );
 
   valueType rhs[M], b[M];
   valueType x[N] = {1,2,3,4,5};
-  lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, rhs, 1
-  );
-  lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, b, 1
-  );
+  lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, rhs, 1 );
+  lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, b,   1 );
 
   msg.green(
     "\nLS solution of A x = b\n"
@@ -95,18 +91,17 @@ test1() {
   lapack_wrapper::zero( N-M, x+3, 1 );
   qr.Q_mul( x );
 
-  msg.green(
-    "x^T      = "+
-    lapack_wrapper::print_matrix( 1, M, x, 1 )
-  );
+  msg.green( "x^T      = "+ lapack_wrapper::print_matrix( 1, M, x, 1 ) );
 
-  lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
-  );
+  lapack_wrapper::gemv( -1.0, Amat, x, 1, 1.0, b, 1 );
+  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  LW_ASSERT( res < 1e-6, "test failed! res = {}", res );
+
   msg.green(
-    "residual = "+
-    lapack_wrapper::print_matrix( 1, M, b, 1 )+
-    "done test1\n"
+    fmt::format(
+      "residual = {}\n||res||_2 = {}\ndone test1\n",
+      lapack_wrapper::print_matrix( 1, M, b, 1 ), res
+    )
   );
 }
 
@@ -127,29 +122,21 @@ test2() {
     0.000001,   5,     3
   };
 
-  msg.blue(
-    "\n\n\nTest2:\n\nInitial A\n"+
-    lapack_wrapper::print_matrix( M, N, A, M )
-  );
+  lapack_wrapper::MatrixWrapper<valueType> Amat( A, M, N, LDA );
+
+  msg.blue( "\n\n\nTest2:\n\nInitial A\n"+ lapack_wrapper::print_matrix( Amat ) );
 
   msg.blue("\nDo QR factorization of A^T\n");
-  qr.t_factorize( "qr", M, N, A, LDA );
+  qr.t_factorize( "qrp", Amat );
 
   valueType R[M*M];
   qr.getR( R, M );
-  msg.blue(
-    "\nR=\n"+
-    lapack_wrapper::print_matrix( M, M, R, M )
-  );
+  msg.blue( "\nR=\n"+lapack_wrapper::print_matrix( M, M, R, M ) );
 
   valueType rhs[M], b[M];
   valueType x[N] = {1,2,3,4,5};
-  lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, rhs, 1
-  );
-  lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, b, 1
-  );
+  lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, rhs, 1 );
+  lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, b,   1 );
 
   msg.blue(
     "\nLS solution of A x = b\n\n"
@@ -157,24 +144,29 @@ test2() {
     lapack_wrapper::print_matrix( 1, M, b, 1 )
   );
 
-  qr.inv_permute( rhs ); // da aggiungere!
+  qr.inv_permute( rhs );
   qr.invRt_mul( rhs, 1 );
   lapack_wrapper::copy( M,   rhs, 1, x, 1 );
   lapack_wrapper::zero( N-M, x+3, 1 );
   qr.Q_mul( x );
 
-  msg.blue(
-    "x^T =      "+
-    lapack_wrapper::print_matrix( 1, M, x, 1 )
-  );
+  msg.blue( "x^T =      "+ lapack_wrapper::print_matrix( 1, M, x, 1 ) );
 
-  lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
-  );
+  lapack_wrapper::gemv( -1.0, Amat, x, 1, 1.0, b, 1 );
   msg.blue(
     "residual = "+
     lapack_wrapper::print_matrix( 1, M, b, 1 )+
     "done test2\n"
+  );
+
+  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  LW_ASSERT( res < 1e-6, "test failed! res = {}", res );
+
+  msg.green(
+    fmt::format(
+      "residual = {}\n||res||_2 = {}\ndone test2\n",
+      lapack_wrapper::print_matrix( 1, M, b, 1 ), res
+    )
   );
 }
 
@@ -233,10 +225,16 @@ test3() {
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
-  cout
-    << "residual = "
-    << lapack_wrapper::print_matrix( 1, M, b, 1 )
-    << "done test3\n";
+
+  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  LW_ASSERT( res < 1e-6, "test failed! res = {}", res );
+
+  msg.green(
+    fmt::format(
+      "residual = {}\n||res||_2 = {}\ndone test3\n",
+      lapack_wrapper::print_matrix( 1, M, b, 1 ), res
+    )
+  );
 }
 
 #define TEST4(NAME,F) \
@@ -417,10 +415,16 @@ test6() {
     << lapack_wrapper::print_matrix( 1, N, x, 1 );
 
   qr.axpy( N, -1.0, L, D, U, x, 1.0, b );
-  cout
-    << "residual = "
-    << lapack_wrapper::print_matrix( 1, N, b, 1 )
-    << "\ndone test6\n";
+
+  valueType res = lapack_wrapper::nrm2( N, b, 1 );
+  LW_ASSERT( res < 1e-6, "test failed! res = {}", res );
+
+  msg.green(
+    fmt::format(
+      "residual = {}\n||res||_2 = {}\ndone test6\n",
+      lapack_wrapper::print_matrix( 1, N, b, 1 ), res
+    )
+  );
 }
 
 static
@@ -466,33 +470,16 @@ test7() {
   lapack_wrapper::gemv(
     lapack_wrapper::TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
-  cout
-    << "residual = "
-    << lapack_wrapper::print_matrix( 1, M, b, 1 );
 
+  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  LW_ASSERT( res < 1e-6, "test failed! res = {}", res );
 
-
-  cout << "\n\nDo QRP factorization of A\n";
-  qrp.allocate( M, M );
-  qrp.load_block( 2, 5, A,   LDA, 0, 0 );
-  qrp.load_block( 3, 5, A+2, LDA, 2, 0 );
-  qrp.factorize( "qrp" );
-
-  cout << "QRP solution of A x = b\n";
-  lapack_wrapper::copy( M, rhs, 1, x, 1 );
-  lapack_wrapper::copy( M, rhs, 1, b, 1 );
-  qrp.t_solve( x );
-  //qrp.t_solve( 1, x, M );
-  cout
-    << "x^T      = "
-    << lapack_wrapper::print_matrix( 1, M, x, 1 );
-
-  lapack_wrapper::gemv( lapack_wrapper::TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1 );
-  cout
-    << "residual = "
-    << lapack_wrapper::print_matrix( 1, M, b, 1 )
-    << "\ndone test7\n";
-
+  msg.green(
+    fmt::format(
+      "residual = {}\n||res||_2 = {}\ndone test7\n",
+      lapack_wrapper::print_matrix( 1, M, b, 1 ), res
+    )
+  );
 }
 
 

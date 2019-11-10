@@ -143,6 +143,7 @@ namespace lapack_wrapper {
   //                                                   |_|   |_|
   */
 
+  //! base class to view a piece of memory as a matrix
   template <typename T>
   class MatrixWrapper {
 
@@ -153,10 +154,10 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer     nRows; //!< Number of rows
-    integer     nCols; //!< Number of columns
+    integer     nRows;   //!< Number of rows
+    integer     nCols;   //!< Number of columns
     integer     ldData;  //!< Leadind dimension
-    valueType * data;
+    valueType * data;    //!< pointer to matrix data
 
     #if defined(DEBUG) || defined(_DEBUG)
     integer
@@ -184,8 +185,8 @@ namespace lapack_wrapper {
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     /*!
-    :|: build an empy wrapper
-    \*/
+     * build an empy wrapper
+     */
     explicit
     MatrixWrapper( )
     : nRows(0)
@@ -219,8 +220,7 @@ namespace lapack_wrapper {
     , nCols(M.nCols)
     , ldData(M.ldData)
     , data(M.data)
-    {
-    }
+    { }
 
     MatrixWrapper<T> const &
     operator = ( MatrixWrapper<T> const & rhs ) {
@@ -234,7 +234,7 @@ namespace lapack_wrapper {
     integer numRows()  const { return this->nRows; }  //!< Number of rows
     integer numCols()  const { return this->nCols; }  //!< Number of columns
     integer lDim()     const { return this->ldData; } //!< Leading dimension
-    integer numElems() const { return this->nRows*this->nCols; }  //!< Number of elements
+    integer numElems() const { return this->nRows*this->nCols; } //!< Number of elements
 
     valueType const * get_data() const { return this->data; }
     valueType       * get_data()       { return this->data; }
@@ -260,8 +260,8 @@ namespace lapack_wrapper {
     /*!
      * Access element (i,j) of the matrix
      *
-     * \param i row of the element
-     * \param j column of the element
+     * \param[in] i row of the element
+     * \param[in] j column of the element
      */
     valueType const &
     operator () ( integer i,  integer j ) const
@@ -271,8 +271,8 @@ namespace lapack_wrapper {
     /*!
      * Access element (i,j) of the matrix
      *
-     * \param i row of the element
-     * \param j column of the element
+     * \param[in] i row of the element
+     * \param[in] j column of the element
      */
     valueType &
     operator () ( integer i,  integer j )
@@ -294,12 +294,17 @@ namespace lapack_wrapper {
 
     /*!
      * Fill the matrix with value `val`
+     * \param[in] val value used to fill matrix
      */
     void
     fill( valueType val ) {
       gefill( this->nRows, this->nCols, this->data, this->ldData, val );
     }
 
+    /*!
+     * Scale the matrix with value `sc` (multiply all elements by `sc`)
+     * \param[in] sc value used to scale matrix
+     */
     void
     scale_by( valueType sc );
 
@@ -331,22 +336,50 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    void
+    add_to_diag( valueType mu ) {
+      axpy(
+        std::min(this->nRows,this->nCols),
+        1.0, &mu, 0,
+        this->data, this->ldData+1
+      );
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     /*!
      * Initialize matrix
      *
-     * \param data   pointer of memory with data to be copied
-     * \param ldData leading dimension of the memory to be copied
+     * \param[in] data   pointer of memory with data to be copied
+     * \param[in] ldData leading dimension of the memory to be copied
      *
      */
     void load( valueType const data[], integer ldData );
 
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     /*!
      * Initialize matrix
      *
-     * \param A initialize matrix with the matrix of the object A
+     * \param[in] data   pointer of memory with data to be copied
+     * \param[in] ldData leading dimension of the memory to be copied
+     *
+     */
+    void load_transposed( valueType const data[], integer ldData );
+
+    /*!
+     * Initialize matrix
+     *
+     * \param[in] A initialize matrix with the matrix of the object A
      *
      */
     void load( MatW const & A );
+
+    /*!
+     * Initialize matrix
+     *
+     * \param[in] A initialize matrix with the matrix of the object A
+     *
+     */
+    void load_transposed( MatW const & A );
 
     /*!
      *  Copy a matrix to a rectangular block of the stored matrix
@@ -519,31 +552,46 @@ namespace lapack_wrapper {
     load_row( valueType const row[], integer irow )
     { copy( this->nCols, row, 1, this->data + irow, this->ldData ); }
 
-    /*!
-     * Initialize matrix to 0 and next copy sparse matrix
-     *
-     * \param sp sparse matrix to be copied
-     *
-     */
-    void load0( Sparse const & sp );
+    void
+    load_sparse_column(
+      integer         nnz,
+      valueType const values[],
+      integer   const i_row[],
+      integer         j
+    );
 
     void
-    load0(
-      integer   const rows[],
-      integer   const cols[],
-      valueType const vals[],
-      integer         nnz
+    load_sparse_row(
+      integer         nnz,
+      valueType const values[],
+      integer         i,
+      integer   const j_col[]
     );
 
     /*!
      * Copy sparse matrix into the object
      *
-     * \param sp sparse matrix to be copied
+     * \param[in] sp sparse matrix to be copied
      *
      */
     void load( Sparse const & sp );
+    /*!
+     * Copy sparse matrix into the object transposing it
+     *
+     * \param[in] sp sparse matrix to be copied
+     *
+     */
     void load_transposed( Sparse const & sp );
 
+    /*!
+     * Copy sparse matrix into the object
+     *
+     * \param[in] rows row indices of the sparse matrix
+     * \param[in] cols column indices of the sparse matrix
+     * \param[in] vals values of the sparse matrix
+     * \param[in] nnz  number of nonzeros elements
+     *
+     */
     void
     load(
       integer   const rows[],
@@ -551,6 +599,45 @@ namespace lapack_wrapper {
       valueType const vals[],
       integer         nnz
     );
+
+    void
+    load0(
+      integer   const rows[],
+      integer   const cols[],
+      valueType const vals[],
+      integer         nnz
+    ) {
+      this->zero_fill();
+      this->load( rows, cols, vals, nnz );
+    }
+
+    /*!
+     * Copy sparse matrix into the object
+     *
+     * \param[in] rows row indices of the sparse matrix
+     * \param[in] cols column indices of the sparse matrix
+     * \param[in] vals values of the sparse matrix
+     * \param[in] nnz  number of nonzeros elements
+     *
+     */
+    void
+    load_symmetric(
+      integer   const rows[],
+      integer   const cols[],
+      valueType const vals[],
+      integer         nnz
+    );
+
+    void
+    load0_symmetric(
+      integer   const rows[],
+      integer   const cols[],
+      valueType const vals[],
+      integer         nnz
+    ) {
+      this->zero_fill();
+      this->load_symmetric( rows, cols, vals, nnz );
+    }
 
     /*!
      * Copy sparse matrix into the object
@@ -560,9 +647,43 @@ namespace lapack_wrapper {
      * \param j_offs offset added to to the column indices
      *
      */
-    void load( Sparse const & sp, integer i_offs, integer j_offs );
-    void load_transposed( Sparse const & sp, integer i_offs, integer j_offs );
+    void
+    load( Sparse const & sp, integer i_offs, integer j_offs );
 
+    void
+    load0( Sparse const & sp, integer i_offs, integer j_offs ) {
+      this->zero_fill();
+      this->load( sp, i_offs, j_offs );
+    }
+
+    /*!
+     * Copy sparse matrix into the object transposing it
+     *
+     * \param sp     sparse matrix to be copied
+     * \param i_offs offset added to to the row indices
+     * \param j_offs offset added to to the column indices
+     *
+     */
+    void
+    load_transposed( Sparse const & sp, integer i_offs, integer j_offs );
+
+    void
+    load0_transposed( Sparse const & sp, integer i_offs, integer j_offs ) {
+      this->zero_fill();
+      this->load_transposed( sp, i_offs, j_offs );
+    }
+
+    /*!
+     * Copy sparse matrix into the object
+     *
+     * \param[in] i_offs row index offset
+     * \param[in] j_offs column index offset
+     * \param[in] rows   row indices of the sparse matrix
+     * \param[in] cols   column indices of the sparse matrix
+     * \param[in] vals   values of the sparse matrix
+     * \param[in] nnz    number of nonzeros elements
+     *
+     */
     void
     load(
       integer         i_offs,
@@ -572,6 +693,53 @@ namespace lapack_wrapper {
       valueType const vals[],
       integer         nnz
     );
+
+    void
+    load0(
+      integer         i_offs,
+      integer         j_offs,
+      integer   const rows[],
+      integer   const cols[],
+      valueType const vals[],
+      integer         nnz
+    ) {
+      this->zero_fill();
+      this->load( i_offs, j_offs, rows, cols, vals, nnz );
+    }
+
+    /*!
+     * Copy sparse matrix into the object
+     *
+     * \param[in] i_offs row index offset
+     * \param[in] j_offs column index offset
+     * \param[in] rows   row indices of the sparse matrix
+     * \param[in] cols   column indices of the sparse matrix
+     * \param[in] vals   values of the sparse matrix
+     * \param[in] nnz    number of nonzeros elements
+     *
+     */
+    void
+    load_symmetric(
+      integer         i_offs,
+      integer         j_offs,
+      integer   const rows[],
+      integer   const cols[],
+      valueType const vals[],
+      integer         nnz
+    );
+
+    void
+    load0_symmetric(
+      integer         i_offs,
+      integer         j_offs,
+      integer   const rows[],
+      integer   const cols[],
+      valueType const vals[],
+      integer         nnz
+    ) {
+      this->zero_fill();
+      this->load_symmetric( i_offs, j_offs, rows, cols, vals, nnz );
+    }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     /*!
@@ -936,7 +1104,7 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numCols() == B.numRows() &&
       A.numRows() == C.numRows() &&
       B.numCols() == C.numCols(),
@@ -980,7 +1148,7 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numCols() == B.numRows() &&
       A.numRows() == C.numRows() &&
       B.numCols() == C.numCols(),
@@ -1031,7 +1199,7 @@ namespace lapack_wrapper {
     integer Ac = TRANSA == NO_TRANSPOSE ? A.numCols() : A.numRows();
     integer Br = TRANSB == NO_TRANSPOSE ? B.numRows() : B.numCols();
     integer Bc = TRANSB == NO_TRANSPOSE ? B.numCols() : B.numRows();
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       C.numRows() == Ar && C.numCols() == Bc && Ac == Br,
       "gemm, at `{}' inconsistent dimensions: "
       "\nA = {} x {}\nB = {} x {}\nC = {} x {}"
@@ -1085,7 +1253,7 @@ namespace lapack_wrapper {
     integer Ac = TRANSA == NO_TRANSPOSE ? A.numCols() : A.numRows();
     integer Br = TRANSB == NO_TRANSPOSE ? B.numRows() : B.numCols();
     integer Bc = TRANSB == NO_TRANSPOSE ? B.numCols() : B.numRows();
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       C.numRows() == Ar && C.numCols() == Bc && Ac == Br,
       "gemm, inconsistent dimensions: "
       "\nA = {} x {}\nB = {} x {}\nC = {} x {}"
@@ -1131,7 +1299,7 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmv, matrix is {} x {} expected square",
       A.numRows(), A.numCols()
@@ -1167,7 +1335,7 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmv at `{}` matrix is {} x {} expected square",
       where, A.numRows(), A.numRows()
@@ -1201,7 +1369,7 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trsv, matrix is {} x {} expected square",
       A.numRows(), A.numCols()
@@ -1237,7 +1405,7 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trsv at `{}` matrix is {} x {} expected square",
       where, A.numRows(), A.numRows()
@@ -1275,7 +1443,7 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmm, matrix is {} x {} expected square",
       A.numRows(), A.numCols()
@@ -1318,7 +1486,7 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmm, at `{}` matrix is {} x {} expected square",
       where, A.numRows(), A.numRows()
@@ -1359,7 +1527,7 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trsm, matrix is {} x {} expected square",
       A.numRows(), A.numCols()
@@ -1402,7 +1570,7 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LW_ASSERT(
+    LW_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmm, at `{}` matrix is {} x {} expected square",
       where, A.numRows(), A.numRows()

@@ -266,7 +266,7 @@ namespace lapack_wrapper {
       LAPACK_F77NAME(slaswp)(
         &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC
       );
-    #elif defined(LAPACK_WRAPPER_USE_LAPACK)   || \
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
           defined(LAPACK_WRAPPER_USE_ATLAS)
       BLASFUNC(slaswp)(
         &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC

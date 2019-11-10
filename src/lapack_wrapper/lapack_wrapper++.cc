@@ -355,24 +355,38 @@ namespace lapack_wrapper {
                                  doublereal RCOND,
                                  doublereal SVAL[3] );
 
+  template class LU_no_alloc<real>;
+  template class LU_no_alloc<doublereal>;
   template class LU<real>;
   template class LU<doublereal>;
 
+  template class LUPQ_no_alloc<real>;
+  template class LUPQ_no_alloc<doublereal>;
   template class LUPQ<real>;
   template class LUPQ<doublereal>;
 
+  template class QR_no_alloc<real>;
+  template class QR_no_alloc<doublereal>;
   template class QR<real>;
   template class QR<doublereal>;
 
+  template class QRP_no_alloc<real>;
+  template class QRP_no_alloc<doublereal>;
   template class QRP<real>;
   template class QRP<doublereal>;
 
+  template class SVD_no_alloc<real>;
+  template class SVD_no_alloc<doublereal>;
   template class SVD<real>;
   template class SVD<doublereal>;
 
+  template class LSS_no_alloc<real>;
+  template class LSS_no_alloc<doublereal>;
   template class LSS<real>;
   template class LSS<doublereal>;
 
+  template class LSY_no_alloc<real>;
+  template class LSY_no_alloc<doublereal>;
   template class LSY<real>;
   template class LSY<doublereal>;
 

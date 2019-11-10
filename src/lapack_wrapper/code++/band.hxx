@@ -48,6 +48,8 @@ namespace lapack_wrapper {
 
   public:
 
+    using LinearSystemSolver<T>::factorize;
+
     BandedLU();
     virtual ~BandedLU() LAPACK_WRAPPER_OVERRIDE;
 
@@ -170,6 +172,8 @@ namespace lapack_wrapper {
     bool is_factorized;
 
   public:
+
+    using LinearSystemSolver<T>::factorize;
 
     BandedSPD();
 

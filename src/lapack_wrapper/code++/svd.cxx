@@ -32,84 +32,52 @@ namespace lapack_wrapper {
    |
   \*/
 
-  template <typename T>
-  void
-  SVD<T>::allocate( integer NR, integer NC ) {
-
-    if ( nRow != NR || nCol != NC ) {
-      nRow  = NR;
-      nCol  = NC;
-      minRC = std::min(NR,NC);
-      valueType tmp;
-      integer info = gesvd(
-        REDUCED, REDUCED,
-        NR, NC,
-        nullptr, NR,
-        nullptr,
-        nullptr, NR,
-        nullptr, minRC,
-        &tmp, -1
-      );
-      LW_ASSERT(
-        info == 0, "SVD::allocate, in gesvd info = {}", info
-      );
-      Lwork = integer(tmp);
-      info = gesdd(
-        REDUCED,
-        NR, NC,
-        nullptr, NR,
-        nullptr,
-        nullptr, NR,
-        nullptr, minRC,
-        &tmp, -1, nullptr
-      );
-      if ( integer(tmp) > Lwork ) Lwork = integer(tmp);
-      allocReals.allocate( size_t(nRow*nCol+minRC*(nRow+nCol+1)+Lwork) );
-      Amat = allocReals( size_t(nRow*nCol));
-      Svec  = allocReals( size_t(minRC) );
-      Umat  = allocReals( size_t(minRC*nRow) );
-      VTmat = allocReals( size_t(minRC*nCol) );
-      Work  = allocReals( size_t(Lwork) );
-      allocIntegers.allocate( size_t(8*minRC) );
-      IWork = allocIntegers( size_t(8*minRC) );
-    }
-  }
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
-  SVD<T>::factorize( char const who[] ) {
-    integer info;
+  SVD_no_alloc<T>::factorize(
+    char const      who[],
+    valueType const A[],
+    integer         LDA
+  ) {
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+    );
+    LW_ASSERT(
+      info == 0,
+      "SVD_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+      who, info
+    );
     switch ( svd_used ) {
     case USE_GESVD:
       info = gesvd(
         REDUCED,
         REDUCED,
-        nRow, nCol, Amat, nRow,
-        Svec,
-        Umat, nRow,
-        VTmat, minRC,
-        Work, Lwork
+        this->nRows, this->nCols, this->Afactorized, this->nRows,
+        this->Svec,
+        this->Umat,  this->nRows,
+        this->VTmat, this->minRC,
+        this->Work,  this->Lwork
       );
       LW_ASSERT(
         info == 0,
-        "SVD::factorize[{}] call lapack_wrapper::gesvd return info = {}",
+        "SVD_no_alloc::factorize[{}] call lapack_wrapper::gesvd return info = {}",
         who, info
       );
       break;
     case USE_GESDD:
       info = gesdd(
         REDUCED,
-        nRow, nCol, Amat, nRow,
-        Svec,
-        Umat, nRow,
-        VTmat, minRC,
-        Work, Lwork, IWork
+        this->nRows, this->nCols, this->Afactorized, this->nRows,
+        this->Svec,
+        this->Umat,  this->nRows,
+        this->VTmat, this->minRC,
+        this->Work,  this->Lwork, this->IWork
       );
       LW_ASSERT(
         info == 0,
-        "SVD::factorize[{}] call lapack_wrapper::gesdd return info = {}",
+        "SVD_no_alloc::factorize[{}] call lapack_wrapper::gesdd return info = {}",
         who, info
       );
       break;
@@ -120,7 +88,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  SVD<T>::solve( valueType xb[] ) const {
+  SVD_no_alloc<T>::solve( valueType xb[] ) const {
     // A = U*S*VT
     // U*S*VT*x=b --> VT^T S^+ U^T b
     // U  nRow x minRC
@@ -135,7 +103,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  SVD<T>::t_solve( valueType xb[] ) const {
+  SVD_no_alloc<T>::t_solve( valueType xb[] ) const {
     // A = U*S*VT
     // U*S*VT*x=b --> VT^T S^+ U^T b
     // U  nRow x minRC
@@ -144,6 +112,56 @@ namespace lapack_wrapper {
     Vt_mul( 1.0, xb, 1, 0.0, Work, 1 );
     for ( integer i = 0; i < minRC; ++i ) Work[i] /= std::max(Svec[i],smin);
     U_mul( 1.0, Work, 1, 0.0, xb, 1 );
+  }
+
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  SVD<T>::allocate( integer NR, integer NC ) {
+
+    if ( this->nRows != NR || this->nCols != NC ) {
+      integer minRC = std::min(NR,NC);
+      valueType tmp;
+      integer info = gesvd(
+        REDUCED, REDUCED,
+        NR, NC,
+        nullptr, NR,
+        nullptr,
+        nullptr, NR,
+        nullptr, minRC,
+        &tmp, -1
+      );
+      LW_ASSERT( info == 0, "SVD::allocate, in gesvd info = {}", info );
+      integer L = integer(tmp);
+      info = gesdd(
+        REDUCED,
+        NR, NC,
+        nullptr, NR,
+        nullptr,
+        nullptr, NR,
+        nullptr, minRC,
+        &tmp, -1, nullptr
+      );
+      LW_ASSERT( info == 0, "SVD::allocate, in gesdd info = {}", info );
+      if ( integer(tmp) > L ) L = integer(tmp);
+
+      allocReals.allocate( size_t(NR*NC+minRC*(NR+NC+1)+L) );
+      allocIntegers.allocate( size_t(8*minRC) );
+
+      this->no_allocate(
+        NR, NC, L,
+        this->allocReals( size_t(NR*NC) ),
+        this->allocReals( size_t(L) ),
+        this->allocReals( size_t(minRC*NR) ),
+        this->allocReals( size_t(minRC*NC) ),
+        this->allocReals( size_t(minRC) ),
+        this->allocIntegers( size_t(8*this->minRC) )
+      );
+    }
   }
 
   /*\

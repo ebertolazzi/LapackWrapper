@@ -25,7 +25,6 @@
 #define LAPACK_WRAPPERPP_HH
 
 #include "lapack_wrapper.hh"
-#include "lapack_wrapper++.hh"
 #include "TicToc.hh"
 
 #include <complex>
@@ -102,7 +101,7 @@ namespace lapack_wrapper {
           delete [] pMalloc;
           numTotValues   = n;
           numTotReserved = n + (n>>3); // 12% more values
-          pMalloc = new T[numTotReserved];
+          pMalloc        = new T[numTotReserved];
         }
       }
       catch ( std::exception const & exc ) {
@@ -166,10 +165,21 @@ namespace lapack_wrapper {
     std::string out;
     for ( integer i = 0; i < nr; ++i ) {
       for ( integer j = 0; j < nc; ++j )
-        out += fmt::format("{:14.5} ",A[i+j*ldA]);
+        out += fmt::format("{:16.8} ",A[i+j*ldA]);
       out += '\n';
     }
     return out;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename t_Value>
+  inline
+  std::string
+  print_matrix( MatrixWrapper<t_Value> const & Amat ) {
+    return print_matrix(
+      Amat.numRows(), Amat.numCols(), Amat.get_data(), Amat.lDim()
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -284,318 +294,55 @@ namespace lapack_wrapper {
         t_solve( B + i*ldB );
     }
 
-    void
-    solve( MatrixWrapper<valueType>  & M )
-    { solve( M.numCols(), M.get_data(),  M.lDim() ); }
-
-    void
-    t_solve( MatrixWrapper<valueType>  & M )
-    { t_solve( M.numCols(), M.get_data(),  M.lDim() ); }
-
-  };
-
-  /*\
-  :|:   _____          _             _          _   _
-  :|:  |  ___|_ _  ___| |_ ___  _ __(_)______ _| |_(_) ___  _ __
-  :|:  | |_ / _` |/ __| __/ _ \| '__| |_  / _` | __| |/ _ \| '_ \
-  :|:  |  _| (_| | (__| || (_) | |  | |/ / (_| | |_| | (_) | | | |
-  :|:  |_|  \__,_|\___|\__\___/|_|  |_/___\__,_|\__|_|\___/|_| |_|
-  \*/
-
-  template <typename T>
-  class Factorization : public LinearSystemSolver<T> {
-  public:
-    typedef T valueType;
-
-  protected:
-
-    valueType * Amat;
-    integer     nRow;
-    integer     nCol;
-
-  public:
-
-    using LinearSystemSolver<T>::solve;
-    using LinearSystemSolver<T>::t_solve;
-
-    Factorization()
-    : nRow(0)
-    , nCol(0)
-    {}
-
-    virtual
-    ~Factorization()
-    {}
-
-    integer           numRow()   const { return nRow; }
-    integer           numCol()   const { return nCol; }
-    valueType *       Apointer()       { return Amat; }
-    valueType const * Apointer() const { return Amat; }
-
-    void
-    zero()
-    { gezero( this->nRow, this->nCol, this->Amat, this->nRow ); }
-
-    /*!
-     *  Zeroes a rectangular block of the stored matrix
-     *  staring at `(irow,icol)` position
-     *
-     *  \param[in] nr    number of rows of the block to be zeroed
-     *  \param[in] nc    number of columns of the block to be zeroed
-     *  \param[in] irow  starting row
-     *  \param[in] icol  stating column
-     */
-    void
-    zero_block(
-      integer nr,
-      integer nc,
-      integer irow,
-      integer icol
-    ) {
-      gezero( nr, nc, Amat + irow + icol * nRow, nRow );
-    }
-
-    /*!
-     *  Copy a matrix to a rectangular block of the stored matrix
-     *  staring at `(irow,icol)` position
-     *
-     *  \param[in] B     matrix wrapper of the input matrix `B`
-     */
-    void
-    load( MatrixWrapper<T> const & B ) {
-      allocate( B.numRows(), B.numCols() );
-      integer info = gecopy(
-        B.numRows(), B.numCols(),
-        B.get_data(), B.lDim(),
-        Amat, nRow
-      );
-      LW_ASSERT(
-        info == 0,
-        "block_load call lapack_wrapper::gecopy return info = {}", info
-      );
-    }
-
-    /*!
-     *  Copy a matrix to a rectangular block of the stored matrix
-     *  staring at `(irow,icol)` position
-     *
-     *  \param[in] nr    number of rows of the block to be zeroed
-     *  \param[in] nc    number of columns of the block to be zeroed
-     *  \param[in] B     pointer to memory storing the input matrix `B`
-     *  \param[in] ldB   leading dimension of the matrix `B`
-     *  \param[in] irow  starting row
-     *  \param[in] icol  stating column
-     */
-    void
-    load_block(
-      integer         nr,
-      integer         nc,
-      valueType const B[],
-      integer         ldB,
-      integer         irow = 0,
-      integer         icol = 0
-    ) {
-      integer info = gecopy(
-        nr, nc,
-        B, ldB,
-        Amat + irow + icol * nRow, nRow
-      );
-      LW_ASSERT(
-        info == 0,
-        "load_block call lapack_wrapper::gecopy return info = {}", info
-      );
-    }
-
-    /*!
-     *  Copy vector `column` to the `icol`th column of the internal stored matrix
-     *  \param[in] column the column vector
-     *  \param[in] icol   the column to be changed
-     */
-    void
-    load_column( valueType const column[], integer icol )
-    { copy( this->nRow, column, 1, this->Amat + icol * this->nRow, 1 ); }
-
-    /*!
-     *  Copy vector `row` to the `irow`th row of the internal stored matrix
-     *  \param[in] row  the row vector
-     *  \param[in] irow the row to be changed
-     */
-    void
-    load_row( valueType const row[], integer irow )
-    { copy( this->nCol, row, 1, this->Amat + irow, this->nRow ); }
-
-    /*!
-     *  Copy vector element of a sparse vector to a column of
-     *  the internal stored matrix
-     *  \param[in] nnz    number of nonzeros of the columns
-     *  \param[in] values the values of the sparse vector
-     *  \param[in] row    index position of the values of the sparse vector
-     *  \param[in] icol   the column to be changed
-     *  \param[in] offs   offset for the index, 0 for C based vector -1 for FORTRAN based vector
-     */
-    void
-    load_sparse_column(
-      integer         nnz,
-      valueType const values[],
-      integer   const row[],
-      integer         icol,
-      integer         offs = 0
-    ) {
-      valueType * Acol = Amat + icol * nRow;
-      lapack_wrapper::zero( nRow, Acol, 1 );
-      for ( integer i = 0; i < nnz; ++i ) Acol[row[i]+offs] = values[i];
-    }
-
-    /*!
-     *  Copy vector element of a sparse vector to a row of the
-     *  internal stored matrix
-     *  \param[in] nnz    number of nonzeros of the columns
-     *  \param[in] values the values of the sparse vector
-     *  \param[in] col    index position of the values of the sparse vector
-     *  \param[in] irow   the column to be changed
-     *  \param[in] offs   offset for the index, 0 for C based vector -1 for FORTRAN based vector
-     */
-    void
-    load_sparse_row(
-      integer         nnz,
-      valueType const values[],
-      integer   const col[],
-      integer         irow,
-      integer         offs = 0
-    ) {
-      valueType * Arow = Amat + irow;
-      lapack_wrapper::zero( nRow, Arow, nRow );
-      for ( integer i = 0; i < nnz; ++i ) Arow[col[i]+offs] = values[i];
-    }
-
-    /*!
-     *  Copy a sparse matrix into the internal stored matrix
-     *  \param[in] nnz    number of nonzeros of the columns
-     *  \param[in] values the values of the sparse vector
-     *  \param[in] row    index row position of the values of the sparse vector
-     *  \param[in] col    index column position of the values of the sparse vector
-     */
-    void
-    load_sparse(
-      integer         nnz,
-      valueType const values[],
-      integer   const row[],
-      integer   const col[]
-    ) {
-      lapack_wrapper::zero( nRow*nCol, Amat, 1 );
-      for ( integer i = 0; i < nnz; ++i )
-        Amat[row[i] + col[i] * nRow] = values[i];
-    }
-
-    /*!
-     *  Copy a sparse matrix into the internal stored matrix
-     *  \param[in] nnz    number of nonzeros of the columns
-     *  \param[in] values the values of the sparse vector
-     *  \param[in] row    index row position of the values of the sparse vector
-     *  \param[in] r_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
-     *  \param[in] col    index column position of the values of the sparse vector
-     *  \param[in] c_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
-     */
-    void
-    load_sparse(
-      integer         nnz,
-      valueType const values[],
-      integer   const row[], integer r_offs,
-      integer   const col[], integer c_offs
-    ) {
-      lapack_wrapper::zero( nRow*nCol, Amat, 1 );
-      for ( integer i = 0; i < nnz; ++i )
-        Amat[row[i]+r_offs + (col[i]+c_offs) * nRow] = values[i];
-    }
-
-    /*!
-     *  Copy a sparse matrix into the internal stored matrix.
-     *  The matrix is assumed symmetric and only the lower or upper
-     *  part is passed.
-     *
-     *  \param[in] nnz    number of nonzeros of the columns
-     *  \param[in] values the values of the sparse vector
-     *  \param[in] row    index row position of the values of the sparse vector
-     *  \param[in] col    index column position of the values of the sparse vector
-     */
-    void
-    load_sparse_sym(
-      integer         nnz,
-      valueType const values[],
-      integer   const row[],
-      integer   const col[]
-    ) {
-      lapack_wrapper::zero( nRow*nCol, Amat, 1 );
-      for ( integer i = 0; i < nnz; ++i ) {
-        integer ii = row[i];
-        integer jj = col[i];
-        Amat[ii + jj * nRow] = values[i];
-        if ( ii != jj ) Amat[ jj + ii * nRow] = values[i];
-      }
-    }
-
-    /*!
-     *  Copy a sparse matrix into the internal stored matrix.
-     *  The matrix is assumed symmetric and only the lower or upper
-     *  part is passed.
-     *
-     *  \param[in] nnz    number of nonzeros of the columns
-     *  \param[in] values the values of the sparse vector
-     *  \param[in] row    index row position of the values of the sparse vector
-     *  \param[in] r_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
-     *  \param[in] col    index column position of the values of the sparse vector
-     *  \param[in] c_offs offset for the index, 0 for C based vector -1 for FORTRAN based vector
-     */
-    void
-    load_sparse_sym(
-      integer         nnz,
-      valueType const values[],
-      integer   const row[], integer r_offs,
-      integer   const col[], integer c_offs
-    ) {
-      lapack_wrapper::zero( nRow*nCol, Amat, 1 );
-      for ( integer i = 0; i < nnz; ++i ) {
-        integer ii = row[i]+r_offs;
-        integer jj = col[i]+c_offs;
-        Amat[ii + jj * nRow] = values[i];
-        if ( ii != jj ) Amat[ jj + ii * nRow] = values[i];
-      }
-    }
-
-    void
-    add_to_diag( valueType mu ) {
-      lapack_wrapper::axpy( std::min(nRow,nCol), 1.0, &mu, 0, Amat, nRow+1 );
-    }
-
-    /*\
-    :|:         _      _               _
-    :|:  __   _(_)_ __| |_ _   _  __ _| |___
-    :|:  \ \ / / | '__| __| | | |/ _` | / __|
-    :|:   \ V /| | |  | |_| |_| | (_| | \__ \
-    :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
-    \*/
-
-    virtual
-    void
-    allocate( integer NR, integer NC ) LAPACK_WRAPPER_PURE_VIRTUAL;
-
-    virtual
-    void
-    factorize( char const who[] ) LAPACK_WRAPPER_PURE_VIRTUAL;
-
     virtual
     void
     factorize(
+      char const      /* who */ [],
+      integer         /* NR  */   ,
+      integer         /* NC  */   ,
+      valueType const /* A   */ [],
+      integer         /* LDA */
+    ) {
+      LW_ERROR0( "LinearSystemSolver::factorize, not defined in derived class" );
+    }
+
+    // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+    // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+    void
+    solve( MatrixWrapper<valueType> & M )
+    { solve( M.numCols(), M.get_data(),  M.lDim() ); }
+
+    void
+    t_solve( MatrixWrapper<valueType> & M )
+    { t_solve( M.numCols(), M.get_data(),  M.lDim() ); }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    void
+    factorize( char const who[], MatrixWrapper<valueType> const & M ) {
+      this->factorize( who, M.numRows(), M.numCols(), M.get_data(), M.lDim() );
+    }
+
+    void
+    t_factorize(
       char const      who[],
       integer         NR,
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) {
+      Matrix<valueType> M(NC,NR);
+      for ( integer i = 0; i < NR; ++i )
+        for ( integer j = 0; j < NC; ++j )
+          M(j,i) = A[i+j*LDA];
+      this->factorize( who, M );
+    }
 
     void
-    factorize( char const who[], MatrixWrapper<valueType> const & M )
-    { factorize( who, M.numRows(), M.numCols(), M.get_data(), M.lDim() ); }
+    t_factorize( char const who[], MatrixWrapper<valueType> const & M ) {
+      this->t_factorize( who, M.numRows(), M.numCols(), M.get_data(), M.lDim() );
+    }
 
   };
 
@@ -706,24 +453,38 @@ namespace lapack_wrapper {
   #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
   #endif
 
+  extern template class LU_no_alloc<real>;
+  extern template class LU_no_alloc<doublereal>;
   extern template class LU<real>;
   extern template class LU<doublereal>;
 
+  extern template class LUPQ_no_alloc<real>;
+  extern template class LUPQ_no_alloc<doublereal>;
   extern template class LUPQ<real>;
   extern template class LUPQ<doublereal>;
 
+  extern template class QR_no_alloc<real>;
+  extern template class QR_no_alloc<doublereal>;
   extern template class QR<real>;
   extern template class QR<doublereal>;
 
+  extern template class QRP_no_alloc<real>;
+  extern template class QRP_no_alloc<doublereal>;
   extern template class QRP<real>;
   extern template class QRP<doublereal>;
 
+  extern template class SVD_no_alloc<real>;
+  extern template class SVD_no_alloc<doublereal>;
   extern template class SVD<real>;
   extern template class SVD<doublereal>;
 
+  extern template class LSS_no_alloc<real>;
+  extern template class LSS_no_alloc<doublereal>;
   extern template class LSS<real>;
   extern template class LSS<doublereal>;
 
+  extern template class LSY_no_alloc<real>;
+  extern template class LSY_no_alloc<doublereal>;
   extern template class LSY<real>;
   extern template class LSY<doublereal>;
 

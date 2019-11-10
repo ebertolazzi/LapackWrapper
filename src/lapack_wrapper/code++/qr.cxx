@@ -32,53 +32,39 @@ namespace lapack_wrapper {
    |
   \*/
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   template <typename T>
   void
-  QR<T>::setMaxNrhs( integer mnrhs ) {
-    LW_ASSERT(
-      mnrhs > 0,
-      "lapack_wrapper::QR::setMaxNrhs, maxNrhs = {}", mnrhs
+  QR_no_alloc<T>::factorize(
+    char const      who[],
+    valueType const A[],
+    integer         LDA
+  ) {
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
     );
-    maxNrhs = mnrhs;
-  }
-
-  template <typename T>
-  void
-  QR<T>::allocate( integer NR, integer NC, integer Lwrk ) {
-    nRow       = NR;
-    nCol       = NC;
-    nReflector = std::min(nRow,nCol);
-    Lwork      = Lwrk;
-    allocReals.allocate( size_t(nRow*nCol+Lwork+nReflector) );
-    Amat = allocReals( size_t(nRow*nCol) );
-    Work = allocReals( size_t(Lwork) );
-    Tau  = allocReals( size_t(nReflector) );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  void
-  QR<T>::allocate( integer NR, integer NC ) {
-    if ( nRow != NR || nCol != NC || Lwork < maxNrhs ) {
-      valueType tmp; // get optimal allocation
-      integer info = geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 );
-      LW_ASSERT(
-        info == 0,
-        "QR::allocate call lapack_wrapper::geqrf return info = {}", info
-      );
-      integer L = std::max( integer(tmp), maxNrhs );
-      if ( L < NR ) L = NR;
-      if ( L < NC ) L = NC;
-      allocate( NR, NC, L );
-    }
+    LW_ASSERT(
+      info == 0,
+      "QR_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+      who, info
+    );
+    info = geqrf(
+      this->nRows, this->nCols, this->Afactorized, this->nRows,
+      this->Tau, this->WorkFactorized, this->Lwork
+    );
+    LW_ASSERT(
+      info == 0,
+      "QR_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}",
+      who, info
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
-  QR<T>::applyQ(
+  QR_no_alloc<T>::applyQ(
     SideMultiply  SIDE,
     Transposition TRANS,
     integer       nRefl,
@@ -88,24 +74,24 @@ namespace lapack_wrapper {
     integer       ldC
   ) const {
     LW_ASSERT(
-      (SIDE == lapack_wrapper::LEFT  && NR == nRow) ||
-      (SIDE == lapack_wrapper::RIGHT && NC == nRow),
-      "QR::applyQ NR = {} NC = {} nRow = {}",
-      NR, NC, nRow
+      (SIDE == lapack_wrapper::LEFT  && NR == this->nRows) ||
+      (SIDE == lapack_wrapper::RIGHT && NC == this->nRows),
+      "QR_no_alloc::applyQ NR = {} NC = {} nRow = {}",
+      NR, NC, this->nRows
     );
     integer info = ormqr(
       SIDE, TRANS,
       NR, NC,
       nRefl,  // numero riflettori usati nel prodotto Q
-      Amat, nRow /*ldA*/,
-      Tau,
+      this->Afactorized, this->nRows /*ldA*/,
+      this->Tau,
       C, ldC,
-      Work, Lwork
+      this->WorkFactorized, this->Lwork
     );
     LW_ASSERT(
       info == 0,
-      "QR::applyQ call lapack_wrapper::ormqr return info = {} Lwork = {}",
-      info, Lwork
+      "QR_no_alloc::applyQ call lapack_wrapper::ormqr return info = {} Lwork = {}",
+      info, this->Lwork
     );
   }
 
@@ -113,20 +99,94 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR<T>::getR( valueType R[], integer ldR ) const {
-    integer minRC = std::min( nRow, nCol );
+  QR_no_alloc<T>::getR( valueType R[], integer ldR ) const {
+    integer minRC = std::min( this->nRows, this->nCols );
     gezero( minRC, minRC, R, ldR );
     for ( integer i = 0; i < minRC; ++i )
       for ( integer j = i; j < minRC; ++j )
-        R[i+j*ldR] = Amat[ i+j*nRow];
+        R[i+j*ldR] = this->Afactorized[ i+j*this->nRows];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
-  QR<T>::solve( valueType xb[] ) const {
-    LW_ASSERT0( nRow == nCol, "in QR::solve, factored matrix must be square" );
+  QR_no_alloc<T>::getR( Matrix<T> & R ) const {
+    integer minRC = std::min( this->nRows, this->nCols );
+    R.setup( minRC, minRC );
+    R.zero_fill();
+    for ( integer i = 0; i < minRC; ++i )
+      for ( integer j = i; j < minRC; ++j )
+        R(i,j) = this->Afactorized[ i+j*this->nRows];
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::getQ( valueType Q[], integer ldQ ) const {
+    geid( this->nRows, this->nCols, Q, ldQ );
+    Q_mul( this->nRows, this->nCols , Q, ldQ );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::getQ( Matrix<T> & Q ) const {
+    Q.setup( this->nRows, this->nCols );
+    Q.id( 1.0 );
+    Q_mul( Q );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::getA( valueType A[], integer ldA ) const {
+    gecopy(
+      this->nRows, this->nCols, this->Afactorized, this->nRows, A, ldA
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::getA( Matrix<T> & A ) const {
+    A.setup( this->nRows, this->nCols );
+    gecopy(
+      this->nRows, this->nCols, this->Afactorized, this->nRows,
+      A.get_data(), A.lDim()
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::getTau( valueType tau[] ) const {
+    copy( std::min(this->nRows, this->nCols), this->Tau, 1, tau, 1 );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::getTau( Matrix<T> & tau ) const {
+    tau.setup( 1, std::min(this->nRows, this->nCols) );
+    copy( std::min(this->nRows, this->nCols), this->Tau, 1, tau.get_data(), 1 );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::solve( valueType xb[] ) const {
+    LW_ASSERT0(
+      this->nRows == this->nCols,
+      "QR_no_alloc::solve, factored matrix must be square"
+    );
     Qt_mul(xb);
     invR_mul(xb);
   }
@@ -135,8 +195,11 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR<T>::t_solve( valueType xb[] ) const {
-    LW_ASSERT0( nRow == nCol, "in QR::solve_t, factored matrix must be square" );
+  QR_no_alloc<T>::t_solve( valueType xb[] ) const {
+    LW_ASSERT0(
+      this->nRows == this->nCols,
+      "QR_no_alloc::solve_t, factored matrix must be square"
+    );
     invRt_mul(xb);
     Q_mul(xb);
   }
@@ -145,20 +208,57 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LW_ASSERT0( nRow == nCol, "in QR::solve, factored matrix must be square" );
-    Qt_mul( nRow, nrhs, XB, ldXB );
-    invR_mul( nRow, nrhs, XB, ldXB );
+  QR_no_alloc<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
+    LW_ASSERT0(
+      this->nRows == this->nCols,
+      "QR_no_alloc::solve, factored matrix must be square"
+    );
+    Qt_mul( this->nRows, nrhs, XB, ldXB );
+    invR_mul( this->nRows, nrhs, XB, ldXB );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
-  QR<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LW_ASSERT0( nRow == nCol, "in QR::solve_t, factored matrix must be square" );
-    invRt_mul( nRow, nrhs, XB, ldXB );
-    Q_mul( nRow, nrhs, XB, ldXB );
+  QR_no_alloc<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
+    LW_ASSERT0(
+      this->nRows == this->nCols,
+      "QR_no_alloc::solve_t, factored matrix must be square"
+    );
+    invRt_mul( this->nRows, nrhs, XB, ldXB );
+    Q_mul( this->nRows, nrhs, XB, ldXB );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR<T>::allocate( integer NR, integer NC ) {
+    if ( this->nRows != NR || this->nCols != NC ) {
+      valueType tmp; // get optimal allocation
+      integer info = geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 );
+      LW_ASSERT(
+        info == 0,
+        "QR::allocate call lapack_wrapper::geqrf return info = {}", info
+      );
+
+      integer minRC = std::min( NR, NC );
+      integer maxRC = std::max( NR, NC );
+      integer L     = std::max( integer(tmp), maxRC );
+
+      this->allocReals.allocate( size_t(NR*NC+L+minRC) );
+
+      this->nRows          = NR;
+      this->nCols          = NC;
+      this->nReflector     = minRC;
+      this->Lwork          = L;
+      this->Afactorized    = this->allocReals( size_t(NR*NC) );
+      this->WorkFactorized = this->allocReals( size_t(L) );
+      this->Tau            = this->allocReals( size_t(minRC) );
+    }
   }
 
   /*\
@@ -172,47 +272,127 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QRP<T>::allocate( integer NR, integer NC ) {
-    if ( nRow != NR || nCol != NC || Lwork < maxNrhs ) {
-      valueType tmp; // get optimal allocation
-      integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
-      LW_ASSERT(
-        info == 0,
-        "QRP::allocate call lapack_wrapper::geqp3 return info = {}", info
-      );
-      integer L = std::max( integer(tmp), maxNrhs );
-      if ( L < NR ) L = NR;
-      if ( L < NC ) L = NC;
-      QR<T>::allocate( NR, NC, L );
-    }
-    allocIntegers.allocate(size_t(NC));
-    JPVT = allocIntegers(size_t(NC));
-  }
-
-  template <typename T>
-  void
-  QRP<T>::permute( valueType x[] ) const {
-    // applico permutazione
-    for ( integer i = 0; i < nCol; ++i ) Work[JPVT[i]-1] = x[i];
-    copy( nCol, Work, 1, x, 1 );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  void
-  QRP<T>::inv_permute( valueType x[] ) const {
-    // applico permutazione
-    for ( integer i = 0; i < nCol; ++i ) Work[i] = x[JPVT[i]-1];
-    copy( nCol, Work, 1, x, 1 );
+  QRP_no_alloc<T>::factorize(
+    char const      who[],
+    valueType const A[],
+    integer         LDA
+  ) {
+    // calcolo fattorizzazione QR della matrice A
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+    );
+    LW_ASSERT(
+      info == 0,
+      "QRP_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+      who, info
+    );
+    std::fill( this->JPVT, this->JPVT+this->nCols, integer(0) );
+    info = geqp3(
+      this->nRows, this->nCols, this->Afactorized, this->nRows,
+      this->JPVT, this->Tau, this->WorkFactorized, this->Lwork
+    );
+    LW_ASSERT(
+      info == 0,
+      "QRP_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}",
+      who, info
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
-  QRP<T>::solve( valueType xb[] ) const {
-    LW_ASSERT0( nRow == nCol, "in QRP::solve, factored matrix must be square" );
+  QRP_no_alloc<T>::permute( valueType x[], integer incx ) const {
+    // applico permutazione
+    for ( integer i = 0; i < this->nCols; ++i )
+      this->WorkPermute[this->JPVT[i]-1] = x[i*incx];
+    copy( this->nCols, this->WorkPermute, 1, x, incx );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QRP_no_alloc<T>::inv_permute( valueType x[], integer incx ) const {
+    // applico permutazione
+    for ( integer i = 0; i < this->nCols; ++i )
+      this->WorkPermute[i] = x[incx*(this->JPVT[i]-1)];
+    copy( this->nCols, this->WorkPermute, 1, x, incx );
+  }
+
+  template <typename T>
+  void
+  QRP_no_alloc<T>::permute_rows(
+    integer   nr,
+    integer   nc,
+    valueType C[],
+    integer   ldC
+  ) const {
+    LW_ASSERT(
+      nr == this->nCols,
+      "QRP_no_alloc::permute_rows, bad number of row, expected {} found {}",
+      this->nCols, nr
+    );
+    for ( integer j = 0; j < nc; ++j ) permute( C + ldC*j, 1 );
+  }
+
+  template <typename T>
+  void
+  QRP_no_alloc<T>::inv_permute_rows(
+    integer   nr,
+    integer   nc,
+    valueType C[],
+    integer   ldC
+  ) const {
+    LW_ASSERT(
+      nr == this->nCols,
+      "QRP_no_alloc::inv_permute_rows, bad number of row, expected {} found {}",
+      this->nCols, nr
+    );
+    for ( integer j = 0; j < nc; ++j ) inv_permute( C + ldC*j, 1 );
+  }
+
+  template <typename T>
+  void
+  QRP_no_alloc<T>::permute_cols(
+    integer   nr,
+    integer   nc,
+    valueType C[],
+    integer   ldC
+  ) const {
+    LW_ASSERT(
+      nc == this->nCols,
+      "QRP_no_alloc::permute_cols, bad number of cols, expected {} found {}",
+      this->nCols, nc
+    );
+    for ( integer i = 0; i < nr; ++i ) permute( C + i, ldC );
+  }
+
+  template <typename T>
+  void
+  QRP_no_alloc<T>::inv_permute_cols(
+    integer   nr,
+    integer   nc,
+    valueType C[],
+    integer   ldC
+  ) const {
+    LW_ASSERT(
+      nc == this->nCols,
+      "QRP_no_alloc::inv_permute_cols, bad number of cols, expected {} found {}",
+      this->nCols, nc
+    );
+    for ( integer i = 0; i < nr; ++i ) inv_permute( C + i, ldC );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QRP_no_alloc<T>::solve( valueType xb[] ) const {
+    LW_ASSERT0(
+      this->nRows == this->nCols,
+      "QRP_no_alloc::solve, factored matrix must be square"
+    );
     Qt_mul(xb);
     invR_mul(xb);
     permute(xb); // da aggiungere!
@@ -222,8 +402,11 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QRP<T>::t_solve( valueType xb[] ) const {
-    LW_ASSERT0( nRow == nCol, "in QRP::solve_t, factored matrix must be square" );
+  QRP_no_alloc<T>::t_solve( valueType xb[] ) const {
+    LW_ASSERT0(
+      this->nRows == this->nCols,
+      "QRP_no_alloc::solve_t, factored matrix must be square"
+    );
     inv_permute(xb); // da aggiungere!
     invRt_mul(xb);
     Q_mul(xb);
@@ -233,22 +416,73 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QRP<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LW_ASSERT0( nRow == nCol, "in QRP::solve, factored matrix must be square" );
-    Qt_mul( nRow, nrhs, XB, ldXB );
-    invR_mul( nRow, nrhs, XB, ldXB );
-    permute_rows( nRow, nrhs, XB, ldXB ); // da aggiungere!
+  QRP_no_alloc<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
+    LW_ASSERT(
+      this->nRows == this->nCols,
+      "QRP_no_alloc::solve, factored matrix must be square, found {} x {}",
+      this->nRows, this->nCols
+    );
+    Qt_mul( this->nRows, nrhs, XB, ldXB );
+    invR_mul( this->nRows, nrhs, XB, ldXB );
+    permute_rows( this->nRows, nrhs, XB, ldXB ); // da aggiungere!
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
-  QRP<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LW_ASSERT0( nRow == nCol, "in QRP::solve_t, factored matrix must be square" );
-    inv_permute_rows( nRow, nrhs, XB, ldXB ); // da aggiungere!
-    invRt_mul( nRow, nrhs, XB, ldXB );
-    Q_mul( nRow, nrhs, XB, ldXB );
+  QRP_no_alloc<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
+    LW_ASSERT(
+      this->nRows == this->nCols,
+      "QRP_no_alloc::solve_t, factored matrix must be square, found {} x {}",
+      this->nRows, this->nCols
+    );
+    inv_permute_rows( this->nRows, nrhs, XB, ldXB ); // da aggiungere!
+    invRt_mul( this->nRows, nrhs, XB, ldXB );
+    Q_mul( this->nRows, nrhs, XB, ldXB );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QRP<T>::allocate( integer NR, integer NC ) {
+    if ( this->nRows != NR || this->nCols != NC ) {
+      valueType tmp; // get optimal allocation
+      integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
+      LW_ASSERT(
+        info == 0,
+        "QRP::allocate call lapack_wrapper::geqp3 return info = {}", info
+      );
+
+      integer minRC = std::min( NR, NC );
+      integer maxRC = std::max( NR, NC );
+      integer L     = std::max( integer(tmp), maxRC );
+
+      this->allocReals.allocate( size_t(NR*NC+L+minRC+maxRC) );
+      this->allocIntegers.allocate( size_t(NC) );
+
+      this->nRows          = NR;
+      this->nCols          = NC;
+      this->nReflector     = minRC;
+      this->Lwork          = L;
+      this->Afactorized    = this->allocReals( size_t(NR*NC) );
+      this->WorkFactorized = this->allocReals( size_t(L) );
+      this->Tau            = this->allocReals( size_t(minRC) );
+      this->WorkPermute    = this->allocReals( size_t(maxRC) );
+      this->JPVT           = this->allocIntegers( size_t(NC) );
+
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QRP_no_alloc<T>::getPerm( integer jpvt[] ) const {
+    std::copy( this->JPVT, this->JPVT+this->nCols, jpvt );
   }
 
 }

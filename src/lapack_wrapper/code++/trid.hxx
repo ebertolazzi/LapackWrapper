@@ -49,6 +49,8 @@ namespace lapack_wrapper {
 
   public:
 
+    using LinearSystemSolver<T>::factorize;
+
     TridiagonalSPD()
     : allocReals("allocReals")
     , nRC(0)
@@ -153,6 +155,8 @@ namespace lapack_wrapper {
     integer     nRC;
 
   public:
+
+    using LinearSystemSolver<T>::factorize;
 
     TridiagonalLU()
     : allocReals("TridiagonalLU-allocReals")
@@ -264,6 +268,8 @@ namespace lapack_wrapper {
     void RsolveTransposed( valueType xb[] ) const;
 
   public:
+
+    using LinearSystemSolver<T>::factorize;
 
     TridiagonalQR()
     : allocReals("allocReals")
