@@ -104,6 +104,8 @@ namespace lapack_wrapper {
     // 1 + warning
     // 2
     int level;
+    int n_thread;
+    int max_n_thread;
 
     Console_style message_style;
     Console_style warning_style;
@@ -116,8 +118,11 @@ namespace lapack_wrapper {
 
     void changeLevel( int new_level );
     void changeStream( ostream_type * new_p_stream );
+    void changeNthread( int new_n_thread );
 
     int getLevel() const { return level; }
+    int getNthread() const { return n_thread; }
+    int getMaxNthread() const { return max_n_thread; }
 
     ostream_type * getStream() const { return p_stream; }
 
@@ -125,7 +130,7 @@ namespace lapack_wrapper {
     message( std::string const & msg, int msg_level = 4 ) const;
 
     Console const &
-    semaphore( unsigned rvg, std::string const & msg, int msg_level = 4 ) const;
+    semaphore( unsigned ryg, std::string const & msg, int msg_level = 0 ) const;
 
     Console const &
     warning( std::string const & msg ) const; // level >= 2
@@ -136,14 +141,14 @@ namespace lapack_wrapper {
     Console const &
     fatal( std::string const & msg ) const; // level >= 0
 
-    Console const & black   ( std::string const & msg, int msg_level = 4 ) const;
-    Console const & red     ( std::string const & msg, int msg_level = 4 ) const;
-    Console const & green   ( std::string const & msg, int msg_level = 4 ) const;
-    Console const & yellow  ( std::string const & msg, int msg_level = 4 ) const;
-    Console const & blue    ( std::string const & msg, int msg_level = 4 ) const;
-    Console const & magenta ( std::string const & msg, int msg_level = 4 ) const;
-    Console const & cyan    ( std::string const & msg, int msg_level = 4 ) const;
-    Console const & gray    ( std::string const & msg, int msg_level = 4 ) const;
+    Console const & black   ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & red     ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & green   ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & yellow  ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & blue    ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & magenta ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & cyan    ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & gray    ( std::string const & msg, int msg_level = 0 ) const;
 
     void
     setMessageStyle(

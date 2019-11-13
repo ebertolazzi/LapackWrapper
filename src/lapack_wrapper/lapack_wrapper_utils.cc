@@ -62,6 +62,8 @@
 #include <cxxabi.h>   // for __cxa_demangle
 #endif
 
+#include <thread>
+
 namespace lapack_wrapper {
 
   void
@@ -79,8 +81,13 @@ namespace lapack_wrapper {
     this->p_stream = new_p_stream;
   }
 
+  void
+  Console::changeNthread( int new_n_thread ) {
+    this->n_thread = new_n_thread;
+  }
+
   Console const &
-  Console::black( std::string const & msg, int  msg_level ) const {
+  Console::black( std::string const & msg, int msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
     if ( msg_level <= level )
       (*p_stream) << rang::fg::black << msg << rang::fg::reset;
@@ -88,7 +95,7 @@ namespace lapack_wrapper {
   }
 
   Console const &
-  Console::red( std::string const & msg, int  msg_level ) const {
+  Console::red( std::string const & msg, int msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
     if ( msg_level <= level )
       (*p_stream) << rang::fg::red << msg << rang::fg::reset;
@@ -96,7 +103,7 @@ namespace lapack_wrapper {
   }
 
   Console const &
-  Console::green( std::string const & msg, int  msg_level ) const {
+  Console::green( std::string const & msg, int msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
     if ( msg_level <= level )
       (*p_stream) << rang::fg::green << msg << rang::fg::reset;
@@ -104,7 +111,7 @@ namespace lapack_wrapper {
   }
 
   Console const &
-  Console::yellow( std::string const & msg, int  msg_level ) const {
+  Console::yellow( std::string const & msg, int msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
     if ( msg_level <= level )
       (*p_stream) << rang::fg::yellow << msg << rang::fg::reset;
@@ -112,7 +119,7 @@ namespace lapack_wrapper {
   }
 
   Console const &
-  Console::blue( std::string const & msg, int  msg_level ) const {
+  Console::blue( std::string const & msg, int msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
     if ( msg_level <= level )
       (*p_stream) << rang::fg::blue << msg << rang::fg::reset;
@@ -120,7 +127,7 @@ namespace lapack_wrapper {
   }
 
   Console const &
-  Console::magenta( std::string const & msg, int  msg_level ) const {
+  Console::magenta( std::string const & msg, int msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
     if ( msg_level <= level )
       (*p_stream) << rang::fg::magenta << msg << rang::fg::reset;
@@ -128,7 +135,7 @@ namespace lapack_wrapper {
   }
 
   Console const &
-  Console::cyan( std::string const & msg, int  msg_level ) const {
+  Console::cyan( std::string const & msg, int msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
     if ( msg_level <= level )
       (*p_stream) << rang::fg::cyan << msg << rang::fg::reset;
@@ -136,7 +143,7 @@ namespace lapack_wrapper {
   }
 
   Console const &
-  Console::gray( std::string const & msg, int  msg_level ) const {
+  Console::gray( std::string const & msg, int msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
     if ( msg_level <= level )
       (*p_stream) << rang::fg::gray << msg << rang::fg::reset;
@@ -162,6 +169,10 @@ namespace lapack_wrapper {
     fatal_style.s = rang::style::underline;
     fatal_style.f = rang::fg::red;
     fatal_style.b = rang::bg::reset;
+
+    max_n_thread = int(std::thread::hardware_concurrency());
+    n_thread     = 1+(n_thread>>1);
+
   }
 
   Console const &
