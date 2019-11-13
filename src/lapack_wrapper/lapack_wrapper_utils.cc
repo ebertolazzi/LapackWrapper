@@ -64,75 +64,68 @@
 
 namespace lapack_wrapper {
 
+  void
+  Console::changeLevel( int new_level ) {
+    LW_ASSERT(
+      new_level >= -1 && new_level <= 4,
+      "Console::changeLevel( new_level = {})\nnew_level must be in the range [-1,4]",
+      new_level
+    );
+    this->level = new_level;
+  }
 
   Console const &
   Console::black( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     (*p_stream) << rang::fg::black << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
   Console::red( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     (*p_stream) << rang::fg::red << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
   Console::green( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     (*p_stream) << rang::fg::green << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
   Console::yellow( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     (*p_stream) << rang::fg::yellow << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
   Console::blue( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     (*p_stream) << rang::fg::blue << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
   Console::magenta( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     (*p_stream) << rang::fg::magenta << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
   Console::cyan( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     (*p_stream) << rang::fg::cyan << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
   Console::gray( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     (*p_stream) << rang::fg::gray << msg << rang::fg::reset;
     return *this;
   }
@@ -164,9 +157,7 @@ namespace lapack_wrapper {
     std::string const & msg,
     int                 msg_level
   ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     static rang::fg rvg_color[3] = { rang::fg::red, rang::fg::yellow, rang::fg::green };
     if ( msg_level >= level )
       (*p_stream)
@@ -180,9 +171,7 @@ namespace lapack_wrapper {
 
   Console const &
   Console::message( std::string const & msg, int msg_level ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     if ( msg_level >= level )
       (*p_stream)
         << message_style.s
@@ -197,9 +186,7 @@ namespace lapack_wrapper {
 
   Console const &
   Console::warning( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     if ( level >= 2 )
       (*p_stream)
         << warning_style.s
@@ -214,9 +201,7 @@ namespace lapack_wrapper {
 
   Console const &
   Console::error( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
     if ( level >= 1 )
       (*p_stream)
         << error_style.s
@@ -231,10 +216,7 @@ namespace lapack_wrapper {
 
   Console const &
   Console::fatal( std::string const & msg ) const {
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    #endif
-
     (*p_stream)
       << fatal_style.s
       << fatal_style.f
@@ -243,21 +225,13 @@ namespace lapack_wrapper {
       << rang::style::reset
       << rang::fg::reset
       << rang::bg::reset;
-
     return *this;
   }
 
-  #ifdef LAPACK_WRAPPER_USE_CXX11
   const char*
   Runtime_Error::what() const noexcept {
     return std::runtime_error::what();
   }
-  #else
-  const char*
-  Runtime_Error::what() const throw() {
-    return std::runtime_error::what();
-  }
-  #endif
 
   #ifndef LAPACK_WRAPPER_OS_WINDOWS
   /*

@@ -195,8 +195,6 @@ namespace lapack_wrapper {
     { return this->isFactorized; }
   };
 
-  #ifdef LAPACK_WRAPPER_USE_CXX11
-
   #ifdef __clang__
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
@@ -210,7 +208,6 @@ namespace lapack_wrapper {
   #pragma clang diagnostic pop
   #endif
 
-  #endif
 } // namespace lapack_wrapper
 
 #endif // HSLSOLVER_H

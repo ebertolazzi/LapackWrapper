@@ -183,8 +183,6 @@ namespace lapack_wrapper {
     }
   };
 
-  #ifdef LAPACK_WRAPPER_USE_CXX11
-
   #ifdef __clang__
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
@@ -196,8 +194,6 @@ namespace lapack_wrapper {
 
   #ifdef __clang__
   #pragma clang diagnostic pop
-  #endif
-
   #endif
 
 } // namespace lapack_wrapper

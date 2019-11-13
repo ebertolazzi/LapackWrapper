@@ -683,11 +683,8 @@ namespace lapack_wrapper {
   };
 
   // explicit instantiation declaration to suppress warnings
-
-  #ifdef LAPACK_WRAPPER_USE_CXX11
   extern template class SparseCCOOR<real>;
   extern template class SparseCCOOR<doublereal>;
-  #endif
 
 }
 

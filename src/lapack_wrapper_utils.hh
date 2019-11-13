@@ -24,9 +24,7 @@
 #ifndef LAPACK_WRAPPER_UTILS_HH
 #define LAPACK_WRAPPER_UTILS_HH
 
-#ifdef LAPACK_WRAPPER_USE_CXX11
-  #include <mutex> // std::mutex
-#endif
+#include <mutex> // std::mutex
 
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
@@ -83,18 +81,12 @@ namespace lapack_wrapper {
     : std::runtime_error( grab_backtrace( reason, file, line ) )
     { }
 
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     virtual const char* what() const noexcept override;
-    #else
-    virtual const char* what() const throw();
-    #endif
   };
 
   class Console {
 
-    #ifdef LAPACK_WRAPPER_USE_CXX11
     mutable std::mutex message_mutex; // mutex for critical section
-    #endif
 
   public:
     class Console_style {
@@ -121,6 +113,8 @@ namespace lapack_wrapper {
   public:
 
     Console( ostream_type * p_stream = &std::cout, int level = 4 );
+
+    void changeLevel( int new_level );
 
     Console const &
     message( std::string const & msg, int msg_level = 4 ) const;

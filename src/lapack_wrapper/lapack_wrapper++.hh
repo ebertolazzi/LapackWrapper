@@ -230,12 +230,10 @@ namespace lapack_wrapper {
 
   // explicit instantiation declaration to suppress warnings
 
-  #ifdef LAPACK_WRAPPER_USE_CXX11
   extern template class Matrix<real>;
   extern template class Matrix<doublereal>;
   extern template class DiagMatrix<real>;
   extern template class DiagMatrix<doublereal>;
-  #endif
 
   // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -446,8 +444,6 @@ namespace lapack_wrapper {
 
   // explicit instantiation declaration to suppress warnings
 
-  #ifdef LAPACK_WRAPPER_USE_CXX11
-
   #ifdef __clang__
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
@@ -529,8 +525,6 @@ namespace lapack_wrapper {
 
   extern template class GeneralizedSVD<real>;
   extern template class GeneralizedSVD<doublereal>;
-
-  #endif
 
 } // end namespace lapack_wrapper
 

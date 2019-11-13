@@ -81,19 +81,12 @@
 // check if compiler is C++11
 #if (defined(_MSC_VER) &&  _MSC_VER >= 1800) || \
     (defined(__cplusplus) && __cplusplus > 199711L)
-  #ifndef LAPACK_WRAPPER_DO_NOT_USE_CXX11
-    #define LAPACK_WRAPPER_USE_CXX11
-  #endif
 #else
-  // "LapackWrapper libray compiled without c++11 support, cannot use thread"
-  // not C++11 compiler
-  #ifndef nullptr
-    #define nullptr NULL
-  #endif
+  #error "Lapack Wrapper must be compiled using C++ >= C++11"
 #endif
 
 #define LAPACK_WRAPPER_PURE_VIRTUAL = 0
-#if defined(LAPACK_WRAPPER_USE_CXX11) && !defined(LAPACK_WRAPPER_OS_WINDOWS)
+#ifndef LAPACK_WRAPPER_OS_WINDOWS
   #define LAPACK_WRAPPER_OVERRIDE  override
   #define LAPACK_WRAPPER_CONSTEXPR constexpr
   #ifdef __clang__

@@ -181,11 +181,7 @@
     #endif
   #endif
 #else
-  #ifdef LAPACK_WRAPPER_USE_CXX11
-    #include <cstdint>
-  #else
-    #include <stdint.h>
-  #endif
+  #include <cstdint>
 #endif
 
 // set macro for used LAPACK name
