@@ -80,58 +80,66 @@ namespace lapack_wrapper {
   }
 
   Console const &
-  Console::black( std::string const & msg ) const {
+  Console::black( std::string const & msg, int  msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    (*p_stream) << rang::fg::black << msg << rang::fg::reset;
+    if ( msg_level >= level )
+      (*p_stream) << rang::fg::black << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
-  Console::red( std::string const & msg ) const {
+  Console::red( std::string const & msg, int  msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    (*p_stream) << rang::fg::red << msg << rang::fg::reset;
+    if ( msg_level >= level )
+      (*p_stream) << rang::fg::red << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
-  Console::green( std::string const & msg ) const {
+  Console::green( std::string const & msg, int  msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    (*p_stream) << rang::fg::green << msg << rang::fg::reset;
+    if ( msg_level >= level )
+      (*p_stream) << rang::fg::green << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
-  Console::yellow( std::string const & msg ) const {
+  Console::yellow( std::string const & msg, int  msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    (*p_stream) << rang::fg::yellow << msg << rang::fg::reset;
+    if ( msg_level >= level )
+      (*p_stream) << rang::fg::yellow << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
-  Console::blue( std::string const & msg ) const {
+  Console::blue( std::string const & msg, int  msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    (*p_stream) << rang::fg::blue << msg << rang::fg::reset;
+    if ( msg_level >= level )
+      (*p_stream) << rang::fg::blue << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
-  Console::magenta( std::string const & msg ) const {
+  Console::magenta( std::string const & msg, int  msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    (*p_stream) << rang::fg::magenta << msg << rang::fg::reset;
+    if ( msg_level >= level )
+      (*p_stream) << rang::fg::magenta << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
-  Console::cyan( std::string const & msg ) const {
+  Console::cyan( std::string const & msg, int  msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    (*p_stream) << rang::fg::cyan << msg << rang::fg::reset;
+    if ( msg_level >= level )
+      (*p_stream) << rang::fg::cyan << msg << rang::fg::reset;
     return *this;
   }
 
   Console const &
-  Console::gray( std::string const & msg ) const {
+  Console::gray( std::string const & msg, int  msg_level ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
-    (*p_stream) << rang::fg::gray << msg << rang::fg::reset;
+    if ( msg_level >= level )
+      (*p_stream) << rang::fg::gray << msg << rang::fg::reset;
     return *this;
   }
 

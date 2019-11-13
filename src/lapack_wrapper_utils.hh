@@ -117,6 +117,10 @@ namespace lapack_wrapper {
     void changeLevel( int new_level );
     void changeStream( ostream_type * new_p_stream );
 
+    int getLevel() const { return level; }
+
+    ostream_type * getStream() const { return p_stream; }
+
     Console const &
     message( std::string const & msg, int msg_level = 4 ) const;
 
@@ -132,14 +136,14 @@ namespace lapack_wrapper {
     Console const &
     fatal( std::string const & msg ) const; // level >= 0
 
-    Console const & black   ( std::string const & msg ) const;
-    Console const & red     ( std::string const & msg ) const;
-    Console const & green   ( std::string const & msg ) const;
-    Console const & yellow  ( std::string const & msg ) const;
-    Console const & blue    ( std::string const & msg ) const;
-    Console const & magenta ( std::string const & msg ) const;
-    Console const & cyan    ( std::string const & msg ) const;
-    Console const & gray    ( std::string const & msg ) const;
+    Console const & black   ( std::string const & msg, int msg_level = 4 ) const;
+    Console const & red     ( std::string const & msg, int msg_level = 4 ) const;
+    Console const & green   ( std::string const & msg, int msg_level = 4 ) const;
+    Console const & yellow  ( std::string const & msg, int msg_level = 4 ) const;
+    Console const & blue    ( std::string const & msg, int msg_level = 4 ) const;
+    Console const & magenta ( std::string const & msg, int msg_level = 4 ) const;
+    Console const & cyan    ( std::string const & msg, int msg_level = 4 ) const;
+    Console const & gray    ( std::string const & msg, int msg_level = 4 ) const;
 
     void
     setMessageStyle(
