@@ -183,7 +183,7 @@ namespace lapack_wrapper {
   ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);
     static rang::fg rvg_color[3] = { rang::fg::red, rang::fg::yellow, rang::fg::green };
-    if ( msg_level >= level )
+    if ( msg_level <= level )
       (*p_stream)
         << rang::style::reset
         << rang::bg::reset
