@@ -74,6 +74,11 @@ namespace lapack_wrapper {
     this->level = new_level;
   }
 
+  void
+  Console::changeStream( ostream_type * new_p_stream  ) {
+    this->p_stream = new_p_stream;
+  }
+
   Console const &
   Console::black( std::string const & msg ) const {
     std::lock_guard<std::mutex> lock_access(message_mutex);

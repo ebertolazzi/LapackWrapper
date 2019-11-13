@@ -115,6 +115,7 @@ namespace lapack_wrapper {
     Console( ostream_type * p_stream = &std::cout, int level = 4 );
 
     void changeLevel( int new_level );
+    void changeStream( ostream_type * new_p_stream );
 
     Console const &
     message( std::string const & msg, int msg_level = 4 ) const;
