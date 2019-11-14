@@ -257,7 +257,7 @@ namespace lapack_wrapper {
     return std::runtime_error::what();
   }
 
-  #ifndef LAPACK_WRAPPER_OS_WINDOWS
+  #ifdef LAPACK_WRAPPER_OS_WINDOWS
   /*
     #include "StackWalker.h"
     static
@@ -297,11 +297,13 @@ namespace lapack_wrapper {
     int                 line
   ) const {
     std::ostringstream ost;
-    char filename[MAXPATHLEN];
-    basename_r( file, filename );
+    std::string filename = file;
+
     fmt::print(
       ost, "\n{}\nOn File:{}:{}\nprocess ID:{}, parent process ID:{}\nstack trace:\n",
-      reason, filename, line, getpid(), getppid()
+      reason,
+      filename.substr(filename.find_last_of("/\\") + 1),
+      line, getpid(), getppid()
     );
 
     //  record stack trace upto 128 frames
@@ -333,7 +335,7 @@ namespace lapack_wrapper {
         //  if this is a C++ library, symbol will be demangled
         //  on success function returns 0
         //
-        fmt::print( ost, "{:2} ({:30})  {} — {} + {}\n",
+        fmt::print( ost, "{:2} {:30}  [{}] {} + {}\n",
           i, moduleName, addr, demang( functionSymbol ), offset
         );
       #endif
