@@ -270,7 +270,7 @@ namespace lapack_wrapper {
     }
   */
   std::string
-  Runtime_Error::grab_backtrace(
+  Runtime_TraceError::grab_backtrace(
     std::string const & reason,
     char const          file[],
     int                 line
@@ -291,7 +291,7 @@ namespace lapack_wrapper {
   }
 
   std::string
-  Runtime_Error::grab_backtrace(
+  Runtime_TraceError::grab_backtrace(
     std::string const & reason,
     char const          file[],
     int                 line

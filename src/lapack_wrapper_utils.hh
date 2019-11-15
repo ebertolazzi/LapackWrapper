@@ -31,19 +31,41 @@
 #endif
 
 #ifndef LW_ERROR0
-  #define LW_ERROR0(MSG) throw lapack_wrapper::Runtime_Error( MSG, __FILE__, __LINE__ )
-#endif
-
-#ifndef LW_ERROR
-  #define LW_ERROR(...) LW_ERROR0( fmt::format(__VA_ARGS__) )
+  #define LW_ERROR0(MSG) \
+  throw lapack_wrapper::Runtime_Error( MSG, __FILE__, __LINE__ )
 #endif
 
 #ifndef LW_ASSERT0
   #define LW_ASSERT0(COND,MSG) if ( !(COND) ) LW_ERROR0( MSG )
 #endif
 
+#ifndef LW_ERROR
+  #define LW_ERROR(...) \
+  throw lapack_wrapper::Runtime_Error( fmt::format(__VA_ARGS__), __FILE__, __LINE__ )
+#endif
+
 #ifndef LW_ASSERT
   #define LW_ASSERT(COND,...) if ( !(COND) ) LW_ERROR( __VA_ARGS__ )
+#endif
+
+
+
+#ifndef LW_ERROR_TRACE0
+  #define LW_ERROR_TRACE0(MSG) \
+  throw lapack_wrapper::Runtime_TraceError( MSG, __FILE__, __LINE__ )
+#endif
+
+#ifndef LW_ASSERT_TRACE0
+  #define LW_ASSERT_TRACE0(COND,MSG) if ( !(COND) ) LW_ERROR_TRACE0( MSG )
+#endif
+
+#ifndef LW_ERROR_TRACE
+  #define LW_ERROR_TRACE(...) \
+  throw lapack_wrapper::Runtime_TraceError( fmt::format(__VA_ARGS__), __FILE__, __LINE__ )
+#endif
+
+#ifndef LW_ASSERT_TRACE
+  #define LW_ASSERT_TRACE(COND,...) if ( !(COND) ) LW_ERROR_TRACE( __VA_ARGS__ )
 #endif
 
 #ifdef LAPACK_WRAPPER_NO_DEBUG
@@ -66,7 +88,7 @@ namespace lapack_wrapper {
 
   typedef std::basic_ostream<char> ostream_type;
 
-  class Runtime_Error : public std::runtime_error {
+  class Runtime_TraceError : public std::runtime_error {
   private:
     std::string
     grab_backtrace(
@@ -77,8 +99,23 @@ namespace lapack_wrapper {
 
   public:
     explicit
-    Runtime_Error( std::string const & reason, char const file[], int line )
+    Runtime_TraceError( std::string const & reason, char const file[], int line )
     : std::runtime_error( grab_backtrace( reason, file, line ) )
+    { }
+
+    virtual const char* what() const noexcept override;
+  };
+
+  class Runtime_Error : public std::runtime_error {
+  public:
+    explicit
+    Runtime_Error( std::string const & reason, char const file[], int line )
+    : std::runtime_error( fmt::format( "\n{}\nOn File:{}:{}\n", reason, file, line ) )
+    { }
+
+    explicit
+    Runtime_Error( char const reason[], char const file[], int line )
+    : std::runtime_error( fmt::format( "\n{}\nOn File:{}:{}\n", reason, file, line ) )
     { }
 
     virtual const char* what() const noexcept override;
