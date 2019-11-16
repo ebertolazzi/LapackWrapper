@@ -1155,7 +1155,7 @@ namespace lapack_wrapper {
   ) {
     LW_ASSERT(
       LWORK >= 2*N,
-      "large, LWORK = {} must be >= {}", LWORK, 2*N
+      "large, LWORK = {} must be >= {}\n", LWORK, 2*N
     );
     // Test the input arguments
     if ( N < 0 ) return -1;
@@ -1287,13 +1287,11 @@ namespace lapack_wrapper {
 
     if ( LR == LEFT ) {
       LW_ASSERT(
-        LWORK >= 2*M + N,
-        "laror, LWORK = {} must be >= {}", LWORK, 2*M + N
+        LWORK >= 2*M + N, "laror, LWORK = {} must be >= {}\n", LWORK, 2*M + N
       );
     } else if ( LR == RIGHT ) {
       LW_ASSERT(
-        LWORK >= 2*N + M,
-        "laror, LWORK = {} must be >= {}", LWORK, 2*N + M
+        LWORK >= 2*N + M, "laror, LWORK = {} must be >= {}\n", LWORK, 2*N + M
       );
     } else {
       return -1;
@@ -1310,8 +1308,7 @@ namespace lapack_wrapper {
     if ( init ) geid( M, N, A, LDA );
 
     LW_ASSERT(
-      LWORK >= 2*N,
-      "large, LWORK = {} must be >= {}", LWORK, 2*N
+      LWORK >= 2*N, "large, LWORK = {} must be >= {}\n", LWORK, 2*N
     );
     // Test the input arguments
     if ( N < 0 ) return -1;

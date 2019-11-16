@@ -43,7 +43,7 @@ namespace lapack_wrapper {
       nullptr, NR, nullptr, NR, nullptr,
       this->rcond, this->rank, &tmp, -1
     );
-    LW_ASSERT( info == 0, "LSS_no_alloc::getL, in gelss info = {}", info );
+    LW_ASSERT( info == 0, "LSS_no_alloc::getL, in gelss info = {}\n", info );
     return integer(tmp);
   }
 
@@ -61,7 +61,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "LSS::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+      "LSS_no_alloc::factorize( who={},...) call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
   }
@@ -87,7 +87,7 @@ namespace lapack_wrapper {
       this->sigma, this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::solve (rhs=1), in gelss info = {}", info );
+    LW_ASSERT( info == 0, "LSS::solve (rhs=1), in gelss info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -112,7 +112,7 @@ namespace lapack_wrapper {
       this->sigma, this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::t_solve (rhs=1), in gelss info = {}", info );
+    LW_ASSERT( info == 0, "LSS::t_solve (rhs=1), in gelss info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -140,7 +140,7 @@ namespace lapack_wrapper {
       this->sigma, this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::solve (rhs={}), in gelss info = {}", nrhs, info );
+    LW_ASSERT( info == 0, "LSS::solve (rhs={}), in gelss info = {}\n", nrhs, info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -169,7 +169,9 @@ namespace lapack_wrapper {
       this->sigma, this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0,"LSS::t_solve (rhs={}), in gelss info = {}", nrhs, info );
+    LW_ASSERT(
+      info == 0,"LSS::t_solve (rhs={}), in gelss info = {}\n", nrhs, info
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -217,7 +219,7 @@ namespace lapack_wrapper {
       nullptr, NR, nullptr, NR, nullptr,
       this->rcond, this->rank, &tmp, -1
     );
-    LW_ASSERT( info == 0, "LSY_no_alloc::getL, in gelss info = {}", info );
+    LW_ASSERT( info == 0, "LSY_no_alloc::getL, in gelss info = {}\n", info );
     return integer(tmp);
   }
 
@@ -235,7 +237,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+      "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
   }
@@ -261,7 +263,7 @@ namespace lapack_wrapper {
       this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::solve (rhs=1), in gelsy info = {}", info );
+    LW_ASSERT( info == 0, "LSS::solve (rhs=1), in gelsy info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -286,7 +288,7 @@ namespace lapack_wrapper {
       this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::t_solve (rhs=1), in gelsy info = {}", info  );
+    LW_ASSERT( info == 0, "LSS::t_solve (rhs=1), in gelsy info = {}\n", info  );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -314,7 +316,9 @@ namespace lapack_wrapper {
       this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSD::solve (rhs={}), in gelsy info = {}", nrhs, info );
+    LW_ASSERT(
+      info == 0, "LSD::solve (rhs={}), in gelsy info = {}\n", nrhs, info
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -343,7 +347,9 @@ namespace lapack_wrapper {
       this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSD::t_solve (rhs={}), in gelsy info = {}", nrhs, info );
+    LW_ASSERT(
+      info == 0, "LSD::t_solve (rhs={}), in gelsy info = {}\n", nrhs, info
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -386,7 +392,7 @@ namespace lapack_wrapper {
     integer info = gecopy( this->nRows, this->nCols, A, LDA, this->Amat, this->nRows );
     LW_ASSERT(
       info == 0,
-      "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+      "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
   }

@@ -45,7 +45,7 @@
       fname, 256,
       ext,   128
     );
-    LW_ASSERT0( e == 0, "lapack_wrapper, basename failed!" );
+    LW_ASSERT0( e == 0, "lapack_wrapper, basename failed!\n" );
     return fname;
   }
 #else
@@ -70,7 +70,7 @@ namespace lapack_wrapper {
   Console::changeLevel( int new_level ) {
     LW_ASSERT(
       new_level >= -1 && new_level <= 4,
-      "Console::changeLevel( new_level = {})\nnew_level must be in the range [-1,4]",
+      "Console::changeLevel( new_level = {})\nnew_level must be in the range [-1,4]\n",
       new_level
     );
     this->level = new_level;
@@ -391,14 +391,14 @@ namespace lapack_wrapper {
     for ( int i = 0; i < DIM; ++i ) {
       if ( isInfinite(pv[i]) ) {
         LW_ERROR(
-          "{}\n({}):{}) found Infinity at {}[{}]\n{}",
+          "{}\n({}):{}) found Infinity at {}[{}]\n{}\n",
           LINE_LINE_LINE_LINE,
           basename(const_cast<char*>(file)), line, v_name, i,
           LINE_LINE_LINE_LINE
         );
       } else if ( isNaN(pv[i]) ) {
         LW_ERROR(
-          "{}\n({}):{}) found NaN at {}[{}]\n{}",
+          "{}\n({}):{}) found NaN at {}[{}]\n{}\n",
           LINE_LINE_LINE_LINE,
           basename(const_cast<char*>(file)), line, v_name, i,
           LINE_LINE_LINE_LINE
@@ -418,14 +418,14 @@ namespace lapack_wrapper {
     for ( int i = 0; i < DIM; ++i ) {
       if ( isInfinite(pv[i]) ) {
         LW_ERROR(
-          "{}\n({}):{}) found Infinity at {}[{}]\n{}",
+          "{}\n({}):{}) found Infinity at {}[{}]\n{}\n",
           LINE_LINE_LINE_LINE,
           basename(const_cast<char*>(file)), line, v_name, i,
           LINE_LINE_LINE_LINE
         );
       } else if ( isNaN(pv[i]) ) {
         LW_ERROR(
-          "{}\n({}):{}) found NaN at {}[{}]\n{}",
+          "{}\n({}):{}) found NaN at {}[{}]\n{}\n",
           LINE_LINE_LINE_LINE,
           basename(const_cast<char*>(file)), line, v_name, i,
           LINE_LINE_LINE_LINE

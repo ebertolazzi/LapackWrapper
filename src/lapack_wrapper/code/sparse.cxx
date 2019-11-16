@@ -220,7 +220,8 @@ namespace lapack_wrapper {
   ) const {
     LW_ASSERT(
       DimX == this->nCols && DimY == this->nRows,
-      "SparseCCOOR::gemv, bad dimensions, dimX = {}, dimY = {} matrix is {} x {}",
+      "SparseCCOOR::gemv, bad dimensions, "
+      "dimX = {}, dimY = {} matrix is {} x {}\n",
       DimX, DimY, this->nRows, this->nCols
     );
     if ( this->matrix_is_full ) {
@@ -269,7 +270,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       DimY == this->nCols && DimX == this->nRows,
       "SparseCCOOR::gemv_Transposed, bad dimensions, "
-      "dimX = {}, dimY = {} matrix is {} x {}",
+      "dimX = {}, dimY = {} matrix is {} x {}\n",
       DimX, DimY, this->nRows, this->nCols
     );
     if ( this->matrix_is_full ) {
@@ -318,7 +319,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       DimY == this->nCols && DimX == this->nRows && DimX == DimY,
       "SparseCCOOR::gemv_Symmetric, bad dimensions, "
-      "dimX = {}, dimY = {} matrix is {} x {}",
+      "dimX = {}, dimY = {} matrix is {} x {}\n",
       DimX, DimY, this->nRows, this->nCols
     );
     this->y_manage( beta, DimY, y, incY );
@@ -435,7 +436,7 @@ namespace lapack_wrapper {
   SparseCCOOR<T>::fill( valueType const V[], integer M ) {
     LW_ASSERT0(
       M == this->nnz,
-      "SparseCCOOR::fill(...) bad size input vector"
+      "SparseCCOOR::fill(...) bad size input vector\n"
     );
     for ( integer i = 0; i < this->nnz; ++i )
       this->vals[i] = V[i];
@@ -446,7 +447,7 @@ namespace lapack_wrapper {
   SparseCCOOR<T>::fill( std::vector<valueType> const & V ) {
     LW_ASSERT0(
       V.size() == this->vals.size(),
-      "SparseCCOOR::fill(...) bad size input vector"
+      "SparseCCOOR::fill(...) bad size input vector\n"
     );
     std::copy( V.begin(), V.end(), this->vals.begin() );
   }
@@ -490,7 +491,7 @@ namespace lapack_wrapper {
   ) {
     LW_ASSERT(
       row >= 0 && row < this->nRows && col >= 0 && col < this->nCols,
-      "SparseCCOOR::push_value_C({},{}) out of bound", row, col
+      "SparseCCOOR::push_value_C({},{}) out of bound\n", row, col
     );
     if ( this->matrix_is_full ) {
        if ( this->matrix_is_row_major ) vals[ col + row * nCols ] =  val;
@@ -513,7 +514,7 @@ namespace lapack_wrapper {
   ) {
     LW_ASSERT(
       row > 0 && row <= this->nRows && col > 0 && col <= this->nCols,
-      "SparseCCOOR::push_value_F({},{}) out of bound", row, col
+      "SparseCCOOR::push_value_F({},{}) out of bound\n", row, col
     );
     if ( !this->fortran_indexing ) { --row; --col; }
     if ( this->matrix_is_full ) {

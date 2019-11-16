@@ -405,7 +405,7 @@ namespace lapack_wrapper {
     virtual
     void
     get_full_view( MatrixWrapper<valueType> & ) {
-      LW_ERROR0( "get_full_view not defined");
+      LW_ERROR0( "get_full_view not defined\n");
     }
 
     /*!
@@ -612,7 +612,7 @@ namespace lapack_wrapper {
         NNZ == this->rows.size() &&
         NNZ == this->cols.size() &&
         NNZ == this->vals.size(),
-        "export_data, bad dimension"
+        "export_data, bad dimension\n"
       );
       integer offs = 0;
       if ( fi ) ++offs;
@@ -672,7 +672,7 @@ namespace lapack_wrapper {
     get_full_view( MatrixWrapper<valueType> & MW ) LAPACK_WRAPPER_OVERRIDE {
       LW_ASSERT0(
         this->matrix_is_full,
-        "get_full_view, matrix is sparse"
+        "get_full_view, matrix is sparse\n"
       );
       if ( this->matrix_is_row_major ) {
         MW.setup( &this->vals.front(), nCols, nRows, nCols );

@@ -77,10 +77,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedLU<T>::solve( valueType xb[] ) const {
-    LW_ASSERT0( is_factorized, "BandedLU::solve, matrix not yet factorized" );
-    LW_ASSERT0( m == n, "BandedLU::solve, matrix must be square" );
+    LW_ASSERT0( is_factorized, "BandedLU::solve, matrix not yet factorized\n" );
+    LW_ASSERT0( m == n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs( NO_TRANSPOSE, m, nL, nU, 1, AB, ldAB, ipiv, xb, m );
-    LW_ASSERT( info == 0, "BandedLU::solve, info = {}", info );
+    LW_ASSERT( info == 0, "BandedLU::solve, info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -88,10 +88,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedLU<T>::t_solve( valueType xb[] ) const {
-    LW_ASSERT0( is_factorized, "BandedLU::solve, matrix not yet factorized" );
-    LW_ASSERT0( m == n, "BandedLU::solve, matrix must be square" );
+    LW_ASSERT0( is_factorized, "BandedLU::solve, matrix not yet factorized\n" );
+    LW_ASSERT0( m == n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs( TRANSPOSE, m, nL, nU, 1, AB, ldAB, ipiv, xb, m );
-    LW_ASSERT( info == 0, "BandedLU::t_solve, info = {}", info );
+    LW_ASSERT( info == 0, "BandedLU::t_solve, info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -99,10 +99,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedLU<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
-    LW_ASSERT0( is_factorized, "BandedLU::solve, matrix not yet factorized" );
-    LW_ASSERT0( m == n, "BandedLU::solve, matrix must be square" );
+    LW_ASSERT0( is_factorized, "BandedLU::solve, matrix not yet factorized\n" );
+    LW_ASSERT0( m == n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs( NO_TRANSPOSE, m, nL, nU, nrhs, AB, ldAB, ipiv, B, ldB );
-    LW_ASSERT( info == 0, "BandedLU::solve, info = {}", info );
+    LW_ASSERT( info == 0, "BandedLU::solve, info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -110,10 +110,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedLU<T>::t_solve( integer nrhs, valueType B[], integer ldB ) const {
-    LW_ASSERT0( is_factorized, "BandedLU::solve, matrix not yet factorized" );
-    LW_ASSERT0( m == n, "BandedLU::solve, matrix must be square" );
+    LW_ASSERT0( is_factorized, "BandedLU::solve, matrix not yet factorized\n" );
+    LW_ASSERT0( m == n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs( TRANSPOSE, m, nL, nU, nrhs, AB, ldAB, ipiv, B, ldB );
-    LW_ASSERT( info == 0, "BandedLU::t_solve, info = {}", info );
+    LW_ASSERT( info == 0, "BandedLU::t_solve, info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -122,14 +122,14 @@ namespace lapack_wrapper {
   void
   BandedLU<T>::factorize( char const who[] ) {
     LW_ASSERT(
-      !is_factorized, "BandedLU::factorize[{}], matrix yet factorized", who
+      !is_factorized, "BandedLU::factorize[{}], matrix yet factorized\n", who
     );
     LW_ASSERT(
-      m == n, "BandedLU::factorize[{}], matrix must be square", who
+      m == n, "BandedLU::factorize[{}], matrix must be square\n", who
     );
     integer info = gbtrf( m, n, nL, nU, AB, ldAB, ipiv );
     LW_ASSERT(
-      info == 0, "BandedLU::factorize[{}], info = {}", who, info
+      info == 0, "BandedLU::factorize[{}], info = {}\n", who, info
     );
     is_factorized = true;
   }
@@ -151,11 +151,13 @@ namespace lapack_wrapper {
   BandedLU<T>::check( integer i, integer j ) const {
     LW_ASSERT(
       i >= 0 && i < m && j >= 0 && j < n,
-      "BandedLU::check( {}, {} ) out of range", i, j
+      "BandedLU::check( {}, {} ) indices out of range: [0..{}) x [0..{})\n",
+      i, j, m, n
     );
     LW_ASSERT(
       j >= i-nL && j <= i+nU,
-      "BandedLU::check( {}, {} ) out of band", i, j
+      "BandedLU::check( {}, {} ) indices out of band: nLower: {} nUpper: {}\n",
+      i, j, nL, nU
     );
   }
 
@@ -171,17 +173,20 @@ namespace lapack_wrapper {
   ) {
     LW_ASSERT(
       i >= 0 && i < m && j >= 0 && j < n,
-      "BandedLU::insert( {}, {} ) out of range", i, j
+      "BandedLU::insert( {}, {} ) out of range: [0..{}) x [0..{})\n",
+      i, j, m, n
     );
     LW_ASSERT(
       i-nL <= j && j <= i+nU,
-      "BandedLU::insert( {}, {} ) out of band", i, j
+      "BandedLU::insert( {}, {} ) out of band: nLower: {} nUpper: {}\n",
+      i, j, nL, nU
     );
     (*this)(i,j) = v;
     if ( sym && i != j ) {
       LW_ASSERT(
         j-nL <= i && i <= j+nU,
-        "BandedLU::insert( {}, {} ) out of band", i, j
+        "BandedLU::insert( {}, {} ) out of band: nLower: {} nUpper: {}\n",
+        i, j, nL, nU
       );
       (*this)(j,i) = v;
     }
@@ -201,8 +206,7 @@ namespace lapack_wrapper {
   ) {
 
     LW_ASSERT0(
-      !is_factorized,
-      "BandedLU::load_block, matrix is factorized"
+      !is_factorized, "BandedLU::load_block, matrix is factorized\n"
     );
 
     #if 1
@@ -311,9 +315,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedSPD<T>::solve( valueType xb[] ) const {
-    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized" );
+    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
     integer info = pbtrs( UPLO, n, nD, 1, AB, ldAB, xb, n );
-    LW_ASSERT( info == 0, "BandedSPD::solve, info = {}", info );
+    LW_ASSERT( info == 0, "BandedSPD::solve, info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -321,9 +325,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedSPD<T>::t_solve( valueType xb[] ) const {
-    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized" );
+    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
     integer info = pbtrs( UPLO, n, nD, 1, AB, ldAB, xb, n );
-    LW_ASSERT( info == 0, "BandedSPD::t_solve, info = {}", info );
+    LW_ASSERT( info == 0, "BandedSPD::t_solve, info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -331,9 +335,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedSPD<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
-    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized" );
+    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
     integer info = pbtrs( UPLO, n, nD, nrhs, AB, ldAB, B, ldB );
-    LW_ASSERT( info == 0, "BandedSPD::solve, info = {}", info );
+    LW_ASSERT( info == 0, "BandedSPD::solve, info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -341,9 +345,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedSPD<T>::t_solve( integer nrhs, valueType B[], integer ldB ) const {
-    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized" );
+    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
     integer info = pbtrs( UPLO, n, nD, nrhs, AB, ldAB, B, ldB );
-    LW_ASSERT( info == 0, "BandedSPD::t_solve, info = {}", info );
+    LW_ASSERT( info == 0, "BandedSPD::t_solve, info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -352,10 +356,10 @@ namespace lapack_wrapper {
   void
   BandedSPD<T>::factorize( char const who[] ) {
     LW_ASSERT(
-      !is_factorized, "BandedSPD::factorize[{}], matrix yet factorized", who
+      !is_factorized, "BandedSPD::factorize[{}], matrix yet factorized\n", who
     );
     integer info = pbtrf( UPLO, n, nD, AB, ldAB );
-    LW_ASSERT( info == 0, "BandedSPD::factorize[{}], info = {}", who, info );
+    LW_ASSERT( info == 0, "BandedSPD::factorize[{}], info = {}\n", who, info );
     is_factorized = true;
   }
 

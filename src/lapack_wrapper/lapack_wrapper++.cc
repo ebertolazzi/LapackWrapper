@@ -176,15 +176,15 @@ namespace lapack_wrapper {
     // Test the input scalar arguments.
     LW_ASSERT(
       M >= 0 && N >= 0,
-      "rankEstimate, bad size matrix {} x {}", M, N
+      "rankEstimate, bad size matrix {} x {}\n", M, N
     );
     LW_ASSERT(
       LDA >= max_index(1,M),
-      "rankEstimate, bad leading dimension ldA = {}", LDA
+      "rankEstimate, bad leading dimension ldA = {}\n", LDA
     );
     LW_ASSERT(
       RCOND >= 0,
-      "rankEstimate, bad condision number rcond = {}", RCOND
+      "rankEstimate, bad condision number rcond = {}\n", RCOND
     );
 
     // Quick return if possible

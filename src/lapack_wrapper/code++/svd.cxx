@@ -46,7 +46,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "SVD_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+      "SVD_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
     switch ( svd_used ) {
@@ -62,7 +62,7 @@ namespace lapack_wrapper {
       );
       LW_ASSERT(
         info == 0,
-        "SVD_no_alloc::factorize[{}] call lapack_wrapper::gesvd return info = {}",
+        "SVD_no_alloc::factorize[{}] call lapack_wrapper::gesvd return info = {}\n",
         who, info
       );
       break;
@@ -77,7 +77,7 @@ namespace lapack_wrapper {
       );
       LW_ASSERT(
         info == 0,
-        "SVD_no_alloc::factorize[{}] call lapack_wrapper::gesdd return info = {}",
+        "SVD_no_alloc::factorize[{}] call lapack_wrapper::gesdd return info = {}\n",
         who, info
       );
       break;
@@ -135,7 +135,7 @@ namespace lapack_wrapper {
         nullptr, minRC,
         &tmp, -1
       );
-      LW_ASSERT( info == 0, "SVD::allocate, in gesvd info = {}", info );
+      LW_ASSERT( info == 0, "SVD::allocate, in gesvd info = {}\n", info );
       integer L = integer(tmp);
       info = gesdd(
         REDUCED,
@@ -146,7 +146,7 @@ namespace lapack_wrapper {
         nullptr, minRC,
         &tmp, -1, nullptr
       );
-      LW_ASSERT( info == 0, "SVD::allocate, in gesdd info = {}", info );
+      LW_ASSERT( info == 0, "SVD::allocate, in gesdd info = {}\n", info );
       if ( integer(tmp) > L ) L = integer(tmp);
 
       allocReals.allocate( size_t(NR*NC+minRC*(NR+NC+1)+L) );
@@ -301,7 +301,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "GeneralizedSVD<T>::allocate(m={},n={},p={}) failed, info = {}",
+      "GeneralizedSVD<T>::allocate(m={},n={},p={}) failed, info = {}\n",
       m, n, p, info
     );
     this->M     = m;
@@ -347,8 +347,7 @@ namespace lapack_wrapper {
       IWork
     );
     LW_ASSERT(
-      info == 0,
-      "GeneralizedSVD<T>::compute() failed, info = {}", info
+      info == 0, "GeneralizedSVD<T>::compute() failed, info = {}\n", info
     );
     // R is stored in A(1:K+L,N-K-L+1:N) on exit.
     this->R.setup(
@@ -372,12 +371,12 @@ namespace lapack_wrapper {
     integer info = gecopy( m, n, A, ldA, A_saved, m );
     LW_ASSERT(
       info == 0,
-      "GeneralizedSVD<T>::setup(...) failed to copy A, info = {}", info
+      "GeneralizedSVD<T>::setup(...) failed to copy A, info = {}\n", info
     );
     info = gecopy( p, n, B, ldB, B_saved, p );
     LW_ASSERT(
       info == 0,
-      "GeneralizedSVD<T>::setup(...) failed to copy B, info = {}", info
+      "GeneralizedSVD<T>::setup(...) failed to copy B, info = {}\n", info
     );
     compute();
   }
@@ -391,7 +390,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       n == B.numCols(),
       "GeneralizedSVD<T>::setup( A, B ) incompatible matrices\n"
-      "A is {} x {}\nB is {} x {}",
+      "A is {} x {} and B is {} x {}\n",
       A.numRows(), A.numCols(), B.numRows(), B.numCols()
     );
     this->setup( m, n, p, A.get_data(), A.lDim(), B.get_data(), B.lDim() );

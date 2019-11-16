@@ -46,7 +46,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "QR_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+      "QR_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
     info = geqrf(
@@ -55,7 +55,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "QR_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}",
+      "QR_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}\n",
       who, info
     );
   }
@@ -76,7 +76,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       (SIDE == lapack_wrapper::LEFT  && NR == this->nRows) ||
       (SIDE == lapack_wrapper::RIGHT && NC == this->nRows),
-      "QR_no_alloc::applyQ NR = {} NC = {} nRow = {}",
+      "QR_no_alloc::applyQ NR = {} NC = {} nRow = {}\n",
       NR, NC, this->nRows
     );
     integer info = ormqr(
@@ -90,7 +90,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "QR_no_alloc::applyQ call lapack_wrapper::ormqr return info = {} Lwork = {}",
+      "QR_no_alloc::applyQ call lapack_wrapper::ormqr return info = {} Lwork = {}\n",
       info, this->Lwork
     );
   }
@@ -185,7 +185,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::solve( valueType xb[] ) const {
     LW_ASSERT0(
       this->nRows == this->nCols,
-      "QR_no_alloc::solve, factored matrix must be square"
+      "QR_no_alloc::solve, factored matrix must be square\n"
     );
     Qt_mul(xb);
     invR_mul(xb);
@@ -198,7 +198,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::t_solve( valueType xb[] ) const {
     LW_ASSERT0(
       this->nRows == this->nCols,
-      "QR_no_alloc::solve_t, factored matrix must be square"
+      "QR_no_alloc::solve_t, factored matrix must be square\n"
     );
     invRt_mul(xb);
     Q_mul(xb);
@@ -211,7 +211,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
     LW_ASSERT0(
       this->nRows == this->nCols,
-      "QR_no_alloc::solve, factored matrix must be square"
+      "QR_no_alloc::solve, factored matrix must be square\n"
     );
     Qt_mul( this->nRows, nrhs, XB, ldXB );
     invR_mul( this->nRows, nrhs, XB, ldXB );
@@ -224,7 +224,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
     LW_ASSERT0(
       this->nRows == this->nCols,
-      "QR_no_alloc::solve_t, factored matrix must be square"
+      "QR_no_alloc::solve_t, factored matrix must be square\n"
     );
     invRt_mul( this->nRows, nrhs, XB, ldXB );
     Q_mul( this->nRows, nrhs, XB, ldXB );
@@ -242,7 +242,7 @@ namespace lapack_wrapper {
       integer info = geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 );
       LW_ASSERT(
         info == 0,
-        "QR::allocate call lapack_wrapper::geqrf return info = {}", info
+        "QR::allocate call lapack_wrapper::geqrf return info = {}\n", info
       );
 
       integer minRC = std::min( NR, NC );
@@ -283,7 +283,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "QRP_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}",
+      "QRP_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
     std::fill( this->JPVT, this->JPVT+this->nCols, integer(0) );
@@ -293,7 +293,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "QRP_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}",
+      "QRP_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}\n",
       who, info
     );
   }
@@ -330,7 +330,7 @@ namespace lapack_wrapper {
   ) const {
     LW_ASSERT(
       nr == this->nCols,
-      "QRP_no_alloc::permute_rows, bad number of row, expected {} found {}",
+      "QRP_no_alloc::permute_rows, bad number of row, expected {} found {}\n",
       this->nCols, nr
     );
     for ( integer j = 0; j < nc; ++j ) permute( C + ldC*j, 1 );
@@ -346,7 +346,7 @@ namespace lapack_wrapper {
   ) const {
     LW_ASSERT(
       nr == this->nCols,
-      "QRP_no_alloc::inv_permute_rows, bad number of row, expected {} found {}",
+      "QRP_no_alloc::inv_permute_rows, bad number of row, expected {} found {}\n",
       this->nCols, nr
     );
     for ( integer j = 0; j < nc; ++j ) inv_permute( C + ldC*j, 1 );
@@ -362,7 +362,7 @@ namespace lapack_wrapper {
   ) const {
     LW_ASSERT(
       nc == this->nCols,
-      "QRP_no_alloc::permute_cols, bad number of cols, expected {} found {}",
+      "QRP_no_alloc::permute_cols, bad number of cols, expected {} found {}\n",
       this->nCols, nc
     );
     for ( integer i = 0; i < nr; ++i ) permute( C + i, ldC );
@@ -378,7 +378,7 @@ namespace lapack_wrapper {
   ) const {
     LW_ASSERT(
       nc == this->nCols,
-      "QRP_no_alloc::inv_permute_cols, bad number of cols, expected {} found {}",
+      "QRP_no_alloc::inv_permute_cols, bad number of cols, expected {} found {}\n",
       this->nCols, nc
     );
     for ( integer i = 0; i < nr; ++i ) inv_permute( C + i, ldC );
@@ -391,7 +391,7 @@ namespace lapack_wrapper {
   QRP_no_alloc<T>::solve( valueType xb[] ) const {
     LW_ASSERT0(
       this->nRows == this->nCols,
-      "QRP_no_alloc::solve, factored matrix must be square"
+      "QRP_no_alloc::solve, factored matrix must be square\n"
     );
     Qt_mul(xb);
     invR_mul(xb);
@@ -405,7 +405,7 @@ namespace lapack_wrapper {
   QRP_no_alloc<T>::t_solve( valueType xb[] ) const {
     LW_ASSERT0(
       this->nRows == this->nCols,
-      "QRP_no_alloc::solve_t, factored matrix must be square"
+      "QRP_no_alloc::solve_t, factored matrix must be square\n"
     );
     inv_permute(xb); // da aggiungere!
     invRt_mul(xb);
@@ -419,7 +419,7 @@ namespace lapack_wrapper {
   QRP_no_alloc<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
     LW_ASSERT(
       this->nRows == this->nCols,
-      "QRP_no_alloc::solve, factored matrix must be square, found {} x {}",
+      "QRP_no_alloc::solve, factored matrix must be square, found {} x {}\n",
       this->nRows, this->nCols
     );
     Qt_mul( this->nRows, nrhs, XB, ldXB );
@@ -434,7 +434,7 @@ namespace lapack_wrapper {
   QRP_no_alloc<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
     LW_ASSERT(
       this->nRows == this->nCols,
-      "QRP_no_alloc::solve_t, factored matrix must be square, found {} x {}",
+      "QRP_no_alloc::solve_t, factored matrix must be square, found {} x {}\n",
       this->nRows, this->nCols
     );
     inv_permute_rows( this->nRows, nrhs, XB, ldXB ); // da aggiungere!
@@ -454,7 +454,7 @@ namespace lapack_wrapper {
       integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
       LW_ASSERT(
         info == 0,
-        "QRP::allocate call lapack_wrapper::geqp3 return info = {}", info
+        "QRP::allocate call lapack_wrapper::geqp3 return info = {}\n", info
       );
 
       integer minRC = std::min( NR, NC );

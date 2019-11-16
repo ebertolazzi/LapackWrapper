@@ -301,7 +301,7 @@ namespace lapack_wrapper {
       valueType const /* A   */ [],
       integer         /* LDA */
     ) {
-      LW_ERROR0( "LinearSystemSolver::factorize, not defined in derived class" );
+      LW_ERROR0( "LinearSystemSolver::factorize, not defined in derived class\n" );
     }
 
     // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

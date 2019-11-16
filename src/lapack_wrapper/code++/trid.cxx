@@ -80,7 +80,7 @@ namespace lapack_wrapper {
     integer info = pttrf( N, L, D );
     LW_ASSERT(
       info == 0,
-      "TridiagonalSPD::factorize[{}], return info = {}", who, info
+      "TridiagonalSPD::factorize[{}], return info = {}\n", who, info
     );
   }
 
@@ -91,7 +91,7 @@ namespace lapack_wrapper {
   TridiagonalSPD<T>::cond1( valueType norm1 ) const {
     valueType rcond;
     integer info = ptcon1( nRC, D, L, norm1, rcond, WORK );
-    LW_ASSERT( info == 0, "TridiagonalSPD::cond1, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalSPD::cond1, return info = {}\n", info );
     return rcond;
   }
 
@@ -101,7 +101,7 @@ namespace lapack_wrapper {
   void
   TridiagonalSPD<T>::solve( valueType xb[] ) const {
     integer info = pttrs( nRC, 1, D, L, xb, nRC );
-    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -110,7 +110,7 @@ namespace lapack_wrapper {
   void
   TridiagonalSPD<T>::t_solve( valueType xb[] ) const {
     integer info = pttrs( nRC, 1, D, L, xb, nRC );
-    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -119,7 +119,7 @@ namespace lapack_wrapper {
   void
   TridiagonalSPD<T>::solve( integer nrhs, valueType xb[], integer ldXB ) const {
     integer info = pttrs( nRC, nrhs, D, L, xb, ldXB );
-    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -128,7 +128,7 @@ namespace lapack_wrapper {
   void
   TridiagonalSPD<T>::t_solve( integer nrhs, valueType xb[], integer ldXB ) const {
     integer info = pttrs( nRC, nrhs, D, L, xb, ldXB );
-    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -182,7 +182,7 @@ namespace lapack_wrapper {
     copy( N, _U, 1, U, 1 );
     integer info = gttrf( N, L, D, U, U2, IPIV );
     LW_ASSERT(
-      info == 0, "TridiagonalLU::factorize[{}], return info = {}", who, info
+      info == 0, "TridiagonalLU::factorize[{}], return info = {}\n", who, info
     );
   }
 
@@ -193,7 +193,7 @@ namespace lapack_wrapper {
   TridiagonalLU<T>::cond1( valueType norm1 ) const {
     valueType rcond;
     integer info = gtcon1( nRC, L, D, U, U2, IPIV, norm1, rcond, WORK, IWORK );
-    LW_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
     return rcond;
   }
 
@@ -204,7 +204,7 @@ namespace lapack_wrapper {
   TridiagonalLU<T>::condInf( valueType normInf ) const {
     valueType rcond;
     integer info = gtconInf( nRC, L, D, U, U2, IPIV, normInf, rcond, WORK, IWORK );
-    LW_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
     return rcond;
   }
 
@@ -214,7 +214,7 @@ namespace lapack_wrapper {
   void
   TridiagonalLU<T>::solve( valueType xb[] ) const {
     integer info = gttrs( NO_TRANSPOSE, nRC, 1, L, D, U, U2, IPIV, xb, nRC );
-    LW_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -223,7 +223,7 @@ namespace lapack_wrapper {
   void
   TridiagonalLU<T>::t_solve( valueType xb[] ) const {
     integer info = gttrs( TRANSPOSE, nRC, 1, L, D, U, U2, IPIV, xb, nRC );
-    LW_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalLU::t_solve, return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -232,7 +232,7 @@ namespace lapack_wrapper {
   void
   TridiagonalLU<T>::solve( integer nrhs, valueType xb[], integer ldXB ) const {
     integer info = gttrs( NO_TRANSPOSE, nRC, nrhs, L, D, U, U2, IPIV, xb, ldXB );
-    LW_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -241,7 +241,7 @@ namespace lapack_wrapper {
   void
   TridiagonalLU<T>::t_solve( integer nrhs, valueType xb[], integer ldXB ) const {
     integer info = gttrs( TRANSPOSE, nRC, nrhs, L, D, U, U2, IPIV, xb, ldXB );
-    LW_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}", info );
+    LW_ASSERT( info == 0, "TridiagonalLU::t_solve, return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

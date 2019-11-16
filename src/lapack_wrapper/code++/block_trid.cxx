@@ -57,15 +57,13 @@ namespace lapack_wrapper {
     this->nnz = nr0*nr0;
 
     LW_ASSERT(
-      nr0 >= 0,
-      "BlockTridiagonalSymmetic::setup, nr0 = {}", nr0
+      nr0 >= 0, "BlockTridiagonalSymmetic::setup( nblks = {}, ... )\n", nr0
     );
 
     for ( integer i = 1; i < nblks; ++i ) {
       integer nr = rBlocks[i+1] - rBlocks[i];
       LW_ASSERT(
-        nr >= 0,
-        "BlockTridiagonalSymmetic::setup, nr = {}", nr
+        nr >= 0, "BlockTridiagonalSymmetic::setup( nblks = {}, ... )\n", nr
       );
       this->nnz += nr*(nr+nr0);
       if ( nr > nrmax ) nrmax = nr;
@@ -125,11 +123,13 @@ namespace lapack_wrapper {
     integer iBlock = integer(std::upper_bound( ib, ie, ii ) - ib) - 1;
     integer jBlock = integer(std::upper_bound( ib, ie, jj ) - ib) - 1;
 
-    LW_ASSERT0(
-      row_blocks[iBlock] <= ii && ii < row_blocks[iBlock+1], "bad iBlock"
+    LW_ASSERT(
+      row_blocks[iBlock] <= ii && ii < row_blocks[iBlock+1],
+      "BlockTridiagonalSymmetic( i = {}, j = {} ) bad iBlock\n", ii, jj
     );
-    LW_ASSERT0(
-      row_blocks[jBlock] <= jj && jj < row_blocks[jBlock+1], "bad iBlock"
+    LW_ASSERT(
+      row_blocks[jBlock] <= jj && jj < row_blocks[jBlock+1],
+      "BlockTridiagonalSymmetic( i = {}, j = {} ) bad jBlock\n", ii, jj
     );
 
     integer nr = row_blocks[iBlock+1] - row_blocks[iBlock];
@@ -138,7 +138,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       jBlock == iBlock || jBlock+1 == iBlock,
       "BlockTridiagonalSymmetic:find( {} , {} ) --> "
-      "( iBlock = {}, jBlock = {} ) --> ( i = {}, j = {} ) out of range",
+      "( iBlock = {}, jBlock = {} ) --> ( i = {}, j = {} ) out of range\n",
       ii, jj, iBlock, jBlock, i, j
     );
 
@@ -160,11 +160,13 @@ namespace lapack_wrapper {
     integer iBlock = integer(std::upper_bound( ib, ie, ii ) - ib) - 1;
     integer jBlock = integer(std::upper_bound( ib, ie, jj ) - ib) - 1;
 
-    LW_ASSERT0(
-      row_blocks[iBlock] <= ii && ii < row_blocks[iBlock+1], "bad iBlock"
+    LW_ASSERT(
+      row_blocks[iBlock] <= ii && ii < row_blocks[iBlock+1],
+      "BlockTridiagonalSymmetic( i = {}, j = {} ) bad iBlock\n", ii, jj
     );
-    LW_ASSERT0(
-      row_blocks[jBlock] <= jj && jj < row_blocks[jBlock+1], "bad iBlock"
+    LW_ASSERT(
+      row_blocks[jBlock] <= jj && jj < row_blocks[jBlock+1],
+      "BlockTridiagonalSymmetic( i = {}, j = {} ) bad jBlock\n", ii, jj
     );
 
     integer nr = row_blocks[iBlock+1] - row_blocks[iBlock];
@@ -173,7 +175,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       jBlock == iBlock || jBlock+1 == iBlock,
       "BlockTridiagonalSymmetic:operator () ( {}, {} ) --> "
-      "( iBlock = {}, jBlock = {} ) --> ( i = {}, j = {} ) out of range",
+      "( iBlock = {}, jBlock = {} ) --> ( i = {}, j = {} ) out of range\n",
       ii, jj, iBlock, jBlock, i, j
     );
 
@@ -203,7 +205,8 @@ namespace lapack_wrapper {
     integer j      = jj - jmin;
     LW_ASSERT(
       jmin <= jj && jj < jmax && jmin <= ii,
-      "bad iBlock ii = {} jj = {}", ii, jj
+      "BlockTridiagonalSymmetic::insert( i = {}, j = {}, v = {}, sym = {} )\n",
+      ii, jj, v, sym
     );
     if ( ii < jmax ) {
       integer i  = ii - jmin;
@@ -260,7 +263,7 @@ namespace lapack_wrapper {
       integer ierr = gecopy( nr, nc, data, ldData, this->L_blocks[n], nr );
       LW_ASSERT(
         ierr == 0,
-        "BlockTridiagonalSymmetic::setL, gecopy return ierr = {}", ierr
+        "BlockTridiagonalSymmetic::setL, gecopy return ierr = {}\n", ierr
       );
     }
   }
@@ -288,7 +291,7 @@ namespace lapack_wrapper {
       integer ierr = gecopy( nrow, ncol, data, ldData, D, ldD );
       LW_ASSERT(
         ierr == 0,
-        "BlockTridiagonalSymmetic::setD (block), gecopy return ierr = {}", ierr
+        "BlockTridiagonalSymmetic::setD (block), gecopy return ierr = {}\n", ierr
       );
     }
   }
@@ -315,7 +318,7 @@ namespace lapack_wrapper {
       integer ierr = gecopy( nrow, ncol, data, ldData, L, ldL );
       LW_ASSERT(
         ierr == 0,
-        "BlockTridiagonalSymmetic::setL (block), gecopy return ierr = {}", ierr
+        "BlockTridiagonalSymmetic::setL (block), gecopy return ierr = {}\n", ierr
       );
     }
   }
@@ -327,7 +330,7 @@ namespace lapack_wrapper {
   BlockTridiagonalSymmetic<T>::factorize( char const who[] ) {
     LW_ASSERT(
       !is_factorized,
-      "BlockTridiagonalSymmetic::factorize[{}], already factored", who
+      "BlockTridiagonalSymmetic::factorize[{}], already factored\n", who
     );
 
     integer info = lapack_wrapper::getrf(
@@ -338,7 +341,7 @@ namespace lapack_wrapper {
 
     LW_ASSERT(
       info == 0,
-      "BlockTridiagonalSymmetic::factorize[{}] getrf INFO = {}", who, info
+      "BlockTridiagonalSymmetic::factorize[{}] getrf INFO = {}\n", who, info
     );
 
     for ( integer k=1; k < this->nBlocks; ++k ) {
@@ -353,7 +356,7 @@ namespace lapack_wrapper {
       info = getrs( TRANSPOSE, nr0, nr1, D0, nr0, B_permutation[k-1], Work, nr0 );
       LW_ASSERT(
         info == 0,
-        "BlockTridiagonalSymmetic::factorize[{}] getrs INFO = {}", who, info
+        "BlockTridiagonalSymmetic::factorize[{}] getrs INFO = {}\n", who, info
       );
 
       // DD{k}   = DD{k} - (LL{k-1}*DD{k-1}) *LL{k-1}.';
@@ -374,7 +377,7 @@ namespace lapack_wrapper {
 
       LW_ASSERT(
         info == 0,
-        "BlockTridiagonalSymmetic::factorize[{}] getrf INFO = ", who, info
+        "BlockTridiagonalSymmetic::factorize[{}] getrf INFO = {}\n", who, info
       );
 
     }
@@ -387,7 +390,7 @@ namespace lapack_wrapper {
   void
   BlockTridiagonalSymmetic<T>::solve( valueType xb[] ) const {
     LW_ASSERT0(
-      is_factorized, "BlockTridiagonalSymmetic::solve, matrix not factored"
+      is_factorized, "BlockTridiagonalSymmetic::solve, matrix not factored\n"
     );
 
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
@@ -414,10 +417,11 @@ namespace lapack_wrapper {
       nr1 = this->DnumRows(k);
       // solve
       valueType const * D1 = this->D_blocks[k];
-      integer info = getrs( NO_TRANSPOSE, nr1, 1, D1, nr1, B_permutation[k], xk, nr1 );
+      integer info = getrs(
+        NO_TRANSPOSE, nr1, 1, D1, nr1, B_permutation[k], xk, nr1
+      );
       LW_ASSERT(
-        info == 0,
-        "BlockTridiagonalSymmetic::solve getrs INFO = {}", info
+        info == 0, "BlockTridiagonalSymmetic::solve getrs INFO = {}", info
       );
       xk += nr1;
     }
@@ -450,7 +454,7 @@ namespace lapack_wrapper {
     integer   ldB
   ) const {
     LW_ASSERT0(
-      is_factorized, "BlockTridiagonalSymmetic::solve, matrix not factored"
+      is_factorized, "BlockTridiagonalSymmetic::solve, matrix not factored\n"
     );
 
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
@@ -483,8 +487,7 @@ namespace lapack_wrapper {
         Bk, ldB
       );
       LW_ASSERT(
-        info == 0,
-        "BlockTridiagonalSymmetic::solve getrs INFO = {}", info
+        info == 0, "BlockTridiagonalSymmetic::solve getrs INFO = {}\n", info
       );
       Bk += nr1;
     }

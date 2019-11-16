@@ -55,14 +55,14 @@ namespace lapack_wrapper {
     integer info = gecopy( this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows );
     LW_ASSERT(
       info == 0,
-      "LU::factorize[{}] gecopy(nRow={}, nCol={}, A, LDA={}, B, LDB={}) : INFO = {}",
+      "LU::factorize[{}] gecopy(nRow={}, nCol={}, A, LDA={}, B, LDB={}) : INFO = {}\n",
       who, this->nRows, this->nCols, LDA, this->nRows, info
     );
     info = getrf(
       this->nRows, this->nCols, this->Afactorized, this->nRows, this->i_pivot
     );
     LW_ASSERT(
-      info == 0, "LU::factorize[{}] getrf INFO = {}", who, info
+      info == 0, "LU::factorize[{}] getrf INFO = {}\n", who, info
     );
   }
 
@@ -73,7 +73,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::check_ls( char const who[] ) const {
     LW_ASSERT(
       this->nRows == this->nCols,
-      "LU<T>::{}, rectangular matrix {} x {}", who, this->nRows, this->nCols
+      "LU<T>::{}, rectangular matrix {} x {}\n", who, this->nRows, this->nCols
     );
   }
 
@@ -88,7 +88,7 @@ namespace lapack_wrapper {
       this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
       xb, this->nRows
     );
-    LW_ASSERT( info == 0, "LU::solve, getrs INFO = {}", info );
+    LW_ASSERT( info == 0, "LU::solve, getrs INFO = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -102,7 +102,7 @@ namespace lapack_wrapper {
       this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
       xb, this->nRows
     );
-    LW_ASSERT( info == 0, "LU::t_solve, getrs INFO = {}", info );
+    LW_ASSERT( info == 0, "LU::t_solve, getrs INFO = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -116,7 +116,7 @@ namespace lapack_wrapper {
       this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
       B, ldB
     );
-    LW_ASSERT( info == 0, "LU::solve getrs INFO = {}", info );
+    LW_ASSERT( info == 0, "LU::solve getrs INFO = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -130,7 +130,7 @@ namespace lapack_wrapper {
       this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
       B, ldB
     );
-    LW_ASSERT( info >= 0, "LU::t_solve getrs INFO = {}", info );
+    LW_ASSERT( info >= 0, "LU::t_solve getrs INFO = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -143,7 +143,7 @@ namespace lapack_wrapper {
       this->nRows, this->Afactorized, this->nRows,
       norm1, rcond, this->Work, this->Iwork
     );
-    LW_ASSERT( info == 0, "LU::cond1, gecon1 return info = {}", info );
+    LW_ASSERT( info == 0, "LU::cond1, gecon1 return info = {}\n", info );
     return rcond;
   }
 
@@ -157,7 +157,7 @@ namespace lapack_wrapper {
       this->nRows, this->Afactorized, this->nRows,
       normInf, rcond, this->Work, this->Iwork
     );
-    LW_ASSERT( info == 0, "LU::condInf, geconInf return info = {}", info );
+    LW_ASSERT( info == 0, "LU::condInf, geconInf return info = {}\n", info );
     return rcond;
   }
 
@@ -233,13 +233,13 @@ namespace lapack_wrapper {
       this->nRC, this->nRC, A, LDA, this->Afactorized, this->nRC
     );
     LW_ASSERT(
-      info == 0, "LUPQ_no_alloc::factorize[{}] gecopy INFO = {}", who, info
+      info == 0, "LUPQ_no_alloc::factorize[{}] gecopy INFO = {}\n", who, info
     );
     info = getc2(
       this->nRC, this->Afactorized, this->nRC, this->i_piv, this->j_piv
     );
     LW_ASSERT(
-      info == 0, "LUPQ_no_alloc::factorize[{}] getc2 INFO = {}", who, info
+      info == 0, "LUPQ_no_alloc::factorize[{}] getc2 INFO = {}\n", who, info
     );
   }
 

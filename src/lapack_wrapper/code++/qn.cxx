@@ -36,7 +36,7 @@ namespace lapack_wrapper {
   QN<T>::allocate( integer N ) {
     LW_ASSERT(
       N > 0 && N <= 1000,
-      "QN<T>::allocate, N = {} must be > 0 and <= 1000", N
+      "QN<T>::allocate, N = {} must be > 0 and <= 1000\n", N
     );
     n = N;
     allocReals.allocate( size_t(n*(n+3)) );

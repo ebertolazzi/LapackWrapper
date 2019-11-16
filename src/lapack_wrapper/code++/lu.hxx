@@ -287,7 +287,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) LAPACK_WRAPPER_OVERRIDE {
       LW_ASSERT(
-        NR == NC, "LUPQ::factorize, non square matrix: {} x {}", NR, NC
+        NR == NC, "LUPQ::factorize, non square matrix: {} x {}\n", NR, NC
       );
       factorize( who, NR, A, LDA );
     }

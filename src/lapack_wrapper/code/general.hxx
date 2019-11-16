@@ -2492,7 +2492,7 @@ namespace lapack_wrapper {
   #else
   {
     integer ierr = gecopy( M, N, B, LDB, C, LDC );
-    LW_ASSERT( ierr == 0, "geadd, ierr = {}", ierr );
+    LW_ASSERT( ierr == 0, "geadd, ierr = {}\n", ierr );
     real const * Aj = A;
     real       * Cj = C;
     for ( integer j = 0; j < N; ++j, Aj += LDA, Cj += LDC ) {
@@ -2522,7 +2522,7 @@ namespace lapack_wrapper {
   #else
   {
     integer ierr = gecopy( M, N, B, LDB, C, LDC );
-    LW_ASSERT( ierr == 0, "geadd, ierr = {}", ierr );
+    LW_ASSERT( ierr == 0, "geadd, ierr = {}\n", ierr );
     doublereal const * Aj = A;
     doublereal       * Cj = C;
     for ( integer j = 0; j < N; ++j, Aj += LDA, Cj += LDC ) {
@@ -5978,7 +5978,7 @@ namespace lapack_wrapper {
     if ( lwork < 0 ) {
       work[0] = real(lw);
     } else {
-      LW_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}", lwork, lw );
+      LW_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
       CLAPACKNAME(sggsvd)(
         const_cast<character*>( JOBU ? "U" : "N"),
         const_cast<character*>( JOBV ? "V" : "N"),
@@ -6019,7 +6019,7 @@ namespace lapack_wrapper {
         work[0] = real(lw);
       } else {
         LW_ASSERT(
-          lwork >= lw, "ggsvd, lwork = {} must be >= {}", lwork, lw
+          lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw
         );
         LAPACK_F77NAME(sggsvd)(
           const_cast<character*>( JOBU ? "U" : "N"),
@@ -6125,7 +6125,7 @@ namespace lapack_wrapper {
     if ( lwork < 0 ) {
       work[0] = doublereal(lw);
     } else {
-      LW_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}", lwork, lw );
+      LW_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
       CLAPACKNAME(dggsvd)(
         const_cast<character*>( JOBU ? "U" : "N"),
         const_cast<character*>( JOBV ? "V" : "N"),
@@ -6166,7 +6166,7 @@ namespace lapack_wrapper {
         work[0] = doublereal(lw);
       } else {
         LW_ASSERT(
-          lwork >= lw, "ggsvd, lwork = {} must be >= {}", lwork, lw
+          lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw
         );
         LAPACK_F77NAME(dggsvd)(
           const_cast<character*>( JOBU ? "U" : "N"),

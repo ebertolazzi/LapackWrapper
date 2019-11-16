@@ -47,7 +47,7 @@ namespace lapack_wrapper {
   {
     LW_ASSERT_DEBUG(
       nr >= 0 && nc >= 0 && this->ldData >= nr,
-      "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions",
+      "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions\n",
       nr, nc, ld
     );
   }
@@ -68,7 +68,7 @@ namespace lapack_wrapper {
     this->ldData = ld;
     LW_ASSERT_DEBUG(
       nr >= 0 && nc >= 0 && this->ldData >= nr,
-      "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions",
+      "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions\n",
       nr, nc, ld
     );
   }
@@ -94,7 +94,7 @@ namespace lapack_wrapper {
   MatrixWrapper<T>::check( MatW const & A ) const {
     LW_ASSERT(
       A.numRows() == this->nRows && A.numCols() == this->nCols,
-      "MatrixWrapper::check(A) size(A) = {} x {} expected {} x {}",
+      "MatrixWrapper::check(A) size(A) = {} x {} expected {} x {}\n",
       A.numRows(), A.numCols(), this->nRows, this->nCols
     );
   }
@@ -107,7 +107,7 @@ namespace lapack_wrapper {
     LW_ASSERT(
       sp.get_number_of_rows() <= this->nRows &&
       sp.get_number_of_cols() <= this->nCols,
-      "MatrixWrapper::check(sp) size(sp) = {} x {} must be contained in {} x {}",
+      "MatrixWrapper::check(sp) size(sp) = {} x {} must be contained in {} x {}\n",
       sp.get_number_of_rows(), sp.get_number_of_cols(),
       this->nRows, this->nCols
     );
@@ -123,7 +123,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}", info
+      "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info
     );
   }
 
@@ -151,7 +151,7 @@ namespace lapack_wrapper {
     );
     LW_ASSERT(
       info == 0,
-      "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}", info
+      "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info
     );
   }
 
@@ -163,7 +163,7 @@ namespace lapack_wrapper {
     #ifndef LAPACK_WRAPPER_NO_DEBUG
     LW_ASSERT(
       A.numCols() == this->nRows && A.numRows() == this->nCols,
-      "MatrixWrapper::load_transposed(A) size(A) = {} x {} expected {} x {}",
+      "MatrixWrapper::load_transposed(A) size(A) = {} x {} expected {} x {}\n",
       A.numRows(), A.numCols(), this->nCols, this->nRows
     );
     #endif
