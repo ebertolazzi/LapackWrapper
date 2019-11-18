@@ -96,6 +96,8 @@ namespace lapack_wrapper {
     // do internal factorization, to be executed (only once) before to call solve or t_solve
     void factorize( char const who[] );
 
+    bool factorize();
+
     /*\
     :|:         _      _               _
     :|:  __   _(_)_ __| |_ _   _  __ _| |___
@@ -202,6 +204,8 @@ namespace lapack_wrapper {
 
     // do internal fatcorization, to be executed (only once) before to call solve or t_solve
     void factorize( char const who[] );
+
+    bool factorize( );
 
     /*\
     :|:         _      _               _

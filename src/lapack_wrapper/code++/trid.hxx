@@ -70,6 +70,13 @@ namespace lapack_wrapper {
       valueType const _D[]
     );
 
+    bool
+    factorize(
+      integer         N,
+      valueType const _L[],
+      valueType const _D[]
+    );
+
     /*\
     :|:         _      _               _
     :|:  __   _(_)_ __| |_ _   _  __ _| |___
@@ -182,6 +189,14 @@ namespace lapack_wrapper {
       valueType const _U[]
     );
 
+    bool
+    factorize(
+      integer         N,
+      valueType const _L[],
+      valueType const _D[],
+      valueType const _U[]
+    );
+
     /*\
     :|:         _      _               _
     :|:  __   _(_)_ __| |_ _   _  __ _| |___
@@ -284,6 +299,14 @@ namespace lapack_wrapper {
     void
     factorize(
       char const      who[],
+      integer         N,
+      valueType const L[],
+      valueType const D[],
+      valueType const U[]
+    );
+
+    bool
+    factorize(
       integer         N,
       valueType const L[],
       valueType const D[],

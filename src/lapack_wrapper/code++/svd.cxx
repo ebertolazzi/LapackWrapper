@@ -87,6 +87,41 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  bool
+  SVD_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+    );
+    if ( info != 0 ) return false;
+    switch ( svd_used ) {
+    case USE_GESVD:
+      info = gesvd(
+        REDUCED,
+        REDUCED,
+        this->nRows, this->nCols, this->Afactorized, this->nRows,
+        this->Svec,
+        this->Umat,  this->nRows,
+        this->VTmat, this->minRC,
+        this->Work,  this->Lwork
+      );
+      break;
+    case USE_GESDD:
+      info = gesdd(
+        REDUCED,
+        this->nRows, this->nCols, this->Afactorized, this->nRows,
+        this->Svec,
+        this->Umat,  this->nRows,
+        this->VTmat, this->minRC,
+        this->Work,  this->Lwork, this->IWork
+      );
+      break;
+    }
+    return info == 0;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   void
   SVD_no_alloc<T>::solve( valueType xb[] ) const {
     // A = U*S*VT

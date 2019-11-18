@@ -83,6 +83,9 @@ namespace lapack_wrapper {
       integer         LDA
     );
 
+    bool
+    factorize( valueType const A[], integer LDA );
+
     valueType cond1( valueType norm1 ) const;
     valueType condInf( valueType normInf ) const;
 
@@ -157,6 +160,17 @@ namespace lapack_wrapper {
       this->factorize( who, A, LDA );
     }
 
+    bool
+    factorize(
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) LAPACK_WRAPPER_OVERRIDE {
+      this->allocate( NR, NC );
+      return this->factorize( A, LDA );
+    }
+
   };
 
   //============================================================================
@@ -209,6 +223,9 @@ namespace lapack_wrapper {
       valueType const A[],
       integer         LDA
     );
+
+    bool
+    factorize( valueType const A[], integer LDA );
 
     /*\
     :|:         _      _               _
@@ -290,6 +307,27 @@ namespace lapack_wrapper {
         NR == NC, "LUPQ::factorize, non square matrix: {} x {}\n", NR, NC
       );
       factorize( who, NR, A, LDA );
+    }
+
+    bool
+    factorize(
+      integer         NRC,
+      valueType const A[],
+      integer         LDA
+    ) {
+      this->allocate( NRC );
+      return this->factorize( A, LDA );
+    }
+
+    bool
+    factorize(
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) LAPACK_WRAPPER_OVERRIDE {
+      if ( NR != NC ) return false;
+      return factorize( NR, A, LDA );
     }
 
   };

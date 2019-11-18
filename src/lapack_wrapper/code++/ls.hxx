@@ -108,6 +108,9 @@ namespace lapack_wrapper {
       integer         LDA
     );
 
+    bool
+    factorize( valueType const A[], integer LDA );
+
     void      setRcond( valueType r )     { this->rcond = r; }
     integer   getRank()             const { return this->rank; }
     valueType getSigma( integer i ) const { return this->sigma[i]; }
@@ -191,6 +194,17 @@ namespace lapack_wrapper {
     ) LAPACK_WRAPPER_OVERRIDE {
       this->allocate( NR, NC );
       this->factorize( who, A, LDA );
+    }
+
+    bool
+    factorize(
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) LAPACK_WRAPPER_OVERRIDE {
+      this->allocate( NR, NC );
+      return this->factorize( A, LDA );
     }
 
   };
@@ -279,6 +293,9 @@ namespace lapack_wrapper {
       integer         LDA
     );
 
+    bool
+    factorize( valueType const A[], integer LDA );
+
     void
     setRcond( valueType r )
     { rcond = r; }
@@ -359,6 +376,14 @@ namespace lapack_wrapper {
     void
     factorize(
       char const      who[],
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) LAPACK_WRAPPER_OVERRIDE;
+
+    bool
+    factorize(
       integer         NR,
       integer         NC,
       valueType const A[],

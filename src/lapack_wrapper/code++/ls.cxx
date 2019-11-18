@@ -69,6 +69,17 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  bool
+  LSS_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Amat, this->nRows
+    );
+    return info == 0;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   void
   LSS_no_alloc<T>::solve( valueType xb[] ) const {
     // check memory
@@ -245,6 +256,17 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  bool
+  LSY_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Amat, this->nRows
+    );
+    return info == 0;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   void
   LSY_no_alloc<T>::solve( valueType xb[] ) const {
     // check memory
@@ -389,12 +411,31 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     allocate( NR, NC );
-    integer info = gecopy( this->nRows, this->nCols, A, LDA, this->Amat, this->nRows );
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Amat, this->nRows
+    );
     LW_ASSERT(
       info == 0,
       "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
+  LSY<T>::factorize(
+    integer         NR,
+    integer         NC,
+    valueType const A[],
+    integer         LDA
+  ) {
+    allocate( NR, NC );
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Amat, this->nRows
+    );
+    return info == 0;
   }
 
 }

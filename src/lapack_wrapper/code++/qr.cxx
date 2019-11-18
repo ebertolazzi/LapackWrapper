@@ -63,6 +63,25 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  bool
+  QR_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+    );
+    bool ok = info == 0;
+    if ( ok ) {
+      info = geqrf(
+        this->nRows, this->nCols, this->Afactorized, this->nRows,
+        this->Tau, this->WorkFactorized, this->Lwork
+      );
+      ok = info == 0;
+    }
+    return ok;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   void
   QR_no_alloc<T>::applyQ(
     SideMultiply  SIDE,
@@ -296,6 +315,27 @@ namespace lapack_wrapper {
       "QRP_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}\n",
       who, info
     );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
+  QRP_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+    // calcolo fattorizzazione QR della matrice A
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+    );
+    bool ok = info == 0;
+    if ( ok ) {
+      std::fill( this->JPVT, this->JPVT+this->nCols, integer(0) );
+      info = geqp3(
+        this->nRows, this->nCols, this->Afactorized, this->nRows,
+        this->JPVT, this->Tau, this->WorkFactorized, this->Lwork
+      );
+      ok = info == 0;
+    }
+    return ok;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

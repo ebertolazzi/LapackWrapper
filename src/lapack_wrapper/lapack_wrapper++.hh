@@ -304,6 +304,17 @@ namespace lapack_wrapper {
       LW_ERROR0( "LinearSystemSolver::factorize, not defined in derived class\n" );
     }
 
+    virtual
+    bool
+    factorize(
+      integer         /* NR  */   ,
+      integer         /* NC  */   ,
+      valueType const /* A   */ [],
+      integer         /* LDA */
+    ) {
+      return false;
+    }
+
     // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
     // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -322,6 +333,11 @@ namespace lapack_wrapper {
       this->factorize( who, M.numRows(), M.numCols(), M.get_data(), M.lDim() );
     }
 
+    bool
+    factorize( MatrixWrapper<valueType> const & M ) {
+      return this->factorize( M.numRows(), M.numCols(), M.get_data(), M.lDim() );
+    }
+
     void
     t_factorize(
       char const      who[],
@@ -337,9 +353,28 @@ namespace lapack_wrapper {
       this->factorize( who, M );
     }
 
+    bool
+    t_factorize(
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) {
+      Matrix<valueType> M(NC,NR);
+      for ( integer i = 0; i < NR; ++i )
+        for ( integer j = 0; j < NC; ++j )
+          M(j,i) = A[i+j*LDA];
+      return this->factorize( M );
+    }
+
     void
     t_factorize( char const who[], MatrixWrapper<valueType> const & M ) {
       this->t_factorize( who, M.numRows(), M.numCols(), M.get_data(), M.lDim() );
+    }
+
+    bool
+    t_factorize( MatrixWrapper<valueType> const & M ) {
+      return this->t_factorize( M.numRows(), M.numCols(), M.get_data(), M.lDim() );
     }
 
   };

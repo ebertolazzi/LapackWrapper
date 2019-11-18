@@ -137,6 +137,18 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  bool
+  BandedLU<T>::factorize() {
+    if ( is_factorized ) return true;
+    if ( m != n ) return false;
+    integer info = gbtrf( m, n, nL, nU, AB, ldAB, ipiv );
+    is_factorized = info == 0;
+    return is_factorized;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   void
   BandedLU<T>::zero() {
     integer nnz = m*(2*nL+nU+1);
@@ -361,6 +373,17 @@ namespace lapack_wrapper {
     integer info = pbtrf( UPLO, n, nD, AB, ldAB );
     LW_ASSERT( info == 0, "BandedSPD::factorize[{}], info = {}\n", who, info );
     is_factorized = true;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
+  BandedSPD<T>::factorize() {
+    if ( is_factorized ) return true;
+    integer info = pbtrf( UPLO, n, nD, AB, ldAB );
+    is_factorized = info == 0;
+    return is_factorized;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

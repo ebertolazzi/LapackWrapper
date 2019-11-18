@@ -87,6 +87,28 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  bool
+  TridiagonalSPD<T>::factorize(
+    integer         N,
+    valueType const _L[],
+    valueType const _D[]
+  ) {
+    if ( nRC != N ) {
+      nRC = N;
+      allocReals.allocate(3*N);
+      L    = allocReals(N);
+      D    = allocReals(N);
+      WORK = allocReals(N);
+    }
+    copy( N, _L, 1, L, 1 );
+    copy( N, _D, 1, D, 1 );
+    integer info = pttrf( N, L, D );
+    return info == 0;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   T
   TridiagonalSPD<T>::cond1( valueType norm1 ) const {
     valueType rcond;
@@ -189,6 +211,35 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  bool
+  TridiagonalLU<T>::factorize(
+    integer         N,
+    valueType const _L[],
+    valueType const _D[],
+    valueType const _U[]
+  ) {
+    if ( nRC != N ) {
+      nRC = N;
+      allocReals.allocate(6*N);
+      allocIntegers.allocate(2*N);
+      L     = allocReals(N);
+      D     = allocReals(N);
+      U     = allocReals(N);
+      U2    = allocReals(N);
+      WORK  = allocReals(2*N);
+      IPIV  = allocIntegers(N);
+      IWORK = allocIntegers(N);
+    }
+    copy( N, _L, 1, L, 1 );
+    copy( N, _D, 1, D, 1 );
+    copy( N, _U, 1, U, 1 );
+    integer info = gttrf( N, L, D, U, U2, IPIV );
+    return info == 0;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   T
   TridiagonalLU<T>::cond1( valueType norm1 ) const {
     valueType rcond;
@@ -272,9 +323,8 @@ namespace lapack_wrapper {
   \*/
 
   template <typename T>
-  void
+  bool
   TridiagonalQR<T>::factorize(
-    char const      /* who */[],
     integer         N,
     valueType const L[],
     valueType const D[],
@@ -320,6 +370,20 @@ namespace lapack_wrapper {
     if ( sum > normInfA ) normInfA = sum;
 
     // Q A = R
+    return true;
+  }
+
+  template <typename T>
+  void
+  TridiagonalQR<T>::factorize(
+    char const      who[],
+    integer         N,
+    valueType const L[],
+    valueType const D[],
+    valueType const U[]
+  ) {
+    bool ok = this->factorize( N, L, D, U );
+    LW_ASSERT( ok, "TridiagonalQR<T>::factorize failed at {}\n", who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

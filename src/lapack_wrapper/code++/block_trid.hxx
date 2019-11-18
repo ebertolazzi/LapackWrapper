@@ -142,8 +142,8 @@ namespace lapack_wrapper {
     valueType const & operator () ( integer ii, integer jj ) const;
     valueType       & operator () ( integer ii, integer jj );
 
-    void
-    factorize( char const who[] );
+    void factorize( char const who[] );
+    bool factorize( );
 
     /*\
     :|:         _      _               _

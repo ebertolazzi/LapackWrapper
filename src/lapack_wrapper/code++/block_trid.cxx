@@ -387,6 +387,54 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  bool
+  BlockTridiagonalSymmetic<T>::factorize() {
+    if ( is_factorized ) return true;
+
+    integer info = lapack_wrapper::getrf(
+      this->DnumRows(0), this->DnumCols(0),
+      this->D_blocks[0], this->DnumRows(0),
+      B_permutation[0]
+    );
+
+    if ( info != 0 ) return false;
+
+    for ( integer k=1; k < this->nBlocks; ++k ) {
+      integer nr0 = this->DnumRows(k-1);
+      integer nr1 = this->DnumRows(k);
+      valueType * L0 = this->L_blocks[k-1];
+      valueType * D0 = this->D_blocks[k-1];
+      valueType * D1 = this->D_blocks[k];
+      // Work = L^T nr0 x nr1
+      getranspose( nr1, nr0, L0, nr1, Work, nr0 );
+      // solve
+      info = getrs( TRANSPOSE, nr0, nr1, D0, nr0, B_permutation[k-1], Work, nr0 );
+      if ( info != 0 ) return false;
+
+      // DD{k}   = DD{k} - (LL{k-1}*DD{k-1}) *LL{k-1}.';
+
+      gemm(
+        TRANSPOSE,
+        TRANSPOSE,
+        nr1, nr1, nr0,
+        -1.0, Work, nr0,
+        L0, nr1,
+        1.0, D1, nr1
+      );
+
+      // Work --> L nr1 x nr0
+      getranspose( nr0, nr1, Work, nr0, L0, nr1 );
+
+      info = getrf( nr1, nr1, D1, nr1, B_permutation[k] );
+
+      if ( info != 0 ) return false;
+    }
+    return (is_factorized = true);
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   void
   BlockTridiagonalSymmetic<T>::solve( valueType xb[] ) const {
     LW_ASSERT0(

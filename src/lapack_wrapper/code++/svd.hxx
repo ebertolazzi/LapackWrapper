@@ -119,6 +119,10 @@ namespace lapack_wrapper {
       integer         LDA
     );
 
+    virtual
+    bool
+    factorize( valueType const A[], integer LDA );
+
     void
     setRcond( valueType r )
     { rcond = r; }
@@ -280,6 +284,18 @@ namespace lapack_wrapper {
     ) LAPACK_WRAPPER_OVERRIDE {
       this->allocate( NR, NC );
       this->factorize( who, A, LDA );
+    }
+
+    virtual
+    bool
+    factorize(
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) LAPACK_WRAPPER_OVERRIDE {
+      this->allocate( NR, NC );
+      return this->factorize( A, LDA );
     }
 
   };

@@ -98,6 +98,9 @@ namespace lapack_wrapper {
       integer         LDA
     );
 
+    bool
+    factorize( valueType const A[], integer LDA );
+
     /*\
     :|:  overwrites the general real M-by-N matrix C with
     :|:
@@ -433,6 +436,17 @@ namespace lapack_wrapper {
       this->factorize( who, A, LDA );
     }
 
+    bool
+    factorize(
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) LAPACK_WRAPPER_OVERRIDE {
+      this->allocate( NR, NC );
+      return this->factorize( A, LDA );
+    }
+
   };
 
   //============================================================================
@@ -506,6 +520,9 @@ namespace lapack_wrapper {
       valueType const A[],
       integer         LDA
     );
+
+    bool
+    factorize( valueType const A[], integer LDA );
 
     // -------------------------------------------------------------------------
 
@@ -678,6 +695,24 @@ namespace lapack_wrapper {
     ) LAPACK_WRAPPER_OVERRIDE {
       this->allocate( NR, NC );
       this->QRP_no_alloc<T>::factorize( who, A, LDA );
+    }
+
+    /*!
+     *  Do QR factorization with column pivoting of a rectangular matrix
+     *  \param NR  number of rows of the matrix
+     *  \param NC  number of columns of the matrix
+     *  \param A   pointer to the matrix
+     *  \param LDA Leading dimension of the matrix
+     */
+    bool
+    factorize(
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) LAPACK_WRAPPER_OVERRIDE {
+      this->allocate( NR, NC );
+      return this->QRP_no_alloc<T>::factorize( A, LDA );
     }
 
   };

@@ -52,7 +52,9 @@ namespace lapack_wrapper {
     valueType const A[],
     integer         LDA
   ) {
-    integer info = gecopy( this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows );
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+    );
     LW_ASSERT(
       info == 0,
       "LU::factorize[{}] gecopy(nRow={}, nCol={}, A, LDA={}, B, LDB={}) : INFO = {}\n",
@@ -64,6 +66,24 @@ namespace lapack_wrapper {
     LW_ASSERT(
       info == 0, "LU::factorize[{}] getrf INFO = {}\n", who, info
     );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
+  LU_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+    integer info = gecopy(
+      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+    );
+    bool ok = info == 0;
+    if ( ok ) {
+      info = getrf(
+        this->nRows, this->nCols, this->Afactorized, this->nRows, this->i_pivot
+      );
+      ok = info == 0;
+    }
+    return ok;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -241,6 +261,24 @@ namespace lapack_wrapper {
     LW_ASSERT(
       info == 0, "LUPQ_no_alloc::factorize[{}] getc2 INFO = {}\n", who, info
     );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
+  LUPQ_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+    integer info = gecopy(
+      this->nRC, this->nRC, A, LDA, this->Afactorized, this->nRC
+    );
+    bool ok = info == 0;
+    if ( ok ) {
+      info = getc2(
+        this->nRC, this->Afactorized, this->nRC, this->i_piv, this->j_piv
+      );
+      ok = info == 0;
+    }
+    return ok;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
