@@ -216,11 +216,11 @@ namespace lapack_wrapper {
     \*/
 
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
   };

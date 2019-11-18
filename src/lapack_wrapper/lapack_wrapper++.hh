@@ -271,25 +271,63 @@ namespace lapack_wrapper {
     \*/
 
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_PURE_VIRTUAL;
 
     virtual
-    void
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_PURE_VIRTUAL;
 
     virtual
-    void
+    bool
     solve( integer nrhs, valueType B[], integer ldB ) const {
       for ( integer i = 0; i < nrhs; ++i )
-        solve( B + i*ldB );
+        if ( !solve( B + i*ldB ) ) return false;
+      return true;
+    }
+
+    virtual
+    bool
+    t_solve( integer nrhs, valueType B[], integer ldB ) const {
+      for ( integer i = 0; i < nrhs; ++i )
+        if ( !t_solve( B + i*ldB ) ) return false;
+      return true;
     }
 
     virtual
     void
-    t_solve( integer nrhs, valueType B[], integer ldB ) const {
-      for ( integer i = 0; i < nrhs; ++i )
-        t_solve( B + i*ldB );
+    solve( char const who[], valueType xb[] ) const {
+      LW_ASSERT(
+        this->solve( xb ),
+        "LinearSystemSolver::solve failed at {}\n", who
+      );
+    }
+
+    virtual
+    void
+    t_solve( char const who[], valueType xb[] ) const {
+      LW_ASSERT(
+        this->t_solve( xb ),
+        "LinearSystemSolver::t_solve failed at {}\n", who
+      );
+    }
+
+    virtual
+    void
+    solve( char const who[], integer nrhs, valueType B[], integer ldB ) const {
+      LW_ASSERT(
+        this->solve( nrhs, B, ldB ),
+        "LinearSystemSolver::solve failed at {}\n", who
+      );
+    }
+
+    virtual
+    void
+    t_solve( char const who[], integer nrhs, valueType B[], integer ldB ) const {
+      LW_ASSERT(
+        this->t_solve( nrhs, B, ldB ),
+        "LinearSystemSolver::solve failed at {}\n", who
+      );
     }
 
     virtual
@@ -318,13 +356,21 @@ namespace lapack_wrapper {
     // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
     // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-    void
+    bool
     solve( MatrixWrapper<valueType> & M )
-    { solve( M.numCols(), M.get_data(),  M.lDim() ); }
+    { return solve( M.numCols(), M.get_data(),  M.lDim() ); }
 
     void
+    solve( char const who[], MatrixWrapper<valueType> & M )
+    { this->solve( who, M.numCols(), M.get_data(),  M.lDim() ); }
+
+    bool
     t_solve( MatrixWrapper<valueType> & M )
-    { t_solve( M.numCols(), M.get_data(),  M.lDim() ); }
+    { return t_solve( M.numCols(), M.get_data(),  M.lDim() ); }
+
+    void
+    t_solve( char const who[], MatrixWrapper<valueType> & M )
+    { this->t_solve( who, M.numCols(), M.get_data(),  M.lDim() ); }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -454,7 +500,7 @@ namespace lapack_wrapper {
 
     ~LSQC() {}
 
-    void
+    bool
     factorize(
       integer         NR,
       integer         NC,
@@ -463,10 +509,10 @@ namespace lapack_wrapper {
       bool const      row_select[] // row selected for minimization
     );
 
-    void
+    bool
     solve( valueType xb[] ) const;
 
-    void
+    bool
     solve(
       integer   nrhs,
       valueType B[],

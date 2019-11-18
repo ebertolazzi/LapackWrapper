@@ -435,11 +435,9 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   BlockTridiagonalSymmetic<T>::solve( valueType xb[] ) const {
-    LW_ASSERT0(
-      is_factorized, "BlockTridiagonalSymmetic::solve, matrix not factored\n"
-    );
+    if ( !is_factorized ) return false;
 
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
     integer k = 0;
@@ -468,9 +466,7 @@ namespace lapack_wrapper {
       integer info = getrs(
         NO_TRANSPOSE, nr1, 1, D1, nr1, B_permutation[k], xk, nr1
       );
-      LW_ASSERT(
-        info == 0, "BlockTridiagonalSymmetic::solve getrs INFO = {}", info
-      );
+      if ( info != 0 ) return false;
       xk += nr1;
     }
     // RR{k} = RR{k}-LL{k}.'*RR{k+1};
@@ -490,20 +486,20 @@ namespace lapack_wrapper {
       xk  = xkm1;
       nr1 = nr0;
     }
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   BlockTridiagonalSymmetic<T>::solve(
     integer   nrhs,
     valueType B[],
     integer   ldB
   ) const {
-    LW_ASSERT0(
-      is_factorized, "BlockTridiagonalSymmetic::solve, matrix not factored\n"
-    );
+
+    if ( !is_factorized ) return false;
 
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
     integer k = 0;
@@ -534,9 +530,7 @@ namespace lapack_wrapper {
         D1, nr1, B_permutation[k],
         Bk, ldB
       );
-      LW_ASSERT(
-        info == 0, "BlockTridiagonalSymmetic::solve getrs INFO = {}\n", info
-      );
+      if ( info != 0 ) return false;
       Bk += nr1;
     }
     // RR{k} = RR{k}-LL{k}.'*RR{k+1};
@@ -556,25 +550,26 @@ namespace lapack_wrapper {
       Bk  = Bkm1;
       nr1 = nr0;
     }
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   BlockTridiagonalSymmetic<T>::t_solve( valueType xb[] ) const
-  { BlockTridiagonalSymmetic<T>::solve( xb ); }
+  { return BlockTridiagonalSymmetic<T>::solve( xb ); }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   BlockTridiagonalSymmetic<T>::t_solve(
     integer   nrhs,
     valueType xb[],
     integer   ldXB
   ) const {
-    BlockTridiagonalSymmetic<T>::solve( nrhs, xb, ldXB );
+    return BlockTridiagonalSymmetic<T>::solve( nrhs, xb, ldXB );
   }
 
 }

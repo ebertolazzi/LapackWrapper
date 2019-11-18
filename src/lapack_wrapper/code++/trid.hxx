@@ -86,15 +86,15 @@ namespace lapack_wrapper {
     \*/
 
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     solve(
       integer   nrhs,
       valueType xb[],
@@ -102,7 +102,7 @@ namespace lapack_wrapper {
     ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     t_solve(
       integer   nrhs,
       valueType xb[],
@@ -206,15 +206,23 @@ namespace lapack_wrapper {
     \*/
 
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
     void
+    solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
     void
+    t_solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     solve(
       integer   nrhs,
       valueType xb[],
@@ -223,10 +231,28 @@ namespace lapack_wrapper {
 
     virtual
     void
+    solve(
+      char const who[],
+      integer    nrhs,
+      valueType  xb[],
+      integer    ldXB
+    ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     t_solve(
       integer   nrhs,
       valueType xb[],
       integer   ldXB
+    ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    void
+    t_solve(
+      char const who[],
+      integer    nrhs,
+      valueType  xb[],
+      integer    ldXB
     ) const LAPACK_WRAPPER_OVERRIDE;
 
     /*\
@@ -330,15 +356,15 @@ namespace lapack_wrapper {
     \*/
 
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     solve(
       integer   nrhs,
       valueType xb[],
@@ -346,7 +372,7 @@ namespace lapack_wrapper {
     ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     t_solve(
       integer   nrhs,
       valueType xb[],

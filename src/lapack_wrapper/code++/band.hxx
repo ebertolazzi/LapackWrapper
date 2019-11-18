@@ -107,15 +107,23 @@ namespace lapack_wrapper {
     \*/
 
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
     void
+    solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
     void
+    t_solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     solve(
       integer   nrhs,
       valueType B[],
@@ -124,7 +132,25 @@ namespace lapack_wrapper {
 
     virtual
     void
+    solve(
+      char const who[],
+      integer    nrhs,
+      valueType  B[],
+      integer    ldB
+    ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     t_solve(
+      integer   nrhs,
+      valueType B[],
+      integer   ldB
+    ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    void
+    t_solve(
+      char const who[],
       integer   nrhs,
       valueType B[],
       integer   ldB
@@ -216,15 +242,23 @@ namespace lapack_wrapper {
     \*/
 
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
     void
+    solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
     void
+    t_solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     solve(
       integer   nrhs,
       valueType B[],
@@ -233,10 +267,28 @@ namespace lapack_wrapper {
 
     virtual
     void
+    solve(
+      char const who[],
+      integer    nrhs,
+      valueType  B[],
+      integer    ldB
+    ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     t_solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
+    ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    void
+    t_solve(
+      char const who[],
+      integer    nrhs,
+      valueType  B[],
+      integer    ldB
     ) const LAPACK_WRAPPER_OVERRIDE;
 
     /*\

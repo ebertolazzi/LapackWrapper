@@ -122,7 +122,7 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   SVD_no_alloc<T>::solve( valueType xb[] ) const {
     // A = U*S*VT
     // U*S*VT*x=b --> VT^T S^+ U^T b
@@ -132,12 +132,13 @@ namespace lapack_wrapper {
     Ut_mul( 1.0, xb, 1, 0.0, Work, 1 );
     for ( integer i = 0; i < minRC; ++i ) Work[i] /= std::max(Svec[i],smin);
     V_mul( 1.0, Work, 1, 0.0, xb, 1 );
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   SVD_no_alloc<T>::t_solve( valueType xb[] ) const {
     // A = U*S*VT
     // U*S*VT*x=b --> VT^T S^+ U^T b
@@ -147,6 +148,7 @@ namespace lapack_wrapper {
     Vt_mul( 1.0, xb, 1, 0.0, Work, 1 );
     for ( integer i = 0; i < minRC; ++i ) Work[i] /= std::max(Svec[i],smin);
     U_mul( 1.0, Work, 1, 0.0, xb, 1 );
+    return true;
   }
 
 

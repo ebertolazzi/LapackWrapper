@@ -77,11 +77,7 @@ namespace lapack_wrapper {
     }
 
     void
-    factorize(
-      char const      who[],
-      valueType const A[],
-      integer         LDA
-    );
+    factorize( char const who[], valueType const A[], integer LDA );
 
     bool
     factorize( valueType const A[], integer LDA );
@@ -98,15 +94,23 @@ namespace lapack_wrapper {
     \*/
 
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
     void
+    solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
     void
+    t_solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     solve(
       integer   nrhs,
       valueType B[],
@@ -115,7 +119,25 @@ namespace lapack_wrapper {
 
     virtual
     void
+    solve(
+      char const who[],
+      integer    nrhs,
+      valueType  B[],
+      integer    ldB
+    ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    bool
     t_solve(
+      integer   nrhs,
+      valueType B[],
+      integer   ldB
+    ) const LAPACK_WRAPPER_OVERRIDE;
+
+    virtual
+    void
+    t_solve(
+      char const who[],
       integer   nrhs,
       valueType B[],
       integer   ldB
@@ -236,15 +258,15 @@ namespace lapack_wrapper {
     \*/
 
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     solve(
       integer   nrhs,
       valueType B[],
@@ -252,7 +274,7 @@ namespace lapack_wrapper {
     ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     t_solve(
       integer   nrhs,
       valueType B[],

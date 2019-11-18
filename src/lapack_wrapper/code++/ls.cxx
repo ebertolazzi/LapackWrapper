@@ -80,7 +80,7 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LSS_no_alloc<T>::solve( valueType xb[] ) const {
     // check memory
     integer L = getL( this->nRows, this->nCols, 1 );
@@ -98,13 +98,13 @@ namespace lapack_wrapper {
       this->sigma, this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::solve (rhs=1), in gelss info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LSS_no_alloc<T>::t_solve( valueType xb[] ) const {
     // check memory
     integer L = getL( this->nCols, this->nRows, 1 );
@@ -123,13 +123,13 @@ namespace lapack_wrapper {
       this->sigma, this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::t_solve (rhs=1), in gelss info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LSS_no_alloc<T>::solve(
     integer   nrhs,
     valueType B[],
@@ -151,13 +151,13 @@ namespace lapack_wrapper {
       this->sigma, this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::solve (rhs={}), in gelss info = {}\n", nrhs, info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LSS_no_alloc<T>::t_solve(
     integer   nrhs,
     valueType B[],
@@ -180,9 +180,7 @@ namespace lapack_wrapper {
       this->sigma, this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT(
-      info == 0,"LSS::t_solve (rhs={}), in gelss info = {}\n", nrhs, info
-    );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -267,7 +265,7 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LSY_no_alloc<T>::solve( valueType xb[] ) const {
     // check memory
     integer L = getL( this->nRows, this->nCols, 1 );
@@ -285,13 +283,13 @@ namespace lapack_wrapper {
       this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::solve (rhs=1), in gelsy info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LSY_no_alloc<T>::t_solve( valueType xb[] ) const {
     // check memory
     integer L = getL( this->nCols, this->nRows, 1 );
@@ -310,13 +308,13 @@ namespace lapack_wrapper {
       this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT( info == 0, "LSS::t_solve (rhs=1), in gelsy info = {}\n", info  );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LSY_no_alloc<T>::solve(
     integer   nrhs,
     valueType B[],
@@ -338,15 +336,13 @@ namespace lapack_wrapper {
       this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT(
-      info == 0, "LSD::solve (rhs={}), in gelsy info = {}\n", nrhs, info
-    );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LSY_no_alloc<T>::t_solve(
     integer   nrhs,
     valueType B[],
@@ -369,9 +365,7 @@ namespace lapack_wrapper {
       this->rcond, this->rank,
       this->Work, this->Lwork
     );
-    LW_ASSERT(
-      info == 0, "LSD::t_solve (rhs={}), in gelsy info = {}\n", nrhs, info
-    );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

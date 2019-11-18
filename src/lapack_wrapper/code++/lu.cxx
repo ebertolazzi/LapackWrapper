@@ -98,59 +98,133 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LU_no_alloc<T>::solve( valueType xb[] ) const {
-    check_ls("solve");
+    if ( this->nRows != this->nCols ) return false;
     integer info = getrs(
       NO_TRANSPOSE,
       this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
       xb, this->nRows
     );
-    LW_ASSERT( info == 0, "LU::solve, getrs INFO = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
+  LU_no_alloc<T>::solve( char const who[], valueType xb[] ) const {
+    check_ls("solve");
+    integer info = getrs(
+      NO_TRANSPOSE,
+      this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
+      xb, this->nRows
+    );
+    LW_ASSERT( info == 0, "LU::solve, getrs INFO = {}\nat {}\n", info, who );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
   LU_no_alloc<T>::t_solve( valueType xb[] ) const {
-    check_ls("t_solve");
+    if ( this->nRows != this->nCols ) return false;
     integer info = getrs(
       TRANSPOSE,
       this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
       xb, this->nRows
     );
-    LW_ASSERT( info == 0, "LU::t_solve, getrs INFO = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
+  LU_no_alloc<T>::t_solve( char const who[], valueType xb[] ) const {
+    check_ls( who );
+    integer info = getrs(
+      TRANSPOSE,
+      this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
+      xb, this->nRows
+    );
+    LW_ASSERT( info == 0, "LU::t_solve, getrs INFO = {}\nat {}\n", info, who );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
   LU_no_alloc<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
-    check_ls("solve");
+    if ( this->nRows != this->nCols ) return false;
     integer info = getrs(
       NO_TRANSPOSE,
       this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
       B, ldB
     );
-    LW_ASSERT( info == 0, "LU::solve getrs INFO = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
-  LU_no_alloc<T>::t_solve( integer nrhs, valueType B[], integer ldB ) const {
-    check_ls("t_solve");
+  LU_no_alloc<T>::solve(
+    char const who[],
+    integer    nrhs,
+    valueType  B[],
+    integer    ldB
+  ) const {
+    check_ls(who);
+    integer info = getrs(
+      NO_TRANSPOSE,
+      this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
+      B, ldB
+    );
+    LW_ASSERT( info == 0, "LU::solve getrs INFO = {}\nat {}\n", info, who );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
+  LU_no_alloc<T>::t_solve(
+    integer    nrhs,
+    valueType  B[],
+    integer    ldB
+  ) const {
+    if ( this->nRows != this->nCols ) return false;
     integer info = getrs(
       TRANSPOSE,
       this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
       B, ldB
     );
-    LW_ASSERT( info >= 0, "LU::t_solve getrs INFO = {}\n", info );
+    return info >= 0;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  LU_no_alloc<T>::t_solve(
+    char const who[],
+    integer    nrhs,
+    valueType  B[],
+    integer    ldB
+  ) const {
+    check_ls( who );
+    integer info = getrs(
+      TRANSPOSE,
+      this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
+      B, ldB
+    );
+    LW_ASSERT( info >= 0, "LU::t_solve getrs INFO = {}\nat {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -284,7 +358,7 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LUPQ_no_alloc<T>::solve( valueType xb[] ) const {
     // Apply permutations IPIV to RHS
     swaps( 1, xb, this->nRC, 0, this->nRC-2, this->i_piv, 1 );
@@ -303,12 +377,14 @@ namespace lapack_wrapper {
 
     // Apply permutations JPIV to the solution (RHS)
     swaps( 1, xb, this->nRC, 0, this->nRC-2, this->j_piv, -1 );
+
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LUPQ_no_alloc<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
     // Apply permutations IPIV to RHS
     swaps( nrhs, B, ldB, 0, this->nRC-2, this->i_piv, 1 );
@@ -327,12 +403,14 @@ namespace lapack_wrapper {
 
     // Apply permutations JPIV to the solution (RHS)
     swaps( nrhs, B, ldB, 0, this->nRC-2, this->j_piv, -1 );
+
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LUPQ_no_alloc<T>::t_solve( valueType xb[] ) const {
     // Apply permutations JPIV to the solution (RHS)
     swaps( 1, xb, this->nRC, 0, this->nRC-2, this->j_piv, 1 );
@@ -352,12 +430,13 @@ namespace lapack_wrapper {
     // Apply permutations IPIV to RHS
     swaps( 1, xb, this->nRC, 0, this->nRC-2, this->i_piv, -1 );
 
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   LUPQ_no_alloc<T>::t_solve( integer nrhs, valueType B[], integer ldB ) const {
 
     // Apply permutations JPIV to the solution (RHS)
@@ -377,6 +456,8 @@ namespace lapack_wrapper {
 
     // Apply permutations IPIV to RHS
     swaps( nrhs, B, ldB, 0, this->nRC-2, this->i_piv, -1 );
+
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

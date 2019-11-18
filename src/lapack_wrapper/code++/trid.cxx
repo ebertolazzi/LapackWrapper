@@ -120,37 +120,37 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   TridiagonalSPD<T>::solve( valueType xb[] ) const {
     integer info = pttrs( nRC, 1, D, L, xb, nRC );
-    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   TridiagonalSPD<T>::t_solve( valueType xb[] ) const {
     integer info = pttrs( nRC, 1, D, L, xb, nRC );
-    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   TridiagonalSPD<T>::solve( integer nrhs, valueType xb[], integer ldXB ) const {
     integer info = pttrs( nRC, nrhs, D, L, xb, ldXB );
-    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   TridiagonalSPD<T>::t_solve( integer nrhs, valueType xb[], integer ldXB ) const {
     integer info = pttrs( nRC, nrhs, D, L, xb, ldXB );
-    LW_ASSERT( info == 0, "TridiagonalSPD::solve, return info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -260,39 +260,105 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   TridiagonalLU<T>::solve( valueType xb[] ) const {
     integer info = gttrs( NO_TRANSPOSE, nRC, 1, L, D, U, U2, IPIV, xb, nRC );
-    LW_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
+  TridiagonalLU<T>::solve( char const who[], valueType xb[] ) const {
+    integer info = gttrs( NO_TRANSPOSE, nRC, 1, L, D, U, U2, IPIV, xb, nRC );
+    LW_ASSERT(
+      info == 0,
+      "TridiagonalLU::solve, return info = {}\nat {}\n",
+      info, who
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
   TridiagonalLU<T>::t_solve( valueType xb[] ) const {
     integer info = gttrs( TRANSPOSE, nRC, 1, L, D, U, U2, IPIV, xb, nRC );
-    LW_ASSERT( info == 0, "TridiagonalLU::t_solve, return info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
+  TridiagonalLU<T>::t_solve( char const who[], valueType xb[] ) const {
+    integer info = gttrs( TRANSPOSE, nRC, 1, L, D, U, U2, IPIV, xb, nRC );
+    LW_ASSERT(
+      info == 0,
+      "TridiagonalLU::t_solve, return info = {}\nat {}\n",
+      info, who
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
   TridiagonalLU<T>::solve( integer nrhs, valueType xb[], integer ldXB ) const {
     integer info = gttrs( NO_TRANSPOSE, nRC, nrhs, L, D, U, U2, IPIV, xb, ldXB );
-    LW_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}\n", info );
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
+  TridiagonalLU<T>::solve(
+    char const who[],
+    integer    nrhs,
+    valueType  xb[],
+    integer    ldXB
+  ) const {
+    integer info = gttrs( NO_TRANSPOSE, nRC, nrhs, L, D, U, U2, IPIV, xb, ldXB );
+    LW_ASSERT(
+      info == 0,
+      "TridiagonalLU::solve, return info = {}\nat {}\n",
+      info, who
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
   TridiagonalLU<T>::t_solve( integer nrhs, valueType xb[], integer ldXB ) const {
     integer info = gttrs( TRANSPOSE, nRC, nrhs, L, D, U, U2, IPIV, xb, ldXB );
-    LW_ASSERT( info == 0, "TridiagonalLU::t_solve, return info = {}\n", info );
+    return info == 0;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  TridiagonalLU<T>::t_solve(
+    char const who[],
+    integer    nrhs,
+    valueType  xb[],
+    integer    ldXB
+  ) const {
+    integer info = gttrs( TRANSPOSE, nRC, nrhs, L, D, U, U2, IPIV, xb, ldXB );
+    LW_ASSERT(
+      info == 0,
+      "TridiagonalLU::t_solve, return info = {}\nat {}\n",
+      info, who
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -411,31 +477,33 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   TridiagonalQR<T>::solve( valueType xb[] ) const {
     // A x = b --> Q A x = Q b --> R x = Q b
     // applico Q b
     for ( integer i = 0; i < nRC-1; ++i )
       rot( 1, &xb[i], 1, &xb[i+1], 1, C[i], S[i] );
     Rsolve( xb );
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   TridiagonalQR<T>::t_solve( valueType xb[] ) const {
     // A^T x = b --> A^T Q^T Q x = b --> R^T Q x = b --> R^T y = b  x = Q^T y
     RsolveTransposed( xb );
     // applico Q^T b
     for ( integer i = nRC-2; i >= 0; --i )
       rot( 1, &xb[i], 1, &xb[i+1], 1, C[i], -S[i] );
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   TridiagonalQR<T>::solve( integer nrhs, valueType xb[], integer ldXB ) const {
     // A x = b --> Q A x = Q b --> R x = Q b
     // applico Q b
@@ -443,18 +511,20 @@ namespace lapack_wrapper {
       rot( nrhs, &xb[i], ldXB, &xb[i+1], ldXB, C[i], S[i] );
     for ( integer i = 0; i < nrhs; ++i )
       Rsolve( xb+i*ldXB );
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   TridiagonalQR<T>::t_solve( integer nrhs, valueType xb[], integer ldXB ) const {
     // A^T x = b --> A^T Q^T Q x = b --> R^T Q x = b --> R^T y = b  x = Q^T y
     for ( integer i = 0; i < nrhs; ++i )
       RsolveTransposed(xb+i*ldXB);
     for ( integer i = nRC-2; i >= 0; --i )
       rot( nrhs, &xb[i], ldXB, &xb[i+1], ldXB, C[i], -S[i] );
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

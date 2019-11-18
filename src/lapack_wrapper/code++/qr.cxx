@@ -200,53 +200,45 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   QR_no_alloc<T>::solve( valueType xb[] ) const {
-    LW_ASSERT0(
-      this->nRows == this->nCols,
-      "QR_no_alloc::solve, factored matrix must be square\n"
-    );
+    if ( this->nRows != this->nCols ) return false;
     Qt_mul(xb);
     invR_mul(xb);
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   QR_no_alloc<T>::t_solve( valueType xb[] ) const {
-    LW_ASSERT0(
-      this->nRows == this->nCols,
-      "QR_no_alloc::solve_t, factored matrix must be square\n"
-    );
+    if ( this->nRows != this->nCols ) return false;
     invRt_mul(xb);
     Q_mul(xb);
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   QR_no_alloc<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LW_ASSERT0(
-      this->nRows == this->nCols,
-      "QR_no_alloc::solve, factored matrix must be square\n"
-    );
+    if ( this->nRows != this->nCols ) return false;
     Qt_mul( this->nRows, nrhs, XB, ldXB );
     invR_mul( this->nRows, nrhs, XB, ldXB );
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   QR_no_alloc<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LW_ASSERT0(
-      this->nRows == this->nCols,
-      "QR_no_alloc::solve_t, factored matrix must be square\n"
-    );
+    if ( this->nRows != this->nCols ) return false;
     invRt_mul( this->nRows, nrhs, XB, ldXB );
     Q_mul( this->nRows, nrhs, XB, ldXB );
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -427,59 +419,49 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   QRP_no_alloc<T>::solve( valueType xb[] ) const {
-    LW_ASSERT0(
-      this->nRows == this->nCols,
-      "QRP_no_alloc::solve, factored matrix must be square\n"
-    );
+    if ( this->nRows != this->nCols ) return false;
     Qt_mul(xb);
     invR_mul(xb);
     permute(xb); // da aggiungere!
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   QRP_no_alloc<T>::t_solve( valueType xb[] ) const {
-    LW_ASSERT0(
-      this->nRows == this->nCols,
-      "QRP_no_alloc::solve_t, factored matrix must be square\n"
-    );
+    if ( this->nRows != this->nCols ) return false;
     inv_permute(xb); // da aggiungere!
     invRt_mul(xb);
     Q_mul(xb);
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   QRP_no_alloc<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LW_ASSERT(
-      this->nRows == this->nCols,
-      "QRP_no_alloc::solve, factored matrix must be square, found {} x {}\n",
-      this->nRows, this->nCols
-    );
+    if ( this->nRows != this->nCols ) return false;
     Qt_mul( this->nRows, nrhs, XB, ldXB );
     invR_mul( this->nRows, nrhs, XB, ldXB );
     permute_rows( this->nRows, nrhs, XB, ldXB ); // da aggiungere!
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
+  bool
   QRP_no_alloc<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
-    LW_ASSERT(
-      this->nRows == this->nCols,
-      "QRP_no_alloc::solve_t, factored matrix must be square, found {} x {}\n",
-      this->nRows, this->nCols
-    );
+    if ( this->nRows != this->nCols ) return false;
     inv_permute_rows( this->nRows, nrhs, XB, ldXB ); // da aggiungere!
     invRt_mul( this->nRows, nrhs, XB, ldXB );
     Q_mul( this->nRows, nrhs, XB, ldXB );
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -316,7 +316,7 @@ namespace lapack_wrapper {
   }
 
   template <typename T>
-  void
+  bool
   LSQC<T>::solve( valueType xb[] ) const {
     integer NR = lu.numRow();
     lapack_wrapper::zero( NR, rhs, 1 );
@@ -327,16 +327,17 @@ namespace lapack_wrapper {
     }
     // c
     for ( integer i = 0; i < NR2; ++i ) rhs[NR1+i] = xb[to_row2[i]];
+    return true;
   }
 
   template <typename T>
-  void
+  bool
   LSQC<T>::solve(
     integer   nrhs,
     valueType B[],
     integer   ldB
   ) const {
-
+    return false;
   }
 
   #endif

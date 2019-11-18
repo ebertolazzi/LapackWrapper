@@ -345,7 +345,7 @@ namespace lapack_wrapper {
      * param xb on input the rhs of linear system on output the solution
      */
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     /*!
@@ -354,11 +354,11 @@ namespace lapack_wrapper {
      *  \param xb on input the rhs of linear system on output the solution
      */
     virtual
-    void
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     solve(
       integer   nrhs,
       valueType B[],
@@ -366,7 +366,7 @@ namespace lapack_wrapper {
     ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     t_solve(
       integer   nrhs,
       valueType B[],
@@ -606,7 +606,7 @@ namespace lapack_wrapper {
      *  \param xb on input the rhs of linear system on output the solution
      */
     virtual
-    void
+    bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     /*!
@@ -615,11 +615,11 @@ namespace lapack_wrapper {
      *  \param xb on input the rhs of linear system on output the solution
      */
     virtual
-    void
+    bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     solve(
       integer   nrhs,
       valueType B[],
@@ -627,7 +627,7 @@ namespace lapack_wrapper {
     ) const LAPACK_WRAPPER_OVERRIDE;
 
     virtual
-    void
+    bool
     t_solve(
       integer   nrhs,
       valueType B[],
