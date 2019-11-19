@@ -153,26 +153,26 @@ namespace lapack_wrapper {
   Console::Console( ostream_type * _p_stream, int _level )
   : p_stream(_p_stream)
   , level(_level)
+  , n_thread(1)
   {
-    message_style.s = rang::style::reset;
-    message_style.f = rang::fg::reset;
-    message_style.b = rang::bg::reset;
+    this->message_style.s = rang::style::reset;
+    this->message_style.f = rang::fg::reset;
+    this->message_style.b = rang::bg::reset;
 
-    warning_style.s = rang::style::reset;
-    warning_style.f = rang::fg::yellow;
-    warning_style.b = rang::bg::reset;
+    this->warning_style.s = rang::style::reset;
+    this->warning_style.f = rang::fg::yellow;
+    this->warning_style.b = rang::bg::reset;
 
-    error_style.s = rang::style::italic;
-    error_style.f = rang::fg::red;
-    error_style.b = rang::bg::reset;
+    this->error_style.s = rang::style::italic;
+    this->error_style.f = rang::fg::red;
+    this->error_style.b = rang::bg::reset;
 
-    fatal_style.s = rang::style::underline;
-    fatal_style.f = rang::fg::red;
-    fatal_style.b = rang::bg::reset;
+    this->fatal_style.s = rang::style::underline;
+    this->fatal_style.f = rang::fg::red;
+    this->fatal_style.b = rang::bg::reset;
 
-    max_n_thread = int(std::thread::hardware_concurrency());
-    n_thread     = 1+(n_thread>>1);
-
+    this->max_n_thread = int(std::thread::hardware_concurrency());
+    this->n_thread     = 1+(this->max_n_thread>>1);
   }
 
   Console const &

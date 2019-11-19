@@ -24,6 +24,7 @@
 #include <lapack_wrapper/TicToc.hh>
 
 #include <fmt/format.h>
+#include <fmt/chrono.h>
 #include <rang.hpp>
 
 #ifdef __GNUC__ 

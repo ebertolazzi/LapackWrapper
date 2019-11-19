@@ -149,6 +149,9 @@ namespace lapack_wrapper {
     Console_style error_style;
     Console_style fatal_style;
 
+    Console() = delete;
+    Console( Console const & ) = delete;
+
   public:
 
     Console( ostream_type * p_stream = &std::cout, int level = 4 );
