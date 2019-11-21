@@ -43,7 +43,7 @@ using namespace std;
 typedef double valueType;
 using lapack_wrapper::integer;
 
-static lapack_wrapper::Console msg;
+static lapack_wrapper::Console msg(&std::cout);
 
 static
 void

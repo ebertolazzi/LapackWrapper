@@ -24,7 +24,9 @@
 #ifndef LAPACK_WRAPPER_UTILS_HH
 #define LAPACK_WRAPPER_UTILS_HH
 
-#include <mutex> // std::mutex
+#include <mutex>    // std::mutex
+#include <iostream>
+#include <iostream>
 
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
@@ -87,6 +89,14 @@
 namespace lapack_wrapper {
 
   typedef std::basic_ostream<char> ostream_type;
+
+  void
+  printTrace(
+    int                 line,
+    char        const   file[],
+    std::string const & msg,
+    ostream_type      & stream
+  );
 
   class Runtime_TraceError : public std::runtime_error {
   private:

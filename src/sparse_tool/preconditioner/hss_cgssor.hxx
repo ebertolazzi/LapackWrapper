@@ -101,7 +101,7 @@ namespace SparseTool {
         r -= alpha * Ap;
         preco.assPreco(q,r);
         rvalueType resid = normi(q)/normr0;
-        cout << "       SUB  iter = " << iter << " residual = " << resid << '\n';
+        //cout << "       SUB  iter = " << iter << " residual = " << resid << '\n';
         if ( resid <= epsi ) break;
         rho_1 = rho;
         rho   = dot(q,r);

@@ -94,8 +94,6 @@ namespace lapack_wrapper {
     //! allocate memory for `n` objects
     void
     allocate( size_t n ) {
-      using std::cerr;
-      using std::exit;
       try {
         if ( n > numTotReserved ) {
           delete [] pMalloc;
@@ -105,17 +103,19 @@ namespace lapack_wrapper {
         }
       }
       catch ( std::exception const & exc ) {
-        cerr
-          << "Memory allocation failed: " << exc.what()
-          << "\nTry to allocate " << n << " bytes for " << _name
-          << '\n';
-        exit(0);
+        std::string reason = fmt::format(
+          "Memory allocation failed: {}\nTry to allocate {} bytes for {}\n",
+          exc.what(), n, _name
+        );
+        printTrace( __LINE__, __FILE__, reason, std::cerr );
+        std::exit(0);
       }
       catch (...) {
-        cerr
-          << "Malloc allocation failed for " << _name
-          << ": memory exausted\n";
-        exit(0);
+        std::string reason = fmt::format(
+          "Memory allocation failed for {}: memory exausted\n", _name
+        );
+        printTrace( __LINE__, __FILE__, reason, std::cerr );
+        std::exit(0);
       }
       numTotValues = n;
       numAllocated = 0;
@@ -140,12 +140,11 @@ namespace lapack_wrapper {
       size_t offs = numAllocated;
       numAllocated += sz;
       if ( numAllocated > numTotValues ) {
-        using std::cerr;
-        using std::exit;
-        cerr
-          << "\nMalloc<" << _name
-          << ">::operator () (" << sz << ") -- Malloc EXAUSTED\n";
-        exit(0);
+        std::string reason = fmt::format(
+          "nMalloc<{}>::operator () ({}) -- Memory EXAUSTED\n", _name, sz
+        );
+        printTrace( __LINE__, __FILE__, reason, std::cerr );
+        std::exit(0);
       }
       return pMalloc + offs;
     }
