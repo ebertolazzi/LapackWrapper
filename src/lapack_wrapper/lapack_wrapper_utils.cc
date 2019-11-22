@@ -335,7 +335,6 @@ namespace lapack_wrapper {
 
     for ( int i = 1; i < frames; ++i) {
       #ifdef LAPACK_WRAPPER_OS_LINUX
-        int status;
         Dl_info dlinfo;
         if( !dladdr(callstack[i], &dlinfo) ) continue;
         fmt::print( stream, "{:2} {}\n", i, demang( dlinfo.dli_sname ) );

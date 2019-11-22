@@ -46,14 +46,36 @@ task :clean_linux do
   FileUtils.cd ".."
   arch = `uname -m`.chomp #elimina a capo
   begin
-    unless Dir.exist?( "/usr/local/include/openblas" ) then
-      FileUtils.ln_sf "/usr/include/#{arch}-linux-gcc",
-                      "/usr/local/include/openblas",
-                      force: true
+    dir_openblas = "/usr/local/include/openblas"
+    cmd          = "NOPE"
+    unless Dir.exist?( dir_openblas ) then
+      ###FileUtils.mkdir_p "/usr/local/include"
+      sh "sudo mkdir -p /usr/local/include"
+      sys_openblas = "/usr/include/#{arch}-linux-gcc"
+      if Dir.exist?( sys_openblas ) then
+        ###FileUtils.ln_sf sys_openblas, dir_openblas, force: true
+        cmd "sudo ln -s #{sys_openblas} #{dir_openblas}"
+        sh cmd
+      else
+        sys_openblas = "/usr/include/#{arch}-linux-gnu"
+        if Dir.exist?( sys_openblas ) then
+          ###FileUtils.ln_sf sys_openblas, dir_openblas, force: true
+          cmd = "sudo ln -s #{sys_openblas} #{dir_openblas}"
+          sh cmd
+        else
+          cmd = "(cant find system openblas)"
+          throw
+        end
+      end
+    else
+      cmd = "(#{dir_openblas} exists)"
+      throw
     end
   rescue
-    puts "Failed to link /usr/include/#{arch}-linux-gcc".yellow
-    puts "with /usr/local/include/openblas".yellow
+    puts "--------------------------------------\n".yellow
+    puts "--------------------------------------\n".yellow
+    puts "--------------------------------------\n".yellow
+    puts "Failed #{cmd}".yellow
     puts "lapack may fails".yellow
     puts "press return to continue".yellow
     input = STDIN.gets.strip
