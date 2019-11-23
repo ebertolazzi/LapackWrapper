@@ -828,7 +828,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					$SOURCE_ROOT/../lib3rd/lib,
-					/usr/local/Cellar/gcc/9.2.0_1/lib/gcc/9/,
+					/usr/local/Cellar/gcc/9.2.0_2/lib/gcc/9/,
 					/opt/intel/mkl/lib,
 					/usr/local/opt/openblas/lib,
 				);
@@ -896,7 +896,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					$SOURCE_ROOT/../lib3rd/lib,
-					/usr/local/Cellar/gcc/9.2.0_1/lib/gcc/9/,
+					/usr/local/Cellar/gcc/9.2.0_2/lib/gcc/9/,
 					/opt/intel/mkl/lib,
 					/usr/local/opt/openblas/lib,
 				);

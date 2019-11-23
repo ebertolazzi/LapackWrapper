@@ -90,6 +90,8 @@ namespace lapack_wrapper {
 
   typedef std::basic_ostream<char> ostream_type;
 
+  std::string basename( char const filename[] );
+
   void
   printTrace(
     int                 line,
@@ -151,8 +153,6 @@ namespace lapack_wrapper {
     // 1 + warning
     // 2
     int level;
-    int n_thread;
-    int max_n_thread;
 
     Console_style message_style;
     Console_style warning_style;
@@ -168,11 +168,7 @@ namespace lapack_wrapper {
 
     void changeLevel( int new_level );
     void changeStream( ostream_type * new_p_stream );
-    void changeNthread( int new_n_thread );
-
-    int getLevel() const { return level; }
-    int getNthread() const { return n_thread; }
-    int getMaxNthread() const { return max_n_thread; }
+    int  getLevel() const { return level; }
 
     ostream_type * getStream() const { return p_stream; }
 

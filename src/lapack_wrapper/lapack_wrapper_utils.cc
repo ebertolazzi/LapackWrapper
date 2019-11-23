@@ -29,29 +29,6 @@
   #endif
 #endif
 
-#ifdef LAPACK_WRAPPER_OS_WINDOWS
-  #include <cstdlib>
-  static
-  char *
-  basename(char const path[] ) {
-    static char drive[100];
-    static char dir[1024];
-    static char fname[256];
-    static char ext[128];
-    errno_t e = _splitpath_s(
-      path,
-      drive, 100,
-      dir,   1024,
-      fname, 256,
-      ext,   128
-    );
-    LW_ASSERT0( e == 0, "lapack_wrapper, basename failed!\n" );
-    return fname;
-  }
-#else
-  #include <libgen.h>
-#endif
-
 #include <algorithm>
 #include <string>
 #include <sstream>
@@ -66,6 +43,56 @@
 
 namespace lapack_wrapper {
 
+  /*\
+  :|:  _
+  :|: | |__  __ _ ___ ___ _ _  __ _ _ __  ___
+  :|: | '_ \/ _` (_-</ -_) ' \/ _` | '  \/ -_)
+  :|: |_.__/\__,_/__/\___|_||_\__,_|_|_|_\___|
+  :|:
+  \*/
+
+  #ifdef LAPACK_WRAPPER_OS_WINDOWS
+    std::string
+    basename( char const path[] ) {
+      static char drive[100];
+      static char dir[1024];
+      static char fname[256];
+      static char ext[128];
+      errno_t e = _splitpath_s(
+        path,
+        drive, 100,
+        dir,   1024,
+        fname, 256,
+        ext,   128
+      );
+      LW_ASSERT0( e == 0, "lapack_wrapper, basename failed!\n" );
+      return fname;
+    }
+  #else
+    std::string
+    basename( char const path[] ) {
+
+      if ( path[0] == '\0' ) return std::string("");
+
+      std::string filename(path);
+
+      size_t len   = filename.length();
+      size_t index = filename.find_last_of("/\\");
+
+      if ( index == std::string::npos ) return filename;
+      if ( index + 1 >= len ) {
+        --len;
+        index = filename.substr(0, len).find_last_of("/\\");
+
+        if ( len   == 0 ) return filename;
+        if ( index == 0 ) return filename.substr(1, len - 1);
+        if ( index == std::string::npos ) return filename.substr(0, len);
+        return filename.substr(index + 1, len - index - 1);
+      }
+      return filename.substr(index + 1, len - index);
+    }
+  #endif
+
   void
   Console::changeLevel( int new_level ) {
     LW_ASSERT(
@@ -79,11 +106,6 @@ namespace lapack_wrapper {
   void
   Console::changeStream( ostream_type * new_p_stream  ) {
     this->p_stream = new_p_stream;
-  }
-
-  void
-  Console::changeNthread( int new_n_thread ) {
-    this->n_thread = new_n_thread;
   }
 
   Console const &
@@ -153,7 +175,6 @@ namespace lapack_wrapper {
   Console::Console( ostream_type * _p_stream, int _level )
   : p_stream(_p_stream)
   , level(_level)
-  , n_thread(1)
   {
     this->message_style.s = rang::style::reset;
     this->message_style.f = rang::fg::reset;
@@ -170,9 +191,6 @@ namespace lapack_wrapper {
     this->fatal_style.s = rang::style::underline;
     this->fatal_style.f = rang::fg::red;
     this->fatal_style.b = rang::bg::reset;
-
-    this->max_n_thread = int(std::thread::hardware_concurrency());
-    this->n_thread     = 1+(this->max_n_thread>>1);
   }
 
   Console const &
@@ -315,13 +333,10 @@ namespace lapack_wrapper {
     std::string const & reason,
     ostream_type      & stream
   ) {
-    std::string filename = file;
 
     fmt::print(
       stream, "\n{}\nOn File:{}:{}\nprocess ID:{}, parent process ID:{}\nstack trace:\n",
-      reason,
-      filename.substr(filename.find_last_of("/\\") + 1),
-      line, getpid(), getppid()
+      reason, basename(file), line, getpid(), getppid()
     );
 
     //  record stack trace upto 128 frames
@@ -420,14 +435,14 @@ namespace lapack_wrapper {
         LW_ERROR(
           "{}\n({}):{}) found Infinity at {}[{}]\n{}\n",
           LINE_LINE_LINE_LINE,
-          basename(const_cast<char*>(file)), line, v_name, i,
+          basename(file), line, v_name, i,
           LINE_LINE_LINE_LINE
         );
       } else if ( isNaN(pv[i]) ) {
         LW_ERROR(
           "{}\n({}):{}) found NaN at {}[{}]\n{}\n",
           LINE_LINE_LINE_LINE,
-          basename(const_cast<char*>(file)), line, v_name, i,
+          basename(file), line, v_name, i,
           LINE_LINE_LINE_LINE
         );
       }
@@ -447,14 +462,14 @@ namespace lapack_wrapper {
         LW_ERROR(
           "{}\n({}):{}) found Infinity at {}[{}]\n{}\n",
           LINE_LINE_LINE_LINE,
-          basename(const_cast<char*>(file)), line, v_name, i,
+          basename(file), line, v_name, i,
           LINE_LINE_LINE_LINE
         );
       } else if ( isNaN(pv[i]) ) {
         LW_ERROR(
           "{}\n({}):{}) found NaN at {}[{}]\n{}\n",
           LINE_LINE_LINE_LINE,
-          basename(const_cast<char*>(file)), line, v_name, i,
+          basename(file), line, v_name, i,
           LINE_LINE_LINE_LINE
         );
       }
