@@ -172,6 +172,86 @@ namespace lapack_wrapper {
     return *this;
   }
 
+  Console const &
+  Console::black_reversed( std::string const & msg, int msg_level ) const {
+    std::lock_guard<std::mutex> lock_access(message_mutex);
+    if ( msg_level <= level )
+      (*p_stream)
+        << rang::fg::black << rang::style::reversed
+        << msg << rang::style::reset << rang::fg::reset;
+    return *this;
+  }
+
+  Console const &
+  Console::red_reversed( std::string const & msg, int msg_level ) const {
+    std::lock_guard<std::mutex> lock_access(message_mutex);
+    if ( msg_level <= level )
+      (*p_stream)
+        << rang::fg::red << rang::style::reversed
+        << msg << rang::style::reset << rang::fg::reset;
+    return *this;
+  }
+
+  Console const &
+  Console::green_reversed( std::string const & msg, int msg_level ) const {
+    std::lock_guard<std::mutex> lock_access(message_mutex);
+    if ( msg_level <= level )
+      (*p_stream)
+        << rang::fg::green << rang::style::reversed
+        << msg << rang::style::reset << rang::fg::reset;
+    return *this;
+  }
+
+  Console const &
+  Console::yellow_reversed( std::string const & msg, int msg_level ) const {
+    std::lock_guard<std::mutex> lock_access(message_mutex);
+    if ( msg_level <= level )
+      (*p_stream)
+        << rang::fg::yellow << rang::style::reversed
+        << msg << rang::style::reset << rang::fg::reset;
+    return *this;
+  }
+
+  Console const &
+  Console::blue_reversed( std::string const & msg, int msg_level ) const {
+    std::lock_guard<std::mutex> lock_access(message_mutex);
+    if ( msg_level <= level )
+      (*p_stream)
+        << rang::fg::blue << rang::style::reversed
+        << msg << rang::style::reset << rang::fg::reset;
+    return *this;
+  }
+
+  Console const &
+  Console::magenta_reversed( std::string const & msg, int msg_level ) const {
+    std::lock_guard<std::mutex> lock_access(message_mutex);
+    if ( msg_level <= level )
+      (*p_stream)
+        << rang::fg::magenta << rang::style::reversed
+        << msg << rang::style::reset << rang::fg::reset;
+    return *this;
+  }
+
+  Console const &
+  Console::cyan_reversed( std::string const & msg, int msg_level ) const {
+    std::lock_guard<std::mutex> lock_access(message_mutex);
+    if ( msg_level <= level )
+      (*p_stream)
+        << rang::fg::cyan << rang::style::reversed
+        << msg << rang::style::reset << rang::fg::reset;
+    return *this;
+  }
+
+  Console const &
+  Console::gray_reversed( std::string const & msg, int msg_level ) const {
+    std::lock_guard<std::mutex> lock_access(message_mutex);
+    if ( msg_level <= level )
+      (*p_stream)
+        << rang::fg::gray << rang::style::reversed
+        << msg << rang::style::reset << rang::fg::reset;
+    return *this;
+  }
+
   Console::Console( ostream_type * _p_stream, int _level )
   : p_stream(_p_stream)
   , level(_level)

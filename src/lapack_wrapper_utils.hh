@@ -172,6 +172,8 @@ namespace lapack_wrapper {
 
     ostream_type * getStream() const { return p_stream; }
 
+    Console const & flush() const { p_stream->flush(); return *this; }
+
     Console const &
     message( std::string const & msg, int msg_level = 4 ) const;
 
@@ -195,6 +197,15 @@ namespace lapack_wrapper {
     Console const & magenta ( std::string const & msg, int msg_level = 0 ) const;
     Console const & cyan    ( std::string const & msg, int msg_level = 0 ) const;
     Console const & gray    ( std::string const & msg, int msg_level = 0 ) const;
+
+    Console const & black_reversed   ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & red_reversed     ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & green_reversed   ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & yellow_reversed  ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & blue_reversed    ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & magenta_reversed ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & cyan_reversed    ( std::string const & msg, int msg_level = 0 ) const;
+    Console const & gray_reversed    ( std::string const & msg, int msg_level = 0 ) const;
 
     void
     setMessageStyle(
