@@ -359,15 +359,15 @@ namespace lapack_wrapper {
 
   void
   printTrace(
-    int            line,
-    char   const   file[],
-    string const & msg,
+    int                 line,
+    char        const   file[],
+    std::string const & msg,
     ostream_type & stream
   ) {
     fmt::print( stream,
       "---------------------------------------------------------\n"
       "file: {}:{}\n{}\n"
-      "---------------------------------------------------------\n"
+      "---------------------------------------------------------\n",
       file, line, msg
     );
   }
