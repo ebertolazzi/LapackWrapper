@@ -21,10 +21,11 @@ task :build_osx => [:download] do
     sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
     sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
     FileUtils.mv '../lib/lib/libfmt.a', "../lib/lib/libfmt_osx_static_debug.a"
+  else
+     sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
+    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
+    FileUtils.mv '../lib/lib/libfmt.a', "../lib/lib/libfmt_osx_static.a"
   end
-  sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
-  sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-  FileUtils.mv '../lib/lib/libfmt.a', "../lib/lib/libfmt_osx_static.a"
   FileUtils.cd '../..'
   Rake::Task[:install_common].invoke()
 end
@@ -39,10 +40,11 @@ task :build_linux => [:download] do
     sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
     sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
     FileUtils.mv '../lib/lib/libfmt.a', "../lib/lib/libfmt_linux_static_debug.a"
+  else
+    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
+    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
+    FileUtils.mv '../lib/lib/libfmt.a', "../lib/lib/libfmt_linux_static.a"
   end
-  sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
-  sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-  FileUtils.mv '../lib/lib/libfmt.a', "../lib/lib/libfmt_linux_static.a"
   FileUtils.cd '../..'
   Rake::Task[:install_common].invoke()
 end
@@ -59,10 +61,11 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
     sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
     sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
     FileUtils.mv './Debug/fmt.lib', "../lib/lib/fmt_win_#{args.bits}_static_debug.lib"
+  else
+    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
+    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
+    FileUtils.mv './Release/fmt.lib', "../lib/lib/fmt_win_#{args.bits}_static.lib"
   end
-  sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib ' + CMAKEDEFINES + '..'
-  sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-  FileUtils.mv './Release/fmt.lib', "../lib/lib/fmt_win_#{args.bits}_static.lib"
   FileUtils.cd '../..'
   Rake::Task[:install_common].invoke()
 end

@@ -27,10 +27,11 @@ task :build_osx => [:download] do
       sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
       sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
       FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_osx_static_debug.a"
+    else
+      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
+      sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
+      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_osx_static.a"
     end
-    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
-    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-    FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_osx_static.a"
     FileUtils.cd '..'
   end
   Rake::Task[:install_common].invoke()
@@ -52,10 +53,11 @@ task :build_linux => [:download] do
       sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
       sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
       FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_linux_static_debug.a"
+    else
+      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
+      sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
+      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_linux_static.a"
     end
-    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=WARNING ..'
-    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-    FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_linux_static.a"
     FileUtils.cd '..'
   end
   Rake::Task[:install_common].invoke()
@@ -88,12 +90,11 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
       sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
       sh 'cmake --build . --clean-first --config Debug --target INSTALL '+PARALLEL+QUIET
       FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{args.bits}_static_debug.lib"
+    else
+      sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
+      sh 'cmake --build . --clean-first --config Release --target INSTALL '+PARALLEL+QUIET
+      FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{args.bits}_static.lib"
     end
-
-    sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-    sh 'cmake --build . --clean-first --config Release --target INSTALL '+PARALLEL+QUIET
-    FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{args.bits}_static.lib"
-
     FileUtils.cd '..'
   end
   Rake::Task[:install_common].invoke()

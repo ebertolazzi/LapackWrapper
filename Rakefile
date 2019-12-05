@@ -105,13 +105,12 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
   if COMPILE_DEBUG then
     sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+  else
+    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
+    sh 'cmake  --build . --config Release  --target install '+PARALLEL+QUIET
   end
 
-  sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-  sh 'cmake  --build . --config Release  --target install '+PARALLEL+QUIET
-
   FileUtils.cd '..'
-
 end
 
 desc 'compile for OSX [default lapack="LAPACK_WRAPPER_USE_ACCELERATE"]'
@@ -151,12 +150,11 @@ task :build_osx, [:lapack] do |t, args|
   if COMPILE_DEBUG then
     sh cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+  else
+    sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
+    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
   end
-  sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-  sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
-
   FileUtils.cd '..'
-
 end
 
 desc 'compile for LINUX [default lapack="LAPACK_WRAPPER_USE_OPENBLAS"]'
@@ -200,10 +198,10 @@ task :build_linux, [:lapack] do |t, args|
   if COMPILE_DEBUG then
     sh cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
     sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+  else
+    sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
+    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
   end
-  sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-  sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
-
   FileUtils.cd '..'
 end
 
