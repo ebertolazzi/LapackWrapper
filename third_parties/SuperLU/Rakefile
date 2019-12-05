@@ -11,6 +11,11 @@ task :download do
   url_download( "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/#{filename}", filename )
 end
 
+def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
+  text= File.read file
+  File.open(file, 'w+'){|f| f << text.gsub(text_to_replace, text_to_put_in_place)}
+end
+
 desc "build superlu lib for osx"
 task :build_osx => [:download] do
   filename = "superlu_#{VER}.tar.gz"
@@ -18,8 +23,15 @@ task :build_osx => [:download] do
     puts "SuperLU already compiled"
   else
     extract_tgz(filename)
+
     FileUtils.rm_rf 'superlu'
     FileUtils.mv    'SuperLU_'+VER, 'superlu'
+
+    ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+    ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+    ChangeOnFile("./superlu/SRC/zreadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+    ChangeOnFile("./superlu/SRC/zreadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+
     FileUtils.rm_rf 'build'
     FileUtils.mkdir 'build'
     FileUtils.cd    'build'
@@ -46,6 +58,12 @@ task :build_linux => [:download] do
     extract_tgz(filename)
     FileUtils.rm_rf 'superlu'
     FileUtils.mv    'SuperLU_'+VER, 'superlu'
+
+    ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+    ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+    ChangeOnFile("./superlu/SRC/zreadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+    ChangeOnFile("./superlu/SRC/zreadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+
     FileUtils.rm_rf 'build'
     FileUtils.mkdir 'build'
     FileUtils.cd    'build'
@@ -75,6 +93,12 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
     extract_tgz(filename)
     FileUtils.rm_rf 'superlu'
     FileUtils.mv    'SuperLU_'+VER, 'superlu'
+
+    ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+    ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+    ChangeOnFile("./superlu/SRC/zreadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+    ChangeOnFile("./superlu/SRC/zreadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+
     dir = "vs_#{args.year}_#{args.bits}"
 
     FileUtils.rm_rf   dir
