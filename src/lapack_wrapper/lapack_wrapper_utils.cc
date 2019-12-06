@@ -355,6 +355,11 @@ namespace lapack_wrapper {
     return std::runtime_error::what();
   }
 
+  const char*
+  Runtime_TraceError::what() const noexcept {
+    return std::runtime_error::what();
+  }
+
   #ifdef LAPACK_WRAPPER_OS_WINDOWS
 
   void

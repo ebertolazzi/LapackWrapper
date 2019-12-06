@@ -162,7 +162,7 @@ namespace lapack_wrapper {
     #if defined(DEBUG) || defined(_DEBUG)
     integer
     iaddr( integer i,  integer j ) const {
-      LW_ASSERT(
+      LW_ASSERT_TRACE(
         i >= 0 && i < this->nRows && j >= 0 && j < this->nCols,
         "iaddr({},{}) out of range [0,{}) x [0,{})\n",
         i, j, this->nRows, this->nCols
@@ -882,19 +882,21 @@ namespace lapack_wrapper {
       integer ncol,
       MatW &  to
     ) {
-      #if defined(DEBUG) || defined(_DEBUG)
-      LW_ASSERT(
-        i_offs >= 0 && i_offs+nrow <= this->nRows &&
-        j_offs >= 0 && j_offs+ncol <= this->nCols,
-        "view_block(i_offs={}, j_offs={}, nrow={}, ncol={}) "
-        "will be out of range [0,{}) x [0,{})\n",
-        i_offs, j_offs, nrow, ncol, this->nRows, this->nCols
-      );
-      #endif
-      to.setup(
-        this->data+this->iaddr(i_offs,j_offs),
-        nrow, ncol, this->ldData
-      );
+      if ( nrow > 0 && ncol > 0 ) {
+        #if defined(DEBUG) || defined(_DEBUG)
+        LW_ASSERT_TRACE(
+          i_offs >= 0 && i_offs+nrow <= this->nRows &&
+          j_offs >= 0 && j_offs+ncol <= this->nCols,
+          "view_block(i_offs={}, j_offs={}, nrow={}, ncol={}) "
+          "will be out of range [0,{}) x [0,{})\n",
+          i_offs, j_offs, nrow, ncol, this->nRows, this->nCols
+        );
+        #endif
+        to.setup(
+          this->data+this->iaddr(i_offs,j_offs),
+          nrow, ncol, this->ldData
+        );
+      }
     }
 
     /*!
@@ -932,7 +934,7 @@ namespace lapack_wrapper {
       integer j_offs
     ) {
       #if defined(DEBUG) || defined(_DEBUG)
-      LW_ASSERT(
+      LW_ASSERT_TRACE(
         i_offs >= 0 && i_offs+to.nRows <= this->nRows &&
         j_offs >= 0 && j_offs+to.nCols <= this->nCols,
         "get_block(i_offs={}, j_offs={}, ...) "
@@ -963,7 +965,7 @@ namespace lapack_wrapper {
       integer j_offs
     ) {
       #if defined(DEBUG) || defined(_DEBUG)
-      LW_ASSERT(
+      LW_ASSERT_TRACE(
         i_offs >= 0 && i_offs+to.nCols <= this->nRows &&
         j_offs >= 0 && j_offs+to.nRows <= this->nCols,
         "get_block_transposed(i_offs={}, j_offs={}, ...) "
