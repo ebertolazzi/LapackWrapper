@@ -8,7 +8,9 @@ VERSION  = $(shell $(CC) -dumpversion)
 CC     += $(WARN)
 CXX    += $(WARN)
 AR      = ar rcs
-LIBSGCC = -lstdc++ -lm -pthread
+LIBSGCC = -lstdc++ -lm -ldl
+
+override CXXFLAGS += -floop-interchange -floop-block 
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
   override LIBS += -llapack -lblas
