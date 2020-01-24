@@ -148,6 +148,27 @@ namespace lapack_wrapper {
       }
       return pMalloc + offs;
     }
+
+    bool is_empty() const { return numAllocated <= numTotValues; }
+
+    void
+    must_be_empty( char const where[] ) const {
+      if ( numAllocated < numTotValues ) {
+        std::string tmp = fmt::format(
+          "in {} {}: not fully used!\nUnused: {} values\n",
+          _name, where, numTotValues - numAllocated
+        );
+        printTrace( __LINE__,__FILE__, tmp, std::cerr );
+      }
+      if ( numAllocated > numTotValues ) {
+        std::string tmp = fmt::format(
+          "in {} {}: too much used!\nMore used: {} values\n",
+          _name, where, numAllocated - numTotValues
+        );
+        printTrace( __LINE__,__FILE__, tmp, std::cerr );
+      }
+    }
+
   };
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
