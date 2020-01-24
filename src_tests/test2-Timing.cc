@@ -86,8 +86,8 @@ template <int N>
 void
 testMM() {
 
-  int     N_TIMES = (1000000/N);
-  double  to_ps   = 1000000.0/N_TIMES;
+  int    N_TIMES = 100;
+  double to_ps   = 1000000.0/N_TIMES;
 
   fmt::print("\nSize N = {}\n",N);
 
@@ -122,10 +122,10 @@ testMM() {
       M2, N,
       1.0, M3, N
     );
-    copy( N*N, M3, 1, M2, 1);
+    memcpy( M2, M3, N*N*sizeof(valueType) );
   }
   tm.toc();
-  fmt::print("(MM) MULT = {:8.4} [ps] (lapack)\n", to_ps*tm.elapsed_ms() );
+  fmt::print("(MM) MULT = {:8.4} [ps/N^3] (lapack)\n", to_ps*tm.elapsed_ms()/(N*N*N) );
 
   // ===========================================================================
 
@@ -136,7 +136,7 @@ testMM() {
     //Vec2<valueType,N*N,1,1>::copy(M3,M2);
   }
   tm.toc();
-  fmt::print("(MM) MULT = {:8.4} [ps] (hand unrolled)\n", to_ps*tm.elapsed_ms() );
+  fmt::print("(MM) MULT = {:8.4} [ps/N^3] (hand unrolled)\n", to_ps*tm.elapsed_ms()/(N*N*N) );
 
   // ===========================================================================
 
@@ -148,7 +148,7 @@ template <int N>
 void
 testMv() {
 
-  int     N_TIMES = (1000000/N);
+  int     N_TIMES = 1000;
   double  to_ps   = 1000000.0/N_TIMES;
 
   fmt::print("\nSize N = {}\n",N);
@@ -184,10 +184,11 @@ testMv() {
       V, 1,
       1.0, R, 1
     );
-    copy( N, R, 1, V, 1);
+    //copy( N, R, 1, V, 1);
+    memcpy( V, R, N*sizeof(valueType) );
   }
   tm.toc();
-  fmt::print("(MV) MULT = {:8.4} [ps] (lapack)\n", to_ps*tm.elapsed_ms() );
+  fmt::print("(MV) MULT = {:8.4} [ps/N^2] (lapack)\n", to_ps*tm.elapsed_ms()/(N*N) );
 
   // ===========================================================================
 
@@ -198,7 +199,7 @@ testMv() {
     //Vec2<valueType,N*N,1,1>::copy(M3,M2);
   }
   tm.toc();
-  fmt::print("(MV) MULT = {:8.4} [ps] (hand unrolled)\n", to_ps*tm.elapsed_ms() );
+  fmt::print("(MV) MULT = {:8.4} [ps/N^2] (hand unrolled)\n", to_ps*tm.elapsed_ms()/(N*N) );
 
   // ===========================================================================
 
@@ -210,7 +211,7 @@ template <int N>
 void
 testCopy() {
 
-  int     N_TIMES = (1000000/N);
+  int     N_TIMES = 10000;
   double  to_ps   = 1000000.0/N_TIMES;
 
   fmt::print("\nSize N = {}\n",N);
@@ -251,7 +252,7 @@ testCopy() {
     M1[0] += M2[0];
   }
   tm.toc();
-  fmt::print("(MM) COPY = {:8.4} [ps] (lapack)\n", to_ps*tm.elapsed_ms() );
+  fmt::print("(MM) COPY = {:8.4} [ps/N^2] (lapack)\n", to_ps*tm.elapsed_ms()/(N*N) );
 
   fmt::print("All done!\n");
 }
@@ -335,7 +336,9 @@ testCopyAll() {
 int
 main() {
   testMvAll();
+  fmt::print("\n\ndone!\n");
   testMMall();
+  fmt::print("\n\ndone!\n");
   testCopyAll();
   fmt::print("\n\nAll done!\n");
   return 0;
