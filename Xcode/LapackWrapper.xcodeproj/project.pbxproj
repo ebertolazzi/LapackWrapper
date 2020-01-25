@@ -59,6 +59,7 @@
 		D9CFB467230CA2A300FB2DD8 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D94090D122F1A44600EB3EBD /* Accelerate.framework */; };
 		D9CFB46E230CA2BC00FB2DD8 /* test7-SparseTool.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9CFB46D230CA2BB00FB2DD8 /* test7-SparseTool.cc */; };
 		D9CFB470230CA2C100FB2DD8 /* test8-SparseToolComplex.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9CFB46F230CA2C100FB2DD8 /* test8-SparseToolComplex.cc */; };
+		D9D6A20223DC7CC0007D8E69 /* lapack_wrapper_tmpl.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9D6A20123DC7CC0007D8E69 /* lapack_wrapper_tmpl.hh */; };
 		D9F9C5552313DAF700764E6C /* izstream_impl.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9F9C5502313DAF600764E6C /* izstream_impl.hh */; };
 		D9F9C5562313DAF700764E6C /* izstream.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9F9C5512313DAF600764E6C /* izstream.hh */; };
 		D9F9C5572313DAF700764E6C /* ozstream.hh in Headers */ = {isa = PBXBuildFile; fileRef = D9F9C5522313DAF600764E6C /* ozstream.hh */; };
@@ -196,6 +197,7 @@
 		D9CFB46F230CA2C100FB2DD8 /* test8-SparseToolComplex.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test8-SparseToolComplex.cc"; path = "../src_tests/test8-SparseToolComplex.cc"; sourceTree = "<group>"; };
 		D9D2A21C230F53570031294A /* preconditioner */ = {isa = PBXFileReference; lastKnownFileType = folder; path = preconditioner; sourceTree = "<group>"; };
 		D9D2A21D230F53DB0031294A /* iterative */ = {isa = PBXFileReference; lastKnownFileType = folder; path = iterative; sourceTree = "<group>"; };
+		D9D6A20123DC7CC0007D8E69 /* lapack_wrapper_tmpl.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lapack_wrapper_tmpl.hh; sourceTree = "<group>"; };
 		D9DE0B3C22F3811C00C08382 /* code */ = {isa = PBXFileReference; lastKnownFileType = folder; path = code; sourceTree = "<group>"; };
 		D9DE0B3D22F381FE00C08382 /* TicToc.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TicToc.hh; sourceTree = "<group>"; };
 		D9DE0B3E22F3827B00C08382 /* code++ */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "code++"; sourceTree = "<group>"; };
@@ -383,6 +385,7 @@
 				D9DE0B3E22F3827B00C08382 /* code++ */,
 				D9DE0B3C22F3811C00C08382 /* code */,
 				D9DE0B3D22F381FE00C08382 /* TicToc.hh */,
+				D9D6A20123DC7CC0007D8E69 /* lapack_wrapper_tmpl.hh */,
 				D958BC9C22F32F0B00D41FCA /* lapack_wrapper.hh */,
 				D958BCAC22F32F0B00D41FCA /* lapack_wrapper.cc */,
 				D958BCAE22F32F0B00D41FCA /* lapack_wrapper++.hh */,
@@ -443,6 +446,7 @@
 				D9CFB440230CA26500FB2DD8 /* sparse_tool_matrix_market.hh in Headers */,
 				D94CEBFE2371B34E001067BF /* format.h in Headers */,
 				D9CFB446230CA26500FB2DD8 /* sparse_tool_iterative.hh in Headers */,
+				D9D6A20223DC7CC0007D8E69 /* lapack_wrapper_tmpl.hh in Headers */,
 				D9F9C5552313DAF700764E6C /* izstream_impl.hh in Headers */,
 				D94CEBF82371B34E001067BF /* chrono.h in Headers */,
 				D94CEBFB2371B34E001067BF /* compile.h in Headers */,

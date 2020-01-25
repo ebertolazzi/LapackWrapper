@@ -26,6 +26,8 @@
 #ifndef LAPACK_WRAPPER_TMPL_HH
 #define LAPACK_WRAPPER_TMPL_HH
 
+#include "lapack_wrapper.hh"
+
 namespace lapack_wrapper {
 
   /*\
