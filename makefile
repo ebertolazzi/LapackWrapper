@@ -20,27 +20,27 @@ override LIBS += -Llib3rd/lib -Llib3rd/dll
 USED_LIB=""
 SYSTEMOPENBLAS=\/\/
 ifeq ($(ATLAS),1)
-  USED_LIB = LAPACK_WRAPPER_USE_ATLAS
+  override USED_LIB = LAPACK_WRAPPER_USE_ATLAS
 endif
 #
 ifeq ($(MKL),1)
-  USED_LIB = LAPACK_WRAPPER_USE_MKL
+  override USED_LIB = LAPACK_WRAPPER_USE_MKL
 endif
 #
 ifeq ($(OPENBLAS),1)
-  USED_LIB = LAPACK_WRAPPER_USE_OPENBLAS
+  override USED_LIB = LAPACK_WRAPPER_USE_OPENBLAS
 endif
 #
 ifeq ($(LAPACK),1)
-  USED_LIB = LAPACK_WRAPPER_USE_LAPACK
+  override USED_LIB = LAPACK_WRAPPER_USE_LAPACK
 endif
 #
 ifeq ($(ACCELERATE),1)
-  USED_LIB = LAPACK_WRAPPER_USE_ACCELERATE
+  override USED_LIB = LAPACK_WRAPPER_USE_ACCELERATE
 endif
 #
 ifeq ($(BLASFEO),1)
-  USED_LIB = LAPACK_WRAPPER_USE_BLASFEO
+  override USED_LIB = LAPACK_WRAPPER_USE_BLASFEO
 endif
 #
 # if missig setup default
@@ -48,12 +48,12 @@ endif
 ifeq ($(USED_LIB), "")
 ifeq (,$(wildcard .lapack_wrapper_config))
 ifneq (,$(findstring Darwin, $(OS)))
-  USED_LIB = LAPACK_WRAPPER_USE_ACCELERATE
+  override USED_LIB = LAPACK_WRAPPER_USE_ACCELERATE
 else
-  USED_LIB = LAPACK_WRAPPER_USE_OPENBLAS
+  override USED_LIB = LAPACK_WRAPPER_USE_OPENBLAS
 endif
 else
-  USED_LIB = $(shell cat .lapack_wrapper_config)
+  override USED_LIB = $(shell cat .lapack_wrapper_config)
 endif
 endif
 

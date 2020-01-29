@@ -27,10 +27,10 @@ endif
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_MKL,$(USED_LIB)))
   # for MKL
-  MKL_PATH = /opt/intel/mkl
-  #MKL_LIB = -lmkl_tbb_thread -lmkl_intel -lmkl_core
-  MKL_LIB = -lmkl_sequential -lmkl_intel -lmkl_core
-  override LIBS += -L$(MKL_PATH)/lib -Xlinker -rpath -Xlinker $(MKL_PATH)/lib $(MKL_LIB)
+  INTEL_PATH = /opt/intel/lib
+  MKL_PATH   = /opt/intel/mkl
+  MKL_LIB = -lmkl_sequential -lmkl_intel_thread -lmkl_core -liomp5
+  override LIBS += -L$(MKL_PATH)/lib -Xlinker -rpath -Xlinker $(MKL_PATH)/lib -L$(INTEL_PATH) -Xlinker -rpath -Xlinker $(INTEL_PATH) $(MKL_LIB)
   override INC  += -I$(MKL_PATH)/include
 endif
 
