@@ -18,7 +18,7 @@ endif
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_OPENBLAS,$(USED_LIB)))
   FPATH=$(dir $(shell gfortran -print-libgcc-file-name))
-  override LIBS += -Llib3rd/dll -Llib3rd/lib -Wl,-rpath,./lib/dll -lopenblas -L$(FPATH) -lgfortran
+  override LIBS += -Llib3rd/dll -Llib3rd/lib -Wl,-rpath,./lib/dll -lopenblas -lomp -L$(FPATH) -lgfortran
   override INC  += -I/usr/include/x86_64-linux-gnu/
 endif
 
