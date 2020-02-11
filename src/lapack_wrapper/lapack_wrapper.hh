@@ -1069,11 +1069,13 @@ namespace lapack_wrapper {
     integer N,
     real    X[]
   ) {
-    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)  || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slarnv)( &IDIST, ISEED, &N, X ); // return void in openblas
+    return 0;
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_slarnv( &IDIST, ISEED, &N, X ); // return void in openblas
     return 0;
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     slarnv( &IDIST, ISEED, &N, X ); // return void in openblas
@@ -1095,11 +1097,13 @@ namespace lapack_wrapper {
     integer    N,
     doublereal X[]
   ) {
-    #if defined(LAPACK_WRAPPER_USE_LAPACK)   || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+    #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+        defined(LAPACK_WRAPPER_USE_ATLAS)  || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlarnv)( &IDIST, ISEED, &N, X ); // return void in openblas
+    return 0;
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_dlarnv( &IDIST, ISEED, &N, X ); // return void in openblas
     return 0;
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlarnv( &IDIST, ISEED, &N, X ); // return void in openblas

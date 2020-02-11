@@ -263,7 +263,7 @@ namespace lapack_wrapper {
     #if defined(LAPACK_WRAPPER_USE_MKL)
       slaswp( &NCOL, A, &LDA, &K1, &K2, IPIV, &INC );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-      LAPACK_F77NAME(slaswp)(
+      LAPACK_slaswp(
         &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC
       );
     #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
@@ -302,7 +302,7 @@ namespace lapack_wrapper {
     #if defined(LAPACK_WRAPPER_USE_MKL)
       dlaswp( &NCOL, A, &LDA, &K1, &K2, IPIV, &INC );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-      LAPACK_F77NAME(dlaswp)(
+      LAPACK_dlaswp(
         &NCOL, A, &LDA, &K1, &K2, const_cast<integer*>(IPIV), &INC
       );
     #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
