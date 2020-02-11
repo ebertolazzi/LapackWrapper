@@ -289,17 +289,17 @@
     // on linux/osx the defaul is too use SYSTEM openblas
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
       #include "../openblas/cblas.h"
-      #include "../openblas/lapacke.h"
+      #include "../openblas/lapack.h"
     #else
       // must use subdirectory to avoid conflict with atlas/lapack...
       #include <openblas/cblas.h>
-      #include <lapacke.h>
+      #include <openblas/lapack.h>
     #endif
   #else
     // on linux/osx the defaul is too use SYSTEM openblas
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
       #include "../openblas/cblas.h"
-      #include "../openblas/lapacke.h"
+      #include "../openblas/lapack.h"
     #else
       // OSX   -I/usr/local/opt/openblas/include/
       #include <cblas.h>
@@ -426,8 +426,13 @@ namespace lapack_wrapper {
     typedef double     doublereal;
     typedef char       character;
     typedef doublereal return_precision;
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-        defined(LAPACK_WRAPPER_USE_BLASFEO)
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    typedef lapack_int integer;
+    typedef float      real;
+    typedef double     doublereal;
+    typedef char       character;
+    typedef double     return_precision;
+  #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     typedef blasint    integer;
     typedef float      real;
     typedef double     doublereal;
