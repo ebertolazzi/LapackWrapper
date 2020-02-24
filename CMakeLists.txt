@@ -9,7 +9,7 @@
 #                                                                          #
 ############################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
+CMAKE_MINIMUM_REQUIRED( VERSION 3.5 )
 SET( CMAKE_VERBOSE_MAKEFILE OFF )
 SET( CMAKE_INSTALL_MESSAGE NEVER )
 
@@ -29,6 +29,12 @@ ELSE()
 ENDIF()
 
 IF(APPLE)
+ELSEIF( UNIX OR LINUX )
+ELSE()
+  SET( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
+ENDIF()
+
+IF(APPLE)
   SET( TARGETS    lapack_wrapper_osx_static${DEBUG_SUFFIX} )
   SET( TARGETHSLS HSL_osx_static${DEBUG_SUFFIX} )
 ELSEIF( UNIX )
@@ -37,20 +43,18 @@ ELSEIF( UNIX )
 ELSE()
   SET( TARGETS    lapack_wrapper_win_${BITS}_static${DEBUG_SUFFIX} )
   SET( TARGETHSLS HSL_win_${BITS}_static${DEBUG_SUFFIX} )
-  SET( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
 ENDIF()
 
 IF ( BUILD_SHARED )
   IF(APPLE)
-    SET( TARGET     lapack_wrapper_osx${DEBUG_SUFFIX} )
-    SET( TARGETHSL  HSL_osx${DEBUG_SUFFIX} )
+    SET( TARGET    lapack_wrapper_osx${DEBUG_SUFFIX} )
+    SET( TARGETHSL HSL_osx${DEBUG_SUFFIX} )
   ELSEIF( UNIX )
-    SET( TARGETS    lapack_wrapper_linux_static${DEBUG_SUFFIX} )
-    SET( TARGETHSLS HSL_linux_static${DEBUG_SUFFIX} )
+    SET( TARGET    lapack_wrapper_linux${DEBUG_SUFFIX} )
+    SET( TARGETHSL HSL_linux${DEBUG_SUFFIX} )
   ELSE()
-    SET( TARGET     lapack_wrapper_win_${BITS}${DEBUG_SUFFIX} )
-    SET( TARGETHSL  HSL_win_${BITS}${DEBUG_SUFFIX} )
-    SET( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
+    SET( TARGET    lapack_wrapper_win_${BITS}${DEBUG_SUFFIX} )
+    SET( TARGETHSL HSL_win_${BITS}${DEBUG_SUFFIX} )
   ENDIF()
 ENDIF()
 
