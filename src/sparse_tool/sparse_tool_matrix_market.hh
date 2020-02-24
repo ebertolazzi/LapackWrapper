@@ -1,6 +1,6 @@
 /*!
 
-  \file     SparseToolMatrixMarket.hh
+  \file     sparse_tool_matrix_market.hh
   \date     2011, July 21
   \version  1.1
   \note     based on SparseLib 11.0 (C 1999 -- 2008)

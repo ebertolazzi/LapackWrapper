@@ -1,6 +1,6 @@
 /*!
 
-  \file     SparseTool.hh
+  \file     sparse_tool.hh
   \mainpage SparseTool: a Sparse Matrix Manager 
   \date     2011, July 21
   \version  1.1
