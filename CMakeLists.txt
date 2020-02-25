@@ -197,17 +197,6 @@ SET(LLPATH ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd )
 
 INCLUDE_DIRECTORIES( src ${LLPATH}/include )
 
-##IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
-##  INCLUDE_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include" )
-##  IF ( ${BITS} STREQUAL "x64" )
-##    set(WINXXBITS Win64)
-##    LINK_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/lib/intel64" )
-##  ELSE()
-##    set(WINXXBITS Win32)
-##    LINK_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/lib/ia32" )
-##  ENDIF()
-##ENDIF()
-
 IF( APPLE OR UNIX )
   LINK_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
