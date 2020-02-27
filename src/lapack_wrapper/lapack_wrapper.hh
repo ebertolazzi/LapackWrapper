@@ -226,17 +226,17 @@
     // on linux/osx the defaul is too use SYSTEM openblas
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
       #include "../openblas/cblas.h"
-      #include "../openblas/lapack.h"
+      #include "../openblas/lapacke.h"
     #else
       // must use subdirectory to avoid conflict with atlas/lapack...
       #include <openblas/cblas.h>
-      #include <openblas/lapack.h>
+      #include <openblas/lapacke.h>
     #endif
   #else
     // on linux/osx the defaul is too use SYSTEM openblas
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
       #include "../openblas/cblas.h"
-      #include "../openblas/lapack.h"
+      #include "../openblas/lapacke.h"
     #else
       // OSX   -I/usr/local/opt/openblas/include/
       #include <cblas.h>
