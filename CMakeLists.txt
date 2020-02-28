@@ -158,12 +158,12 @@ ELSE()
   IF ( BITS MATCHES "x64")
     FIND_LIBRARY(
       lapackblas_libraries libopenblas_x64.lib
-      HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll
+      HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
     )
   ELSE()
     FIND_LIBRARY(
-      lapackblas_libraries libopenblas.lib
-      HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll
+      lapackblas_libraries libopenblas_x86.lib
+      HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
     )
   ENDIF()
   SET( lapackblas_libraries ${lapackblas_libraries} ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} )

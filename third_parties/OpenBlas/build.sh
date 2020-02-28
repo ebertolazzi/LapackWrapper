@@ -18,3 +18,5 @@ make DEBUG=1 DYNAMIC_ARCH=1 BINARY=64 BINARY64=1 \
      FC=x86_64-w64-mingw32-gfortran \
      CFLAGS="-static-libgcc -static-libstdc++ -static -ggdb" \
      FFLAGS="-static"
+
+make FFLAGS=-fno-asynchronous-unwind-tables DYNAMIC_ARCH=1 BINARY=64 BINARY64=1
