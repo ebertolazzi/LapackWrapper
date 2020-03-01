@@ -212,31 +212,31 @@
     // on windows the defaul is too use local openblas
     #ifdef LAPACK_WRAPPER_USE_SYSTEM_OPENBLAS
       #include <openblas/cblas.h>
-      #include <openblas/lapacke.h>
+      #include <openblas/lapack.h>
     #else
       #ifdef LAPACK_WRAPPER_ARCH64
         #include "../openblas/x64/cblas.h"
-        #include "../openblas/x64/lapacke.h"
+        #include "../openblas/x64/lapack.h"
       #else
         #include "../openblas/x86/cblas.h"
-        #include "../openblas/x86/lapacke.h"
+        #include "../openblas/x86/lapack.h"
       #endif
     #endif
   #elif defined(LAPACK_WRAPPER_OS_LINUX)
     // on linux/osx the defaul is too use SYSTEM openblas
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
       #include "../openblas/cblas.h"
-      #include "../openblas/lapacke.h"
+      #include "../openblas/lapack.h"
     #else
       // must use subdirectory to avoid conflict with atlas/lapack...
       #include <openblas/cblas.h>
-      #include <openblas/lapacke.h>
+      #include <openblas/lapack.h>
     #endif
   #else
     // on linux/osx the defaul is too use SYSTEM openblas
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
       #include "../openblas/cblas.h"
-      #include "../openblas/lapacke.h"
+      #include "../openblas/lapack.h"
     #else
       // OSX   -I/usr/local/opt/openblas/include/
       #include <cblas.h>
