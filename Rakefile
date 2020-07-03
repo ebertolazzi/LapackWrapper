@@ -120,7 +120,7 @@ task :build_osx, [:lapack] do |t, args|
   FileUtils.rm_f 'src/lapack_wrapper_config.hh'
   FileUtils.cp   'src/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper_config.hh'
 
-  Rake::Task[:osx_3rd].invoke(args.lapack)
+  Rake::Task[:osx_3rd].invoke()
 
   ChangeOnFile(
     'src/lapack_wrapper_config.hh',
@@ -165,7 +165,7 @@ task :build_linux, [:lapack] do |t, args|
     #:lapack => "LAPACK_WRAPPER_USE_MKL"
   )
 
-  Rake::Task[:linux_3rd].invoke(args.lapack)
+  Rake::Task[:linux_3rd].invoke()
 
   FileUtils.rm_f 'src/lapack_wrapper_config.hh'
   FileUtils.cp   'src/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper_config.hh'
