@@ -50,11 +50,7 @@ ELSEIF( UNIX OR LINUX )
     FIND_LIBRARY( OPENBLAS openblas HINTS /usr/lib /usr/local/lib /usr/lib/${ARCH}-linux-gnu/openblas )
     FIND_LIBRARY( OPENMP   omp      HINTS /usr/lib /usr/local/lib )
     FIND_LIBRARY( DL       dl       HINTS /usr/lib /usr/local/lib )
-    SET( lapackblas_libraries
-         -Wl,--push-state,--whole-archive,--no-undefined,--no-allow-shlib-undefined,--no-as-needed
-         ${OPENBLAS}
-         -ldl -Wl,--pop-state
-         ${OPENMP} ${DL} ${GFORTRAN}
+    SET( lapackblas_libraries ${OPENBLAS} ${OPENMP} ${DL} ${GFORTRAN}
     )
   ELSEIF( LAPACK_WRAPPER_USE_MKL )
     SET( MKLBITS intel64 )
