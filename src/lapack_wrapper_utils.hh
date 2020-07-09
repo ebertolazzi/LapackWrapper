@@ -251,6 +251,19 @@ namespace lapack_wrapper {
       fatal_style.b = b;
     }
 
+    //! set off coloring
+    void
+    setOff() const {
+      rang::setControlMode( control::Off );
+    }
+
+    //! set coloring automatic
+    void
+    setAuto() const {
+      rang::setControlMode( control::Auto );
+      rang::setWinTermMode( winTerm::Auto );
+    }
+
   };
 
   /*
