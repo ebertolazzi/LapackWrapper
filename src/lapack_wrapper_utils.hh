@@ -254,14 +254,19 @@ namespace lapack_wrapper {
     //! set off coloring
     void
     setOff() const {
-      rang::setControlMode( control::Off );
+      #ifndef OS_WIN
+      rang::setControlMode( rang::control::Off );
+      #endif
     }
 
     //! set coloring automatic
     void
     setAuto() const {
-      rang::setControlMode( control::Auto );
-      rang::setWinTermMode( winTerm::Auto );
+      #ifdef OS_WIN
+      rang::setWinTermMode( rang::winTerm::Auto );
+      #else
+      rang::setControlMode( rang::control::Auto );
+      #endif
     }
 
   };
