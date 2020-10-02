@@ -9,7 +9,7 @@
 #                                                                          #
 ############################################################################
 
-CMAKE_MINIMUM_REQUIRED( VERSION 3.5 )
+CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 SET( CMAKE_VERBOSE_MAKEFILE OFF )
 SET( CMAKE_INSTALL_MESSAGE NEVER )
 
