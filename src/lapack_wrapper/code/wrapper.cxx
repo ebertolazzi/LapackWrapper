@@ -40,13 +40,13 @@ namespace lapack_wrapper {
     integer     nc,
     integer     ld
   )
-  : nRows(nr)
-  , nCols(nc)
-  , ldData(ld)
-  , data(_data)
+  : m_nRows(nr)
+  , m_nCols(nc)
+  , m_ldData(ld)
+  , m_data(_data)
   {
     LW_ASSERT_DEBUG(
-      nr >= 0 && nc >= 0 && this->ldData >= nr,
+      nr >= 0 && nc >= 0 && m_ldData >= nr,
       "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions\n",
       nr, nc, ld
     );
@@ -62,12 +62,12 @@ namespace lapack_wrapper {
     integer     nc,
     integer     ld
   ) {
-    this->data   = _data;
-    this->nRows  = nr;
-    this->nCols  = nc;
-    this->ldData = ld;
+    m_data   = _data;
+    m_nRows  = nr;
+    m_nCols  = nc;
+    m_ldData = ld;
     LW_ASSERT_DEBUG(
-      nr >= 0 && nc >= 0 && this->ldData >= nr,
+      nr >= 0 && nc >= 0 && m_ldData >= nr,
       "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions\n",
       nr, nc, ld
     );
@@ -78,12 +78,12 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::scale_by( T sc ) {
-    if ( this->ldData == this->nRows ) {
-      scal( this->nRows*this->nCols, sc, this->data, 1 );
+    if ( m_ldData == m_nRows ) {
+      scal( m_nRows*m_nCols, sc, m_data, 1 );
     } else {
-      T * p = this->data;
-      for ( integer i = 0; i < this->nCols; ++i, p += this->ldData )
-        scal( this->nRows, sc, p, 1 );
+      T * p = m_data;
+      for ( integer i = 0; i < m_nCols; ++i, p += m_ldData )
+        scal( m_nRows, sc, p, 1 );
     }
   }
 
@@ -93,9 +93,9 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::check( MatW const & A ) const {
     LW_ASSERT(
-      A.numRows() == this->nRows && A.numCols() == this->nCols,
+      A.numRows() == m_nRows && A.numCols() == m_nCols,
       "MatrixWrapper::check(A) size(A) = {} x {} expected {} x {}\n",
-      A.numRows(), A.numCols(), this->nRows, this->nCols
+      A.numRows(), A.numCols(), m_nRows, m_nCols
     );
   }
 
@@ -105,11 +105,11 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::check( Sparse const & sp ) const {
     LW_ASSERT(
-      sp.get_number_of_rows() <= this->nRows &&
-      sp.get_number_of_cols() <= this->nCols,
+      sp.get_number_of_rows() <= m_nRows &&
+      sp.get_number_of_cols() <= m_nCols,
       "MatrixWrapper::check(sp) size(sp) = {} x {} must be contained in {} x {}\n",
       sp.get_number_of_rows(), sp.get_number_of_cols(),
-      this->nRows, this->nCols
+      m_nRows, m_nCols
     );
   }
 
@@ -119,7 +119,7 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::load( valueType const data_in[], integer ldData_in ) {
     integer info = gecopy(
-      this->nRows, this->nCols, data_in, ldData_in, this->data, this->ldData
+      m_nRows, m_nCols, data_in, ldData_in, m_data, m_ldData
     );
     LW_ASSERT(
       info == 0,
@@ -132,9 +132,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::load_transposed( valueType const data_in[], integer ldData_in ) {
-    for ( integer i = 0; i < this->nRows; ++i )
-      for ( integer j = 0; j < this->nCols; ++j )
-        this->data[i+j*this->ldData] = data_in[j+i*ldData_in];
+    for ( integer i = 0; i < m_nRows; ++i )
+      for ( integer j = 0; j < m_nCols; ++j )
+        m_data[i+j*m_ldData] = data_in[j+i*ldData_in];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -146,8 +146,8 @@ namespace lapack_wrapper {
     check(A);
     #endif
     integer info = gecopy(
-      A.numRows(), A.numCols(), A.get_data(), A.lDim(),
-      this->data, this->ldData
+      A.numRows(), A.numCols(), A.data(), A.lDim(),
+      m_data, m_ldData
     );
     LW_ASSERT(
       info == 0,
@@ -162,14 +162,14 @@ namespace lapack_wrapper {
   MatrixWrapper<T>::load_transposed( MatW const & A ) {
     #ifndef LAPACK_WRAPPER_NO_DEBUG
     LW_ASSERT(
-      A.numCols() == this->nRows && A.numRows() == this->nCols,
+      A.numCols() == m_nRows && A.numRows() == m_nCols,
       "MatrixWrapper::load_transposed(A) size(A) = {} x {} expected {} x {}\n",
-      A.numRows(), A.numCols(), this->nCols, this->nRows
+      A.numRows(), A.numCols(), m_nCols, m_nRows
     );
     #endif
-    for ( integer i=0; i < this->nRows; ++i )
-      for ( integer j=0; j < this->nCols; ++j )
-        this->data[iaddr(i,j)] = A(j,i);
+    for ( integer i=0; i < m_nRows; ++i )
+      for ( integer j=0; j < m_nCols; ++j )
+        m_data[iaddr(i,j)] = A(j,i);
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -185,7 +185,7 @@ namespace lapack_wrapper {
     valueType const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
-      this->data[ this->iaddr(pRows[idx],pCols[idx]) ] = pValues[idx];
+      m_data[ this->iaddr(pRows[idx],pCols[idx]) ] = pValues[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -201,7 +201,7 @@ namespace lapack_wrapper {
     valueType const * pValues;
     sp.get_data( pCols, pRows, pValues ); // read index transposed
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
-      this->data[ this->iaddr(pRows[idx],pCols[idx]) ] = pValues[idx];
+      m_data[ this->iaddr(pRows[idx],pCols[idx]) ] = pValues[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -217,7 +217,7 @@ namespace lapack_wrapper {
     valueType const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
-      this->data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
+      m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -233,7 +233,7 @@ namespace lapack_wrapper {
     valueType const * pValues;
     sp.get_data( pCols, pRows, pValues ); // read index transposed
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
-      this->data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
+      m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -247,7 +247,7 @@ namespace lapack_wrapper {
     integer         nnz
   ) {
     for ( integer idx = 0; idx < nnz; ++idx )
-      this->data[ this->iaddr(rows[idx],cols[idx]) ] = vals[idx];
+      m_data[ this->iaddr(rows[idx],cols[idx]) ] = vals[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -264,8 +264,8 @@ namespace lapack_wrapper {
       integer   ii = rows[idx];
       integer   jj = cols[idx];
       valueType rr = vals[idx];
-      this->data[ this->iaddr(ii,jj) ] = rr;
-      if ( ii != jj ) this->data[ this->iaddr(jj,ii) ] = rr;
+      m_data[ this->iaddr(ii,jj) ] = rr;
+      if ( ii != jj ) m_data[ this->iaddr(jj,ii) ] = rr;
     }
   }
 
@@ -282,7 +282,7 @@ namespace lapack_wrapper {
     integer         nnz
   ) {
     for ( integer idx = 0; idx < nnz; ++idx )
-      this->data[ this->iaddr(i_offs+rows[idx],j_offs+cols[idx]) ] = vals[idx];
+      m_data[ this->iaddr(i_offs+rows[idx],j_offs+cols[idx]) ] = vals[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -301,8 +301,8 @@ namespace lapack_wrapper {
       integer   ii = i_offs+rows[idx];
       integer   jj = j_offs+cols[idx];
       valueType rr = vals[idx];
-      this->data[ this->iaddr(ii,jj) ] = rr;
-      if ( ii != jj ) this->data[ this->iaddr(jj,ii) ] = rr;
+      m_data[ this->iaddr(ii,jj) ] = rr;
+      if ( ii != jj ) m_data[ this->iaddr(jj,ii) ] = rr;
     }
   }
 
@@ -317,7 +317,7 @@ namespace lapack_wrapper {
     integer         j
   ) {
     for ( integer k = 0; k < nnz; ++k )
-      data[i_row[k]+j*ldData] = values[k];
+      m_data[i_row[k]+j*m_ldData] = values[k];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -331,7 +331,7 @@ namespace lapack_wrapper {
     integer   const j_col[]
   ) {
     for ( integer k = 0; k < nnz; ++k )
-      data[i+j_col[k]*ldData] = values[k];
+      m_data[i+j_col[k]*m_ldData] = values[k];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -340,10 +340,10 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::add( valueType alpha, valueType const data_in[], integer ldData_in ) {
     geadd(
-      this->nRows, this->nCols,
+      m_nRows, m_nCols,
       alpha, data_in, ldData_in,
-      1.0, this->data, this->ldData,
-      this->data, this->ldData
+      1.0, m_data, m_ldData,
+      m_data, m_ldData
     );
   }
 
@@ -353,10 +353,10 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::add( valueType const data_in[], integer ldData_in ) {
     geadd(
-      this->nRows, this->nCols,
+      m_nRows, m_nCols,
       1.0, data_in, ldData_in,
-      1.0, this->data, this->ldData,
-      this->data, this->ldData
+      1.0, m_data, m_ldData,
+      m_data, m_ldData
     );
   }
 
@@ -373,8 +373,7 @@ namespace lapack_wrapper {
     valueType const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
-      this->data[ this->iaddr(pRows[idx],pCols[idx]) ]
-        += pValues[idx];
+      m_data[ this->iaddr(pRows[idx],pCols[idx]) ] += pValues[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -390,8 +389,7 @@ namespace lapack_wrapper {
     valueType const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
-      this->data[ this->iaddr(pRows[idx],pCols[idx]) ]
-        += alpha * pValues[idx];
+      m_data[ this->iaddr(pRows[idx],pCols[idx]) ] += alpha * pValues[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -408,8 +406,7 @@ namespace lapack_wrapper {
     valueType const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
-      this->data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ]
-        += pValues[idx];
+      m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] += pValues[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -427,8 +424,7 @@ namespace lapack_wrapper {
     valueType const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
-      this->data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ]
-        += alpha * pValues[idx];
+      m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] += alpha * pValues[idx];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -448,14 +444,14 @@ namespace lapack_wrapper {
 
   template <typename T>
   Matrix<T>::Matrix( Matrix<T> const & rhs )
-  : MatrixWrapper<T>( nullptr, rhs.nRows, rhs.nCols, rhs.nRows )
+  : MatrixWrapper<T>( nullptr, rhs.m_nRows, rhs.m_nCols, rhs.m_nRows )
   , m_mem("Matrix")
   {
-    size_t sz = rhs.nRows*rhs.nCols;
+    size_t sz = rhs.m_nRows*rhs.m_nCols;
     m_mem.allocate( sz );
-    this->data = m_mem( sz );
-    gecopy( rhs.nRows,  rhs.nCols, rhs.data, rhs.ldData,
-            this->data, this->ldData );
+    m_data = m_mem( sz );
+    gecopy( rhs.m_nRows, rhs.m_nCols, rhs.m_data, rhs.m_ldData,
+            m_data, m_ldData );
   }
 
   template <typename T>
@@ -464,7 +460,7 @@ namespace lapack_wrapper {
   , m_mem("Matrix")
   {
     m_mem.allocate( size_t(nr*nc) );
-    this->data = m_mem( size_t(nr*nc) );
+    m_data = m_mem( size_t(nr*nc) );
   }
 
   template <typename T>
@@ -477,14 +473,14 @@ namespace lapack_wrapper {
   template <typename T>
   Matrix<T> const &
   Matrix<T>::operator = ( Matrix<T> const & rhs ) {
-    size_t sz = rhs.nRows*rhs.nCols;
+    size_t sz = rhs.m_nRows*rhs.m_nCols;
     m_mem.allocate( sz );
-    this->data   = m_mem( sz );
-    this->nRows  = rhs.nRows;
-    this->nCols  = rhs.nCols;
-    this->ldData = rhs.nRows;
-    gecopy( rhs.nRows,  rhs.nCols, rhs.data, rhs.ldData,
-            this->data, this->ldData );
+    m_data   = m_mem( sz );
+    m_nRows  = rhs.m_nRows;
+    m_nCols  = rhs.m_nCols;
+    m_ldData = rhs.m_nRows;
+    gecopy( rhs.m_nRows,  rhs.m_nCols, rhs.m_data, rhs.m_ldData,
+            m_data, m_ldData );
     return *this;
   }
 

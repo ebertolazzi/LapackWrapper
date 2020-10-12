@@ -2049,20 +2049,20 @@ namespace lapack_wrapper {
     real                AMAX,
     EquilibrationType & equ
   ) {
+    character buffer[10];
     #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(slaqge)(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, equilibrate_blas[equ]
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
     BLASFUNC(slaqge)(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, equilibrate_blas[equ]
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     slaqge(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX,
-      const_cast<character*>(equilibrate_blas[equ])
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(slaqge)(
@@ -2070,11 +2070,17 @@ namespace lapack_wrapper {
       const_cast<real*>(R),
       const_cast<real*>(C),
       &ROWCND, &COLCND, &AMAX,
-      const_cast<character*>(equilibrate_blas[equ])
+      buffer
     );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
+    switch ( buffer[0] ) {
+    case 'N': equ = NO_EQUILIBRATE;      break;
+    case 'R': equ = EQUILIBRATE_ROWS;    break;
+    case 'C': equ = EQUILIBRATE_COLUMNS; break;
+    case 'B': equ = EQUILIBRATE_BOTH;    break;
+    }
   }
 
   inline
@@ -2091,20 +2097,20 @@ namespace lapack_wrapper {
     doublereal          AMAX,
     EquilibrationType & equ
   ) {
+    character buffer[10];
     #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(dlaqge)(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, equilibrate_blas[equ]
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
     BLASFUNC(dlaqge)(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, equilibrate_blas[equ]
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlaqge(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX,
-      const_cast<character*>(equilibrate_blas[equ])
+      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dlaqge)(
@@ -2112,11 +2118,17 @@ namespace lapack_wrapper {
       const_cast<doublereal*>(R),
       const_cast<doublereal*>(C),
       &ROWCND, &COLCND, &AMAX,
-      const_cast<character*>(equilibrate_blas[equ])
+      buffer
     );
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
+    switch ( buffer[0] ) {
+    case 'N': equ = NO_EQUILIBRATE;      break;
+    case 'R': equ = EQUILIBRATE_ROWS;    break;
+    case 'C': equ = EQUILIBRATE_COLUMNS; break;
+    case 'B': equ = EQUILIBRATE_BOTH;    break;
+    }
   }
 
   /*
@@ -3064,6 +3076,220 @@ namespace lapack_wrapper {
   }
 
   #endif
+
+  /*\
+   *
+   *  Purpose
+   *  =======
+   *
+   *  DLASCL2 performs a diagonal scaling on a vector:
+   *    x <-- D * x
+   *  where the diagonal matrix D is stored as a vector.
+   *
+   *  Eventually to be replaced by BLAS_dge_diag_scale in the new BLAS
+   *  standard.
+   *
+   *  Arguments
+   *  =========
+   *
+   *     M       (input) INTEGER
+   *     The number of rows of D and X. M >= 0.
+   *
+   *     N       (input) INTEGER
+   *     The number of columns of D and X. N >= 0.
+   *
+   *     D       (input) DOUBLE PRECISION array, length M
+   *     Diagonal matrix D, stored as a vector of length M.
+   *
+   *     X       (input/output) DOUBLE PRECISION array, dimension (LDX,N)
+   *     On entry, the vector X to be scaled by D.
+   *     On exit, the scaled vector.
+   *
+   *     LDX     (input) INTEGER
+   *     The leading dimension of the vector X. LDX >= 0.
+   *
+   *  =====================================================================
+  \*/
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
+  // use standard Lapack routine
+  extern "C" {
+    void
+    LAPACK_F77NAME(dlascl2)(
+      integer    const * M,
+      integer    const * N,
+      doublereal const * D,
+      doublereal       * X,
+      integer    const * LDX
+    );
+
+    void
+    LAPACK_F77NAME(slascl2)(
+      integer const * M,
+      integer const * N,
+      real    const * D,
+      real          * X,
+      integer const * LDX
+    );
+  }
+  #endif
+
+  inline
+  void
+  lascl2(
+    integer    M,
+    integer    N,
+    real const D[],
+    real       X[],
+    integer    LDX
+  ) {
+    #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    CLAPACKNAME(slascl2)( &M, &N, const_cast<real*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(slascl2)( &M, &N, D, X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+    LAPACK_F77NAME(slascl2)( &M, &N, const_cast<real*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_slascl2( &M, &N, const_cast<real*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_MKL)
+    slascl2( &M, &N, const_cast<real*>(D), X, &LDX );
+    #else
+    #error "LapackWrapper undefined mapping!"
+    #endif
+  }
+
+  inline
+  void
+  lascl2(
+    integer          M,
+    integer          N,
+    doublereal const D[],
+    doublereal       X[],
+    integer          LDX
+  ) {
+    #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    CLAPACKNAME(dlascl2)( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dlascl2)( &M, &N, D, X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+    LAPACK_F77NAME(dlascl2)( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_dlascl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_MKL)
+    dlascl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    #else
+    #error "LapackWrapper undefined mapping!"
+    #endif
+  }
+
+  /*\
+   *
+   *  Purpose
+   *  =======
+   *
+   *  DLARSCL2 performs a reciprocal diagonal scaling on an vector:
+   *    x <-- inv(D) * x
+   *  where the diagonal matrix D is stored as a vector.
+   *
+   *  Eventually to be replaced by BLAS_dge_diag_scale in the new BLAS
+   *  standard.
+   *
+   *  Arguments
+   *  =========
+   *
+   *     M       (input) INTEGER
+   *     The number of rows of D and X. M >= 0.
+   *
+   *     N       (input) INTEGER
+   *     The number of columns of D and X. N >= 0.
+   *
+   *     D       (input) DOUBLE PRECISION array, length M
+   *     Diagonal matrix D, stored as a vector of length M.
+   *
+   *     X       (input/output) DOUBLE PRECISION array, dimension (LDX,N)
+   *     On entry, the vector X to be scaled by D.
+   *     On exit, the scaled vector.
+   *
+   *     LDX     (input) INTEGER
+   *     The leading dimension of the vector X. LDX >= 0.
+   *
+   *  =====================================================================
+  \*/
+  #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)
+  // use standard Lapack routine
+  extern "C" {
+    void
+    LAPACK_F77NAME(dlarscl2)(
+      integer    const * M,
+      integer    const * N,
+      doublereal const * D,
+      doublereal       * X,
+      integer    const * LDX
+    );
+
+    void
+    LAPACK_F77NAME(slarscl2)(
+      integer const * M,
+      integer const * N,
+      real    const * D,
+      real          * X,
+      integer const * LDX
+    );
+  }
+  #endif
+
+  inline
+  void
+  larscl2(
+    integer    M,
+    integer    N,
+    real const D[],
+    real       X[],
+    integer    LDX
+  ) {
+    #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    CLAPACKNAME(slarscl2)( &M, &N, const_cast<real*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(slarscl2)( &M, &N, D, X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+    LAPACK_F77NAME(slarscl2)( &M, &N, const_cast<real*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_slascl2( &M, &N, const_cast<real*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_MKL)
+    slarscl2( &M, &N, const_cast<real*>(D), X, &LDX );
+    #else
+    #error "LapackWrapper undefined mapping!"
+    #endif
+  }
+
+  inline
+  void
+  larscl2(
+    integer          M,
+    integer          N,
+    doublereal const D[],
+    doublereal       X[],
+    integer          LDX
+  ) {
+    #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    CLAPACKNAME(dlarscl2)( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
+          defined(LAPACK_WRAPPER_USE_ATLAS)
+    LAPACK_F77NAME(dlarscl2)( &M, &N, D, X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+    LAPACK_F77NAME(dlarscl2)( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    LAPACK_dlascl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    #elif defined(LAPACK_WRAPPER_USE_MKL)
+    dlarscl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    #else
+    #error "LapackWrapper undefined mapping!"
+    #endif
+  }
 
   /*
   //   _____ _                            _

@@ -37,16 +37,17 @@
 #include "code/sparse.cxx"
 #include "code/rank_estimate.cxx"
 
-#include "code++/lu.cxx"
-#include "code++/qr.cxx"
-#include "code++/svd.cxx"
+#include "code++/band.cxx"
+#include "code++/block_trid.cxx"
+#include "code++/eig.cxx"
 #include "code++/ls.cxx"
 #include "code++/lsc.cxx"
-#include "code++/trid.cxx"
-#include "code++/band.cxx"
+#include "code++/lu.cxx"
+#include "code++/pinv.cxx"
 #include "code++/qn.cxx"
-#include "code++/eig.cxx"
-#include "code++/block_trid.cxx"
+#include "code++/qr.cxx"
+#include "code++/svd.cxx"
+#include "code++/trid.cxx"
 
 namespace lapack_wrapper {
 
@@ -89,50 +90,14 @@ namespace lapack_wrapper {
   template class SVD<real>;
   template class SVD<doublereal>;
 
-  template class LSS_no_alloc<real>;
-  template class LSS_no_alloc<doublereal>;
-  template class LSS<real>;
-  template class LSS<doublereal>;
-
-  template class LSY_no_alloc<real>;
-  template class LSY_no_alloc<doublereal>;
-  template class LSY<real>;
-  template class LSY<doublereal>;
-
-  template class LSC<real>;
-  template class LSC<doublereal>;
-
-  template class TridiagonalSPD<real>;
-  template class TridiagonalSPD<doublereal>;
-
-  template class TridiagonalLU<real>;
-  template class TridiagonalLU<doublereal>;
-
-  template class TridiagonalQR<real>;
-  template class TridiagonalQR<doublereal>;
-
-  template class BlockTridiagonalSymmetic<real>;
-  template class BlockTridiagonalSymmetic<doublereal>;
-
   template class BandedLU<real>;
   template class BandedLU<doublereal>;
 
   template class BandedSPD<real>;
   template class BandedSPD<doublereal>;
 
-#if 0
-  template class LSQC<real>;
-  template class LSQC<doublereal>;
-#endif
-
-  template class QN<real>;
-  template class QN<doublereal>;
-
-  template class BFGS<real>;
-  template class BFGS<doublereal>;
-
-  template class DFP<real>;
-  template class DFP<doublereal>;
+  template class BlockTridiagonalSymmetic<real>;
+  template class BlockTridiagonalSymmetic<doublereal>;
 
   template class Eigenvalues<real>;
   template class Eigenvalues<doublereal>;
@@ -148,6 +113,42 @@ namespace lapack_wrapper {
 
   template class GeneralizedSVD<real>;
   template class GeneralizedSVD<doublereal>;
+
+  template class LSS_no_alloc<real>;
+  template class LSS_no_alloc<doublereal>;
+  template class LSS<real>;
+  template class LSS<doublereal>;
+
+  template class LSY_no_alloc<real>;
+  template class LSY_no_alloc<doublereal>;
+  template class LSY<real>;
+  template class LSY<doublereal>;
+
+  template class LSC<real>;
+  template class LSC<doublereal>;
+
+  template class PINV_no_alloc<real>;
+  template class PINV_no_alloc<doublereal>;
+  template class PINV<real>;
+  template class PINV<doublereal>;
+
+  template class QN<real>;
+  template class QN<doublereal>;
+
+  template class BFGS<real>;
+  template class BFGS<doublereal>;
+
+  template class DFP<real>;
+  template class DFP<doublereal>;
+
+  template class TridiagonalSPD<real>;
+  template class TridiagonalSPD<doublereal>;
+
+  template class TridiagonalLU<real>;
+  template class TridiagonalLU<doublereal>;
+
+  template class TridiagonalQR<real>;
+  template class TridiagonalQR<doublereal>;
 
 } // end namespace lapack_wrapper
 

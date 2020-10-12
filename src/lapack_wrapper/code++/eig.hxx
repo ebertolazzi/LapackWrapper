@@ -42,13 +42,14 @@ namespace lapack_wrapper {
     typedef SparseCCOOR<T>   Sparse;
 
   private:
-    Malloc<valueType> mem_real;
+    Malloc<valueType> m_mem;
 
-    integer     N, Lwork;
-    valueType * Re;
-    valueType * Im;
-    valueType * Work;
-    valueType * A_saved;
+    integer     m_N;
+    integer     m_Lwork;
+    valueType * m_Re;
+    valueType * m_Im;
+    valueType * m_Work;
+    valueType * m_A_saved;
 
     void allocate( integer N );
     void compute( );
@@ -97,15 +98,16 @@ namespace lapack_wrapper {
     typedef SparseCCOOR<T>   Sparse;
 
   private:
-    Malloc<valueType> mem_real;
+    Malloc<valueType> m_mem;
 
-    integer     N, Lwork;
-    valueType * Re;
-    valueType * Im;
-    valueType * A_saved;
-    valueType * VL;
-    valueType * VR;
-    valueType * Work;
+    integer     m_N;
+    integer     m_Lwork;
+    valueType * m_Re;
+    valueType * m_Im;
+    valueType * m_A_saved;
+    valueType * m_VL;
+    valueType * m_VR;
+    valueType * m_Work;
 
     void allocate( integer N );
     void compute( );
@@ -161,15 +163,16 @@ namespace lapack_wrapper {
     typedef SparseCCOOR<T>   Sparse;
 
   private:
-    Malloc<valueType> mem_real;
+    Malloc<valueType> m_mem;
 
-    integer     N, Lwork;
-    valueType * alphaRe;
-    valueType * alphaIm;
-    valueType * beta;
-    valueType * Work;
-    valueType * A_saved;
-    valueType * B_saved;
+    integer     m_N;
+    integer     m_Lwork;
+    valueType * m_alphaRe;
+    valueType * m_alphaIm;
+    valueType * m_beta;
+    valueType * m_Work;
+    valueType * m_A_saved;
+    valueType * m_B_saved;
 
     void allocate( integer N );
     void compute( );
@@ -239,25 +242,29 @@ namespace lapack_wrapper {
     typedef SparseCCOOR<T>   Sparse;
 
   private:
-    Malloc<valueType> mem_real;
-    Malloc<integer>   mem_int;
+    Malloc<valueType> m_mem_real;
+    Malloc<integer>   m_mem_int;
 
-    integer     N, Lwork, ilo, ihi;
-    valueType   abnorm, bbnorm;
-    valueType * alphaRe;
-    valueType * alphaIm;
-    valueType * beta;
-    valueType * A_saved;
-    valueType * B_saved;
-    valueType * VL;
-    valueType * VR;
-    valueType * lscale;
-    valueType * rscale;
-    valueType * rconde;
-    valueType * rcondv;
-    valueType * Work;
-    integer   * iWork;
-    integer   * bWork;
+    integer     m_N;
+    integer     m_Lwork;
+    integer     m_ilo;
+    integer     m_ihi;
+    valueType   m_abnorm;
+    valueType   m_bbnorm;
+    valueType * m_alphaRe;
+    valueType * m_alphaIm;
+    valueType * m_beta;
+    valueType * m_A_saved;
+    valueType * m_B_saved;
+    valueType * m_VL;
+    valueType * m_VR;
+    valueType * m_lscale;
+    valueType * m_rscale;
+    valueType * m_rconde;
+    valueType * m_rcondv;
+    valueType * m_Work;
+    integer   * m_iWork;
+    integer   * m_bWork;
 
     void allocate( integer N );
     void compute( );
@@ -317,12 +324,12 @@ namespace lapack_wrapper {
     void getLeftEigenvector( std::vector<std::vector<complexType> > & vecs ) const;
     void getRightEigenvector( std::vector<std::vector<complexType> > & vecs ) const;
 
-    valueType         balancedAnorm1() const { return this->abnorm; }
-    valueType         balancedBnorm1() const { return this->bbnorm; }
-    valueType const * getLscale() const { return this->lscale; }
-    valueType const * getRscale() const { return this->rscale; }
-    valueType const * RcondEigenvalues()  const { return this->rconde; }
-    valueType const * RcondEigenvectors() const { return this->rcondv; }
+    valueType         balancedAnorm1()    const { return m_abnorm; }
+    valueType         balancedBnorm1()    const { return m_bbnorm; }
+    valueType const * getLscale()         const { return m_lscale; }
+    valueType const * getRscale()         const { return m_rscale; }
+    valueType const * RcondEigenvalues()  const { return m_rconde; }
+    valueType const * RcondEigenvectors() const { return m_rcondv; }
   };
 
 }

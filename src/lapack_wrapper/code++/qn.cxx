@@ -38,12 +38,12 @@ namespace lapack_wrapper {
       N > 0 && N <= 1000,
       "QN<T>::allocate, N = {} must be > 0 and <= 1000\n", N
     );
-    n = N;
-    allocReals.allocate( size_t(n*(n+3)) );
-    H = allocReals( size_t(n*n) );
-    s = allocReals( size_t(n) );
-    y = allocReals( size_t(n) );
-    z = allocReals( size_t(n) );
+    m_n = N;
+    m_allocReals.allocate( size_t(m_n*(m_n+3)) );
+    m_H = m_allocReals( size_t(m_n*m_n) );
+    m_s = m_allocReals( size_t(m_n) );
+    m_y = m_allocReals( size_t(m_n) );
+    m_z = m_allocReals( size_t(m_n) );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,12 +51,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QN<T>::print( ostream_type & stream ) const {
-    for ( integer i = 0; i < this->n; ++i ) {
-      for ( integer j = 0; j < this->n; ++j )
-        stream
-          << std::setw(14)
-          << this->H[i+j*this->n]
-          << ' ';
+    for ( integer i = 0; i < m_n; ++i ) {
+      for ( integer j = 0; j < m_n; ++j )
+        fmt::print( stream, "{:14} ", m_H[i+j*m_n] );
       stream << '\n';
     }
   }
@@ -75,12 +72,12 @@ namespace lapack_wrapper {
     valueType const y[],
     valueType const s[]
   ) {
-    valueType sy = dot( n, s, 1, y, 1 );
+    valueType sy = dot( m_n, s, 1, y, 1 );
     if ( sy > 0 ) {
-      mult( y, z );
-      valueType yHy = dot( n, z, 1, y, 1 );
-      syr( LOWER, n, (1+yHy/sy)/sy, s, 1, H, n );
-      syr2( LOWER, n, -1/sy, s, 1, z, 1, H, n );
+      mult( y, m_z );
+      valueType yHy = dot( m_n, m_z, 1, y, 1 );
+      syr( LOWER, m_n, (1+yHy/sy)/sy, s, 1, m_H, m_n );
+      syr2( LOWER, m_n, -1/sy, s, 1, m_z, 1, m_H, m_n );
     }
   }
 
@@ -98,12 +95,12 @@ namespace lapack_wrapper {
     valueType const y[],
     valueType const s[]
   ) {
-    valueType sy = dot( n, s, 1, y, 1 );
+    valueType sy = dot( m_n, s, 1, y, 1 );
     if ( sy > 0 ) {
-      mult( y, z );
-      valueType yHy = dot( n, z, 1, y, 1 );
-      syr( LOWER, n, -1/yHy, z, 1, H, n );
-      syr( LOWER, n,   1/sy, s, 1, H, n );
+      mult( y, m_z );
+      valueType yHy = dot( m_n, m_z, 1, y, 1 );
+      syr( LOWER, m_n, -1/yHy, m_z, 1, m_H, m_n );
+      syr( LOWER, m_n,   1/sy, s, 1, m_H, m_n );
     }
   }
 

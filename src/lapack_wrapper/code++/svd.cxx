@@ -35,6 +35,72 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  integer
+  SVD_no_alloc<T>::get_Lwork( integer NR, integer NC ) const {
+    integer minRC = std::min(NR,NC);
+    valueType tmp;
+    integer info = gesvd(
+      REDUCED, REDUCED,
+      NR, NC,
+      nullptr, NR,
+      nullptr,
+      nullptr, NR,
+      nullptr, minRC,
+      &tmp, -1
+    );
+    LW_ASSERT( info == 0, "SVD::allocate, in gesvd info = {}\n", info );
+    integer L = integer(tmp);
+    info = gesdd(
+      REDUCED,
+      NR, NC,
+      nullptr, NR,
+      nullptr,
+      nullptr, NR,
+      nullptr, minRC,
+      &tmp, -1, nullptr
+    );
+    LW_ASSERT( info == 0, "SVD::allocate, in gesdd info = {}\n", info );
+    if ( integer(tmp) > L ) L = integer(tmp);
+    return L;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  SVD_no_alloc<T>::no_allocate(
+    integer     NR,
+    integer     NC,
+    integer     Lwork,
+    valueType * Work,
+    integer     Liwork,
+    integer   * iWork
+  ) {
+    m_nRows = NR;
+    m_nCols = NC;
+    m_minRC = std::min( NR, NC );
+    integer ibf   = (m_minRC*(NR+NC+1)+NR*NC);
+    integer Lmin  = ibf+this->get_Lwork( NR, NC );
+    integer Limin = 8*m_minRC;
+    m_LworkSVD = Lwork - ibf;
+    LW_ASSERT(
+      Lwork >= Lmin && Liwork >= Limin,
+      "SVD_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {},...)\n"
+      "Lwork must be >= {} and Liwork >= {}\n",
+      NR, NC, Lwork, Liwork, Lmin, Limin
+    );
+    valueType * ptr = Work;
+    m_Afactorized = ptr; ptr += NR*NC;
+    m_Umat        = ptr; ptr += m_minRC*NR;
+    m_VTmat       = ptr; ptr += m_minRC*NC;
+    m_Svec        = ptr; ptr += m_minRC;
+    m_WorkSVD     = ptr;
+    m_IWorkSVD    = iWork;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   void
   SVD_no_alloc<T>::factorize(
     char const      who[],
@@ -42,23 +108,23 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info = gecopy(
-      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+      m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
     );
     LW_ASSERT(
       info == 0,
       "SVD_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
-    switch ( svd_used ) {
+    switch ( m_svd_used ) {
     case USE_GESVD:
       info = gesvd(
         REDUCED,
         REDUCED,
-        this->nRows, this->nCols, this->Afactorized, this->nRows,
-        this->Svec,
-        this->Umat,  this->nRows,
-        this->VTmat, this->minRC,
-        this->Work,  this->Lwork
+        m_nRows, m_nCols, m_Afactorized, m_nRows,
+        m_Svec,
+        m_Umat,    m_nRows,
+        m_VTmat,   m_minRC,
+        m_WorkSVD, m_LworkSVD
       );
       LW_ASSERT(
         info == 0,
@@ -69,11 +135,11 @@ namespace lapack_wrapper {
     case USE_GESDD:
       info = gesdd(
         REDUCED,
-        this->nRows, this->nCols, this->Afactorized, this->nRows,
-        this->Svec,
-        this->Umat,  this->nRows,
-        this->VTmat, this->minRC,
-        this->Work,  this->Lwork, this->IWork
+        m_nRows, m_nCols, m_Afactorized, m_nRows,
+        m_Svec,
+        m_Umat,    m_nRows,
+        m_VTmat,   m_minRC,
+        m_WorkSVD, m_LworkSVD, m_IWorkSVD
       );
       LW_ASSERT(
         info == 0,
@@ -90,29 +156,29 @@ namespace lapack_wrapper {
   bool
   SVD_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
     integer info = gecopy(
-      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+      m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
     );
     if ( info != 0 ) return false;
-    switch ( svd_used ) {
+    switch ( m_svd_used ) {
     case USE_GESVD:
       info = gesvd(
         REDUCED,
         REDUCED,
-        this->nRows, this->nCols, this->Afactorized, this->nRows,
-        this->Svec,
-        this->Umat,  this->nRows,
-        this->VTmat, this->minRC,
-        this->Work,  this->Lwork
+        m_nRows, m_nCols, m_Afactorized, m_nRows,
+        m_Svec,
+        m_Umat,    m_nRows,
+        m_VTmat,   m_minRC,
+        m_WorkSVD, m_LworkSVD
       );
       break;
     case USE_GESDD:
       info = gesdd(
         REDUCED,
-        this->nRows, this->nCols, this->Afactorized, this->nRows,
-        this->Svec,
-        this->Umat,  this->nRows,
-        this->VTmat, this->minRC,
-        this->Work,  this->Lwork, this->IWork
+        m_nRows, m_nCols, m_Afactorized, m_nRows,
+        m_Svec,
+        m_Umat,    m_nRows,
+        m_VTmat,   m_minRC,
+        m_WorkSVD, m_LworkSVD, m_IWorkSVD
       );
       break;
     }
@@ -128,10 +194,10 @@ namespace lapack_wrapper {
     // U*S*VT*x=b --> VT^T S^+ U^T b
     // U  nRow x minRC
     // VT minRC x nCol
-    valueType smin = rcond*Svec[0];
-    Ut_mul( 1.0, xb, 1, 0.0, Work, 1 );
-    for ( integer i = 0; i < minRC; ++i ) Work[i] /= std::max(Svec[i],smin);
-    V_mul( 1.0, Work, 1, 0.0, xb, 1 );
+    valueType smin = m_rcond*m_Svec[0];
+    Ut_mul( 1.0, xb, 1, 0.0, m_WorkSVD, 1 );
+    for ( integer i = 0; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
+    V_mul( 1.0, m_WorkSVD, 1, 0.0, xb, 1 );
     return true;
   }
 
@@ -144,13 +210,12 @@ namespace lapack_wrapper {
     // U*S*VT*x=b --> VT^T S^+ U^T b
     // U  nRow x minRC
     // VT minRC x nCol
-    valueType smin = rcond*Svec[0];
-    Vt_mul( 1.0, xb, 1, 0.0, Work, 1 );
-    for ( integer i = 0; i < minRC; ++i ) Work[i] /= std::max(Svec[i],smin);
-    U_mul( 1.0, Work, 1, 0.0, xb, 1 );
+    valueType smin = m_rcond*m_Svec[0];
+    Vt_mul( 1.0, xb, 1, 0.0, m_WorkSVD, 1 );
+    for ( integer i = 0; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
+    U_mul( 1.0, m_WorkSVD, 1, 0.0, xb, 1 );
     return true;
   }
-
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -159,44 +224,16 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SVD<T>::allocate( integer NR, integer NC ) {
-
-    if ( this->nRows != NR || this->nCols != NC ) {
+    if ( m_nRows != NR || m_nCols != NC ) {
       integer minRC = std::min(NR,NC);
-      valueType tmp;
-      integer info = gesvd(
-        REDUCED, REDUCED,
-        NR, NC,
-        nullptr, NR,
-        nullptr,
-        nullptr, NR,
-        nullptr, minRC,
-        &tmp, -1
-      );
-      LW_ASSERT( info == 0, "SVD::allocate, in gesvd info = {}\n", info );
-      integer L = integer(tmp);
-      info = gesdd(
-        REDUCED,
-        NR, NC,
-        nullptr, NR,
-        nullptr,
-        nullptr, NR,
-        nullptr, minRC,
-        &tmp, -1, nullptr
-      );
-      LW_ASSERT( info == 0, "SVD::allocate, in gesdd info = {}\n", info );
-      if ( integer(tmp) > L ) L = integer(tmp);
-
-      allocReals.allocate( size_t(NR*NC+minRC*(NR+NC+1)+L) );
-      allocIntegers.allocate( size_t(8*minRC) );
-
+      integer L     = NR*NC+minRC*(NR+NC+1)+this->get_Lwork( NR, NC );
+      integer L1    = 8*minRC;
+      allocReals.allocate( size_t(L) );
+      allocIntegers.allocate( size_t(L1) );
       this->no_allocate(
-        NR, NC, L,
-        this->allocReals( size_t(NR*NC) ),
-        this->allocReals( size_t(L) ),
-        this->allocReals( size_t(minRC*NR) ),
-        this->allocReals( size_t(minRC*NC) ),
-        this->allocReals( size_t(minRC) ),
-        this->allocIntegers( size_t(8*this->minRC) )
+        NR, NC,
+        L,  this->allocReals( size_t(L) ),
+        L1, this->allocIntegers( size_t(L1) )
       );
     }
   }
@@ -213,24 +250,26 @@ namespace lapack_wrapper {
 
   template <typename T>
   GeneralizedSVD<T>::GeneralizedSVD()
-  : mem_real("GeneralizedSVD(real)")
-  , mem_int("GeneralizedSVD(int)")
-  , M(0)
-  , N(0)
-  , P(0)
-  , K(0)
-  , L(0)
-  , Lwork(0)
-  , Work(nullptr)
-  , IWork(nullptr)
-  , alpha_saved(nullptr)
-  , beta_saved(nullptr)
-  , A_saved(nullptr)
-  , B_saved(nullptr)
-  , U_saved(nullptr)
-  , V_saved(nullptr)
-  , Q_saved(nullptr)
+  : m_mem_real("GeneralizedSVD(real)")
+  , m_mem_int("GeneralizedSVD(int)")
+  , m_M(0)
+  , m_N(0)
+  , m_P(0)
+  , m_K(0)
+  , m_L(0)
+  , m_Lwork(0)
+  , m_Work(nullptr)
+  , m_IWork(nullptr)
+  , m_alpha_saved(nullptr)
+  , m_beta_saved(nullptr)
+  , m_A_saved(nullptr)
+  , m_B_saved(nullptr)
+  , m_U_saved(nullptr)
+  , m_V_saved(nullptr)
+  , m_Q_saved(nullptr)
   {}
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   GeneralizedSVD<T>::GeneralizedSVD(
@@ -240,45 +279,49 @@ namespace lapack_wrapper {
     valueType const A[], integer ldA_in,
     valueType const B[], integer ldB_in
   )
-  : mem_real("GeneralizedSVD(real)")
-  , mem_int("GeneralizedSVD(int)")
-  , M(0)
-  , N(0)
-  , P(0)
-  , K(0)
-  , L(0)
-  , Lwork(0)
-  , Work(nullptr)
-  , IWork(nullptr)
-  , alpha_saved(nullptr)
-  , beta_saved(nullptr)
-  , A_saved(nullptr)
-  , B_saved(nullptr)
-  , U_saved(nullptr)
-  , V_saved(nullptr)
-  , Q_saved(nullptr)
+  : m_mem_real("GeneralizedSVD(real)")
+  , m_mem_int("GeneralizedSVD(int)")
+  , m_M(0)
+  , m_N(0)
+  , m_P(0)
+  , m_K(0)
+  , m_L(0)
+  , m_Lwork(0)
+  , m_Work(nullptr)
+  , m_IWork(nullptr)
+  , m_alpha_saved(nullptr)
+  , m_beta_saved(nullptr)
+  , m_A_saved(nullptr)
+  , m_B_saved(nullptr)
+  , m_U_saved(nullptr)
+  , m_V_saved(nullptr)
+  , m_Q_saved(nullptr)
   { this->setup( m, n, p, A, ldA_in, B, ldB_in ); }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   GeneralizedSVD<T>::GeneralizedSVD( MatW const & A, MatW const & B )
-  : mem_real("GeneralizedSVD(real)")
-  , mem_int("GeneralizedSVD(int)")
-  , M(0)
-  , N(0)
-  , P(0)
-  , K(0)
-  , L(0)
-  , Lwork(0)
-  , Work(nullptr)
-  , IWork(nullptr)
-  , alpha_saved(nullptr)
-  , beta_saved(nullptr)
-  , A_saved(nullptr)
-  , B_saved(nullptr)
-  , U_saved(nullptr)
-  , V_saved(nullptr)
-  , Q_saved(nullptr)
+  : m_mem_real("GeneralizedSVD(real)")
+  , m_mem_int("GeneralizedSVD(int)")
+  , m_M(0)
+  , m_N(0)
+  , m_P(0)
+  , m_K(0)
+  , m_L(0)
+  , m_Lwork(0)
+  , m_Work(nullptr)
+  , m_IWork(nullptr)
+  , m_alpha_saved(nullptr)
+  , m_beta_saved(nullptr)
+  , m_A_saved(nullptr)
+  , m_B_saved(nullptr)
+  , m_U_saved(nullptr)
+  , m_V_saved(nullptr)
+  , m_Q_saved(nullptr)
   { this->setup( A, B ); }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   GeneralizedSVD<T>::GeneralizedSVD(
@@ -294,29 +337,31 @@ namespace lapack_wrapper {
     integer   const B_row[],
     integer   const B_col[]
   )
-  : mem_real("GeneralizedSVD(real)")
-  , mem_int("GeneralizedSVD(int)")
-  , M(0)
-  , N(0)
-  , P(0)
-  , K(0)
-  , L(0)
-  , Lwork(0)
-  , Work(nullptr)
-  , IWork(nullptr)
-  , alpha_saved(nullptr)
-  , beta_saved(nullptr)
-  , A_saved(nullptr)
-  , B_saved(nullptr)
-  , U_saved(nullptr)
-  , V_saved(nullptr)
-  , Q_saved(nullptr)
+  : m_mem_real("GeneralizedSVD(real)")
+  , m_mem_int("GeneralizedSVD(int)")
+  , m_M(0)
+  , m_N(0)
+  , m_P(0)
+  , m_K(0)
+  , m_L(0)
+  , m_Lwork(0)
+  , m_Work(nullptr)
+  , m_IWork(nullptr)
+  , m_alpha_saved(nullptr)
+  , m_beta_saved(nullptr)
+  , m_A_saved(nullptr)
+  , m_B_saved(nullptr)
+  , m_U_saved(nullptr)
+  , m_V_saved(nullptr)
+  , m_Q_saved(nullptr)
   { this->setup(
       m, n, p,
       A_nnz, A_values, A_row, A_col,
       B_nnz, B_values, B_row, B_col
     );
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
@@ -341,59 +386,63 @@ namespace lapack_wrapper {
       "GeneralizedSVD<T>::allocate(m={},n={},p={}) failed, info = {}\n",
       m, n, p, info
     );
-    this->M     = m;
-    this->N     = n;
-    this->P     = p;
-    this->Lwork = integer(wL);
+    m_M     = m;
+    m_N     = n;
+    m_P     = p;
+    m_Lwork = integer(wL);
 
-    this->mem_int.allocate( n );
-    this->IWork = mem_int( n );
+    m_mem_int.allocate( n );
+    m_IWork = m_mem_int( n );
 
-    this->mem_real.allocate( Lwork + (m+p+2)*n + m*m + p*p + n*n );
-    this->Work        = mem_real( Lwork );
-    this->alpha_saved = mem_real( n );
-    this->beta_saved  = mem_real( n );
-    this->A_saved     = mem_real( m*n );
-    this->B_saved     = mem_real( p*n );
-    this->U_saved     = mem_real( m*m );
-    this->V_saved     = mem_real( p*p );
-    this->Q_saved     = mem_real( n*n );
+    m_mem_real.allocate( m_Lwork + (m+p+2)*n + m*m + p*p + n*n );
+    m_Work        = m_mem_real( m_Lwork );
+    m_alpha_saved = m_mem_real( n );
+    m_beta_saved  = m_mem_real( n );
+    m_A_saved     = m_mem_real( m*n );
+    m_B_saved     = m_mem_real( p*n );
+    m_U_saved     = m_mem_real( m*m );
+    m_V_saved     = m_mem_real( p*p );
+    m_Q_saved     = m_mem_real( n*n );
 
-    this->U.setup( this->U_saved, m, m, m );
-    this->V.setup( this->V_saved, p, p, p );
-    this->Q.setup( this->Q_saved, n, n, n );
-    this->Dbeta.setup( this->beta_saved, n );
-    this->Dalpha.setup( this->alpha_saved, n );
+    m_U.setup( m_U_saved, m, m, m );
+    m_V.setup( m_V_saved, p, p, p );
+    m_Q.setup( m_Q_saved, n, n, n );
+    m_Dbeta.setup( m_beta_saved, n );
+    m_Dalpha.setup( m_alpha_saved, n );
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
   GeneralizedSVD<T>::compute() {
     integer info = ggsvd(
       true, true, true,
-      this->M, this->N, this->P, this->K, this->L,
-      this->A_saved, this->M,
-      this->B_saved, this->P,
-      this->alpha_saved,
-      this->beta_saved,
-      this->U_saved, this->M,
-      this->V_saved, this->P,
-      this->Q_saved, this->N,
-      Work,
-      Lwork,
-      IWork
+      m_M, m_N, m_P, m_K, m_L,
+      m_A_saved, m_M,
+      m_B_saved, m_P,
+      m_alpha_saved,
+      m_beta_saved,
+      m_U_saved, m_M,
+      m_V_saved, m_P,
+      m_Q_saved, m_N,
+      m_Work,
+      m_Lwork,
+      m_IWork
     );
     LW_ASSERT(
       info == 0, "GeneralizedSVD<T>::compute() failed, info = {}\n", info
     );
     // R is stored in A(1:K+L,N-K-L+1:N) on exit.
-    this->R.setup(
-      this->A_saved + this->M * ( this->N-this->K-this->L ),
-      this->N,
-      this->K+this->L,
-      this->M
+    m_R.setup(
+      m_A_saved + m_M * ( m_N-m_K-m_L ),
+      m_N,
+      m_K+m_L,
+      m_M
     );
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
@@ -405,18 +454,20 @@ namespace lapack_wrapper {
     valueType const B[], integer ldB
   ) {
     this->allocate( m, n, p );
-    integer info = gecopy( m, n, A, ldA, A_saved, m );
+    integer info = gecopy( m, n, A, ldA, m_A_saved, m );
     LW_ASSERT(
       info == 0,
       "GeneralizedSVD<T>::setup(...) failed to copy A, info = {}\n", info
     );
-    info = gecopy( p, n, B, ldB, B_saved, p );
+    info = gecopy( p, n, B, ldB, m_B_saved, p );
     LW_ASSERT(
       info == 0,
       "GeneralizedSVD<T>::setup(...) failed to copy B, info = {}\n", info
     );
     compute();
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
@@ -430,8 +481,10 @@ namespace lapack_wrapper {
       "A is {} x {} and B is {} x {}\n",
       A.numRows(), A.numCols(), B.numRows(), B.numCols()
     );
-    this->setup( m, n, p, A.get_data(), A.lDim(), B.get_data(), B.lDim() );
+    this->setup( m, n, p, A.data(), A.lDim(), B.data(), B.lDim() );
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
@@ -449,33 +502,37 @@ namespace lapack_wrapper {
     integer   const B_col[]
   ) {
     this->allocate( m, n, p );
-    lapack_wrapper::zero( this->N*this->M, this->A_saved, 1 );
-    lapack_wrapper::zero( this->P*this->M, this->B_saved, 1 );
+    lapack_wrapper::zero( m_N*m_M, m_A_saved, 1 );
+    lapack_wrapper::zero( m_P*m_M, m_B_saved, 1 );
     for ( integer k = 0; k < A_nnz; ++k ) A(A_row[k],A_col[k]) = A_values[k];
     for ( integer k = 0; k < B_nnz; ++k ) B(B_row[k],B_col[k]) = B_values[k];
     compute();
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   template <typename T>
   void
   GeneralizedSVD<T>::info( ostream_type & stream, valueType eps ) const {
-    stream
-      << "A = " << this->M << " x " << this->N << '\n'
-      << "B = " << this->P << " x " << this->N << '\n';
-    for ( integer i = 0; i < this->N; ++i ) {
-      T a =  this->alpha_saved[i];
-      T b =  this->beta_saved[i];
-      stream
-        << "alpha[" << i << "]=" << std::setw(14) << a
-        << ", beta[" << i << "]=" << std::setw(14) << b
-        << ", alpha^2+beta^2 = " << a*a+b*b << '\n';
+    fmt::print( stream,
+      "A = {} x {}\n"
+      "B = {} x {}\n",
+      m_M, m_N, m_P, m_N
+    );
+    for ( integer i = 0; i < m_N; ++i ) {
+      T a = m_alpha_saved[i];
+      T b = m_beta_saved[i];
+      fmt::print( stream,
+        "alpha[{}]={}, beta[{}]={}, alpha^2+beta^2 = {}\n",
+        i, a, i, b, a*a+b*b
+      );
     }
-    stream << "U\n"; this->U.print0( stream, eps );
-    stream << "V\n"; this->V.print0( stream, eps );
-    stream << "Q\n"; this->Q.print0( stream, eps );
-    stream << "R\n"; this->R.print0( stream, eps );
-    stream << "C\n"; this->Dalpha.print( stream );
-    stream << "S\n"; this->Dbeta.print( stream );
+    stream << "U\n"; m_U.print0( stream, eps );
+    stream << "V\n"; m_V.print0( stream, eps );
+    stream << "Q\n"; m_Q.print0( stream, eps );
+    stream << "R\n"; m_R.print0( stream, eps );
+    stream << "C\n"; m_Dalpha.print( stream );
+    stream << "S\n"; m_Dbeta.print( stream );
     stream << '\n';
   }
 

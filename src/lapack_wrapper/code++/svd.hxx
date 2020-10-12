@@ -39,22 +39,22 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer nRows;
-    integer nCols;
+    integer     m_nRows;
+    integer     m_nCols;
 
-    valueType * Afactorized;
-    valueType * Work;
-    valueType * Umat;
-    valueType * VTmat;
-    valueType * Svec;
-    integer   * IWork;
+    valueType * m_Afactorized;
+    valueType * m_WorkSVD;
+    valueType * m_Umat;
+    valueType * m_VTmat;
+    valueType * m_Svec;
+    integer   * m_IWorkSVD;
 
-    valueType rcond;
+    valueType   m_rcond;
 
-    integer minRC;
-    integer Lwork;
+    integer     m_minRC;
+    integer     m_LworkSVD;
 
-    SVD_USED svd_used;
+    SVD_USED    m_svd_used;
 
   public:
 
@@ -64,47 +64,36 @@ namespace lapack_wrapper {
 
     SVD_no_alloc( SVD_USED _svd_used = USE_GESVD )
     : LinearSystemSolver<T>()
-    , nRows(0)
-    , nCols(0)
-    , Afactorized(nullptr)
-    , Work(nullptr)
-    , Umat(nullptr)
-    , VTmat(nullptr)
-    , Svec(nullptr)
-    , IWork(nullptr)
-    , rcond(machineEps<valueType>())
-    , minRC(0)
-    , Lwork(0)
-    , svd_used(_svd_used)
+    , m_nRows(0)
+    , m_nCols(0)
+    , m_Afactorized(nullptr)
+    , m_WorkSVD(nullptr)
+    , m_Umat(nullptr)
+    , m_VTmat(nullptr)
+    , m_Svec(nullptr)
+    , m_IWorkSVD(nullptr)
+    , m_rcond(machineEps<valueType>())
+    , m_minRC(0)
+    , m_LworkSVD(0)
+    , m_svd_used(_svd_used)
     {}
 
     virtual
     ~SVD_no_alloc() LAPACK_WRAPPER_OVERRIDE
     {}
 
+    integer
+    get_Lwork( integer NR, integer NC ) const;
+
     void
     no_allocate(
       integer     NR,
       integer     NC,
-      integer     L,
-      valueType * _Afactorized,
-      valueType * _Work,
-      valueType * _Umat,
-      valueType * _VTmat,
-      valueType * _Svec,
-      integer   * _IWork
-    ) {
-      this->nRows       = NR;
-      this->nCols       = NC;
-      this->Lwork       = L;
-      this->minRC       = std::min( NR, NC );
-      this->Afactorized = _Afactorized;
-      this->Work        = _Work;
-      this->Umat        = _Umat;
-      this->VTmat       = _VTmat;
-      this->Svec        = _Svec;
-      this->IWork       = _IWork;
-    }
+      integer     Lwork,
+      valueType * Work,
+      integer     Liwork,
+      integer   * iWork
+    );
 
     /*!
      *  Do SVD factorization of a rectangular matrix
@@ -125,11 +114,11 @@ namespace lapack_wrapper {
 
     void
     setRcond( valueType r )
-    { rcond = r; }
+    { m_rcond = r; }
 
-    valueType U    ( integer i, integer j ) const { return Umat[i+j*this->nRows]; }
-    valueType V    ( integer i, integer j ) const { return VTmat[j+i*this->nCols]; }
-    valueType sigma( integer i )            const { return Svec[i]; }
+    valueType U    ( integer i, integer j ) const { return m_Umat[i+j*m_nRows]; }
+    valueType V    ( integer i, integer j ) const { return m_VTmat[j+i*m_nCols]; }
+    valueType sigma( integer i )            const { return m_Svec[i]; }
 
     //! y <- alpha * U * x + beta * y
     void
@@ -143,8 +132,8 @@ namespace lapack_wrapper {
     ) const {
       gemv(
         NO_TRANSPOSE,
-        this->nRows, this->minRC,
-        alpha, this->Umat, this->nRows,
+        m_nRows, m_minRC,
+        alpha, m_Umat, m_nRows,
         x, incx,
         beta, y, incy
       );
@@ -162,8 +151,8 @@ namespace lapack_wrapper {
     ) const {
       gemv(
         TRANSPOSE,
-        this->nRows, this->minRC,
-        alpha, this->Umat, this->nRows,
+        m_nRows, m_minRC,
+        alpha, m_Umat, m_nRows,
         x, incx,
         beta, y, incy
       );
@@ -181,8 +170,8 @@ namespace lapack_wrapper {
     ) const {
       gemv(
         TRANSPOSE,
-        this->minRC, this->nCols,
-        alpha, this->VTmat, this->nRows,
+        m_minRC, m_nCols,
+        alpha, m_VTmat, m_nRows,
         x, incx,
         beta, y, incy
       );
@@ -200,8 +189,8 @@ namespace lapack_wrapper {
     ) const {
       gemv(
         NO_TRANSPOSE,
-        this->minRC, this->nCols,
-        alpha, this->VTmat, this->nRows,
+        m_minRC, m_nCols,
+        alpha, m_VTmat, m_nRows,
         x, incx,
         beta, y, incy
       );
@@ -239,6 +228,19 @@ namespace lapack_wrapper {
     Malloc<integer>   allocIntegers;
 
   public:
+
+    using SVD_no_alloc<T>::m_nRows;
+    using SVD_no_alloc<T>::m_nCols;
+    using SVD_no_alloc<T>::m_Afactorized;
+    using SVD_no_alloc<T>::m_WorkSVD;
+    using SVD_no_alloc<T>::m_Umat;
+    using SVD_no_alloc<T>::m_VTmat;
+    using SVD_no_alloc<T>::m_Svec;
+    using SVD_no_alloc<T>::m_IWorkSVD;
+    using SVD_no_alloc<T>::m_rcond;
+    using SVD_no_alloc<T>::m_minRC;
+    using SVD_no_alloc<T>::m_LworkSVD;
+    using SVD_no_alloc<T>::m_svd_used;
 
     using SVD_no_alloc<T>::solve;
     using SVD_no_alloc<T>::t_solve;
@@ -317,22 +319,27 @@ namespace lapack_wrapper {
     typedef MatrixWrapper<T> MatW;
     typedef SparseCCOOR<T>   Sparse;
 
-    Malloc<valueType> mem_real;
-    Malloc<integer>   mem_int;
+    Malloc<valueType> m_mem_real;
+    Malloc<integer>   m_mem_int;
 
-    integer     M, N, P, K, L, Lwork;
-    valueType * Work;
-    integer   * IWork;
-    valueType * alpha_saved;
-    valueType * beta_saved;
-    valueType * A_saved;
-    valueType * B_saved;
-    valueType * U_saved;
-    valueType * V_saved;
-    valueType * Q_saved;
+    integer     m_M;
+    integer     m_N;
+    integer     m_P;
+    integer     m_K;
+    integer     m_L;
+    integer     m_Lwork;
+    valueType * m_Work;
+    integer   * m_IWork;
+    valueType * m_alpha_saved;
+    valueType * m_beta_saved;
+    valueType * m_A_saved;
+    valueType * m_B_saved;
+    valueType * m_U_saved;
+    valueType * m_V_saved;
+    valueType * m_Q_saved;
 
-    MatrixWrapper<T>     U, V, Q, R;
-    DiagMatrixWrapper<T> Dalpha, Dbeta;
+    MatrixWrapper<T>     m_U, m_V, m_Q, m_R;
+    DiagMatrixWrapper<T> m_Dalpha, m_Dbeta;
 
     void allocate( integer N, integer M, integer P );
     void compute( );
@@ -340,11 +347,11 @@ namespace lapack_wrapper {
     // R is stored in A(1:K+L,N-K-L+1:N) on exit.
     valueType &
     A( integer i, integer j )
-    { return this->A_saved[i+j*this->M]; }
+    { return m_A_saved[i+j*m_M]; }
 
     valueType &
     B( integer i, integer j )
-    { return this->B_saved[i+j*this->P]; }
+    { return m_B_saved[i+j*m_P]; }
 
   public:
 
@@ -400,18 +407,18 @@ namespace lapack_wrapper {
       integer   const B_col[]
     );
 
-    MatrixWrapper<T> const & getU() const { return this->U; }
-    MatrixWrapper<T> const & getV() const { return this->V; }
-    MatrixWrapper<T> const & getQ() const { return this->Q; }
-    MatrixWrapper<T> const & getR() const { return this->R; }
-    DiagMatrixWrapper<T> const & getC() const { return this->Dalpha; }
-    DiagMatrixWrapper<T> const & gerS() const { return this->Dbeta; }
+    MatrixWrapper<T>     const & getU() const { return m_U; }
+    MatrixWrapper<T>     const & getV() const { return m_V; }
+    MatrixWrapper<T>     const & getQ() const { return m_Q; }
+    MatrixWrapper<T>     const & getR() const { return m_R; }
+    DiagMatrixWrapper<T> const & getC() const { return m_Dalpha; }
+    DiagMatrixWrapper<T> const & gerS() const { return m_Dbeta; }
 
-    valueType const & alpha( integer i ) const { return alpha_saved[i]; }
-    valueType const & beta( integer i ) const { return beta_saved[i]; }
+    valueType const & alpha( integer i ) const { return m_alpha_saved[i]; }
+    valueType const & beta( integer i ) const { return m_beta_saved[i]; }
 
-    valueType const * getAlpha() const { return alpha_saved; }
-    valueType const * getBeta()  const { return beta_saved; }
+    valueType const * getAlpha() const { return m_alpha_saved; }
+    valueType const * getBeta()  const { return m_beta_saved; }
 
     void info( ostream_type & stream, valueType eps = 0 ) const;
 

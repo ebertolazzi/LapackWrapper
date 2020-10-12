@@ -39,19 +39,19 @@ namespace lapack_wrapper {
 
   protected:
 
-    mutable Malloc<valueType> allocWork;
-    mutable valueType       * Work;
-    mutable integer           Lwork;
+    mutable Malloc<valueType> m_allocWork;
+    mutable valueType       * m_Work;
+    mutable integer           m_Lwork;
 
-    integer nRows;
-    integer nCols;
+    integer m_nRows;
+    integer m_nCols;
 
-            valueType * Amat;
-    mutable valueType * sigma;
-    mutable valueType * AmatWork;
-    mutable integer     rank;
+            valueType * m_Amat;
+    mutable valueType * m_sigma;
+    mutable valueType * m_AmatWork;
+    mutable integer     m_rank;
 
-    valueType rcond;
+    valueType m_rcond;
 
   public:
 
@@ -62,21 +62,21 @@ namespace lapack_wrapper {
     explicit
     LSS_no_alloc()
     : LinearSystemSolver<T>()
-    , allocWork("LSS_no_alloc-allocReals")
-    , Work(nullptr)
-    , Lwork(0)
-    , nRows(0)
-    , nCols(0)
-    , Amat(nullptr)
-    , sigma(nullptr)
-    , AmatWork(nullptr)
-    , rank(0)
-    , rcond(-1)
+    , m_allocWork("LSS_no_alloc-allocReals")
+    , m_Work(nullptr)
+    , m_Lwork(0)
+    , m_nRows(0)
+    , m_nCols(0)
+    , m_Amat(nullptr)
+    , m_sigma(nullptr)
+    , m_AmatWork(nullptr)
+    , m_rank(0)
+    , m_rcond(-1)
     {}
 
     virtual
     ~LSS_no_alloc() LAPACK_WRAPPER_OVERRIDE
-    { allocWork.free(); }
+    { m_allocWork.free(); }
 
     integer getL( integer NR, integer NC, integer nrhs ) const;
 
@@ -84,16 +84,9 @@ namespace lapack_wrapper {
     no_allocate(
       integer     NR,
       integer     NC,
-      valueType * _Amat,
-      valueType * _sigma,
-      valueType * _AmatWork
-    ) {
-      this->nRows    = NR;
-      this->nCols    = NC;
-      this->Amat     = _Amat;
-      this->sigma    = _sigma;
-      this->AmatWork = _AmatWork;
-    }
+      integer     Lwork,
+      valueType * Work
+    );
 
     /*!
      *  Do SVD factorization of a rectangular matrix
@@ -111,9 +104,9 @@ namespace lapack_wrapper {
     bool
     factorize( valueType const A[], integer LDA );
 
-    void      setRcond( valueType r )     { this->rcond = r; }
-    integer   getRank()             const { return this->rank; }
-    valueType getSigma( integer i ) const { return this->sigma[i]; }
+    void      setRcond( valueType r )     { m_rcond = r; }
+    integer   getRank()             const { return m_rank; }
+    valueType getSigma( integer i ) const { return m_sigma[i]; }
 
     /*\
     :|:         _      _               _
@@ -152,9 +145,20 @@ namespace lapack_wrapper {
 
   protected:
 
-    Malloc<valueType> allocReals;
+    Malloc<valueType> m_allocReals;
 
   public:
+
+    using LSS_no_alloc<T>::m_allocWork;
+    using LSS_no_alloc<T>::m_Work;
+    using LSS_no_alloc<T>::m_Lwork;
+    using LSS_no_alloc<T>::m_nRows;
+    using LSS_no_alloc<T>::m_nCols;
+    using LSS_no_alloc<T>::m_Amat;
+    using LSS_no_alloc<T>::m_sigma;
+    using LSS_no_alloc<T>::m_AmatWork;
+    using LSS_no_alloc<T>::m_rank;
+    using LSS_no_alloc<T>::m_rcond;
 
     using LSS_no_alloc<T>::solve;
     using LSS_no_alloc<T>::t_solve;
@@ -166,12 +170,12 @@ namespace lapack_wrapper {
     explicit
     LSS()
     : LSS_no_alloc<T>()
-    , allocReals("LSS-allocReals")
+    , m_allocReals("LSS-allocReals")
     {}
 
     virtual
     ~LSS() LAPACK_WRAPPER_OVERRIDE
-    { allocReals.free(); }
+    { m_allocReals.free(); }
 
     void
     allocate( integer NR, integer NC );
@@ -224,20 +228,20 @@ namespace lapack_wrapper {
 
   protected:
 
-    mutable Malloc<valueType> allocWork;
-    mutable valueType       * Work;
-    mutable integer           Lwork;
+    mutable Malloc<valueType> m_allocWork;
+    mutable valueType       * m_Work;
+    mutable integer           m_Lwork;
 
-    integer nRows;
-    integer nCols;
+    integer m_nRows;
+    integer m_nCols;
 
-    valueType * Amat;
+    valueType * m_Amat;
 
-    mutable valueType * AmatWork;
-    mutable integer   * jpvt;
-    mutable integer     rank;
+    mutable valueType * m_AmatWork;
+    mutable integer   * m_jpvt;
+    mutable integer     m_rank;
 
-    valueType rcond;
+    valueType m_rcond;
 
   public:
 
@@ -248,16 +252,16 @@ namespace lapack_wrapper {
     explicit
     LSY_no_alloc()
     : LinearSystemSolver<T>()
-    , allocWork("LSY_no_alloc")
-    , Work(nullptr)
-    , Lwork(0)
-    , nRows(0)
-    , nCols(0)
-    , Amat(nullptr)
-    , AmatWork(nullptr)
-    , jpvt(nullptr)
-    , rank(0)
-    , rcond(-1)
+    , m_allocWork("LSY_no_alloc")
+    , m_Work(nullptr)
+    , m_Lwork(0)
+    , m_nRows(0)
+    , m_nCols(0)
+    , m_Amat(nullptr)
+    , m_AmatWork(nullptr)
+    , m_jpvt(nullptr)
+    , m_rank(0)
+    , m_rcond(-1)
     {}
 
     virtual
@@ -270,16 +274,11 @@ namespace lapack_wrapper {
     no_allocate(
       integer     NR,
       integer     NC,
-      valueType * _Amat,
-      valueType * _AmatWork,
-      integer   * _jpvt
-    ) {
-      this->nRows    = NR;
-      this->nCols    = NC;
-      this->Amat     = _Amat;
-      this->AmatWork = _AmatWork;
-      this->jpvt     = _jpvt;
-    }
+      integer     Lwork,
+      valueType * Work,
+      integer     Liwork,
+      integer   * iWork
+    );
 
     /*!
      *  Do SVD factorization of a rectangular matrix
@@ -298,11 +297,11 @@ namespace lapack_wrapper {
 
     void
     setRcond( valueType r )
-    { rcond = r; }
+    { m_rcond = r; }
 
     integer
     getRank() const
-    { return rank; }
+    { return m_rank; }
 
     /*\
     :|:         _      _               _
@@ -341,10 +340,20 @@ namespace lapack_wrapper {
 
   protected:
 
-    Malloc<valueType> allocReals;
-    Malloc<integer>   allocInts;
+    Malloc<valueType> m_allocReals;
+    Malloc<integer>   m_allocInts;
 
   public:
+
+    using LSY_no_alloc<T>::m_allocWork;
+    using LSY_no_alloc<T>::m_Work;
+    using LSY_no_alloc<T>::m_Lwork;
+    using LSY_no_alloc<T>::m_nRows;
+    using LSY_no_alloc<T>::m_nCols;
+    using LSY_no_alloc<T>::m_Amat;
+    using LSY_no_alloc<T>::m_AmatWork;
+    using LSY_no_alloc<T>::m_rank;
+    using LSY_no_alloc<T>::m_rcond;
 
     using LSY_no_alloc<T>::factorize;
     using LSY_no_alloc<T>::solve;
@@ -355,13 +364,13 @@ namespace lapack_wrapper {
     explicit
     LSY()
     : LSY_no_alloc<T>()
-    , allocReals("LSY-allocReals")
-    , allocInts("LSY-allocInts")
+    , m_allocReals("LSY-allocReals")
+    , m_allocInts("LSY-allocInts")
     {}
 
     virtual
     ~LSY() LAPACK_WRAPPER_OVERRIDE
-    { allocReals.free(); allocInts.free(); }
+    { m_allocReals.free(); m_allocInts.free(); }
 
     void
     allocate( integer NR, integer NC );

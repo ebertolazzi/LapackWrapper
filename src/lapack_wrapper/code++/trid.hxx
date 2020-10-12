@@ -40,25 +40,25 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<valueType> allocReals;
+    Malloc<valueType> m_allocReals;
 
-    valueType * L;
-    valueType * D;
-    valueType * WORK;
-    integer     nRC;
+    valueType * m_L;
+    valueType * m_D;
+    valueType * m_WORK;
+    integer     m_nRC;
 
   public:
 
     using LinearSystemSolver<T>::factorize;
 
     TridiagonalSPD()
-    : allocReals("allocReals")
-    , nRC(0)
+    : m_allocReals("allocReals")
+    , m_nRC(0)
     {}
 
     virtual
     ~TridiagonalSPD() LAPACK_WRAPPER_OVERRIDE
-    { allocReals.free(); }
+    { m_allocReals.free(); }
 
     valueType cond1( valueType norm1 ) const;
 
@@ -148,33 +148,33 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<valueType> allocReals;
-    Malloc<integer>   allocIntegers;
+    Malloc<valueType> m_allocReals;
+    Malloc<integer>   m_allocIntegers;
 
-    valueType * L;
-    valueType * D;
-    valueType * U;
-    valueType * U2;
-    valueType * WORK;
-    integer   * IPIV;
-    integer   * IWORK;
+    valueType * m_L;
+    valueType * m_D;
+    valueType * m_U;
+    valueType * m_U2;
+    valueType * m_WORK;
+    integer   * m_IPIV;
+    integer   * m_IWORK;
 
-    integer     nRC;
+    integer     m_nRC;
 
   public:
 
     using LinearSystemSolver<T>::factorize;
 
     TridiagonalLU()
-    : allocReals("TridiagonalLU-allocReals")
-    , allocIntegers("TridiagonalLU-allocIntegers")
-    , nRC(0)
+    : m_allocReals("TridiagonalLU-allocReals")
+    , m_allocIntegers("TridiagonalLU-allocIntegers")
+    , m_nRC(0)
     {}
 
     virtual
     ~TridiagonalLU() LAPACK_WRAPPER_OVERRIDE {
-      allocReals.free();
-      allocIntegers.free();
+      m_allocReals.free();
+      m_allocIntegers.free();
     }
 
     valueType cond1( valueType norm1 ) const;
@@ -294,16 +294,16 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<valueType> allocReals;
+    Malloc<valueType> m_allocReals;
 
-    valueType * C;   // rotazioni givens
-    valueType * S;
-    valueType * BD;  // band triangular matrix
-    valueType * BU;  // band triangular matrix
-    valueType * BU2; // band triangular matrix
+    valueType * m_C;   // rotazioni givens
+    valueType * m_S;
+    valueType * m_BD;  // band triangular matrix
+    valueType * m_BU;  // band triangular matrix
+    valueType * m_BU2; // band triangular matrix
 
-    valueType   normInfA;
-    integer     nRC;
+    valueType   m_normInfA;
+    integer     m_nRC;
 
     void Rsolve( valueType xb[] ) const;
     void RsolveTransposed( valueType xb[] ) const;
@@ -313,13 +313,13 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::factorize;
 
     TridiagonalQR()
-    : allocReals("allocReals")
-    , nRC(0)
+    : m_allocReals("allocReals")
+    , m_nRC(0)
     {}
 
     virtual
     ~TridiagonalQR() LAPACK_WRAPPER_OVERRIDE {
-      allocReals.free();
+      m_allocReals.free();
     }
 
     void

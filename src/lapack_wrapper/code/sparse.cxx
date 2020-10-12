@@ -29,11 +29,9 @@ namespace lapack_wrapper {
     integer const * iRow;
     integer const * jCol;
     real    const * vals;
-    this->get_data(iRow, jCol, vals);
-    stream << std::scientific;
+    this->data(iRow, jCol, vals);
     for ( size_t i = 0; i < size_t(this->get_nnz()); ++i)
-      stream << iRow[i] << ", " << jCol[i] << ", " << vals[i] << '\n';
-    stream << std::flush;
+      fmt::print( stream, "{}, {}, {}\n", iRow[i], jCol[i], vals[i]);
   }
 
   template <typename T>

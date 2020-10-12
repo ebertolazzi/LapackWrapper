@@ -44,39 +44,40 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<valueType>  allocReals;
-    Malloc<integer>    allocIntegers;
-    Malloc<valueType*> allocRpointers;
-    Malloc<integer*>   allocIpointers;
+    Malloc<valueType>  m_allocReals;
+    Malloc<integer>    m_allocIntegers;
+    Malloc<valueType*> m_allocRpointers;
+    Malloc<integer*>   m_allocIpointers;
 
-    integer      nBlocks, nnz;
-    valueType ** D_blocks;
-    valueType ** L_blocks;
-    valueType *  Work;
-    integer   ** B_permutation;
-    integer   *  row_blocks;
-    bool         is_factorized;
+    integer      m_nBlocks;
+    integer      m_nnz;
+    valueType ** m_D_blocks;
+    valueType ** m_L_blocks;
+    valueType *  m_Work;
+    integer   ** m_B_permutation;
+    integer   *  m_row_blocks;
+    bool         m_is_factorized;
 
   public:
 
     using LinearSystemSolver<T>::factorize;
 
     BlockTridiagonalSymmetic()
-    : allocReals("BlockTridiagonalSymmetic-allocReals")
-    , allocIntegers("BlockTridiagonalSymmetic-allocIntegers")
-    , allocRpointers("BlockTridiagonalSymmetic-allocRpointers")
-    , allocIpointers("BlockTridiagonalSymmetic-allocIpointers")
-    , nBlocks(0)
-    , nnz(0)
-    , is_factorized(false)
+    : m_allocReals("BlockTridiagonalSymmetic-allocReals")
+    , m_allocIntegers("BlockTridiagonalSymmetic-allocIntegers")
+    , m_allocRpointers("BlockTridiagonalSymmetic-allocRpointers")
+    , m_allocIpointers("BlockTridiagonalSymmetic-allocIpointers")
+    , m_nBlocks(0)
+    , m_nnz(0)
+    , m_is_factorized(false)
     {}
 
     virtual
     ~BlockTridiagonalSymmetic() LAPACK_WRAPPER_OVERRIDE {
-      allocReals.free();
-      allocIntegers.free();
-      allocRpointers.free();
-      allocIpointers.free();
+      m_allocReals.free();
+      m_allocIntegers.free();
+      m_allocRpointers.free();
+      m_allocIpointers.free();
     }
 
     void
@@ -88,10 +89,10 @@ namespace lapack_wrapper {
     void
     zero();
 
-    integer numBlocks() const { return nBlocks; }
+    integer numBlocks() const { return m_nBlocks; }
 
-    integer DnumRows( integer n ) const { return row_blocks[n+1] - row_blocks[n]; }
-    integer DnumCols( integer n ) const { return row_blocks[n+1] - row_blocks[n]; }
+    integer DnumRows( integer n ) const { return m_row_blocks[n+1] - m_row_blocks[n]; }
+    integer DnumCols( integer n ) const { return m_row_blocks[n+1] - m_row_blocks[n]; }
 
     integer LnumRows( integer n ) const { return DnumRows(n+1); }
     integer LnumCols( integer n ) const { return DnumCols(n); }

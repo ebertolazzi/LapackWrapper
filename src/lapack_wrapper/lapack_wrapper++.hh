@@ -80,8 +80,8 @@ namespace lapack_wrapper {
 
     //! malloc object constructor
     explicit
-    Malloc( std::string const & __name )
-    : m_name(__name)
+    Malloc( std::string const & name )
+    : m_name(name)
     , m_numTotValues(0)
     , m_numTotReserved(0)
     , m_numAllocated(0)
@@ -185,7 +185,7 @@ namespace lapack_wrapper {
     std::string out;
     for ( integer i = 0; i < nr; ++i ) {
       for ( integer j = 0; j < nc; ++j )
-        out += fmt::format("{:16.8} ",A[i+j*ldA]);
+        out += fmt::format("{:>14} ",fmt::format("{:.6}",A[i+j*ldA]));
       out += '\n';
     }
     return out;
@@ -198,7 +198,7 @@ namespace lapack_wrapper {
   std::string
   print_matrix( MatrixWrapper<t_Value> const & Amat ) {
     return print_matrix(
-      Amat.numRows(), Amat.numCols(), Amat.get_data(), Amat.lDim()
+      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim()
     );
   }
 
@@ -216,6 +216,12 @@ namespace lapack_wrapper {
   class Matrix : public MatrixWrapper<T> {
     lapack_wrapper::Malloc<T> m_mem;
   public:
+
+    using MatrixWrapper<T>::m_nRows;   //!< Number of rows
+    using MatrixWrapper<T>::m_nCols;   //!< Number of columns
+    using MatrixWrapper<T>::m_ldData;  //!< Leadind dimension
+    using MatrixWrapper<T>::m_data;    //!< pointer to matrix data
+
     Matrix();
     Matrix( Matrix<T> const & M );
     Matrix( integer nr, integer nc );
@@ -378,30 +384,30 @@ namespace lapack_wrapper {
 
     bool
     solve( MatrixWrapper<valueType> & M )
-    { return solve( M.numCols(), M.get_data(),  M.lDim() ); }
+    { return solve( M.numCols(), M.data(), M.lDim() ); }
 
     void
     solve( char const who[], MatrixWrapper<valueType> & M )
-    { this->solve( who, M.numCols(), M.get_data(),  M.lDim() ); }
+    { this->solve( who, M.numCols(), M.data(), M.lDim() ); }
 
     bool
     t_solve( MatrixWrapper<valueType> & M )
-    { return t_solve( M.numCols(), M.get_data(),  M.lDim() ); }
+    { return t_solve( M.numCols(), M.data(), M.lDim() ); }
 
     void
     t_solve( char const who[], MatrixWrapper<valueType> & M )
-    { this->t_solve( who, M.numCols(), M.get_data(),  M.lDim() ); }
+    { this->t_solve( who, M.numCols(), M.data(), M.lDim() ); }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     void
     factorize( char const who[], MatrixWrapper<valueType> const & M ) {
-      this->factorize( who, M.numRows(), M.numCols(), M.get_data(), M.lDim() );
+      this->factorize( who, M.numRows(), M.numCols(), M.data(), M.lDim() );
     }
 
     bool
     factorize( MatrixWrapper<valueType> const & M ) {
-      return this->factorize( M.numRows(), M.numCols(), M.get_data(), M.lDim() );
+      return this->factorize( M.numRows(), M.numCols(), M.data(), M.lDim() );
     }
 
     void
@@ -435,12 +441,12 @@ namespace lapack_wrapper {
 
     void
     t_factorize( char const who[], MatrixWrapper<valueType> const & M ) {
-      this->t_factorize( who, M.numRows(), M.numCols(), M.get_data(), M.lDim() );
+      this->t_factorize( who, M.numRows(), M.numCols(), M.data(), M.lDim() );
     }
 
     bool
     t_factorize( MatrixWrapper<valueType> const & M ) {
-      return this->t_factorize( M.numRows(), M.numCols(), M.get_data(), M.lDim() );
+      return this->t_factorize( M.numRows(), M.numCols(), M.data(), M.lDim() );
     }
 
   };
@@ -450,13 +456,15 @@ namespace lapack_wrapper {
 #include "code++/lu.hxx"
 #include "code++/qr.hxx"
 #include "code++/svd.hxx"
+
+#include "code++/band.hxx"
+#include "code++/block_trid.hxx"
+#include "code++/eig.hxx"
 #include "code++/ls.hxx"
 #include "code++/lsc.hxx"
-#include "code++/trid.hxx"
-#include "code++/band.hxx"
+#include "code++/pinv.hxx"
 #include "code++/qn.hxx"
-#include "code++/eig.hxx"
-#include "code++/block_trid.hxx"
+#include "code++/trid.hxx"
 
 namespace lapack_wrapper {
 
@@ -492,45 +500,14 @@ namespace lapack_wrapper {
   extern template class SVD<real>;
   extern template class SVD<doublereal>;
 
-  extern template class LSS_no_alloc<real>;
-  extern template class LSS_no_alloc<doublereal>;
-  extern template class LSS<real>;
-  extern template class LSS<doublereal>;
-
-  extern template class LSY_no_alloc<real>;
-  extern template class LSY_no_alloc<doublereal>;
-  extern template class LSY<real>;
-  extern template class LSY<doublereal>;
-
-  extern template class LSC<real>;
-  extern template class LSC<doublereal>;
-
-  extern template class TridiagonalSPD<real>;
-  extern template class TridiagonalSPD<doublereal>;
-
-  extern template class TridiagonalLU<real>;
-  extern template class TridiagonalLU<doublereal>;
-
-  extern template class TridiagonalQR<real>;
-  extern template class TridiagonalQR<doublereal>;
-
-  extern template class BlockTridiagonalSymmetic<real>;
-  extern template class BlockTridiagonalSymmetic<doublereal>;
-
   extern template class BandedLU<real>;
   extern template class BandedLU<doublereal>;
 
   extern template class BandedSPD<real>;
   extern template class BandedSPD<doublereal>;
 
-  extern template class QN<real>;
-  extern template class QN<doublereal>;
-
-  extern template class BFGS<real>;
-  extern template class BFGS<doublereal>;
-
-  extern template class DFP<real>;
-  extern template class DFP<doublereal>;
+  extern template class BlockTridiagonalSymmetic<real>;
+  extern template class BlockTridiagonalSymmetic<doublereal>;
 
   extern template class Eigenvalues<real>;
   extern template class Eigenvalues<doublereal>;
@@ -546,6 +523,42 @@ namespace lapack_wrapper {
 
   extern template class GeneralizedSVD<real>;
   extern template class GeneralizedSVD<doublereal>;
+
+  extern template class LSS_no_alloc<real>;
+  extern template class LSS_no_alloc<doublereal>;
+  extern template class LSS<real>;
+  extern template class LSS<doublereal>;
+
+  extern template class LSY_no_alloc<real>;
+  extern template class LSY_no_alloc<doublereal>;
+  extern template class LSY<real>;
+  extern template class LSY<doublereal>;
+
+  extern template class LSC<real>;
+  extern template class LSC<doublereal>;
+
+  extern template class PINV_no_alloc<real>;
+  extern template class PINV_no_alloc<doublereal>;
+  extern template class PINV<real>;
+  extern template class PINV<doublereal>;
+
+  extern template class QN<real>;
+  extern template class QN<doublereal>;
+
+  extern template class BFGS<real>;
+  extern template class BFGS<doublereal>;
+
+  extern template class DFP<real>;
+  extern template class DFP<doublereal>;
+
+  extern template class TridiagonalSPD<real>;
+  extern template class TridiagonalSPD<doublereal>;
+
+  extern template class TridiagonalLU<real>;
+  extern template class TridiagonalLU<doublereal>;
+
+  extern template class TridiagonalQR<real>;
+  extern template class TridiagonalQR<doublereal>;
 
 } // end namespace lapack_wrapper
 

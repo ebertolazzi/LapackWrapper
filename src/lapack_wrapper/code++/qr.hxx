@@ -39,14 +39,14 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer nRows;
-    integer nCols;
-    integer nReflector;
-    integer Lwork;
+    integer m_nRows;
+    integer m_nCols;
+    integer m_nReflector;
+    integer m_LworkQR;
 
-    valueType * Afactorized;
-    valueType * WorkFactorized;
-    valueType * Tau;
+    valueType * m_Afactorized;
+    valueType * m_WorkQR;
+    valueType * m_Tau;
 
   public:
 
@@ -56,35 +56,28 @@ namespace lapack_wrapper {
 
     QR_no_alloc()
     : LinearSystemSolver<T>()
-    , nRows(0)
-    , nCols(0)
-    , nReflector(0)
-    , Lwork(0)
-    , Afactorized(nullptr)
-    , WorkFactorized(nullptr)
-    , Tau(nullptr)
+    , m_nRows(0)
+    , m_nCols(0)
+    , m_nReflector(0)
+    , m_LworkQR(0)
+    , m_Afactorized(nullptr)
+    , m_WorkQR(nullptr)
+    , m_Tau(nullptr)
     {}
 
     virtual
     ~QR_no_alloc() LAPACK_WRAPPER_OVERRIDE {}
 
+    integer
+    get_Lwork( integer NR, integer NC ) const;
+
     void
     no_allocate(
       integer     NR,
       integer     NC,
-      integer     _Lwork,
-      valueType * _Afactorized,
-      valueType * _WorkFactorized,
-      valueType * _Tau
-    ) {
-      this->nRows          = NR;
-      this->nCols          = NC;
-      this->nReflector     = std::min(NR,NC);
-      this->Lwork          = _Lwork;
-      this->Afactorized    = _Afactorized;
-      this->WorkFactorized = _WorkFactorized;
-      this->Tau            = _Tau;
-    }
+      integer     Lwork,
+      valueType * Work
+    );
 
     /*!
      * Do QR factorization of a rectangular matrix
@@ -122,65 +115,68 @@ namespace lapack_wrapper {
     //! x <- Q*x
     void
     Q_mul( valueType x[] ) const {
-      applyQ(
-        LEFT, NO_TRANSPOSE, this->nReflector, this->nRows, 1, x, this->nRows
-      );
+      applyQ( LEFT, NO_TRANSPOSE, m_nReflector, m_nRows, 1, x, m_nRows );
     }
 
     //! x <- Q'*x
     void
-    Qt_mul( valueType x[] ) const
-    { applyQ( LEFT, TRANSPOSE, nReflector, this->nRows, 1, x, this->nRows ); }
+    Qt_mul( valueType x[] ) const {
+      applyQ( LEFT, TRANSPOSE, m_nReflector, m_nRows, 1, x, m_nRows );
+    }
 
     //! C <- Q*C
     void
-    Q_mul( integer nr, integer nc, valueType C[], integer ldC ) const
-    { applyQ( LEFT, NO_TRANSPOSE, this->nReflector, nr, nc, C, ldC ); }
+    Q_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
+      applyQ( LEFT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    }
 
     void
     Q_mul( MatrixWrapper<T> & C ) const {
       applyQ(
-        LEFT, NO_TRANSPOSE, this->nReflector,
-        C.numRows(), C.numCols(), C.get_data(), C.lDim()
+        LEFT, NO_TRANSPOSE, m_nReflector,
+        C.numRows(), C.numCols(), C.data(), C.lDim()
       );
     }
 
     //! C <- Q'*C
     void
-    Qt_mul( integer nr, integer nc, valueType C[], integer ldC ) const
-    { applyQ( LEFT, TRANSPOSE, this->nReflector, nr, nc, C, ldC ); }
+    Qt_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
+      applyQ( LEFT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    }
 
     void
     Qt_mul( MatrixWrapper<T> & C ) const {
       applyQ(
-        LEFT, TRANSPOSE, this->nReflector,
-        C.numRows(), C.numCols(), C.get_data(), C.lDim()
+        LEFT, TRANSPOSE, m_nReflector,
+        C.numRows(), C.numCols(), C.data(), C.lDim()
       );
     }
 
     //! C <- C*Q
     void
-    mul_Q( integer nr, integer nc, valueType C[], integer ldC ) const
-    { applyQ( RIGHT, NO_TRANSPOSE, this->nReflector, nr, nc, C, ldC ); }
+    mul_Q( integer nr, integer nc, valueType C[], integer ldC ) const {
+      applyQ( RIGHT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    }
 
     void
     mul_Q( MatrixWrapper<T> & C ) const {
       applyQ(
-        RIGHT, NO_TRANSPOSE, this->nReflector,
-        C.numRows(), C.numCols(), C.get_data(), C.lDim()
+        RIGHT, NO_TRANSPOSE, m_nReflector,
+        C.numRows(), C.numCols(), C.data(), C.lDim()
       );
     }
 
     //! C <- C*Q'
     void
-    mul_Qt( integer nr, integer nc, valueType C[], integer ldC ) const
-    { applyQ( RIGHT, TRANSPOSE, this->nReflector, nr, nc, C, ldC ); }
+    mul_Qt( integer nr, integer nc, valueType C[], integer ldC ) const {
+      applyQ( RIGHT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    }
 
     void
     mul_Qt( MatrixWrapper<T> & C ) const {
       applyQ(
-        RIGHT, TRANSPOSE, this->nReflector,
-        C.numRows(), C.numCols(), C.get_data(), C.lDim()
+        RIGHT, TRANSPOSE, m_nReflector,
+        C.numRows(), C.numCols(), C.data(), C.lDim()
       );
     }
 
@@ -192,8 +188,8 @@ namespace lapack_wrapper {
       integer       rk,
       valueType     x[],
       integer       incx
-    ) const {
-      trsv( UPPER, TRANS, NON_UNIT, rk, this->Afactorized, this->nRows, x, incx );
+    ) const { // m_nRows = leading dimension
+      trsv( UPPER, TRANS, NON_UNIT, rk, m_Afactorized, m_nRows, x, incx );
     }
 
     void
@@ -205,10 +201,10 @@ namespace lapack_wrapper {
       valueType     alpha,
       valueType     Bmat[],
       integer       ldB
-    ) const {
+    ) const { // m_nRows = leading dimension
       trsm(
         SIDE, UPPER, TRANS, NON_UNIT,
-        nr, nc, alpha, this->Afactorized, this->nRows, Bmat, ldB
+        nr, nc, alpha, m_Afactorized, m_nRows, Bmat, ldB
       );
     }
 
@@ -218,12 +214,12 @@ namespace lapack_wrapper {
       Transposition              TRANS,
       valueType                  alpha,
       MatrixWrapper<valueType> & Bmat
-    ) const {
+    ) const { // m_nRows = leading dimension
       trsm(
         SIDE, UPPER, TRANS, NON_UNIT,
         Bmat.numRows(), Bmat.numCols(),
-        alpha, this->Afactorized, this->nRows,
-        Bmat.get_data(), Bmat.lDim()
+        alpha, m_Afactorized, m_nRows,
+        Bmat.data(), Bmat.lDim()
       );
     }
 
@@ -232,22 +228,22 @@ namespace lapack_wrapper {
     //! x <- R^(-1) * x
     void
     invR_mul( valueType x[], integer incx = 1 ) const {
-      trsv(
+      trsv( // m_nRows = leading dimension
         UPPER, NO_TRANSPOSE, NON_UNIT,
-        nReflector, this->Afactorized, this->nRows, x, incx
+        m_nReflector, m_Afactorized, m_nRows, x, incx
       );
     }
 
     //! C <- R^(-1) * C
     void
-    invR_mul( integer nr, integer nc, valueType C[], integer ldC ) const
-    { Rsolve( LEFT, NO_TRANSPOSE, nr, nc, 1.0, C, ldC ); }
+    invR_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
+      Rsolve( LEFT, NO_TRANSPOSE, nr, nc, 1.0, C, ldC );
+    }
 
     void
     invR_mul( MatrixWrapper<valueType> & C ) const {
       Rsolve(
-        LEFT, NO_TRANSPOSE,
-        C.numRows(), C.numCols(), 1.0, C.get_data(), C.lDim()
+        LEFT, NO_TRANSPOSE, C.numRows(), C.numCols(), 1.0, C.data(), C.lDim()
       );
     }
 
@@ -256,21 +252,22 @@ namespace lapack_wrapper {
     //! x <- R^(-T) * x
     void
     invRt_mul( valueType x[], integer incx = 1 ) const {
-      trsv(
+      trsv( // m_nRows = leading dimension
         UPPER, TRANSPOSE, NON_UNIT,
-        nReflector, this->Afactorized, this->nRows, x, incx
+        m_nReflector, m_Afactorized, m_nRows, x, incx
       );
     }
 
     //! C <- R^(-T) * C
     void
-    invRt_mul( integer nr, integer nc, valueType C[], integer ldC ) const
-    { Rsolve( LEFT, TRANSPOSE, nr, nc, 1.0, C, ldC ); }
+    invRt_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
+      Rsolve( LEFT, TRANSPOSE, nr, nc, 1.0, C, ldC );
+    }
 
     void
     invRt_mul( MatrixWrapper<valueType> & C ) const {
       Rsolve(
-        LEFT, TRANSPOSE, C.numRows(), C.numCols(), 1.0, C.get_data(), C.lDim()
+        LEFT, TRANSPOSE, C.numRows(), C.numCols(), 1.0, C.data(), C.lDim()
       );
     }
 
@@ -278,26 +275,31 @@ namespace lapack_wrapper {
 
     //! C <- C * R^(-1)
     void
-    mul_invR( integer nr, integer nc, valueType C[], integer ldC ) const
-    { Rsolve( RIGHT, NO_TRANSPOSE, nr, nc, 1.0, C, ldC ); }
+    mul_invR( integer nr, integer nc, valueType C[], integer ldC ) const {
+      Rsolve( RIGHT, NO_TRANSPOSE, nr, nc, 1.0, C, ldC );
+    }
 
     void
     mul_invR( MatrixWrapper<valueType> & C ) const {
       Rsolve(
         RIGHT, NO_TRANSPOSE,
-        C.numRows(), C.numCols(), 1.0, C.get_data(), C.lDim()
+        C.numRows(), C.numCols(), 1.0, C.data(), C.lDim()
       );
     }
 
     // -------------------------------------------------------------------------
 
     void
-    mul_invRt( integer nr, integer nc, valueType C[], integer ldC ) const
-    { Rsolve( RIGHT, TRANSPOSE, nr, nc, 1.0, C, ldC ); }
+    mul_invRt( integer nr, integer nc, valueType C[], integer ldC ) const {
+      Rsolve( RIGHT, TRANSPOSE, nr, nc, 1.0, C, ldC );
+    }
 
     void
-    mul_invRt( MatrixWrapper<valueType> & C ) const
-    { Rsolve( RIGHT, TRANSPOSE, C.numRows(), C.numCols(), 1.0, C.get_data(), C.lDim( ) ); }
+    mul_invRt( MatrixWrapper<valueType> & C ) const {
+      Rsolve(
+        RIGHT, TRANSPOSE, C.numRows(), C.numCols(), 1.0, C.data(), C.lDim()
+      );
+    }
 
     // -------------------------------------------------------------------------
 
@@ -307,6 +309,12 @@ namespace lapack_wrapper {
     void
     getR( Matrix<T> & R ) const;
 
+    void
+    getRt( valueType R[], integer ldR ) const;
+
+    void
+    getRt( Matrix<T> & R ) const;
+
     // -------------------------------------------------------------------------
 
     void
@@ -314,6 +322,14 @@ namespace lapack_wrapper {
 
     void
     getQ( Matrix<T> & Q ) const;
+
+    // -------------------------------------------------------------------------
+
+    void
+    getQreduced( valueType Q[], integer ldQ ) const;
+
+    void
+    getQreduced( Matrix<T> & Q ) const;
 
     // -------------------------------------------------------------------------
 
@@ -386,9 +402,18 @@ namespace lapack_wrapper {
 
   protected:
 
-    Malloc<valueType> allocReals;
+    Malloc<valueType> m_allocReals;
 
   public:
+
+    using QR_no_alloc<T>::m_nRows;
+    using QR_no_alloc<T>::m_nCols;
+    using QR_no_alloc<T>::m_nReflector;
+    using QR_no_alloc<T>::m_LworkQR;
+
+    using QR_no_alloc<T>::m_Afactorized;
+    using QR_no_alloc<T>::m_WorkQR;
+    using QR_no_alloc<T>::m_Tau;
 
     using QR_no_alloc<T>::solve;
     using QR_no_alloc<T>::t_solve;
@@ -402,17 +427,18 @@ namespace lapack_wrapper {
     using QR_no_alloc<T>::getQ;
     using QR_no_alloc<T>::getA;
     using QR_no_alloc<T>::getTau;
+    using QR_no_alloc<T>::get_Lwork;
     using QR_no_alloc<T>::no_allocate;
     using QR_no_alloc<T>::factorize;
 
     QR()
     : QR_no_alloc<T>()
-    , allocReals("QR-allocReals")
+    , m_allocReals("QR-allocReals")
     {}
 
     virtual
     ~QR() LAPACK_WRAPPER_OVERRIDE
-    { allocReals.free(); }
+    { m_allocReals.free(); }
 
     void
     allocate( integer nr, integer nc );
@@ -464,10 +490,19 @@ namespace lapack_wrapper {
     typedef typename QR_no_alloc<T>::valueType valueType;
 
   protected:
-    integer   * JPVT;
-    valueType * WorkPermute;
+    integer   * m_JPVT;
+    valueType * m_WorkPermute;
 
   public:
+
+    using QR_no_alloc<T>::m_nRows;
+    using QR_no_alloc<T>::m_nCols;
+    using QR_no_alloc<T>::m_nReflector;
+    using QR_no_alloc<T>::m_LworkQR;
+
+    using QR_no_alloc<T>::m_Afactorized;
+    using QR_no_alloc<T>::m_WorkQR;
+    using QR_no_alloc<T>::m_Tau;
 
     using QR_no_alloc<T>::solve;
     using QR_no_alloc<T>::t_solve;
@@ -486,7 +521,7 @@ namespace lapack_wrapper {
 
     QRP_no_alloc()
     : QR_no_alloc<T>()
-    , JPVT(nullptr)
+    , m_JPVT(nullptr)
     {}
 
     virtual
@@ -497,17 +532,11 @@ namespace lapack_wrapper {
     no_allocate(
       integer     NR,
       integer     NC,
-      integer     _Lwork,
-      valueType * _Afactorized,
-      valueType * _WorkFactorized,
-      valueType * _Tau,
-      valueType * _WorkPermute,
-      integer   * _JPVT
-    ) {
-      this->no_allocate( NR, NC, _Lwork, _Afactorized, _WorkFactorized, _Tau );
-      this->WorkPermute = _WorkPermute;
-      this->JPVT        = _JPVT;
-    }
+      integer     Lwork,
+      valueType * Work,
+      integer     Liwork,
+      integer   * iWork
+    );
 
     /*!
      *  Do QR factorization with column pivoting of a rectangular matrix
@@ -546,7 +575,7 @@ namespace lapack_wrapper {
 
     void
     permute_rows( MatrixWrapper<T> & M ) const
-    { permute_rows( M.numRows(), M.numCols(), M.get_data(), M.lDim() ); }
+    { permute_rows( M.numRows(), M.numCols(), M.data(), M.lDim() ); }
 
     void
     inv_permute_rows(
@@ -558,7 +587,7 @@ namespace lapack_wrapper {
 
     void
     inv_permute_rows( MatrixWrapper<T> & M ) const
-    { inv_permute_rows( M.numRows(), M.numCols(), M.get_data(), M.lDim() ); }
+    { inv_permute_rows( M.numRows(), M.numCols(), M.data(), M.lDim() ); }
 
     void
     permute_cols(
@@ -570,7 +599,7 @@ namespace lapack_wrapper {
 
     void
     permute_cols( MatrixWrapper<T> & M ) const
-    { permute_cols( M.numRows(), M.numCols(), M.get_data(), M.lDim() ); }
+    { permute_cols( M.numRows(), M.numCols(), M.data(), M.lDim() ); }
 
     void
     inv_permute_cols(
@@ -582,13 +611,13 @@ namespace lapack_wrapper {
 
     void
     inv_permute_cols( MatrixWrapper<T> & M ) const
-    { inv_permute_cols( M.numRows(), M.numCols(), M.get_data(), M.lDim() ); }
+    { inv_permute_cols( M.numRows(), M.numCols(), M.data(), M.lDim() ); }
 
     integer
     rankEstimate( valueType rcond ) const {
       valueType SVAL[3];
       return lapack_wrapper::rankEstimate(
-        this->nRows, this->nCols, this->Afactorized, this->nRows, rcond, SVAL
+        m_nRows, m_nCols, m_Afactorized, m_nRows, rcond, SVAL
       );
     }
 
@@ -645,10 +674,19 @@ namespace lapack_wrapper {
     typedef typename QRP_no_alloc<T>::valueType valueType;
 
   private:
-    Malloc<valueType> allocReals;
-    Malloc<integer>   allocIntegers;
+    Malloc<valueType> m_allocReals;
+    Malloc<integer>   m_allocIntegers;
 
   public:
+
+    using QRP_no_alloc<T>::m_nRows;
+    using QRP_no_alloc<T>::m_nCols;
+    using QRP_no_alloc<T>::m_nReflector;
+    using QRP_no_alloc<T>::m_LworkQR;
+
+    using QRP_no_alloc<T>::m_Afactorized;
+    using QRP_no_alloc<T>::m_WorkQR;
+    using QRP_no_alloc<T>::m_Tau;
 
     using QRP_no_alloc<T>::solve;
     using QRP_no_alloc<T>::t_solve;
@@ -667,13 +705,16 @@ namespace lapack_wrapper {
 
     QRP()
     : QRP_no_alloc<T>()
-    , allocReals("QRP-allocReals")
-    , allocIntegers("QRP-allocIntegers")
+    , m_allocReals("QRP-allocReals")
+    , m_allocIntegers("QRP-allocIntegers")
     {}
 
     virtual
     ~QRP() LAPACK_WRAPPER_OVERRIDE
-    { allocIntegers.free(); }
+    { m_allocIntegers.free(); }
+
+    integer
+    get_Lwork( integer NR, integer NC ) const;
 
     void
     allocate( integer nr, integer nc );

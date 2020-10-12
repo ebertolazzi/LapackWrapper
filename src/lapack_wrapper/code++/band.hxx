@@ -192,12 +192,12 @@ namespace lapack_wrapper {
   public:
     typedef T valueType;
 
-    Malloc<valueType> allocReals;
+    Malloc<valueType> m_allocReals;
 
-    integer     n, nD, ldAB;
-    valueType * AB;
-    ULselect    UPLO;
-    bool is_factorized;
+    integer     m_n, m_nD, m_ldAB;
+    valueType * m_AB;
+    ULselect    m_UPLO;
+    bool        m_is_factorized;
 
   public:
 
@@ -217,11 +217,11 @@ namespace lapack_wrapper {
 
     valueType const &
     operator () ( integer i, integer j ) const
-    { return AB[i+j*ldAB]; }
+    { return m_AB[i+j*m_ldAB]; }
 
     valueType &
     operator () ( integer i, integer j )
-    { return AB[i+j*ldAB]; }
+    { return m_AB[i+j*m_ldAB]; }
 
     void
     insert( integer i, integer j, valueType v, bool sym );

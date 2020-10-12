@@ -39,13 +39,13 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer nRows;
-    integer nCols;
+    integer     m_nRows;
+    integer     m_nCols;
 
-    valueType * Afactorized;
-    valueType * Work;
-    integer   * Iwork;
-    integer   * i_pivot;
+    valueType * m_Afactorized;
+    valueType * m_Work;
+    integer   * m_Iwork;
+    integer   * m_i_pivot;
 
     void check_ls( char const who[] ) const;
 
@@ -67,13 +67,13 @@ namespace lapack_wrapper {
       valueType * _Work  = nullptr,
       integer   * _Iwork = nullptr
     ) {
-      this->nRows       = NR;
-      this->nCols       = NC;
-      this->Afactorized = _Afactorized;
-      this->i_pivot     = _i_pivot;
+      m_nRows       = NR;
+      m_nCols       = NC;
+      m_Afactorized = _Afactorized;
+      m_i_pivot     = _i_pivot;
       // only for condition number
-      this->Work        = _Work;
-      this->Iwork       = _Iwork;
+      m_Work        = _Work;
+      m_Iwork       = _Iwork;
     }
 
     void
@@ -154,10 +154,17 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<valueType> allocReals;
-    Malloc<integer>   allocIntegers;
+    Malloc<valueType> m_allocReals;
+    Malloc<integer>   m_allocIntegers;
 
   public:
+
+    using LU_no_alloc<T>::m_nRows;
+    using LU_no_alloc<T>::m_nCols;
+    using LU_no_alloc<T>::m_Afactorized;
+    using LU_no_alloc<T>::m_Work;
+    using LU_no_alloc<T>::m_Iwork;
+    using LU_no_alloc<T>::m_i_pivot;
 
     using LU_no_alloc<T>::factorize;
     using LU_no_alloc<T>::solve;
@@ -212,10 +219,10 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer     nRC;
-    valueType * Afactorized;
-    integer   * i_piv;
-    integer   * j_piv;
+    integer     m_nRC;
+    valueType * m_Afactorized;
+    integer   * m_i_piv;
+    integer   * m_j_piv;
 
   public:
 
@@ -229,15 +236,11 @@ namespace lapack_wrapper {
     void
     no_allocate(
       integer     NRC,
-      valueType * _Afactorized,
-      integer   * _i_piv,
-      integer   * _j_piv
-    ) {
-      this->nRC         = NRC;
-      this->Afactorized = _Afactorized;
-      this->i_piv       = _i_piv;
-      this->j_piv       = _j_piv;
-    }
+      integer     Lwork,
+      valueType * Work,
+      integer     Liwork,
+      integer   * iWork
+    );
 
     void
     factorize(
@@ -292,10 +295,15 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<valueType> allocReals;
-    Malloc<integer>   allocIntegers;
+    Malloc<valueType> m_allocReals;
+    Malloc<integer>   m_allocIntegers;
 
   public:
+
+    using LUPQ_no_alloc<T>::m_nRC;
+    using LUPQ_no_alloc<T>::m_Afactorized;
+    using LUPQ_no_alloc<T>::m_i_piv;
+    using LUPQ_no_alloc<T>::m_j_piv;
 
     using LUPQ_no_alloc<T>::solve;
     using LUPQ_no_alloc<T>::t_solve;

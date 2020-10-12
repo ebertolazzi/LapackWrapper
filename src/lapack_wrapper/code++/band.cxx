@@ -348,11 +348,11 @@ namespace lapack_wrapper {
 
   template <typename T>
   BandedSPD<T>::BandedSPD()
-  : allocReals("_BandedSPD_reals")
-  , n(0)
-  , nD(0)
-  , ldAB(0)
-  , is_factorized(false)
+  : m_allocReals("_BandedSPD_reals")
+  , m_n(0)
+  , m_nD(0)
+  , m_ldAB(0)
+  , m_is_factorized(false)
   {}
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -370,14 +370,14 @@ namespace lapack_wrapper {
     integer  _N,
     integer  _nD
   ) {
-    UPLO = _UPLO;
-    n    = _N;
-    nD   = _nD;
-    ldAB = nD+1;
-    integer nnz = n*ldAB;
-    allocReals.allocate( nnz );
-    AB   = allocReals( nnz );
-    is_factorized = false;
+    m_UPLO = _UPLO;
+    m_n    = _N;
+    m_nD   = _nD;
+    m_ldAB = _nD+1;
+    integer nnz = m_n*m_ldAB;
+    m_allocReals.allocate( nnz );
+    m_AB   = m_allocReals( nnz );
+    m_is_factorized = false;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -386,8 +386,8 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   BandedSPD<T>::solve( valueType xb[] ) const {
-    if ( !is_factorized ) return false;
-    integer info = pbtrs( UPLO, n, nD, 1, AB, ldAB, xb, n );
+    if ( !m_is_factorized ) return false;
+    integer info = pbtrs( m_UPLO, m_n, m_nD, 1, m_AB, m_ldAB, xb, m_n );
     return info == 0;
   }
 
@@ -396,8 +396,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedSPD<T>::solve( char const who[], valueType xb[] ) const {
-    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
-    integer info = pbtrs( UPLO, n, nD, 1, AB, ldAB, xb, n );
+    LW_ASSERT0( m_is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
+    integer info = pbtrs( m_UPLO, m_n, m_nD, 1, m_AB, m_ldAB, xb, m_n );
     LW_ASSERT( info == 0, "BandedSPD::solve, info = {}\nat {}\n", info, who );
   }
 
@@ -407,8 +407,8 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   BandedSPD<T>::t_solve( valueType xb[] ) const {
-    if ( !is_factorized ) return false;
-    integer info = pbtrs( UPLO, n, nD, 1, AB, ldAB, xb, n );
+    if ( !m_is_factorized ) return false;
+    integer info = pbtrs( m_UPLO, m_n, m_nD, 1, m_AB, m_ldAB, xb, m_n );
     return info == 0;
   }
 
@@ -417,8 +417,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedSPD<T>::t_solve( char const who[], valueType xb[] ) const {
-    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
-    integer info = pbtrs( UPLO, n, nD, 1, AB, ldAB, xb, n );
+    LW_ASSERT0( m_is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
+    integer info = pbtrs( m_UPLO, m_n, m_nD, 1, m_AB, m_ldAB, xb, m_n );
     LW_ASSERT( info == 0, "BandedSPD::t_solve, info = {}\nat {}\n", info, who );
   }
 
@@ -428,8 +428,8 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   BandedSPD<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
-    if ( !is_factorized ) return false;
-    integer info = pbtrs( UPLO, n, nD, nrhs, AB, ldAB, B, ldB );
+    if ( !m_is_factorized ) return false;
+    integer info = pbtrs( m_UPLO, m_n, m_nD, nrhs, m_AB, m_ldAB, B, ldB );
     return info == 0;
   }
 
@@ -438,8 +438,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedSPD<T>::solve( char const who[], integer nrhs, valueType B[], integer ldB ) const {
-    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
-    integer info = pbtrs( UPLO, n, nD, nrhs, AB, ldAB, B, ldB );
+    LW_ASSERT0( m_is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
+    integer info = pbtrs( m_UPLO, m_n, m_nD, nrhs, m_AB, m_ldAB, B, ldB );
     LW_ASSERT( info == 0, "BandedSPD::solve, info = {}\nat {}\n", info, who );
   }
 
@@ -449,8 +449,8 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   BandedSPD<T>::t_solve( integer nrhs, valueType B[], integer ldB ) const {
-    if ( !is_factorized ) return false;
-    integer info = pbtrs( UPLO, n, nD, nrhs, AB, ldAB, B, ldB );
+    if ( !m_is_factorized ) return false;
+    integer info = pbtrs( m_UPLO, m_n, m_nD, nrhs, m_AB, m_ldAB, B, ldB );
     return info == 0;
   }
 
@@ -459,8 +459,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedSPD<T>::t_solve( char const who[], integer nrhs, valueType B[], integer ldB ) const {
-    LW_ASSERT0( is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
-    integer info = pbtrs( UPLO, n, nD, nrhs, AB, ldAB, B, ldB );
+    LW_ASSERT0( m_is_factorized, "BandedSPD::solve, matrix not yet factorized\n" );
+    integer info = pbtrs( m_UPLO, m_n, m_nD, nrhs, m_AB, m_ldAB, B, ldB );
     LW_ASSERT( info == 0, "BandedSPD::t_solve, info = {}\nat {}\n", info, who );
   }
 
@@ -470,11 +470,11 @@ namespace lapack_wrapper {
   void
   BandedSPD<T>::factorize( char const who[] ) {
     LW_ASSERT(
-      !is_factorized, "BandedSPD::factorize[{}], matrix yet factorized\n", who
+      !m_is_factorized, "BandedSPD::factorize[{}], matrix yet factorized\n", who
     );
-    integer info = pbtrf( UPLO, n, nD, AB, ldAB );
+    integer info = pbtrf( m_UPLO, m_n, m_nD, m_AB, m_ldAB );
     LW_ASSERT( info == 0, "BandedSPD::factorize[{}], info = {}\n", who, info );
-    is_factorized = true;
+    m_is_factorized = true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -482,10 +482,10 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   BandedSPD<T>::factorize() {
-    if ( is_factorized ) return true;
-    integer info = pbtrf( UPLO, n, nD, AB, ldAB );
-    is_factorized = info == 0;
-    return is_factorized;
+    if ( m_is_factorized ) return true;
+    integer info = pbtrf( m_UPLO, m_n, m_nD, m_AB, m_ldAB );
+    m_is_factorized = info == 0;
+    return m_is_factorized;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -493,8 +493,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedSPD<T>::zero() {
-    lapack_wrapper::zero( n*ldAB, AB, 1 );
-    is_factorized = false;
+    lapack_wrapper::zero( m_n*m_ldAB, m_AB, 1 );
+    m_is_factorized = false;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

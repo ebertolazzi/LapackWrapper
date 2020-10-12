@@ -37,23 +37,23 @@ namespace lapack_wrapper {
     typedef T valueType;
 
   protected:
-    Malloc<valueType> allocReals;
+    Malloc<valueType> m_allocReals;
 
-    integer     n;
-    valueType * H;
-    valueType * s;
-    valueType * y;
-    valueType * z;
+    integer     m_n;
+    valueType * m_H;
+    valueType * m_s;
+    valueType * m_y;
+    valueType * m_z;
 
   public:
 
     QN()
-    : allocReals("QN reals")
-    , n(0)
-    , H(nullptr)
-    , s(nullptr)
-    , y(nullptr)
-    , z(nullptr)
+    : m_allocReals("QN reals")
+    , m_n(0)
+    , m_H(nullptr)
+    , m_s(nullptr)
+    , m_y(nullptr)
+    , m_z(nullptr)
     {}
 
     virtual
@@ -64,19 +64,19 @@ namespace lapack_wrapper {
 
     valueType const &
     operator () ( integer i, integer j ) const
-    { return H[i+j*n]; }
+    { return m_H[i+j*m_n]; }
 
     valueType &
     operator () ( integer i, integer j )
-    { return H[i+j*n]; }
+    { return m_H[i+j*m_n]; }
 
     void
     zero()
-    { lapack_wrapper::gezero( n, n, H, n ); }
+    { lapack_wrapper::gezero( m_n, m_n, m_H, m_n ); }
 
     void
     init()
-    { lapack_wrapper::geid( n, n, H, n ); }
+    { lapack_wrapper::geid( m_n, m_n, m_H, m_n ); }
 
     // r <- beta * r + alpha * H * x
     void
@@ -90,8 +90,8 @@ namespace lapack_wrapper {
     ) const {
       symv(
         LOWER,
-        n,
-        alpha, H, n,
+        m_n,
+        alpha, m_H, m_n,
         x, inc_x,
         beta,
         r, inc_r
@@ -110,9 +110,9 @@ namespace lapack_wrapper {
       valueType const f1[],
       valueType const ss[]
     ) {
-      copy( n,     f1, 1, y, 1 );
-      axpy( n, -1, f0, 1, y, 1 );
-      update( y, ss );
+      copy( m_n,     f1, 1, m_y, 1 );
+      axpy( m_n, -1, f0, 1, m_y, 1 );
+      update( m_y, ss );
     }
 
     void
@@ -122,11 +122,11 @@ namespace lapack_wrapper {
       valueType const x0[],
       valueType const x1[]
     ) {
-      copy( n,     f1, 1, y, 1 );
-      axpy( n, -1, f0, 1, y, 1 );
-      copy( n,     x1, 1, s, 1 );
-      axpy( n, -1, x0, 1, s, 1 );
-      update( y, s );
+      copy( m_n,     f1, 1, m_y, 1 );
+      axpy( m_n, -1, f0, 1, m_y, 1 );
+      copy( m_n,     x1, 1, m_s, 1 );
+      axpy( m_n, -1, x0, 1, m_s, 1 );
+      update( m_y, m_s );
     }
 
     void
@@ -168,9 +168,9 @@ namespace lapack_wrapper {
     using QN<T>::mult;
     using QN<T>::update;
 
-    using QN<T>::n;
-    using QN<T>::H;
-    using QN<T>::z;
+    using QN<T>::m_n;
+    using QN<T>::m_H;
+    using QN<T>::m_z;
 
     BFGS() {}
 
@@ -210,9 +210,9 @@ namespace lapack_wrapper {
     using QN<T>::mult;
     using QN<T>::update;
 
-    using QN<T>::n;
-    using QN<T>::H;
-    using QN<T>::z;
+    using QN<T>::m_n;
+    using QN<T>::m_H;
+    using QN<T>::m_z;
 
     DFP() {}
 

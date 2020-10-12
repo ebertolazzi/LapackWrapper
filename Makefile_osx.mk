@@ -1,15 +1,17 @@
-WARN     = -Weverything -Wno-reserved-id-macro -Wno-padded -Wno-poison-system-directories
+WARN     = -Weverything -Wno-reserved-id-macro -Wno-padded -Wno-poison-system-directories -Wno-c++98-compat -Wno-c++98-compat-pedantic
 CC       = clang
 CXX      = clang++
 VERSION  = $(shell $(CC) --version 2>&1 | grep -o "Apple LLVM version [0-9]\.[0-9]\.[0-9]" | grep -o " [0-9]\.")
 #---------
-CXX     += -std=c++11 -stdlib=libc++ -g -isystem=$(shell pwd)/src/fmt
+CXX     += -std=c++11 -stdlib=libc++ -g
 
 #---------
 CC     += $(WARN)
 CXX    += $(WARN)
 AR      = libtool -static -o
 LIBSGCC = -lstdc++ -lm
+
+override INC += -I/opt/intel/mkl/include
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
   override LIBS += -llapack -lblas

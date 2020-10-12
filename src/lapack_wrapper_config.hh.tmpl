@@ -89,9 +89,6 @@
 #ifndef LAPACK_WRAPPER_OS_WINDOWS
   #define LAPACK_WRAPPER_OVERRIDE  override
   #define LAPACK_WRAPPER_CONSTEXPR constexpr
-  #ifdef __clang__
-    #pragma clang diagnostic ignored "-Wc++98-compat"
-  #endif
 #else
   #define LAPACK_WRAPPER_OVERRIDE
   #define LAPACK_WRAPPER_CONSTEXPR

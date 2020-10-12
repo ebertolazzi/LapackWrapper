@@ -35,12 +35,12 @@ namespace lapack_wrapper {
   template <typename T>
   LU_no_alloc<T>::LU_no_alloc()
   : LinearSystemSolver<T>()
-  , nRows(0)
-  , nCols(0)
-  , Afactorized(nullptr)
-  , Work(nullptr)
-  , Iwork(nullptr)
-  , i_pivot(nullptr)
+  , m_nRows(0)
+  , m_nCols(0)
+  , m_Afactorized(nullptr)
+  , m_Work(nullptr)
+  , m_Iwork(nullptr)
+  , m_i_pivot(nullptr)
   {}
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -53,15 +53,15 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info = gecopy(
-      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+      m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
     );
     LW_ASSERT(
       info == 0,
       "LU::factorize[{}] gecopy(nRow={}, nCol={}, A, LDA={}, B, LDB={}) : INFO = {}\n",
-      who, this->nRows, this->nCols, LDA, this->nRows, info
+      who, m_nRows, m_nCols, LDA, m_nRows, info
     );
     info = getrf(
-      this->nRows, this->nCols, this->Afactorized, this->nRows, this->i_pivot
+      m_nRows, m_nCols, m_Afactorized, m_nRows, m_i_pivot
     );
     LW_ASSERT(
       info == 0, "LU::factorize[{}] getrf INFO = {}\n", who, info
@@ -74,12 +74,12 @@ namespace lapack_wrapper {
   bool
   LU_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
     integer info = gecopy(
-      this->nRows, this->nCols, A, LDA, this->Afactorized, this->nRows
+      m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
     );
     bool ok = info == 0;
     if ( ok ) {
       info = getrf(
-        this->nRows, this->nCols, this->Afactorized, this->nRows, this->i_pivot
+        m_nRows, m_nCols, m_Afactorized, m_nRows, m_i_pivot
       );
       ok = info == 0;
     }
@@ -92,8 +92,8 @@ namespace lapack_wrapper {
   void
   LU_no_alloc<T>::check_ls( char const who[] ) const {
     LW_ASSERT(
-      this->nRows == this->nCols,
-      "LU<T>::{}, rectangular matrix {} x {}\n", who, this->nRows, this->nCols
+      m_nRows == m_nCols,
+      "LU<T>::{}, rectangular matrix {} x {}\n", who, m_nRows, m_nCols
     );
   }
 
@@ -103,11 +103,11 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   LU_no_alloc<T>::solve( valueType xb[] ) const {
-    if ( this->nRows != this->nCols ) return false;
+    if ( m_nRows != m_nCols ) return false;
     integer info = getrs(
       NO_TRANSPOSE,
-      this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
-      xb, this->nRows
+      m_nRows, 1, m_Afactorized, m_nRows, m_i_pivot,
+      xb, m_nRows
     );
     return info == 0;
   }
@@ -120,8 +120,8 @@ namespace lapack_wrapper {
     check_ls("solve");
     integer info = getrs(
       NO_TRANSPOSE,
-      this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
-      xb, this->nRows
+      m_nRows, 1, m_Afactorized, m_nRows, m_i_pivot,
+      xb, m_nRows
     );
     LW_ASSERT( info == 0, "LU::solve, getrs INFO = {}\nat {}\n", info, who );
   }
@@ -132,11 +132,11 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   LU_no_alloc<T>::t_solve( valueType xb[] ) const {
-    if ( this->nRows != this->nCols ) return false;
+    if ( m_nRows != m_nCols ) return false;
     integer info = getrs(
       TRANSPOSE,
-      this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
-      xb, this->nRows
+      m_nRows, 1, m_Afactorized, m_nRows, m_i_pivot,
+      xb, m_nRows
     );
     return info == 0;
   }
@@ -149,8 +149,8 @@ namespace lapack_wrapper {
     check_ls( who );
     integer info = getrs(
       TRANSPOSE,
-      this->nRows, 1, this->Afactorized, this->nRows, this->i_pivot,
-      xb, this->nRows
+      m_nRows, 1, m_Afactorized, m_nRows, m_i_pivot,
+      xb, m_nRows
     );
     LW_ASSERT( info == 0, "LU::t_solve, getrs INFO = {}\nat {}\n", info, who );
   }
@@ -161,10 +161,10 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   LU_no_alloc<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
-    if ( this->nRows != this->nCols ) return false;
+    if ( m_nRows != m_nCols ) return false;
     integer info = getrs(
       NO_TRANSPOSE,
-      this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
+      m_nRows, nrhs, m_Afactorized, m_nRows, m_i_pivot,
       B, ldB
     );
     return info == 0;
@@ -183,7 +183,7 @@ namespace lapack_wrapper {
     check_ls(who);
     integer info = getrs(
       NO_TRANSPOSE,
-      this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
+      m_nRows, nrhs, m_Afactorized, m_nRows, m_i_pivot,
       B, ldB
     );
     LW_ASSERT( info == 0, "LU::solve getrs INFO = {}\nat {}\n", info, who );
@@ -199,10 +199,10 @@ namespace lapack_wrapper {
     valueType  B[],
     integer    ldB
   ) const {
-    if ( this->nRows != this->nCols ) return false;
+    if ( m_nRows != m_nCols ) return false;
     integer info = getrs(
       TRANSPOSE,
-      this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
+      m_nRows, nrhs, m_Afactorized, m_nRows, m_i_pivot,
       B, ldB
     );
     return info >= 0;
@@ -221,7 +221,7 @@ namespace lapack_wrapper {
     check_ls( who );
     integer info = getrs(
       TRANSPOSE,
-      this->nRows, nrhs, this->Afactorized, this->nRows, this->i_pivot,
+      m_nRows, nrhs, m_Afactorized, m_nRows, m_i_pivot,
       B, ldB
     );
     LW_ASSERT( info >= 0, "LU::t_solve getrs INFO = {}\nat {}\n", info );
@@ -234,8 +234,8 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::cond1( valueType norm1 ) const {
     valueType rcond;
     integer info = gecon1(
-      this->nRows, this->Afactorized, this->nRows,
-      norm1, rcond, this->Work, this->Iwork
+      m_nRows, m_Afactorized, m_nRows,
+      norm1, rcond, m_Work, m_Iwork
     );
     LW_ASSERT( info == 0, "LU::cond1, gecon1 return info = {}\n", info );
     return rcond;
@@ -248,8 +248,8 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::condInf( valueType normInf ) const {
     valueType rcond;
     integer info = geconInf(
-      this->nRows, this->Afactorized, this->nRows,
-      normInf, rcond, this->Work, this->Iwork
+      m_nRows, m_Afactorized, m_nRows,
+      normInf, rcond, m_Work, m_Iwork
     );
     LW_ASSERT( info == 0, "LU::condInf, geconInf return info = {}\n", info );
     return rcond;
@@ -260,16 +260,16 @@ namespace lapack_wrapper {
   template <typename T>
   LU<T>::LU()
   : LU_no_alloc<T>()
-  , allocReals("allocReals")
-  , allocIntegers("allocIntegers")
+  , m_allocReals("allocReals")
+  , m_allocIntegers("allocIntegers")
   {}
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   LU<T>::~LU() {
-    allocReals.free();
-    allocIntegers.free();
+    m_allocReals.free();
+    m_allocIntegers.free();
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -277,20 +277,20 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LU<T>::allocate( integer NR, integer NC ) {
-    if ( this->nRows != NR || this->nCols != NC ) {
-      this->nRows = NR;
-      this->nCols = NC;
+    if ( m_nRows != NR || m_nCols != NC ) {
+      m_nRows = NR;
+      m_nCols = NC;
       integer NRC = NR*NC;
       integer NW  = 2*(NR+NC);
-      allocReals.allocate( size_t(NRC+NW) );
-      allocIntegers.allocate( size_t(2*NR) );
+      m_allocReals.allocate( size_t(NRC+NW) );
+      m_allocIntegers.allocate( size_t(2*NR) );
 
       this->no_allocate(
         NR, NC,
-        allocReals( size_t(NRC) ),   // Afactorized
-        allocIntegers( size_t(NR) ), // i_pivot
-        allocReals( size_t(NW) ),    // Work
-        allocIntegers( size_t(NR) )  // Iwork
+        m_allocReals( size_t(NRC) ),   // Afactorized
+        m_allocIntegers( size_t(NR) ), // i_pivot
+        m_allocReals( size_t(NW) ),    // Work
+        m_allocIntegers( size_t(NR) )  // Iwork
       );
 
     }
@@ -308,11 +308,32 @@ namespace lapack_wrapper {
   template <typename T>
   LUPQ_no_alloc<T>::LUPQ_no_alloc()
   : LinearSystemSolver<T>()
-  , nRC(0)
-  , Afactorized(nullptr)
-  , i_piv(nullptr)
-  , j_piv(nullptr)
+  , m_nRC(0)
+  , m_Afactorized(nullptr)
+  , m_i_piv(nullptr)
+  , m_j_piv(nullptr)
   {}
+
+  template <typename T>
+  void
+  LUPQ_no_alloc<T>::no_allocate(
+    integer     NRC,
+    integer     Lwork,
+    valueType * Work,
+    integer     Liwork,
+    integer   * iWork
+  ) {
+    LW_ASSERT(
+      Lwork >= NRC*NRC && Liwork >= 2*NRC,
+      "LUPQ_no_alloc::no_allocate( NRC = {}, Lwork = {}, ..., Liwork = {}, ... )\n"
+      "Lwork must be >= {} and Liwork >= {}\n",
+      NRC, Lwork, Liwork, NRC*NRC, 2*NRC
+    );
+    m_nRC         = NRC;
+    m_Afactorized = Work;
+    m_i_piv       = iWork;
+    m_j_piv       = iWork+NRC;
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -324,13 +345,13 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info = gecopy(
-      this->nRC, this->nRC, A, LDA, this->Afactorized, this->nRC
+      m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC
     );
     LW_ASSERT(
       info == 0, "LUPQ_no_alloc::factorize[{}] gecopy INFO = {}\n", who, info
     );
     info = getc2(
-      this->nRC, this->Afactorized, this->nRC, this->i_piv, this->j_piv
+      m_nRC, m_Afactorized, m_nRC, m_i_piv, m_j_piv
     );
     LW_ASSERT(
       info == 0, "LUPQ_no_alloc::factorize[{}] getc2 INFO = {}\n", who, info
@@ -343,12 +364,12 @@ namespace lapack_wrapper {
   bool
   LUPQ_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
     integer info = gecopy(
-      this->nRC, this->nRC, A, LDA, this->Afactorized, this->nRC
+      m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC
     );
     bool ok = info == 0;
     if ( ok ) {
       info = getc2(
-        this->nRC, this->Afactorized, this->nRC, this->i_piv, this->j_piv
+        m_nRC, m_Afactorized, m_nRC, m_i_piv, m_j_piv
       );
       ok = info == 0;
     }
@@ -361,22 +382,22 @@ namespace lapack_wrapper {
   bool
   LUPQ_no_alloc<T>::solve( valueType xb[] ) const {
     // Apply permutations IPIV to RHS
-    swaps( 1, xb, this->nRC, 0, this->nRC-2, this->i_piv, 1 );
+    swaps( 1, xb, m_nRC, 0, m_nRC-2, m_i_piv, 1 );
 
     // Solve for L part
     trsv(
       LOWER, NO_TRANSPOSE, UNIT,
-      this->nRC, this->Afactorized, this->nRC, xb, 1
+      m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
     // Solve for U part
     trsv(
       UPPER, NO_TRANSPOSE, NON_UNIT,
-      this->nRC, this->Afactorized, this->nRC, xb, 1
+      m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
     // Apply permutations JPIV to the solution (RHS)
-    swaps( 1, xb, this->nRC, 0, this->nRC-2, this->j_piv, -1 );
+    swaps( 1, xb, m_nRC, 0, m_nRC-2, m_j_piv, -1 );
 
     return true;
   }
@@ -387,22 +408,22 @@ namespace lapack_wrapper {
   bool
   LUPQ_no_alloc<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
     // Apply permutations IPIV to RHS
-    swaps( nrhs, B, ldB, 0, this->nRC-2, this->i_piv, 1 );
+    swaps( nrhs, B, ldB, 0, m_nRC-2, m_i_piv, 1 );
 
     // Solve for L part
     trsm(
       LEFT, LOWER, NO_TRANSPOSE, UNIT,
-      this->nRC, nrhs, 1.0, this->Afactorized, this->nRC, B, ldB
+      m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
     // Solve for U part
     trsm(
       LEFT, UPPER, NO_TRANSPOSE, NON_UNIT,
-      this->nRC, nrhs, 1.0, this->Afactorized, this->nRC, B, ldB
+      m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
     // Apply permutations JPIV to the solution (RHS)
-    swaps( nrhs, B, ldB, 0, this->nRC-2, this->j_piv, -1 );
+    swaps( nrhs, B, ldB, 0, m_nRC-2, m_j_piv, -1 );
 
     return true;
   }
@@ -413,22 +434,22 @@ namespace lapack_wrapper {
   bool
   LUPQ_no_alloc<T>::t_solve( valueType xb[] ) const {
     // Apply permutations JPIV to the solution (RHS)
-    swaps( 1, xb, this->nRC, 0, this->nRC-2, this->j_piv, 1 );
+    swaps( 1, xb, m_nRC, 0, m_nRC-2, m_j_piv, 1 );
 
     // Solve for U part
     trsv(
       UPPER, TRANSPOSE, NON_UNIT,
-      this->nRC, this->Afactorized, this->nRC, xb, 1
+      m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
     // Solve for L part
     trsv(
       LOWER, TRANSPOSE, UNIT,
-      this->nRC, this->Afactorized, this->nRC, xb, 1
+      m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
     // Apply permutations IPIV to RHS
-    swaps( 1, xb, this->nRC, 0, this->nRC-2, this->i_piv, -1 );
+    swaps( 1, xb, m_nRC, 0, m_nRC-2, m_i_piv, -1 );
 
     return true;
   }
@@ -440,22 +461,22 @@ namespace lapack_wrapper {
   LUPQ_no_alloc<T>::t_solve( integer nrhs, valueType B[], integer ldB ) const {
 
     // Apply permutations JPIV to the solution (RHS)
-    swaps( nrhs, B, ldB, 0, this->nRC-2, this->j_piv, 1 );
+    swaps( nrhs, B, ldB, 0, m_nRC-2, m_j_piv, 1 );
 
     // Solve for U part
     trsm(
       LEFT, UPPER, TRANSPOSE, NON_UNIT,
-      this->nRC, nrhs, 1.0, this->Afactorized, this->nRC, B, ldB
+      m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
     // Solve for L part
     trsm(
       LEFT, LOWER, TRANSPOSE, UNIT,
-      this->nRC, nrhs, 1.0, this->Afactorized, this->nRC, B, ldB
+      m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
     // Apply permutations IPIV to RHS
-    swaps( nrhs, B, ldB, 0, this->nRC-2, this->i_piv, -1 );
+    swaps( nrhs, B, ldB, 0, m_nRC-2, m_i_piv, -1 );
 
     return true;
   }
@@ -467,16 +488,16 @@ namespace lapack_wrapper {
   template <typename T>
   LUPQ<T>::LUPQ()
   : LUPQ_no_alloc<T>()
-  , allocReals("LUPQ-allocReals")
-  , allocIntegers("LUPQ-allocIntegers")
+  , m_allocReals("LUPQ-allocReals")
+  , m_allocIntegers("LUPQ-allocIntegers")
   {}
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   LUPQ<T>::~LUPQ() {
-    allocReals.free();
-    allocIntegers.free();
+    m_allocReals.free();
+    m_allocIntegers.free();
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -484,14 +505,14 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LUPQ<T>::allocate( integer NRC ) {
-    if ( this->nRC != NRC ) {
-      allocReals.allocate( size_t(NRC*NRC) );
-      allocIntegers.allocate( size_t(2*NRC) );
+    if ( m_nRC != NRC ) {
+      integer NRC2 = NRC*NRC;
+      m_allocReals.allocate( size_t(NRC2) );
+      m_allocIntegers.allocate( size_t(2*NRC) );
       this->no_allocate(
         NRC,
-        allocReals( size_t(NRC*NRC) ), //_Afactorized,
-        allocIntegers( size_t(NRC) ),  // _i_piv,
-        allocIntegers( size_t(NRC) )   // _j_piv
+        NRC2,  m_allocReals( size_t(NRC2) ),
+        2*NRC, m_allocIntegers( size_t(2*NRC) )
       );
     }
   }
