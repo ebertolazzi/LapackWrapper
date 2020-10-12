@@ -28,38 +28,38 @@
   class TicToc {
 
     typedef double real_type;
-    LARGE_INTEGER frequency; // ticks per second
-    LARGE_INTEGER t1, t2;    // ticks
-    real_type elapsed_time;
+    LARGE_INTEGER m_frequency;   // ticks per second
+    LARGE_INTEGER m_t1, m_t2;    // ticks
+    real_type     m_elapsed_time;
 
-    TicToc( TicToc const & );
-    TicToc const & operator = ( TicToc const & ) const;
+    TicToc( TicToc const & ) = delete;
+    TicToc const & operator = ( TicToc const & ) const = delete;
 
   public:
 
     TicToc()
-    : elapsed_time(0)
-    { QueryPerformanceFrequency(&frequency); tic(); }
+    : m_elapsed_time(0)
+    { QueryPerformanceFrequency(&m_frequency); tic(); }
 
     ~TicToc() {}
 
     void
     tic()
-    { QueryPerformanceCounter(&t1); }
+    { QueryPerformanceCounter(&m_t1); }
 
     void
     toc() {
       QueryPerformanceCounter(&t2);
-      elapsed_time = (t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart;;
+      m_elapsed_time = (m_t2.QuadPart - m_t1.QuadPart) * 1000.0 / m_frequency.QuadPart;;
     }
 
     real_type
     elapsed_s() const
-    { return 1e-3*elapsed_time; }
+    { return 1e-3*m_elapsed_time; }
 
     real_type
     elapsed_ms() const
-    { return elapsed_time; }
+    { return m_elapsed_time; }
 
   };
 
@@ -89,10 +89,10 @@
 
     using elapsed_resolution = std::chrono::microseconds;
 
-    clock::time_point start_time;
-    clock::time_point stop_time;
+    clock::time_point m_start_time;
+    clock::time_point m_stop_time;
 
-    elapsed_resolution elapsed_time;
+    elapsed_resolution m_elapsed_time;
 
     TicToc( TicToc const & );
     TicToc const & operator = ( TicToc const & ) const;
@@ -100,28 +100,28 @@
    public:
 
     TicToc()
-    : elapsed_time(0)
-    { tic(); }
+    : m_elapsed_time(0)
+    { this->tic(); }
 
     ~TicToc() {}
 
     void
     tic()
-    { start_time = clock::now(); }
+    { m_start_time = clock::now(); }
 
     void
     toc() {
-      stop_time    = clock::now();
-      elapsed_time = std::chrono::duration_cast<elapsed_resolution>(stop_time - start_time);
+      m_stop_time    = clock::now();
+      m_elapsed_time = std::chrono::duration_cast<elapsed_resolution>(m_stop_time - m_start_time);
     }
 
     real_type
     elapsed_s() const
-    { return 1e-6*elapsed_time.count(); }
+    { return 1e-6*m_elapsed_time.count(); }
 
     real_type
     elapsed_ms() const
-    { return 1e-3*elapsed_time.count(); }
+    { return 1e-3*m_elapsed_time.count(); }
   };
 
   inline

@@ -67,11 +67,11 @@ namespace lapack_wrapper {
 
   private:
 
-    std::string _name;
-    size_t      numTotValues;
-    size_t      numTotReserved;
-    size_t      numAllocated;
-    valueType * pMalloc;
+    std::string m_name;
+    size_t      m_numTotValues;
+    size_t      m_numTotReserved;
+    size_t      m_numAllocated;
+    valueType * m_pMalloc;
 
     Malloc(Malloc<T> const &); // blocco costruttore di copia
     Malloc<T> const & operator = (Malloc<T> &) const; // blocco copia
@@ -81,11 +81,11 @@ namespace lapack_wrapper {
     //! malloc object constructor
     explicit
     Malloc( std::string const & __name )
-    : _name(__name)
-    , numTotValues(0)
-    , numTotReserved(0)
-    , numAllocated(0)
-    , pMalloc(nullptr)
+    : m_name(__name)
+    , m_numTotValues(0)
+    , m_numTotReserved(0)
+    , m_numAllocated(0)
+    , m_pMalloc(nullptr)
     { }
 
     //! malloc object destructor
@@ -95,75 +95,75 @@ namespace lapack_wrapper {
     void
     allocate( size_t n ) {
       try {
-        if ( n > numTotReserved ) {
-          delete [] pMalloc;
-          numTotValues   = n;
-          numTotReserved = n + (n>>3); // 12% more values
-          pMalloc        = new T[numTotReserved];
+        if ( n > m_numTotReserved ) {
+          delete [] m_pMalloc;
+          m_numTotValues   = n;
+          m_numTotReserved = n + (n>>3); // 12% more values
+          m_pMalloc        = new T[m_numTotReserved];
         }
       }
       catch ( std::exception const & exc ) {
         std::string reason = fmt::format(
           "Memory allocation failed: {}\nTry to allocate {} bytes for {}\n",
-          exc.what(), n, _name
+          exc.what(), n, m_name
         );
         printTrace( __LINE__, __FILE__, reason, std::cerr );
         std::exit(0);
       }
       catch (...) {
         std::string reason = fmt::format(
-          "Memory allocation failed for {}: memory exausted\n", _name
+          "Memory allocation failed for {}: memory exausted\n", m_name
         );
         printTrace( __LINE__, __FILE__, reason, std::cerr );
         std::exit(0);
       }
-      numTotValues = n;
-      numAllocated = 0;
+      m_numTotValues = n;
+      m_numAllocated = 0;
     }
 
     //! free memory
     void
     free(void) {
-      if ( pMalloc != nullptr ) {
-        delete [] pMalloc; pMalloc = nullptr;
-        numTotValues   = 0;
-        numTotReserved = 0;
-        numAllocated   = 0;
+      if ( m_pMalloc != nullptr ) {
+        delete [] m_pMalloc; m_pMalloc = nullptr;
+        m_numTotValues   = 0;
+        m_numTotReserved = 0;
+        m_numAllocated   = 0;
       }
     }
 
     //! number of objects allocated
-    size_t size(void) const { return numTotValues; }
+    size_t size(void) const { return m_numTotValues; }
 
     //! get pointer of allocated memory for `sz` objets
     T * operator () ( size_t sz ) {
-      size_t offs = numAllocated;
-      numAllocated += sz;
-      if ( numAllocated > numTotValues ) {
+      size_t offs = m_numAllocated;
+      m_numAllocated += sz;
+      if ( m_numAllocated > m_numTotValues ) {
         std::string reason = fmt::format(
-          "nMalloc<{}>::operator () ({}) -- Memory EXAUSTED\n", _name, sz
+          "nMalloc<{}>::operator () ({}) -- Memory EXAUSTED\n", m_name, sz
         );
         printTrace( __LINE__, __FILE__, reason, std::cerr );
         std::exit(0);
       }
-      return pMalloc + offs;
+      return m_pMalloc + offs;
     }
 
-    bool is_empty() const { return numAllocated <= numTotValues; }
+    bool is_empty() const { return m_numAllocated <= m_numTotValues; }
 
     void
     must_be_empty( char const where[] ) const {
-      if ( numAllocated < numTotValues ) {
+      if ( m_numAllocated < m_numTotValues ) {
         std::string tmp = fmt::format(
           "in {} {}: not fully used!\nUnused: {} values\n",
-          _name, where, numTotValues - numAllocated
+          m_name, where, m_numTotValues - m_numAllocated
         );
         printTrace( __LINE__,__FILE__, tmp, std::cerr );
       }
-      if ( numAllocated > numTotValues ) {
+      if ( m_numAllocated > m_numTotValues ) {
         std::string tmp = fmt::format(
           "in {} {}: too much used!\nMore used: {} values\n",
-          _name, where, numAllocated - numTotValues
+          m_name, where, m_numAllocated - m_numTotValues
         );
         printTrace( __LINE__,__FILE__, tmp, std::cerr );
       }
@@ -214,7 +214,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   class Matrix : public MatrixWrapper<T> {
-    lapack_wrapper::Malloc<T> mem;
+    lapack_wrapper::Malloc<T> m_mem;
   public:
     Matrix();
     Matrix( Matrix<T> const & M );
@@ -233,7 +233,7 @@ namespace lapack_wrapper {
   \*/
   template <typename T>
   class DiagMatrix : public DiagMatrixWrapper<T> {
-    Malloc<T> mem;
+    Malloc<T> m_mem;
   public:
     DiagMatrix();
     DiagMatrix( DiagMatrix const & D );
@@ -451,6 +451,7 @@ namespace lapack_wrapper {
 #include "code++/qr.hxx"
 #include "code++/svd.hxx"
 #include "code++/ls.hxx"
+#include "code++/lsc.hxx"
 #include "code++/trid.hxx"
 #include "code++/band.hxx"
 #include "code++/qn.hxx"
@@ -458,90 +459,6 @@ namespace lapack_wrapper {
 #include "code++/block_trid.hxx"
 
 namespace lapack_wrapper {
-
-
-  //============================================================================
-  /*\
-  :|:   _     ____   ___   ____
-  :|:  | |   / ___| / _ \ / ___|
-  :|:  | |   \___ \| | | | |
-  :|:  | |___ ___) | |_| | |___
-  :|:  |_____|____/ \__\_\\____|
-  \*/
-  /*!  least square constained
-  :|:
-  :|:  minimize    (1/2) * || A * x - b ||^2
-  :|:
-  :|:  subject to  B * x = c
-  :|:
-  :|:  L = (1/2) * || A * x - b ||^2 + lambda * ( B * x - c )
-  :|:
-  :|:  is equivalent to solve linear system
-  :|:
-  :|:  / A^T*A  B^T \  /   x    \   / A^T b \
-  :|:  |            |  |        | = |       |
-  :|:  \ B       0  /  \ lambda /   \   c   /
-  :|:
-  :|:  is equivalent to solve linear system
-  :|:
-  :|:  / 0   A^T  B^T \  /   x    \   / A^T b \
-  :|:  |              |  |        |   |       |
-  :|:  | A   -I    0  |  | omega  | = |   0   |
-  :|:  |              |  |        |   |       |
-  :|:  \ B    0    0  /  \ lambda /   \   c   /
-  :|:
-  \*/
-
-  #if 0
-
-  template <typename T>
-  class LSQC {
-  public:
-    typedef T valueType;
-
-    Malloc<valueType> allocReals;
-    Malloc<integer>   allocIntegers;
-
-    integer     NR1, NR2;
-    integer   * to_row1;
-    integer   * to_row2;
-    valueType * rhs;
-    LU<T> lu;
-
-  public:
-
-    LSQC()
-    : allocReals("LSQC-allocReals")
-    , allocIntegers("LSQC-allocIntegers")
-    , to_row1(nullptr)
-    , to_row2(nullptr)
-    , rhs(nullptr)
-    {}
-
-    ~LSQC() {}
-
-    bool
-    factorize(
-      integer         NR,
-      integer         NC,
-      valueType const M[],
-      integer         ldM,
-      bool const      row_select[] // row selected for minimization
-    );
-
-    bool
-    solve( valueType xb[] ) const;
-
-    bool
-    solve(
-      integer   nrhs,
-      valueType B[],
-      integer   ldB
-    ) const;
-
-  };
-
-  #endif
 
   // explicit instantiation declaration to suppress warnings
 
@@ -584,6 +501,9 @@ namespace lapack_wrapper {
   extern template class LSY_no_alloc<doublereal>;
   extern template class LSY<real>;
   extern template class LSY<doublereal>;
+
+  extern template class LSC<real>;
+  extern template class LSC<doublereal>;
 
   extern template class TridiagonalSPD<real>;
   extern template class TridiagonalSPD<doublereal>;

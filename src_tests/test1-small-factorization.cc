@@ -483,18 +483,79 @@ test7() {
   );
 }
 
+static
+void
+test8() {
+  lapack_wrapper::LSC<valueType> lsc;
+
+  integer const M   = 5;
+  integer const LDA = 5;
+  valueType A[] = {
+    0.001,      2,     3,       2,      3,
+    0.001,  0.001,     0,   0.001,  1e-10,
+    0,      0.001,     0,   0.001,  1e-12,
+    0.001,     -1, 1e-6+1,     -1, -1e-12,
+    0.000001,   5,     3,  1e-6+5,    3+1
+  };
+
+  valueType rhs[M], b[M];
+  valueType x[M] = {1,2,3,4,5};
+  //bool      rselect[M] = { true, true, true, true, true };
+  //bool      rselect[M] = { false, false, false, false, false };
+  bool      rselect[M] = { true, false, true, true, true };
+  lapack_wrapper::gemv(
+    lapack_wrapper::NO_TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, rhs, 1
+  );
+  lapack_wrapper::gemv(
+    lapack_wrapper::NO_TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, b, 1
+  );
+
+  cout
+    << "\n\n\nTest8:\n\nInitial A\n"
+    << lapack_wrapper::print_matrix( M, M, A, M )
+    << "\nb^T\n"
+    << lapack_wrapper::print_matrix( 1, M, b, 1 );
+
+  cout << "\n\nDo LSC factorization of A\n";
+  lsc.factorize( M, M, A, LDA, rselect );
+
+  cout << "\nLSC solution of A x = b\n";
+  lapack_wrapper::copy( M, rhs, 1, x, 1 );
+  lapack_wrapper::copy( M, rhs, 1, b, 1 );
+  lsc.solve( x );
+  //qrp.t_solve( 1, x, M );
+  cout
+    << "x^T      = "
+    << lapack_wrapper::print_matrix( 1, M, x, 1 );
+
+  lapack_wrapper::gemv(
+    lapack_wrapper::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
+  );
+
+  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+
+  msg.green(
+    fmt::format(
+      "residual = {}\n||res||_2 = {}\ndone test8\n",
+      lapack_wrapper::print_matrix( 1, M, b, 1 ), res
+    )
+  );
+}
+
 
 int
 main() {
 
   try {
-    test1();
-    test2();
-    test3();
-    test4();
-    test5();
-    test6();
-    test7();
+    //test1();
+    //test2();
+    //test3();
+    //test4();
+    //test5();
+    //test6();
+    //test7();
+    test8();
   } catch ( exception const & exc ) {
     msg.error( exc.what() );
   } catch ( ... ) {

@@ -1,27 +1,27 @@
 /*!
 
   \file     sparse_tool.hh
-  \mainpage SparseTool: a Sparse Matrix Manager 
+  \mainpage SparseTool: a Sparse Matrix Manager
   \date     2011, July 21
   \version  1.1
   \note     based on SparseLib 11.0 (C 1999 -- 2008)
 
   \author Enrico Bertolazzi
- 
+
   \par Affiliations:
        Dipartimento di Ingegneria Industriale<BR>
        Universita` degli Studi di Trento<BR>
        email: enrico.bertolazzi@unitn.it<BR>
- 
+
   \section Preface
   \a SparseTool is a collection of simple, fast, and efficient classes for
   manipulating large vectors and large sparse matrices.
-  
+
   \section The Basic Vector and Matrix Classes
-  
+
   The library consist of the following templated classes:
   - \c Vector\<T\> which define a \b dense large column vector.
-  - \c SparsePattern which define a \b pattern of the nonzero 
+  - \c SparsePattern which define a \b pattern of the nonzero
     elements which can be used to construct a sparse matrix.
   - \c TridMatrix\<T\> which implements a
     \b tridiagonal matrix.
@@ -170,7 +170,7 @@ namespace SparseToolFun {
 }
 /*! \endcond */
 
-//! The namespace with the SparseTool toolkit 
+//! The namespace with the SparseTool toolkit
 namespace SparseTool {
 
   using ::std::vector;
@@ -182,7 +182,7 @@ namespace SparseTool {
   using ::std::setw;
   using ::std::greater;
   using ::std::less;
-  
+
   // FROM BLITZ++
 
   /*! \cond NODOC */
@@ -305,7 +305,7 @@ namespace SparseTool {
     //! promoted type
     typedef typename promote2<T1,T2,promoteToT1>::T_promote T_promote;
   };
-  
+
   //! Class for promotion with three types
   template<typename T1_orig, typename T2_orig, typename T3_orig>
   class promote_trait3 {
@@ -315,7 +315,7 @@ namespace SparseTool {
     //! promoted type
     typedef typename promote_trait<T12_promote,T3_orig>::T_promote T_promote;
   };
-    
+
   #ifndef SPARSELIB_FUNCTION_TYPE
   #define SPARSELIB_FUNCTION_TYPE float
   #endif
@@ -360,7 +360,7 @@ namespace SparseTool {
 
   /*! \endcond */
 
-  //! define \c uint32_t as the type for indexing vector and matrices 
+  //! define \c uint32_t as the type for indexing vector and matrices
   typedef uint32_t indexType;
 
   //! return minimum value between \c a and \c b
@@ -379,7 +379,7 @@ namespace SparseTool {
   //! comparator class for selecting \a all elements
   struct all_ok {
     //! return always true
-    bool operator () ( indexType i, indexType j ) const { return true; }
+    bool operator () ( indexType /* i */, indexType /* j */ ) const { return true; }
   };
 
   //! comparator class for selecting;lements \a under the diagonal
@@ -429,9 +429,9 @@ namespace SparseTool {
   //    #    #   #   #       #
   //    #    #    #  ######  ######
   */
-  
+
   //! \cond NODOC
-  
+
   //! \defgroup MVStructures Structures Storing Matrix/Vector operations
   //@{
 
@@ -580,7 +580,7 @@ namespace SparseTool {
     , b(_b)
     {}
   };
-  
+
   //! structure storing the operation \c a+s*M*b
   template <typename VA, typename SCALAR, typename MATRIX, typename VB>
   struct Vector_V_sum_S_mul_M_mul_V {
@@ -674,7 +674,7 @@ namespace SparseTool {
       SPARSELIB_V1LOOP( (*this)(i) = valueType(s) ); \
       return *this; \
     } \
-    /*! \brief  Add the element of the \c v derived from \c VectorBase to \c *this. 
+    /*! \brief  Add the element of the \c v derived from \c VectorBase to \c *this.
         If the vector are not of the same size then \c min(size(),v.size()) elements are copied. */ \
     template <typename VEC> inline \
     VECTOR const & \
@@ -1011,13 +1011,13 @@ namespace SparseTool {
     }
 
   /*
-  //  #     #                                   ######                       
-  //  #     # ######  ####  #####  ####  #####  #     #   ##    ####  ###### 
-  //  #     # #      #    #   #   #    # #    # #     #  #  #  #      #      
-  //  #     # #####  #        #   #    # #    # ######  #    #  ####  #####  
-  //   #   #  #      #        #   #    # #####  #     # ######      # #      
-  //    # #   #      #    #   #   #    # #   #  #     # #    # #    # #      
-  //     #    ######  ####    #    ####  #    # ######  #    #  ####  ###### 
+  //  #     #                                   ######
+  //  #     # ######  ####  #####  ####  #####  #     #   ##    ####  ######
+  //  #     # #      #    #   #   #    # #    # #     #  #  #  #      #
+  //  #     # #####  #        #   #    # #    # ######  #    #  ####  #####
+  //   #   #  #      #        #   #    # #####  #     # ######      # #
+  //    # #   #      #    #   #   #    # #   #  #     # #    # #    # #
+  //     #    ######  ####    #    ####  #    # ######  #    #  ####  ######
   */
 
   //! Base vector class
@@ -1034,29 +1034,29 @@ namespace SparseTool {
 
   public:
 
-    //! build and empty vector 
-    VectorBase() {};
+    //! build and empty vector
+    VectorBase() {}
 
-    //! forward the \c size() operator to the derived class 
+    //! forward the \c size() operator to the derived class
     indexType size() const
     { return static_cast<VECTOR const *>(this) -> size(); }
 
-    //! forward the access to the \a i-th element of the vector 
+    //! forward the access to the \a i-th element of the vector
     valueType const &
     operator [] ( indexType i ) const
     { return static_cast<VECTOR const *>(this) -> operator [] (i); }
 
-    //! forward the access to the \a i-th element of the vector 
+    //! forward the access to the \a i-th element of the vector
     valueType &
     operator [] ( indexType i )
     { return static_cast<VECTOR *>(this) -> operator [] (i); }
 
-    //! forward the access to the \a i-th element of the vector 
+    //! forward the access to the \a i-th element of the vector
     valueType const &
     operator () ( indexType i ) const
     { return static_cast<VECTOR const *>(this) -> operator () (i); }
 
-    //! forward the access to the \a i-th element of the vector 
+    //! forward the access to the \a i-th element of the vector
     valueType &
     operator () ( indexType i )
     { return static_cast<VECTOR *>(this) -> operator () (i); }
@@ -1066,20 +1066,20 @@ namespace SparseTool {
   };
 
   /*
-  //  #     #                                   
-  //  #     # ######  ####  #####  ####  #####  
-  //  #     # #      #    #   #   #    # #    # 
-  //  #     # #####  #        #   #    # #    # 
-  //   #   #  #      #        #   #    # #####  
-  //    # #   #      #    #   #   #    # #   #  
-  //     #    ######  ####    #    ####  #    # 
+  //  #     #
+  //  #     # ######  ####  #####  ####  #####
+  //  #     # #      #    #   #   #    # #    #
+  //  #     # #####  #        #   #    # #    #
+  //   #   #  #      #        #   #    # #####
+  //    # #   #      #    #   #   #    # #   #
+  //     #    ######  ####    #    ####  #    #
   */
 
   //! Variable size full vector class
   /*!
     This class extend the STL vector class by adding some math operation
     and interaction with sparse matrix classes.
-    
+
     \par Usage
 
     A \c Vector\<T\> is defined by specifying the type \c T  and
@@ -1166,7 +1166,7 @@ namespace SparseTool {
     although is done more efficiently by the library.
 
     \par Assignment
-    
+
     It is possible to copy the contents of a \c Vector\<T\> to another
     one as the following example show
 
@@ -1176,7 +1176,7 @@ namespace SparseTool {
 2:  a.resize(100);
 3:  b.resize(200);
 4:  c.resize(150);
-  
+
 5:  c = 3;
 6:  b = c;
 7:  a = c;
@@ -1198,7 +1198,7 @@ namespace SparseTool {
     following expressions
 
 \code
-1:  Vector<double> a, b, c;   
+1:  Vector<double> a, b, c;
 2:  a.resize(100);
 3:  b.resize(200);
 4:  c.resize(150);
@@ -1230,12 +1230,12 @@ in fact line \b 5 is equivalent to
        are undefined
     - the \c Vector\<T\> \c a is initialized with \a all its
       first \b 100 elements set to \b 1.
- 
+
     \par Arithmetic Operators on \c Vector\<T\>
 
     A set of usual arithmetic operators are explicitly defined on
     vector-type data.  If not otherwise specified, the operators extend
-    the corresponding scalar operation in a \a component-wise fashion. 
+    the corresponding scalar operation in a \a component-wise fashion.
     Hence, for vectors with size \c dim, the component index \c i
     in all the following expressions is supposed to run through \b 0
     to \c dim-1.
@@ -1303,7 +1303,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
 \endverbatim
 
     \par Function of \c Vector\<T\>
-  
+
     Let be <c> n = min( a.size(), b.size() ) </c>,
 
     - \c dot(a,b)   \f$ = \displaystyle\sum_{i=0}^{n-1} \overline{a_i} b_i \f$
@@ -1330,12 +1330,12 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
 
     //! Build a Vector with \a numElement elements
     Vector( indexType numElement ) : vector<T>(numElement) {};
-    
+
     //! Return the total number of elements of the vector
     indexType size() const { return indexType(vector<T>::size()); }
 
     /*! \brief  Access to the \a i-th element of the Vector.
-        If \c SPARSETOOL_DEBUG is defined an index bound check is performed.  
+        If \c SPARSETOOL_DEBUG is defined an index bound check is performed.
      */
     valueType const &
     operator [] ( indexType i ) const {
@@ -1344,7 +1344,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     }
 
     /*! \brief  Access to the \a i-th element of the Vector.
-        If \c SPARSETOOL_DEBUG is defined an index bound check is performed.  
+        If \c SPARSETOOL_DEBUG is defined an index bound check is performed.
      */
     valueType & 
     operator [] ( indexType i ) {
@@ -1388,7 +1388,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       SPARSELIB_LOOP( indexType(vector<T>::size()), (*this)(i) = a );
     }
 
-    //! Fill the Vector with the value \a v from index \a b to \a e.  
+    //! Fill the Vector with the value \a v from index \a b to \a e.
     void
     fill( indexType b, indexType e, valueType const & v ) {
       SPARSETOOL_TEST(
@@ -1402,11 +1402,11 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       valueType * p = vector<T>::begin() + b;
       SPARSELIB_LOOP( e-b, *p++ = v);
     }
-    
+
     SPARSELIB_VECTOR_OPERATIONS(Vector<T>)
 
   };
-  
+
   /*
   //  #     #                                       #####                         
   //  #     # ######  ####  #####  ####  #####     #     # #      #  ####  ###### 
@@ -1414,13 +1414,13 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   //  #     # #####  #        #   #    # #    #     #####  #      # #      #####  
   //   #   #  #      #        #   #    # #####           # #      # #      #      
   //    # #   #      #    #   #   #    # #   #     #     # #      # #    # #      
-  //     #    ######  ####    #    ####  #    #     #####  ###### #  ####  ###### 
+  //     #    ######  ####    #    ####  #    #     #####  ###### #  ####  ######
   */
   //! Remapping a piece of memory to a vector
   /*!
     This class extend the \c VectorBase class by adding the capacity
     of remapping a piece o \c Vector or a C-pointer
-    
+
     \par Usage
 
     A \c VectorSlice\<T\> is defined by specifying the type \c T.  For example,
@@ -1546,26 +1546,26 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   template<typename A>                                                        \
   class OP_V {                                                                \
   public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME(A);                                        \
+    SPARSELIB_TYPES_FROM_TYPENAME(A);                                         \
   private:                                                                    \
-    A const & a;                                                             \
+    A const & a;                                                              \
   public:                                                                     \
     OP_V(A const & aa) : a(aa) { }                                            \
-    valueType operator () (indexType i) const { return OP a(i); }            \
-    indexType size(void) const { return a.size(); }                          \
+    valueType operator () (indexType i) const { return OP a(i); }             \
+    indexType size(void) const { return a.size(); }                           \
   };                                                                          \
                                                                               \
   template<typename T, typename VEC> inline                                   \
   VectorE<T,OP_V<VectorBase<T,VEC> > >                                        \
   operator OP (VectorBase<T,VEC> const & a) {                                 \
-    typedef OP_V<VectorBase<T,VEC> > op;                                     \
+    typedef OP_V<VectorBase<T,VEC> > op;                                      \
     return VectorE<T,op>(op(a));                                              \
   }                                                                           \
                                                                               \
   template <typename T, typename A> inline                                    \
   VectorE<T,OP_V<VectorE<T,A> > >                                             \
   operator OP (VectorE<T,A> const & a) {                                      \
-    typedef OP_V<VectorE<T,A> > op;                                          \
+    typedef OP_V<VectorE<T,A> > op;                                           \
     return VectorE<T,op>(op(a));                                              \
   }
 
@@ -1573,41 +1573,41 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   template<typename A, typename B>                                            \
   class V_OP_V {                                                              \
   public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME2(A,B);                                     \
+    SPARSELIB_TYPES_FROM_TYPENAME2(A,B);                                      \
   private:                                                                    \
-    A const & a;                                                             \
-    B const & b;                                                             \
+    A const & a;                                                              \
+    B const & b;                                                              \
   public:                                                                     \
     V_OP_V(A const & aa, B const & bb) : a(aa), b(bb) { }                     \
-    valueType operator () (indexType i) const { return a(i) OP b(i); }       \
-    indexType size(void) const { return minIndex(a.size(), b.size()); }      \
-  };                                                                         \
+    valueType operator () (indexType i) const { return a(i) OP b(i); }        \
+    indexType size(void) const { return minIndex(a.size(), b.size()); }       \
+  };                                                                          \
                                                                               \
   template<typename T, typename VA, typename VB> inline                       \
   VectorE<T,V_OP_V<VectorBase<T,VA>,VectorBase<T,VB> > >                      \
   operator OP (VectorBase<T,VA> const & a, VectorBase<T,VB> const & b) {      \
-    typedef V_OP_V<VectorBase<T,VA>,VectorBase<T,VB> > op;                   \
-    return VectorE<T,op>(op(a,b));                                           \
+    typedef V_OP_V<VectorBase<T,VA>,VectorBase<T,VB> > op;                    \
+    return VectorE<T,op>(op(a,b));                                            \
   }                                                                           \
                                                                               \
   template <typename T, typename A, typename VB> inline                       \
   VectorE<T,V_OP_V<VectorE<T,A>,VectorBase<T,VB> > >                          \
   operator OP (VectorE<T,A> const & a, VectorBase<T,VB> const & b) {          \
-    typedef V_OP_V<VectorE<T,A>,VectorBase<T,VB> > op;                       \
+    typedef V_OP_V<VectorE<T,A>,VectorBase<T,VB> > op;                        \
     return VectorE<T,op>(op(a,b));                                            \
   }                                                                           \
                                                                               \
   template <typename T, typename VA, typename B> inline                       \
   VectorE<T,V_OP_V<VectorBase<T,VA>,VectorE<T,B> > >                          \
   operator OP (VectorBase<T,VA> const & a, VectorE<T,B> const & b) {          \
-    typedef V_OP_V<VectorBase<T,VA>,VectorE<T,B> > op;                       \
+    typedef V_OP_V<VectorBase<T,VA>,VectorE<T,B> > op;                        \
     return VectorE<T,op>(op(a,b));                                            \
   }                                                                           \
                                                                               \
   template <typename T, typename A, typename B> inline                        \
   VectorE<T,V_OP_V<VectorE<T,A>, VectorE<T,B> > >                             \
   operator OP (VectorE<T,A> const & a, VectorE<T,B> const & b) {              \
-    typedef V_OP_V<VectorE<T,A>,VectorE<T,B> > op;                           \
+    typedef V_OP_V<VectorE<T,A>,VectorE<T,B> > op;                            \
     return VectorE<T,op>(op(a,b));                                            \
   }
 
@@ -1615,27 +1615,27 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   template<typename S, typename B>                                            \
   class S_OP_V {                                                              \
   public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME3(S,B);                                     \
+    SPARSELIB_TYPES_FROM_TYPENAME3(S,B);                                      \
   private:                                                                    \
-    S const & a;                                                             \
-    B const & b;                                                             \
+    S const & a;                                                              \
+    B const & b;                                                              \
   public:                                                                     \
     S_OP_V(S const & aa, B const & bb) : a(aa), b(bb) { }                     \
-    valueType operator () (indexType i) const { return a OP b(i); }          \
-    indexType size(void) const { return b.size(); }                          \
-  };                                                                         \
+    valueType operator () (indexType i) const { return a OP b(i); }           \
+    indexType size(void) const { return b.size(); }                           \
+  };                                                                          \
                                                                               \
   template <typename T, typename VEC> inline                                  \
   VectorE<T,S_OP_V<T,VectorBase<T,VEC> > >                                    \
   operator OP (T const & s, VectorBase<T,VEC> const & v) {                    \
-    typedef S_OP_V<T,VectorBase<T,VEC> > op;                                 \
+    typedef S_OP_V<T,VectorBase<T,VEC> > op;                                  \
     return VectorE<T,op>(op(s,v));                                            \
   }                                                                           \
                                                                               \
   template <typename T, typename A> inline                                    \
   VectorE<T,S_OP_V<T,VectorE<T,A> > >                                         \
   operator OP (T const & s, VectorE<T,A> const & v) {                         \
-    typedef S_OP_V<T,VectorE<T,A> > op;                                      \
+    typedef S_OP_V<T,VectorE<T,A> > op;                                       \
     return VectorE<T,op>(op(s,v));                                            \
   }
 
@@ -1643,28 +1643,28 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   template<typename S, typename A>                                            \
   class V_OP_S {                                                              \
   public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME3(S,A);                                     \
+    SPARSELIB_TYPES_FROM_TYPENAME3(S,A);                                      \
   private:                                                                    \
-    A const & a;                                                             \
-    S const & b;                                                             \
+    A const & a;                                                              \
+    S const & b;                                                              \
   public:                                                                     \
     V_OP_S(A const & aa, S const & bb) : a(aa), b(bb) { }                     \
-    valueType operator () (indexType i) const { return a(i) OP b; }          \
-    indexType size(void) const { return a.size(); }                          \
-  };                                                                         \
+    valueType operator () (indexType i) const { return a(i) OP b; }           \
+    indexType size(void) const { return a.size(); }                           \
+  };                                                                          \
                                                                               \
   template <typename T, typename VEC> inline                                  \
   VectorE<T,V_OP_S<T,VectorBase<T,VEC> > >                                    \
   operator OP (VectorBase<T,VEC> const & v, T const & s) {                    \
-    typedef V_OP_S<T,VectorBase<T,VEC> > op;                                 \
-    return VectorE<T,op>(op(v,s));                                           \
+    typedef V_OP_S<T,VectorBase<T,VEC> > op;                                  \
+    return VectorE<T,op>(op(v,s));                                            \
   }                                                                           \
                                                                               \
   template <typename T, typename A> inline                                    \
   VectorE<T, V_OP_S<T,VectorE<T,A> > >                                        \
   operator OP (VectorE<T,A> const & v, T const & s) {                         \
-    typedef V_OP_S<T,VectorE<T,A> > op;                                      \
-    return VectorE<T,op>(op(v,s));                                           \
+    typedef V_OP_S<T,VectorE<T,A> > op;                                       \
+    return VectorE<T,op>(op(v,s));                                            \
   }
   
   /*! \endcond */
@@ -1689,35 +1689,35 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   SPARSELIB_VS(/,Vector_V_div_S)
 
   /*! \endcond */
-  
-  /*! \cond NODOC */  
+
+  /*! \cond NODOC */
 
   #define SPARSELIB_F_V(FUN)                                                  \
   template<typename A>                                                        \
   class Vector_##FUN {                                                        \
   public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME_FUN1(A);                                   \
+    SPARSELIB_TYPES_FROM_TYPENAME_FUN1(A);                                    \
   private:                                                                    \
-    A const & a;                                                             \
+    A const & a;                                                              \
   public:                                                                     \
     Vector_##FUN(A const & aa) : a(aa) { }                                    \
     valueType operator () (indexType i) const                                 \
-      { return ::SparseToolFun::FUN(a(i)); }                                 \
-    indexType size(void) const { return a.size(); }                          \
+      { return ::SparseToolFun::FUN(a(i)); }                                  \
+    indexType size(void) const { return a.size(); }                           \
   };
 
   #define SPARSELIB_F_V_TREE(FUN)                                             \
   template<typename T> inline                                                 \
   VectorE<T,Vector_##FUN<Vector<T> > >                                        \
   FUN(Vector<T> const & a) {                                                  \
-    typedef Vector_##FUN<Vector<T> > op;                                     \
+    typedef Vector_##FUN<Vector<T> > op;                                      \
     return VectorE<T,op>(op(a));                                              \
   }                                                                           \
                                                                               \
   template <typename T, typename A> inline                                    \
   VectorE<T,Vector_##FUN<VectorE<T,A> > >                                     \
   FUN(VectorE<T,A> const & a) {                                               \
-    typedef Vector_##FUN<VectorE<T,A> > op;                                  \
+    typedef Vector_##FUN<VectorE<T,A> > op;                                   \
     return VectorE<T,op>(op(a));                                              \
   }
 
@@ -1725,43 +1725,43 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   template<typename A, typename B>                                            \
   class Vector_##FUN {                                                        \
   public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME_FUN2(A,B);                                 \
+    SPARSELIB_TYPES_FROM_TYPENAME_FUN2(A,B);                                  \
   private:                                                                    \
-    A const & a;                                                             \
-    B const & b;                                                             \
+    A const & a;                                                              \
+    B const & b;                                                              \
   public:                                                                     \
     Vector_##FUN(A const & aa, B const & bb) : a(aa), b(bb) { }               \
     valueType operator () (indexType i) const                                 \
-      { return ::SparseToolFun::FUN(a(i), b(i)); }                           \
-    indexType size(void) const { return minIndex(a.size(), b.size()); }      \
+      { return ::SparseToolFun::FUN(a(i), b(i)); }                            \
+    indexType size(void) const { return minIndex(a.size(), b.size()); }       \
   };
 
   #define SPARSELIB_F_VV_TREE(FUN)                                            \
   template<typename T> inline                                                 \
   VectorE<T,Vector_##FUN<Vector<T>,Vector<T> > >                              \
   FUN(Vector<T> const & a, Vector<T> const & b) {                             \
-    typedef Vector_##FUN<Vector<T>,Vector<T> > op;                           \
-    return VectorE<T,op>(op(a,b));                                           \
+    typedef Vector_##FUN<Vector<T>,Vector<T> > op;                            \
+    return VectorE<T,op>(op(a,b));                                            \
   }                                                                           \
                                                                               \
   template <typename T, typename A> inline                                    \
   VectorE<T,Vector_##FUN<VectorE<T,A>,Vector<T> > >                           \
   FUN(VectorE<T,A> const & a, Vector<T> const & b) {                          \
-    typedef Vector_##FUN<VectorE<T,A>,Vector<T> > op;                        \
+    typedef Vector_##FUN<VectorE<T,A>,Vector<T> > op;                         \
     return VectorE<T,op>(op(a,b));                                            \
   }                                                                           \
                                                                               \
   template <typename T, typename B> inline                                    \
   VectorE<T,Vector_##FUN<Vector<T>,VectorE<T,B> > >                           \
   FUN(Vector<T> const & a, VectorE<T,B> const & b) {                          \
-    typedef Vector_##FUN<Vector<T>,VectorE<T,B> > op;                        \
+    typedef Vector_##FUN<Vector<T>,VectorE<T,B> > op;                         \
     return VectorE<T,op>(op(a,b));                                            \
   }                                                                           \
                                                                               \
   template <typename T, typename A, typename B> inline                        \
   VectorE<T,Vector_##FUN<VectorE<T,A>, VectorE<T,B> > >                       \
   FUN(VectorE<T,A> const & a, VectorE<T,B> const & b) {                       \
-    typedef Vector_##FUN<VectorE<T,A>,VectorE<T,B> > op;                     \
+    typedef Vector_##FUN<VectorE<T,A>,VectorE<T,B> > op;                      \
     return VectorE<T,op>(op(a,b));                                            \
   }
   /*! \endcond */
@@ -1975,7 +1975,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   #undef SPARSELIB_F_V_TREE
   #undef SPARSELIB_F_VV
   #undef SPARSELIB_F_VV_TREE
-  
+
   //! \name Vector norm
   //@{
 
@@ -2104,22 +2104,22 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   //@{
 
   // D O T
-  //! Evaluate dot product between vector \c a and vector \c b 
+  //! Evaluate dot product between vector \c a and vector \c b
   template <typename T, typename V1, typename V2> inline
   T dot(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
   { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::dot(a,b); }
 
-  //! Evaluate dot product between vector expression \c a and vector \c b 
+  //! Evaluate dot product between vector expression \c a and vector \c b
   template <typename T, typename A, typename V> inline
   T dot(VectorE<T,A> const & a, VectorBase<T,V> const & b)
   { return F2<VectorE<T,A>,VectorBase<T,V> >::dot(a,b); }
 
-  //! Evaluate dot product between vector \c a and vector expression \c b 
+  //! Evaluate dot product between vector \c a and vector expression \c b
   template <typename T, typename A, typename V> inline
   T dot(VectorBase<T,V> const & a, VectorE<T,A> const & b)
   { return F2<VectorBase<T,V>,VectorE<T,A> >::dot(a,b); }
 
-  //! Evaluate dot product between vector expression  \c a and vector expression \c b 
+  //! Evaluate dot product between vector expression  \c a and vector expression \c b
   template <typename T, typename A, typename B> inline
   T dot(VectorE<T,A> const & a, VectorE<T,B> const & b)
   { return F2<VectorE<T,A>,VectorE<T,B> >::dot(a,b); }
@@ -2151,39 +2151,39 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   //@{
 
   // D I S T
-  //! Evaluate euclidean distance between vector \c a and vector \c b   
+  //! Evaluate euclidean distance between vector \c a and vector \c b
   template <typename T, typename V1, typename V2> inline
   typename return_trait<T>::valueType dist(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
   { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::dist(a,b); }
 
-  //! Evaluate euclidean distance between vector expression \c a and vector \c b   
+  //! Evaluate euclidean distance between vector expression \c a and vector \c b
   template <typename T, typename A, typename V> inline
   typename return_trait<T>::valueType dist(VectorE<T,A> const & a, VectorBase<T,V> const & b)
   { return F2<VectorE<T,A>,VectorBase<T,V> >::dist(a,b); }
 
-  //! Evaluate euclidean distance between vector \c a and vector expression \c b   
+  //! Evaluate euclidean distance between vector \c a and vector expression \c b
   template <typename T, typename A, typename V> inline
   typename return_trait<T>::valueType dist(VectorBase<T,V> const & a, VectorE<T,A> const & b)
   { return F2<VectorBase<T,V>,VectorE<T,A> >::dist(a,b); }
 
-  //! Evaluate euclidean distance between vector expression \c a and vector expression \c b   
+  //! Evaluate euclidean distance between vector expression \c a and vector expression \c b
   template <typename T, typename A, typename B> inline
   typename return_trait<T>::valueType dist(VectorE<T,A> const & a, VectorE<T,B> const & b)
   { return F2<VectorE<T,A>,VectorE<T,B> >::dist(a,b); }
 
   // D I S T 2
 
-  //! Evaluate square of euclidean distance between vector \c a and vector \c b   
+  //! Evaluate square of euclidean distance between vector \c a and vector \c b
   template <typename T, typename V1, typename V2> inline
   typename return_trait<T>::valueType dist2(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
   { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::dist2(a,b); }
 
-  //! Evaluate square of euclidean distance between vector expression \c a and vector \c b   
+  //! Evaluate square of euclidean distance between vector expression \c a and vector \c b
   template <typename T, typename A, typename V> inline
   typename return_trait<T>::valueType dist2(VectorE<T,A> const & a, VectorBase<T,V> const & b)
   { return F2<VectorE<T,A>,Vector<T> >::dist2(a,b); }
 
-  //! Evaluate square of euclidean distance between vector \c a and vector expression \c b   
+  //! Evaluate square of euclidean distance between vector \c a and vector expression \c b
   template <typename T, typename A, typename V> inline
   typename return_trait<T>::valueType dist2(VectorBase<T,V> const & a, VectorE<T,A> const & b)
   { return F2<VectorBase<T,V>,VectorE<T,A> >::dist2(a,b); }
@@ -2204,7 +2204,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   // #    #  #     #   #   #     # #   #        #     # #     # #    #     #
   //  #### #  #####   ###   #####  #    #        #####  ####### #     #    #
   */
-  
+
   //! \name Sorting Structures
   //@{
 
@@ -2637,13 +2637,13 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   template <typename TM, typename T, typename VEC> inline                     \
   Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VEC> >                              \
   operator * (MATRIX<TM> const & M, VectorBase<T,VEC> const & a) {            \
-    return Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VEC> >(M,a);              \
+    return Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VEC> >(M,a);               \
   }                                                                           \
                                                                               \
   template <typename T, typename TM> inline                                   \
   Vector_S_mul_M<T,MATRIX<TM> >                                               \
   operator * (T const & s, MATRIX<TM> const & M) {                            \
-    return Vector_S_mul_M<T, MATRIX<TM> >(s,M);                              \
+    return Vector_S_mul_M<T, MATRIX<TM> >(s,M);                               \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VEC> inline                     \
@@ -2651,7 +2651,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   operator * (Vector_S_mul_M<T,MATRIX<TM> > const & sM,                       \
               VectorBase<T,VEC>             const & v) {                      \
     return Vector_S_mul_M_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >            \
-           (sM.s,sM.M,v);                                                    \
+           (sM.s,sM.M,v);                                                     \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VEC> inline                     \
@@ -2659,7 +2659,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   operator * (T const & s,                                                    \
               Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VEC> > const & Mv) {    \
     return Vector_S_mul_M_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >            \
-           (s,Mv.M,Mv.a);                                                    \
+           (s,Mv.M,Mv.a);                                                     \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VA, typename VB> inline         \
@@ -2667,7 +2667,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   operator + (VectorBase<T,VA> const & a,                                     \
               Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VB> > const & Mv) {     \
     return Vector_V_sum_M_mul_V<VectorBase<T,VA>, MATRIX<TM>,                 \
-                                VectorBase<T,VB> >(a,Mv.M,Mv.a);             \
+                                VectorBase<T,VB> >(a,Mv.M,Mv.a);              \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VA, typename VB> inline         \
@@ -2675,7 +2675,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   operator - (VectorBase<T,VA> const & a,                                     \
               Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VB> > const & Mv) {     \
     return Vector_V_sub_M_mul_V<VectorBase<T,VA>,MATRIX<TM>,                  \
-                                VectorBase<T,VB> >(a,Mv.M,Mv.a);             \
+                                VectorBase<T,VB> >(a,Mv.M,Mv.a);              \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VA, typename VB> inline         \
@@ -2684,13 +2684,13 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
               Vector_S_mul_M_mul_V<T,MATRIX<TM>,VectorBase<T,VB> > const & sMv) { \
     return Vector_V_sum_S_mul_M_mul_V<VectorBase<T,VA>,T,MATRIX<TM>,          \
                                       VectorBase<T,VB> >                      \
-                                      (a,sMv.s,sMv.M,sMv.a);                 \
+                                      (a,sMv.s,sMv.M,sMv.a);                  \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VEC> inline                     \
   Vector_Mt_mul_V<MATRIX<TM>, VectorBase<T,VEC> >                             \
   operator ^ (MATRIX<TM> const & M, VectorBase<T,VEC> const & a) {            \
-    return Vector_Mt_mul_V<MATRIX<TM>, VectorBase<T,VEC> >(M,a);             \
+    return Vector_Mt_mul_V<MATRIX<TM>, VectorBase<T,VEC> >(M,a);              \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VEC> inline                     \
@@ -2698,7 +2698,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   operator ^ (Vector_S_mul_M<T,MATRIX<TM> > const & sM,                       \
               VectorBase<T,VEC>             const & v) {                      \
     return Vector_S_mul_Mt_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >           \
-           (sM.s,sM.M,v);                                                    \
+           (sM.s,sM.M,v);                                                     \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VEC> inline                     \
@@ -2706,7 +2706,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   operator * (T const & s,                                                    \
               Vector_Mt_mul_V<MATRIX<TM>, VectorBase<T,VEC> > const & Mv) {   \
     return Vector_S_mul_Mt_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >           \
-           (s,Mv.M,Mv.a);                                                    \
+           (s,Mv.M,Mv.a);                                                     \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VA, typename VB> inline         \
@@ -2714,7 +2714,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   operator + (VectorBase<T,VA> const & a,                                     \
               Vector_Mt_mul_V<MATRIX<TM>, VectorBase<T,VB> > const & Mv) {    \
     return Vector_V_sum_Mt_mul_V<VectorBase<T,VA>,MATRIX<TM>,                 \
-                                 VectorBase<T,VB> >(a,Mv.M,Mv.a);            \
+                                 VectorBase<T,VB> >(a,Mv.M,Mv.a);             \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VA, typename VB> inline         \
@@ -2722,7 +2722,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   operator - (VectorBase<T,VA> const & a,                                     \
               Vector_Mt_mul_V<MATRIX<TM>,VectorBase<T,VB> > const & Mv) {     \
     return Vector_V_sub_Mt_mul_V<VectorBase<T,VA>,MATRIX<TM>,                 \
-                                 VectorBase<T,VB> >(a,Mv.M,Mv.a);            \
+                                 VectorBase<T,VB> >(a,Mv.M,Mv.a);             \
   }                                                                           \
                                                                               \
   template <typename T, typename TM, typename VA, typename VB> inline         \
@@ -2731,7 +2731,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
               Vector_S_mul_Mt_mul_V<T,MATRIX<TM>,VectorBase<T,VB> > const & sMv) { \
     return Vector_V_sum_S_mul_Mt_mul_V<VectorBase<T,VA>,T,MATRIX<TM>,         \
                                        VectorBase<T,VB> >                     \
-                                       (a,sMv.s,sMv.M,sMv.a);                \
+                                       (a,sMv.s,sMv.M,sMv.a);                 \
   }
 
   /*!
@@ -2750,14 +2750,14 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     indexType sp_ncols;     //!< Number of columns of the derived class
     indexType sp_min_size;  //!< Minimum between \c sp_nrows and \c sp_ncols
     indexType sp_max_size;  //!< Minimum between \c sp_nrows and \c sp_ncols
-    indexType sp_nnz;       //!< Total number of nonzeros of the derived sparse matrix  
+    indexType sp_nnz;       //!< Total number of nonzeros of the derived sparse matrix
     indexType sp_lower_nnz; //!< Total number of nonzeros under the main diagonal
     indexType sp_upper_nnz; //!< Total number of nonzeros over the main diagonal
     indexType sp_diag_nnz;  //!< Total number of nonzeros on the main diagonal
-    bool      sp_isOrdered; 
+    bool      sp_isOrdered;
     /*!< \brief Some sparse matrix can be internally in a state not ordered.
          When in this state the random access to element is unpredictable
-         and can result in runtime error. 
+         and can result in runtime error.
          This method return \c true if the matrix is ordered. */
 
     //! check the index \c idx. If out of the range \c 0..nnz-1 and error is issued.
@@ -2768,7 +2768,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         "Sparse::operator [" << idx << "] index out of range"
       )
     }
-    
+
     //! check the indices \c i and \c j. If out of the range of the matrix and error is issued.
     void
     test_index(indexType i, indexType j) const {
@@ -2848,19 +2848,19 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     /*! \brief
         \name Iterator
         These methods are useful for accessing all the nonzero elements
-        of the derived sparse matrix.  The methods 
+        of the derived sparse matrix.  The methods
 
         - \c void \c Begin()
         - \c void \c Next()
         - \c bool \c End()
-        
+
         permits to loops on all the elements, while the methods
 
         - \c indexType \c row()
         - \c indexType \c column()
         - \c valueType \c value()
 
-        permits to access values of the actual elements 
+        permits to access values of the actual elements
         pointed by the iterator. For example to print all the stored
         values of the \c Sparse object \c S we can do:
 
@@ -2869,7 +2869,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     cout << " row   = " << S.row()
          << " col   = " << S.column()
          << " value = " << S.value()
-         << '\n';  
+         << '\n';
   }
 \endcode
     */
@@ -3037,17 +3037,17 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            2 & -1 &    & 1  &    \\ 
-            1 & 2  &    &    & 5  \\ 
-              &    & 2  & -3 &    \\ 
-              &    & 3  & 2  & -4 \\ 
+            2 & -1 &    & 1  &    \\
+            1 & 2  &    &    & 5  \\
+              &    & 2  & -3 &    \\
+              &    & 3  & 2  & -4 \\
               &    &    & 4  & 2
         \end{BMAT}\right],\qquad
         (\bm{A}=2.1) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           2.1 & 0   &     & 0   &    \\ 
-           0   & 2.1 &     &     & 0  \\ 
-               &     & 2.1 & 0   &    \\ 
-               &     & 0   & 2.1 & 0  \\ 
+           2.1 & 0   &     & 0   &    \\
+           0   & 2.1 &     &     & 0  \\
+               &     & 2.1 & 0   &    \\
+               &     & 0   & 2.1 & 0  \\
                &     &     & 0   & 2.1
         \end{BMAT}\right]
         \f]
@@ -3066,17 +3066,17 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       \htmlonly <TABLE><TR><TD> \endhtmlonly
       \f[
       \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      2 & -1 &    & 1  &    \\ 
-      1 & 2  &    &    & 5  \\ 
-        &    & 2  & -3 &    \\ 
-        &    & 3  & 2  & -4 \\ 
+      2 & -1 &    & 1  &    \\
+      1 & 2  &    &    & 5  \\
+        &    & 2  & -3 &    \\
+        &    & 3  & 2  & -4 \\
         &    &    & 4  & 2
       \end{BMAT}\right],\qquad
       (\bm{A}\verb|+=| 2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      4 & -1 &    & 1  &    \\ 
-      1 & 4  &    &    & 5  \\ 
-        &    & 4  & -3 &    \\ 
-        &    & 3  & 4  & -4 \\ 
+      4 & -1 &    & 1  &    \\
+      1 & 4  &    &    & 5  \\
+        &    & 4  & -3 &    \\
+        &    & 3  & 4  & -4 \\
         &    &    & 4  & 4
       \end{BMAT}\right]
       \f]
@@ -3093,17 +3093,17 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       \htmlonly <TABLE><TR><TD> \endhtmlonly
       \f[
       \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      2 & -1 &    & 1  &    \\ 
-      1 & 2  &    &    & 5  \\ 
-        &    & 2  & -3 &    \\ 
-        &    & 3  & 2  & -4 \\ 
+      2 & -1 &    & 1  &    \\
+      1 & 2  &    &    & 5  \\
+        &    & 2  & -3 &    \\
+        &    & 3  & 2  & -4 \\
         &    &    & 4  & 2
       \end{BMAT}\right],\qquad
       (\bm{A} \verb|-=| 2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      0 & -1 &    & 1  &    \\ 
-      1 & 0  &    &    & 5  \\ 
-        &    & 0  & -3 &    \\ 
-        &    & 3  & 0  & -4 \\ 
+      0 & -1 &    & 1  &    \\
+      1 & 0  &    &    & 5  \\
+        &    & 0  & -3 &    \\
+        &    & 3  & 0  & -4 \\
         &    &    & 4  & 0
       \end{BMAT}\right]
       \f]
@@ -3120,17 +3120,17 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       \htmlonly <TABLE><TR><TD> \endhtmlonly
       \f[
       \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      2 & -1 &    & 1  &    \\ 
-      1 & 2  &    &    & 5  \\ 
-        &    & 2  & -3 &    \\ 
-        &    & 3  & 2  & -4 \\ 
+      2 & -1 &    & 1  &    \\
+      1 & 2  &    &    & 5  \\
+        &    & 2  & -3 &    \\
+        &    & 3  & 2  & -4 \\
         &    &    & 4  & 2
       \end{BMAT}\right],\qquad
       (\bm{A} \verb|*=| 2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      4 & -2 &    & 2  &    \\ 
-      2 &  4 &    &    & 10 \\ 
-        &    & 4  & -6 &    \\ 
-        &    & 6  & 4  & -8 \\ 
+      4 & -2 &    & 2  &    \\
+      2 &  4 &    &    & 10 \\
+        &    & 4  & -6 &    \\
+        &    & 6  & 4  & -8 \\
         &    &    & 8  & 4
       \end{BMAT}\right]
       \f]
@@ -3144,17 +3144,17 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       \htmlonly <TABLE><TR><TD> \endhtmlonly
       \f[
       \bm{A}= \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      2 & -1 &    & 1  &    \\ 
-      1 & 2  &    &    & 5  \\ 
-        &    & 2  & -3 &    \\ 
-        &    & 3  & 2  & -4 \\ 
+      2 & -1 &    & 1  &    \\
+      1 & 2  &    &    & 5  \\
+        &    & 2  & -3 &    \\
+        &    & 3  & 2  & -4 \\
         &    &    & 4  & 2
       \end{BMAT}\right],\qquad
       (\bm{A} \verb|/=| 10) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      0.2 & -0.1 &      & 0.1  &      \\ 
-      0.1 & 0.2  &      &      & 0.5  \\ 
-          &      & 0.2  & -0.3 &      \\ 
-          &      & 0.3  & 0.2  & -0.4 \\ 
+      0.2 & -0.1 &      & 0.1  &      \\
+      0.1 & 0.2  &      &      & 0.5  \\
+          &      & 0.2  & -0.3 &      \\
+          &      & 0.3  & 0.2  & -0.4 \\
           &      &      & 0.4  & 0.2
       \end{BMAT}\right]
       \f]
@@ -3171,10 +3171,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
            \bm{A}= \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           2 & -1 &    & 1  &    \\ 
-           1 & 2  &    &    & 5  \\ 
-             &    & 2  & -3 &    \\ 
-             &    & 3  & 2  & -4 \\ 
+           2 & -1 &    & 1  &    \\
+           1 & 2  &    &    & 5  \\
+             &    & 2  & -3 &    \\
+             &    & 3  & 2  & -4 \\
              &    &    & 4  & 2
            \end{BMAT}\right],\qquad
            \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
@@ -3182,10 +3182,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
            \end{BMAT}\right],
            \qquad
            (\bm{A}=\bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           1 & 0 &   & 0 &   \\ 
-           0 & 2 &   &   & 0 \\ 
-             &   & 3 & 0 &   \\ 
-             &   & 0 & 0 & 0 \\ 
+           1 & 0 &   & 0 &   \\
+           0 & 2 &   &   & 0 \\
+             &   & 3 & 0 &   \\
+             &   & 0 & 0 & 0 \\
              &   &   & 0 & 0
           \end{BMAT}\right]
         \f]
@@ -3208,10 +3208,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-          2 & -1 &    & 1  &    \\ 
-          1 & 2  &    &    & 5  \\ 
-            &    & 2  & -3 &    \\ 
-            &    & 3  & 2  & -4 \\ 
+          2 & -1 &    & 1  &    \\
+          1 & 2  &    &    & 5  \\
+            &    & 2  & -3 &    \\
+            &    & 3  & 2  & -4 \\
             &    &    & 4  & 2
         \end{BMAT}\right],\qquad
         \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
@@ -3219,10 +3219,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \end{BMAT}\right],
         \qquad
         (\bm{A}\verb|-=| \bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-          3 & -1 &    & 1  &    \\ 
-          1 & 4  &    &    & 5  \\ 
-            &    & 5  & -3 &    \\ 
-            &    & 3  & 2  & -4 \\ 
+          3 & -1 &    & 1  &    \\
+          1 & 4  &    &    & 5  \\
+            &    & 5  & -3 &    \\
+            &    & 3  & 2  & -4 \\
             &    &    & 4  & 2
         \end{BMAT}\right]
       \f]
@@ -3236,16 +3236,16 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         (*this)(k,k) += v(k);
       return *this;
     }
-    /*! \brief 
+    /*! \brief
         Subtract the components of \c v to the diagonal.
         For example
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-          2 & -1 &    & 1  &    \\ 
-          1 & 2  &    &    & 5  \\ 
-            &    & 2  & -3 &    \\ 
-            &    & 3  & 2  & -4 \\ 
+          2 & -1 &    & 1  &    \\
+          1 & 2  &    &    & 5  \\
+            &    & 2  & -3 &    \\
+            &    & 3  & 2  & -4 \\
             &    &    & 4  & 2
         \end{BMAT}\right],\qquad
         \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
@@ -3253,10 +3253,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \end{BMAT}\right],
         \qquad
         (\bm{A}\verb|-=| \bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-          1 & -1 &    & 1  &    \\ 
-          1 & 0  &    &    & 5  \\ 
-            &    & -1  & -3 &    \\ 
-            &    & 3  & 2  & -4 \\ 
+          1 & -1 &    & 1  &    \\
+          1 & 0  &    &    & 5  \\
+            &    & -1  & -3 &   \\
+            &    & 3  & 2  & -4 \\
             &    &    & 4  & 2
         \end{BMAT}\right]
       \f]
@@ -3276,10 +3276,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            2 & -1 &    & 1  &    \\ 
-            1 & 2  &    &    & 5  \\ 
-              &    & 2  & -3 &    \\ 
-              &    & 3  & 2  & -4 \\ 
+            2 & -1 &    & 1  &    \\
+            1 & 2  &    &    & 5  \\
+              &    & 2  & -3 &    \\
+              &    & 3  & 2  & -4 \\
               &    &    & 4  & 2
         \end{BMAT}\right],\qquad
         \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c.c.c}
@@ -3292,10 +3292,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
         \f[
         (\bm{A}=\bm{a}+2\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           3 & 0 &   & 0  &    \\ 
-           0 & 0 &   &    & 0  \\ 
-             &   & 7 & 0  &    \\ 
-             &   & 0 & 0  & 0  \\ 
+           3 & 0 &   & 0  &    \\
+           0 & 0 &   &    & 0  \\
+             &   & 7 & 0  &    \\
+             &   & 0 & 0  & 0  \\
              &   &   & 0  & 0
          \end{BMAT}\right]
         \f]
@@ -3316,10 +3316,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            2 & -1 &    & 1  &    \\ 
-            1 & 2  &    &    & 5  \\ 
-              &    & 2  & -3 &    \\ 
-              &    & 3  & 2  & -4 \\ 
+            2 & -1 &    & 1  &    \\
+            1 & 2  &    &    & 5  \\
+              &    & 2  & -3 &    \\
+              &    & 3  & 2  & -4 \\
               &    &    & 4  & 2
         \end{BMAT}\right],\qquad
         \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c.c.c}
@@ -3332,10 +3332,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
         \f[
         (\bm{A}\verb|+=| \bm{a}+2\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            5 & -1 &    & 1  &    \\ 
-            1 & 2  &    &    & 5  \\ 
-              &    & 9  & -3 &    \\ 
-              &    & 3  & 2  & -4 \\ 
+            5 & -1 &    & 1  &    \\
+            1 & 2  &    &    & 5  \\
+              &    & 9  & -3 &    \\
+              &    & 3  & 2  & -4 \\
               &    &    & 4  & 2
         \end{BMAT}\right]
         \f]
@@ -3355,10 +3355,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            2 & -1 &    & 1  &    \\ 
-            1 & 2  &    &    & 5  \\ 
-              &    & 2  & -3 &    \\ 
-              &    & 3  & 2  & -4 \\ 
+            2 & -1 &    & 1  &    \\
+            1 & 2  &    &    & 5  \\
+              &    & 2  & -3 &    \\
+              &    & 3  & 2  & -4 \\
               &    &    & 4  & 2
         \end{BMAT}\right],\qquad
         \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c.c.c}
@@ -3371,13 +3371,13 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
         \f[
         (\bm{A} \verb|-=| \bm{a}+2\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           -1 & -1 &    & 1  &    \\ 
-            1 & 2  &    &    & 5  \\ 
-              &    & -5 & -3 &    \\ 
-              &    & 3  & 2  & -4 \\ 
+           -1 & -1 &    & 1  &    \\
+            1 & 2  &    &    & 5  \\
+              &    & -5 & -3 &    \\
+              &    & 3  & 2  & -4 \\
               &    &    & 4  & 2
         \end{BMAT}\right]
-        \f]    
+        \f]
         \htmlonly </TD></TR></TABLE> \endhtmlonly
     */
     template <typename R> inline
@@ -3390,7 +3390,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     }
     //@}
 
-    /*! \brief 
+    /*! \brief
         \name Matrix-Vector multiplication
     */
 
@@ -3454,7 +3454,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     //! Create an empty preconditioner
     Preco(void) : pr_size(0) {}
     ~Preco(void) {};
-    //! return the number of row/column of the preconditioner matrix 
+    //! return the number of row/column of the preconditioner matrix
     indexType size(void) const { return pr_size; }
   };
 
@@ -3486,14 +3486,14 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     following \b 6 x \b 7 sparse matrix pattern
 
     \htmlonly <TABLE><TR><TD> \endhtmlonly
-    \f[ 
+    \f[
       \bm{S} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c.c.c}{c.c.c.c.c.c}
-     * & * &   &   &   &   & * \\ 
-       & * & * &   &   &   &   \\ 
-       &   &   & * & * &   &   \\ 
-       & * &   &   & * &   &   \\ 
-     * &   & * &   &   & * &   \\ 
-       & * &   &   &   &   & * 
+     * & * &   &   &   &   & * \\
+       & * & * &   &   &   &   \\
+       &   &   & * & * &   &   \\
+       & * &   &   & * &   &   \\
+     * &   & * &   &   & * &   \\
+       & * &   &   &   &   & *
        \end{BMAT}\right]
     \f]
     \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
@@ -3505,7 +3505,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
        \end{tabular}
     \f]
     \htmlonly </TD></TR></TABLE> \endhtmlonly
-    Notice that the index follows the C convention, starting from \b 0. 
+    Notice that the index follows the C convention, starting from \b 0.
     The class \c SparsePattern try to manage such a structure in a
     simple way for the user.  To define a \c SparsePattern class you
     can use uno of the following scripture
@@ -3561,10 +3561,10 @@ sp.resize(sobj);
     typedef SparsePattern             MATRIX;
     typedef SparseBase<SparsePattern> SPARSE;
 
-    Vector<indexType> I;    //!< Vector of row index 
+    Vector<indexType> I;    //!< Vector of row index
     Vector<indexType> J;    //!< Vector of column index
     mutable indexType ipos; //!< Actual position of iterator
-    
+
     //! \cond NODOC
     template <typename MAT, typename Compare>
     void
@@ -3626,7 +3626,7 @@ sp.resize(sobj);
      * Copy the sparse pattern \c sp to \c *this.
      * \param sp sparse pattern to be copied
      */
-    SparsePattern(SparsePattern const & sp) : SPARSE() 
+    SparsePattern(SparsePattern const & sp) : SPARSE()
     { convert(sp,all_ok()); }
 
     // convert => SparsePattern
@@ -3786,29 +3786,29 @@ sp.resize(sobj);
   // #     #  #    #    #    #    #  #  #    #
   //
   */
-  
+
   /*!
 
     \class CCoorMatrix
 
-    The class \c CCoorMatrix\<T\> implement a 
+    The class \c CCoorMatrix\<T\> implement a
     <B> Compressed Coordinate </B> storage sparse scheme.
     It consists of two big vector of unsigned integer which contain
     the coordinate of nonzero elements and a big one of real number
     which contain the values.  We call \c I the vector that store the
-    rows coordinate, \c J the vector that store the columns coordinate 
+    rows coordinate, \c J the vector that store the columns coordinate
     and \c A the vector that store the nonzero values.
     For example the following \b 6 x \b 7 sparse matrix
 
     \htmlonly <TABLE><TR><TD> \endhtmlonly
     \f[
     \bm{A} = \left[\begin{BMAT}(e){c.c.c.c.c.c.c}{c.c.c.c.c.c}
-     1 & 2    &    &   &   &   & 9 \\ 
-       & -1   & 0  &   &   &   &   \\ 
-       &      &    & 3 & 4 &   &   \\ 
-       & 2    &    &   & 5 &   &   \\ 
-     2 &      & -2 &   &   & 1 &   \\ 
-       & -1.5 &    &   &   &   & -1 
+     1 & 2    &    &   &   &   & 9 \\
+       & -1   & 0  &   &   &   &   \\
+       &      &    & 3 & 4 &   &   \\
+       & 2    &    &   & 5 &   &   \\
+     2 &      & -2 &   &   & 1 &   \\
+       & -1.5 &    &   &   &   & -1
     \end{BMAT}\right]
     \f]
     \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
@@ -3822,7 +3822,7 @@ sp.resize(sobj);
     \end{tabular}
     \f]
     \htmlonly </TD></TR></TABLE> \endhtmlonly
-    
+
     Notice that the index follows the C convention, starting from
     \b 0.  The class \c CCoorMatrix\<T\> try to manage such a
     structure in a simple way for the user.  To define a
@@ -3871,17 +3871,17 @@ CCoorMatrix<double> ccoor(sobj);
 
     - \c internalOrder()
       This methods reorder internally the nonzero elements of
-      \c CCoorMatrix\<double\> in such a way if 
+      \c CCoorMatrix\<double\> in such a way if
       <c> k1 < k2 </c>we have one of the two following cases
       -# <c> I(k1) <  I(k2) </c>
       -# <c> I(k1) == I(k2) </c> and <c> J(k1) <= J(k2)</c>
       \n
       Moreover all duplicated entries are added togheter.
-    
+
     - <c> bool isOrdered() </c>
       this methods return \c true if the elements inside the class
-      <c> CCoorMatrix<double> </c>are ordered, \c false otherwise. 
-  
+      <c> CCoorMatrix<double> </c>are ordered, \c false otherwise.
+
   */
   //! Compressed Coordinate Matrix Storage
   template <typename T>
@@ -3918,7 +3918,7 @@ CCoorMatrix<double> ccoor(sobj);
 
   public:
 
-    /*! \brief 
+    /*! \brief
      *  Initialize and empty sparse compressed coordinate matrix
      *  of \c 0 rows and \c 0 columns.
      */
@@ -4229,15 +4229,15 @@ CCoorMatrix<double> ccoor(sobj);
   /*! \cond NODOC */
   SPARSELIB_MUL_STRUCTURES(CCoorMatrix)
   /*! \endcond */
-  
+
   /*
-  //  #     # #     # #       ####### ### ######  #       #     # 
-  //  ##   ## #     # #          #     #  #     # #        #   #  
-  //  # # # # #     # #          #     #  #     # #         # #   
-  //  #  #  # #     # #          #     #  ######  #          #    
-  //  #     # #     # #          #     #  #       #          #    
-  //  #     # #     # #          #     #  #       #          #    
-  //  #     #  #####  #######    #    ### #       #######    #    
+  //  #     # #     # #       ####### ### ######  #       #     #
+  //  ##   ## #     # #          #     #  #     # #        #   #
+  //  # # # # #     # #          #     #  #     # #         # #
+  //  #  #  # #     # #          #     #  ######  #          #
+  //  #     # #     # #          #     #  #       #          #
+  //  #     # #     # #          #     #  #       #          #
+  //  #     #  #####  #######    #    ### #       #######    #
   */
   /*!
    * Perform matrix multiplication of a matrix in Compressed Coordinate
@@ -4338,9 +4338,9 @@ CCoorMatrix<double> ccoor(sobj);
   // #     #  #    #    #    #   #   #   #  #
   // #     #  #    #    #    #    #  #  #    #
   */
-  
+
   /*!
-  
+
     The class \c CRowMatrix\<T\> implement a <B> Compressed Rows </B>
     storage sparse scheme.  It consists of two big vector of unsigned
     integer which contain the coordinate of nonzero elements and a big one
@@ -4352,12 +4352,12 @@ CCoorMatrix<double> ccoor(sobj);
     \htmlonly <TABLE><TR><TD> \endhtmlonly
     \f[
     \bm{A} = \left[\begin{BMAT}(e){c.c.c.c.c.c.c}{c.c.c.c.c.c}
-     1 & 2    &    &   &   &   & 9 \\ 
-       & -1   & 0  &   &   &   &   \\ 
-       &      &    & 3 & 4 &   &   \\ 
-       & 2    &    &   & 5 &   &   \\ 
-     2 &      & -2 &   &   & 1 &   \\ 
-       & -1.5 &    &   &   &   & -1 
+     1 & 2    &    &   &   &   & 9 \\
+       & -1   & 0  &   &   &   &   \\
+       &      &    & 3 & 4 &   &   \\
+       & 2    &    &   & 5 &   &   \\
+     2 &      & -2 &   &   & 1 &   \\
+       & -1.5 &    &   &   &   & -1
    \end{BMAT}\right]
    \f]
    \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
@@ -4378,11 +4378,11 @@ CCoorMatrix<double> ccoor(sobj);
 \code
 CRowMatrix<double> crow;         // instancean empty CRowMatrix<double> class.
 CRowMatrix<double> crow(sp);     // instance a CRowMatrix<double> class with the sparsity pattern
-                                  // defined in the sp SparsePattern class.
+                                 // defined in the sp SparsePattern class.
 CRowMatrix<double> crow(crow1);  // instance a CRowMatrix<double> class which is the copy
-                                  // of the CRowMatrix<double> object crow1.
+                                 // of the CRowMatrix<double> object crow1.
 CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is the copy
-                                  // of the Sparse object crow1.
+                                 // of the Sparse object crow1.
 \endcode
 
     It is possible in any moment to change the sizes and the maximum
@@ -4487,7 +4487,7 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
 
   public:
 
-    /*! \brief 
+    /*! \brief
      *  Initialize and empty sparse compressed row matrix
      *  of \c 0 rows and \c 0 columns.
      */
@@ -4726,7 +4726,7 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
   // #     #  #    #    #    #   #   #   #  #
   // #     #  #    #    #    #    #  #  #    #
   */
-  
+
   /*!
 
     The class \c CColMatrix\<T\> implement a <B> Compressed Columns </B>
@@ -4740,12 +4740,12 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
     \htmlonly <TABLE><TR><TD> \endhtmlonly
     \f[
     \bm{A} = \left[\begin{BMAT}(e){c.c.c.c.c.c.c}{c.c.c.c.c.c}
-      1 & 2    &    &   &   &   & 9 \\ 
-        & -1   & 0  &   &   &   &   \\ 
-        &      &    & 3 & 4 &   &   \\ 
-        & 2    &    &   & 5 &   &   \\ 
-      2 &      & -2 &   &   & 1 &   \\ 
-        & -1.5 &    &   &   &   & -1 
+      1 & 2    &    &   &   &   & 9 \\
+        & -1   & 0  &   &   &   &   \\
+        &      &    & 3 & 4 &   &   \\
+        & 2    &    &   & 5 &   &   \\
+      2 &      & -2 &   &   & 1 &   \\
+        & -1.5 &    &   &   &   & -1
     \end{BMAT}\right]
     \f]
     \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
@@ -4760,7 +4760,7 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
     \f]
     \htmlonly </TD></TR></TABLE> \endhtmlonly
 
-    Notice that the index follows the C convention, starting from \b 0. 
+    Notice that the index follows the C convention, starting from \b 0.
     The class \c CColMatrix\<T\> try to manage such a structure in a
     simple way for the user.  To define a \c CColMatrix\<T\> class you
     can use one of the following scripture
@@ -4768,7 +4768,7 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
 \code
 CColMatrix<double> ccol;        // instance an empty CColMatrix<double> class.
 CColMatrix<double> ccol(sp);    // instance a CColMatrix<double> class with the sparsity
-                                 // pattern defined in the SparsePattern class sp.  
+                                 // pattern defined in the SparsePattern class sp.
 CColMatrix<double> ccol(ccol1); // instance a CColMatrix<double> class which is the copy
                                  // of the CColMatrix<double> object ccol1.
 CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is the copy
@@ -4868,7 +4868,7 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
 
   public:
 
-    /*! \brief 
+    /*! \brief
      *  Initialize and empty sparse compressed column matrix
      *  of \c 0 rows and \c 0 columns.
      */
@@ -5109,23 +5109,23 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
   */
 
   /*!
-  
+
      The class <c> TridMatrix<T> </c> implement a sparse band matrix.
      It consists of a big matrix of \c valueType which contain the values
      of nonzero elements.  We call \c M this big matrix which
-     represents an \f$ n\times m \f$ matrix which stores the rows of nonzero. 
+     represents an \f$ n\times m \f$ matrix which stores the rows of nonzero.
      For example the following band matrix
-     
+
      \htmlonly <TABLE><TR><TD> \endhtmlonly
      \f[
        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c.c.c}{c.c.c.c.c.c.c}
-         2 & -1 &    &    &    &    &    \\ 
-         1 & 2  & -2 &    &    &    &    \\ 
-           & 2  & 2  & -3 &    &    &    \\ 
-           &    & 3  & 2  & -4 &    &    \\ 
-           &    &    & 4  & 2  & -5 &    \\ 
-           &    &    &    & 5  & 2  & -6 \\ 
-           &    &    &    &    & 6  & 2 
+         2 & -1 &    &    &    &    &    \\
+         1 & 2  & -2 &    &    &    &    \\
+           & 2  & 2  & -3 &    &    &    \\
+           &    & 3  & 2  & -4 &    &    \\
+           &    &    & 4  & 2  & -5 &    \\
+           &    &    &    & 5  & 2  & -6 \\
+           &    &    &    &    & 6  & 2
         \end{BMAT}\right]
         \qquad
         \begin{tabular}{c|c|c}
@@ -5134,15 +5134,15 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
           * & 2 & -1 \\
           1 & 2 & -2 \\
           2 & 2 & -3 \\
-          3 & 2 & -4 \\ 
-          4 & 2 & -5 \\ 
-          5 & 2 & -6 \\ 
+          3 & 2 & -4 \\
+          4 & 2 & -5 \\
+          5 & 2 & -6 \\
           6 & 2 & *  \\
           \hline
         \end{tabular}
      \f]
      \htmlonly </TD></TR></TABLE> \endhtmlonly
-    
+
      where * means unused elements.  Notice that the index follows
      the C convention, starting from \c 0.
      The class <c> TridMatrix<T> </c> manage such a structure in a simple
@@ -5275,15 +5275,15 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         (\bm{A}=2.1) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2.1 & 0    &      &     \\ 
-            0   & 2.1  & 0    &     \\ 
-                & 0    & 2.1  & 0   \\ 
+            2.1 & 0    &      &     \\
+            0   & 2.1  & 0    &     \\
+                & 0    & 2.1  & 0   \\
                 &      & 0    & 2.1 \\
          \end{BMAT}\right]
       \f]
@@ -5300,18 +5300,18 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         (\bm{A}+=2.1) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            4.1 & -1   &      &    \\ 
-            1   & 4.1  & -1   &    \\ 
-                & 1    & 4.1  & -1 \\ 
-                &      & 1    & 4.1  \\
+            4.1 & -1   &      &     \\
+            1   & 4.1  & -1   &     \\
+                & 1    & 4.1  & -1  \\
+                &      & 1    & 4.1 \\
          \end{BMAT}\right]
-        \f]    
+        \f]
         \htmlonly </TD></TR></TABLE> \endhtmlonly
     */
     TridMatrix<T> &
@@ -5324,38 +5324,38 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         (\bm{A}-=2.1) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            -0.1 & -1   &      &    \\ 
-            1   & -0.1  & -1   &    \\ 
-                & 1    & -0.1  & -1 \\ 
-                &      & 1    & -0.1  \\
+            -0.1 & -1   &      &     \\
+            1   & -0.1  & -1   &     \\
+                & 1    & -0.1  & -1  \\
+                &      & 1    & -0.1 \\
          \end{BMAT}\right]
-        \f]    
+        \f]
         \htmlonly </TD></TR></TABLE> \endhtmlonly
     */
     TridMatrix<T> &
     operator -= ( valueType const & s )
     { D -= s; return *this; }
-    
+
     /*! \brief
         Multiply by \c s to all the nonzeros.  For example
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         (\bm{A}*=2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            4 & -2 &    &    \\ 
-            2 & 4  & -2 &    \\ 
-              & 2  & 4  & -2 \\ 
+            4 & -2 &    &    \\
+            2 & 4  & -2 &    \\
+              & 2  & 4  & -2 \\
               &    & 2  & 4  \\
          \end{BMAT}\right]
         \f]
@@ -5364,24 +5364,24 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
     TridMatrix<T> &
     operator *= ( valueType const & s )
     { A *= s; return *this; }
-    
+
     /*! \brief
         Divide by \c s to all the nonzeros.  For example
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         (\bm{A}/=2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            1   & -0.5 &      &    \\ 
-            0.5 & 1    & -0.5 &    \\ 
-                & 0.5  & 1    & -0.5 \\ 
-                &      & 0.5  & 1  \\
+            1   & -0.5 &      &      \\
+            0.5 & 1    & -0.5 &      \\
+                & 0.5  & 1    & -0.5 \\
+                &      & 0.5  & 1    \\
          \end{BMAT}\right]
-        \f]    
+        \f]
         \htmlonly </TD></TR></TABLE> \endhtmlonly
     */
     TridMatrix<T> &
@@ -5394,9 +5394,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
@@ -5404,9 +5404,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \end{BMAT}\right],
         \qquad
         (\bm{A}/=2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            1 & 0  &   &   \\ 
-            0 & 2  & 0 &   \\ 
-              & 0  & 3 & 0 \\ 
+            1 & 0  &   &   \\
+            0 & 2  & 0 &   \\
+              & 0  & 3 & 0 \\
               &    & 0 & 0 \\
          \end{BMAT}\right]
         \f]
@@ -5423,9 +5423,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
@@ -5433,12 +5433,12 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \end{BMAT}\right],
         \qquad
         (\bm{A}\verb|+=|\bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            3 & -1 &    &    \\ 
-            1 & 4  & -1 &    \\ 
-              & 1  & 5  & -1 \\ 
+            3 & -1 &    &    \\
+            1 & 4  & -1 &    \\
+              & 1  & 5  & -1 \\
               &    & 1  & 2  \\
          \end{BMAT}\right]
-        \f]    
+        \f]
         \htmlonly </TD></TR></TABLE> \endhtmlonly
     */
     template <typename VECTOR> inline
@@ -5452,9 +5452,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
@@ -5462,9 +5462,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \end{BMAT}\right],
         \qquad
         (\bm{A}\verb|-=|\bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            3 & -1 &    &    \\ 
-            1 & 4  & -1 &    \\ 
-              & 1  & 5  & -1 \\ 
+            3 & -1 &    &    \\
+            1 & 4  & -1 &    \\
+              & 1  & 5  & -1 \\
               &    & 1  & 2  \\
          \end{BMAT}\right]
         \f]
@@ -5481,9 +5481,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
@@ -5494,9 +5494,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \end{BMAT}\right],
         \qquad
         (\bm{A}=\bm{a}+2*\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            3 & 0  &   &   \\ 
-            0 & 0  & 0 &   \\ 
-              & 0  & 7 & 0 \\ 
+            3 & 0  &   &   \\
+            0 & 0  & 0 &   \\
+              & 0  & 7 & 0 \\
               &    & 0 & 0 \\
          \end{BMAT}\right]
         \f]
@@ -5513,9 +5513,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
@@ -5526,9 +5526,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \end{BMAT}\right],
         \qquad
         (\bm{A}\verb|+=|\bm{a}+2*\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            5 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 9  & -1 \\ 
+            5 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 9  & -1 \\
               &    & 1  & 2  \\
          \end{BMAT}\right]
         \f]
@@ -5545,9 +5545,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \htmlonly <TABLE><TR><TD> \endhtmlonly
         \f[
         \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\ 
-            1 & 2  & -1 &    \\ 
-              & 1  & 2  & -1 \\ 
+            2 & -1 &    &    \\
+            1 & 2  & -1 &    \\
+              & 1  & 2  & -1 \\
               &    & 1  & 2  \\
         \end{BMAT}\right],\qquad
         \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
@@ -5558,9 +5558,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
         \end{BMAT}\right],
         \qquad
         (\bm{A}\verb|-=|\bm{a}+2*\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            -1 & -1 &    &    \\ 
-             1 & 2  & -1 &    \\ 
-               & 1  & -5 & -1 \\ 
+            -1 & -1 &    &    \\
+             1 & 2  & -1 &    \\
+               & 1  & -5 & -1 \\
                &    & 1  & 2  \\
          \end{BMAT}\right]
         \f]
@@ -5801,7 +5801,7 @@ namespace SparseToolLoad {
   using ::SparseTool::CRowMatrix;
   using ::SparseTool::CColMatrix;
   using ::SparseTool::TridMatrix;
-  
+
   using ::SparseTool::absval;
   using ::SparseTool::sin;
   using ::SparseTool::cos;

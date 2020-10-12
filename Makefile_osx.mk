@@ -1,9 +1,10 @@
-WARN     = -Weverything -Wno-reserved-id-macro -Wno-padded
+WARN     = -Weverything -Wno-reserved-id-macro -Wno-padded -Wno-poison-system-directories
 CC       = clang
 CXX      = clang++
 VERSION  = $(shell $(CC) --version 2>&1 | grep -o "Apple LLVM version [0-9]\.[0-9]\.[0-9]" | grep -o " [0-9]\.")
 #---------
-CXX     += -std=c++11 -stdlib=libc++ -g
+CXX     += -std=c++11 -stdlib=libc++ -g -isystem=$(shell pwd)/src/fmt
+
 #---------
 CC     += $(WARN)
 CXX    += $(WARN)

@@ -317,8 +317,8 @@ namespace lapack_wrapper {
     void getLeftEigenvector( std::vector<std::vector<complexType> > & vecs ) const;
     void getRightEigenvector( std::vector<std::vector<complexType> > & vecs ) const;
 
-    valueType balancedAnorm1() const { return this->abnorm; }
-    valueType balancedBnorm1() const { return this->bbnorm; }
+    valueType         balancedAnorm1() const { return this->abnorm; }
+    valueType         balancedBnorm1() const { return this->bbnorm; }
     valueType const * getLscale() const { return this->lscale; }
     valueType const * getRscale() const { return this->rscale; }
     valueType const * RcondEigenvalues()  const { return this->rconde; }

@@ -443,17 +443,17 @@ namespace lapack_wrapper {
   template <typename T>
   Matrix<T>::Matrix()
   : MatrixWrapper<T>()
-  , mem("Matrix")
+  , m_mem("Matrix")
   {}
 
   template <typename T>
   Matrix<T>::Matrix( Matrix<T> const & rhs )
   : MatrixWrapper<T>( nullptr, rhs.nRows, rhs.nCols, rhs.nRows )
-  , mem("Matrix")
+  , m_mem("Matrix")
   {
     size_t sz = rhs.nRows*rhs.nCols;
-    mem.allocate( sz );
-    this->data = mem( sz );
+    m_mem.allocate( sz );
+    this->data = m_mem( sz );
     gecopy( rhs.nRows,  rhs.nCols, rhs.data, rhs.ldData,
             this->data, this->ldData );
   }
@@ -461,25 +461,25 @@ namespace lapack_wrapper {
   template <typename T>
   Matrix<T>::Matrix( integer nr, integer nc )
   : MatrixWrapper<T>( nullptr, nr, nc, nr )
-  , mem("Matrix")
+  , m_mem("Matrix")
   {
-    mem.allocate( size_t(nr*nc) );
-    this->data = mem( size_t(nr*nc) );
+    m_mem.allocate( size_t(nr*nc) );
+    this->data = m_mem( size_t(nr*nc) );
   }
 
   template <typename T>
   void
   Matrix<T>::setup( integer nr, integer nc ) {
-    mem.allocate( size_t(nr*nc) );
-    this->MatrixWrapper<T>::setup( mem( size_t(nr*nc) ), nr, nc, nr );
+    m_mem.allocate( size_t(nr*nc) );
+    this->MatrixWrapper<T>::setup( m_mem( size_t(nr*nc) ), nr, nc, nr );
   }
 
   template <typename T>
   Matrix<T> const &
   Matrix<T>::operator = ( Matrix<T> const & rhs ) {
     size_t sz = rhs.nRows*rhs.nCols;
-    mem.allocate( sz );
-    this->data   = mem( sz );
+    m_mem.allocate( sz );
+    this->data   = m_mem( sz );
     this->nRows  = rhs.nRows;
     this->nCols  = rhs.nCols;
     this->ldData = rhs.nRows;
@@ -500,43 +500,43 @@ namespace lapack_wrapper {
   template <typename T>
   DiagMatrix<T>::DiagMatrix()
   : DiagMatrixWrapper<T>()
-  , mem("DiagMatrix")
+  , m_mem("DiagMatrix")
   {}
 
   template <typename T>
   DiagMatrix<T>::DiagMatrix( DiagMatrix<T> const & D )
   : MatrixWrapper<T>( nullptr, D.dim )
-  , mem("DiagMatrix")
+  , m_mem("DiagMatrix")
   {
-    mem.allocate( size_t(D.dim) );
-    this->data = mem( size_t(D.dim) );
+    m_mem.allocate( size_t(D.dim) );
+    this->data = m_mem( size_t(D.dim) );
     std::copy_n( D.data, D.dim, this->data );
   }
 
   template <typename T>
   DiagMatrix<T>::DiagMatrix( integer _dim )
   : DiagMatrixWrapper<T>( nullptr, _dim )
-  , mem("DiagMatrix")
+  , m_mem("DiagMatrix")
   {
-    mem.allocate( size_t(this->dim) );
-    this->data = mem( size_t(this->dim) );
+    m_mem.allocate( size_t(this->dim) );
+    this->data = m_mem( size_t(this->dim) );
   }
 
   template <typename T>
   void
   DiagMatrix<T>::setup( integer _dim ) {
     this->dim = _dim;
-    mem.allocate( size_t(this->dim) );
+    m_mem.allocate( size_t(this->dim) );
     this->dim  = _dim;
-    this->data = mem( size_t(this->dim) );
+    this->data = m_mem( size_t(this->dim) );
   }
 
   template <typename T>
   DiagMatrix<T> const &
   DiagMatrix<T>::operator = ( DiagMatrix<T> const & rhs ) {
-    mem.allocate( size_t(rhs.dim) );
+    m_mem.allocate( size_t(rhs.dim) );
     this->dim  = rhs.dim;
-    this->data = mem( size_t(rhs.dim) );
+    this->data = m_mem( size_t(rhs.dim) );
     std::copy_n( rhs.data, rhs.dim, this->data );
   }
 
