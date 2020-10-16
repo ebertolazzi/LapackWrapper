@@ -64,8 +64,8 @@ namespace lapack_wrapper {
      */
     explicit
     DiagMatrixWrapper( valueType * _data, integer _dim ) {
-      this->data = _data;
-      this->dim  = _dim;
+      m_data = _data;
+      m_dim  = _dim;
     }
 
     integer getDim()   const { return m_dim;}  //!< Number of elements
@@ -89,23 +89,23 @@ namespace lapack_wrapper {
 
     valueType const &
     operator [] ( integer i ) const
-    { return this->data[i]; }
+    { return m_data[i]; }
 
     valueType &
     operator [] ( integer i )
-    { return this->data[i]; }
+    { return m_data[i]; }
 
     DMatW const & operator = (valueType v) {
-      fill( this->dim, this->data, v );
+      fill( m_dim, m_data, v );
       return *this;
     }
 
     DMatW & operator = ( DMatW const & COPY ) {
       LW_ASSERT0(
-        this->dim == COPY.dim,
+        m_dim == COPY.m_dim,
         "DiagMatrixWrapper operator = bad matrix dimensions\n"
       );
-      std::copy( COPY.data, COPY.data+COPY.dim, this->data );
+      std::copy_n( COPY.m_data, COPY.m_dim, m_data );
       return *this;
     }
 
@@ -856,10 +856,10 @@ namespace lapack_wrapper {
       MatW       & C
     ) {
       geadd(
-        C.nRows, C.nCols,
-        alpha, A.data, A.ldData,
-        beta,  B.data, B.ldData,
-        C.data, C.ldData
+        C.m_nRows, C.m_nCols,
+        alpha, A.m_data, A.m_ldData,
+        beta,  B.m_data, B.m_ldData,
+        C.m_data, C.m_ldData
       );
     }
 

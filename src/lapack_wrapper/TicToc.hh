@@ -49,7 +49,7 @@
 
     void
     toc() {
-      QueryPerformanceCounter(&t2);
+      QueryPerformanceCounter(&m_t2);
       m_elapsed_time = (m_t2.QuadPart - m_t1.QuadPart) * 1000.0 / m_frequency.QuadPart;;
     }
 
