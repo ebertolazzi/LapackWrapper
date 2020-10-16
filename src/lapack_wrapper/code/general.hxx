@@ -3078,9 +3078,9 @@ namespace lapack_wrapper {
   #endif
 
   /*\
-   *
-   *  Purpose
-   *  =======
+   *  #ifdef LAPACK_WRAPPER_OS_OSX
+
+=====
    *
    *  DLASCL2 performs a diagonal scaling on a vector:
    *    x <-- D * x
@@ -3151,7 +3151,10 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slascl2)( &M, &N, const_cast<real*>(D), X, &LDX );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_slascl2( &M, &N, const_cast<real*>(D), X, &LDX );
+    for ( integer i = 0; i < M; ++i ) {
+      real s = D[i];
+      for ( integer j = 0; j < 1; ++j ) X[i+j*LDX] *= s;
+    }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     slascl2( &M, &N, const_cast<real*>(D), X, &LDX );
     #else
@@ -3176,7 +3179,10 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlascl2)( &M, &N, const_cast<doublereal*>(D), X, &LDX );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_dlascl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    for ( integer i = 0; i < M; ++i ) {
+      doublereal s = D[i];
+      for ( integer j = 0; j < 1; ++j ) X[i+j*LDX] *= s;
+    }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlascl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
     #else
@@ -3196,9 +3202,9 @@ namespace lapack_wrapper {
    *  Eventually to be replaced by BLAS_dge_diag_scale in the new BLAS
    *  standard.
    *
-   *  Arguments
-   *  =========
-   *
+   *  Arguments  #ifdef LAPACK_WRAPPER_OS_OSX
+
+
    *     M       (input) INTEGER
    *     The number of rows of D and X. M >= 0.
    *
@@ -3258,7 +3264,10 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slarscl2)( &M, &N, const_cast<real*>(D), X, &LDX );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_slascl2( &M, &N, const_cast<real*>(D), X, &LDX );
+    for ( integer i = 0; i < M; ++i ) {
+      real s = D[i];
+      for ( integer j = 0; j < 1; ++j ) X[i+j*LDX] /= s;
+    }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     slarscl2( &M, &N, const_cast<real*>(D), X, &LDX );
     #else
@@ -3283,7 +3292,10 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlarscl2)( &M, &N, const_cast<doublereal*>(D), X, &LDX );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_dlascl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
+    for ( integer i = 0; i < M; ++i ) {
+      doublereal s = D[i];
+      for ( integer j = 0; j < 1; ++j ) X[i+j*LDX] /= s;
+    }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlarscl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
     #else

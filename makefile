@@ -11,7 +11,7 @@ CLIBS = -lc++
 DEFS  =
 
 
-CXXFLAGS = -O2 -funroll-loops -fPIC --system-header-prefix=src/fmt -Wno-poison-system-directories
+CXXFLAGS = -O2 -funroll-loops -fPIC -Wno-poison-system-directories
 override INC  += -I./src -Ilib3rd/include
 override LIBS += -Llib3rd/lib -Llib3rd/dll
 
