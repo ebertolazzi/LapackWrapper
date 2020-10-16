@@ -222,18 +222,33 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
+  SVD<T>::SVD( SVD_USED svd_used )
+  : SVD_no_alloc<T>( svd_used )
+  , m_allocReals( "SVD-allocReals" )
+  , m_allocIntegers( "SVD-allocIntegers" )
+  {}
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  SVD<T>::~SVD()
+  { m_allocReals.free(); m_allocIntegers.free(); }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   void
   SVD<T>::allocate( integer NR, integer NC ) {
     if ( m_nRows != NR || m_nCols != NC ) {
       integer minRC = std::min(NR,NC);
       integer L     = NR*NC+minRC*(NR+NC+1)+this->get_Lwork( NR, NC );
       integer L1    = 8*minRC;
-      allocReals.allocate( size_t(L) );
-      allocIntegers.allocate( size_t(L1) );
+      m_allocReals.allocate( size_t(L) );
+      m_allocIntegers.allocate( size_t(L1) );
       this->no_allocate(
         NR, NC,
-        L,  this->allocReals( size_t(L) ),
-        L1, this->allocIntegers( size_t(L1) )
+        L,  m_allocReals( size_t(L) ),
+        L1, m_allocIntegers( size_t(L1) )
       );
     }
   }

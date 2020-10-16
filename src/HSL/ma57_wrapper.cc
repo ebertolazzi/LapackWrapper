@@ -28,86 +28,97 @@ namespace lapack_wrapper {
     bool      isFortranIndexing
   ) {
     // Set dimension:
-    this->nnz = Nnz;
+    m_nnz = Nnz;
     if (N_Row != N_Col) {
-      this->isInitialized = false;
-      this->isFactorized  = false;
-      this->last_error    = "CPPMA57<real>::init N_Row != N_Col!";
+      m_isInitialized = false;
+      m_isFactorized  = false;
+      m_last_error    = "CPPMA57<real>::init N_Row != N_Col!";
       return false;
     }
-    this->numRows = this->numCols = N_Row;
+    m_nRows = m_nCols = N_Row;
     // allocate memory:
-    this->i_Row.resize(size_t(this->nnz));
-    this->j_Col.resize(size_t(this->nnz));
-    this->iKeep.resize(size_t(5 * this->numRows + 2 * this->nnz + 42));
-    this->iPivotSeq.resize(size_t(5 * this->numRows));
+    m_i_Row.resize(size_t(m_nnz));
+    m_j_Col.resize(size_t(m_nnz));
+    m_iKeep.resize(size_t(5 * m_nRows + 2 * m_nnz + 42));
+    m_iPivotSeq.resize(size_t(5 * m_nRows));
 
     // Copy row and column arrays:
-    std::copy_n(iRow, this->nnz, this->i_Row.begin());
-    std::copy_n(jCol, this->nnz, this->j_Col.begin());
+    std::copy_n(iRow, m_nnz, m_i_Row.begin());
+    std::copy_n(jCol, m_nnz, m_j_Col.begin());
 
     if (!isFortranIndexing) {
       // Correct fortran indexing:
-      for ( size_t i = 0; i < size_t(this->nnz); ++i ) {
-        ++this->i_Row[i];
-        ++this->j_Col[i];
+      for ( size_t i = 0; i < size_t(m_nnz); ++i ) {
+        ++m_i_Row[i];
+        ++m_j_Col[i];
       }
     }
 
-    this->job = 1;
+    m_job = 1;
     // Initialize MA57:
-    HSL::ma57i<real>(this->cntl, this->icntl);
+    HSL::ma57i<real>( m_cntl, m_icntl );
     // Analyse the structure of the linear system:
-    int NiKeep = int(this->iKeep.size());
-    HSL::ma57a<real>(this->numRows, this->nnz, &this->i_Row.front(), &this->j_Col.front(), NiKeep, &this->iKeep.front(), &this->iPivotSeq.front(), this->icntl, this->iinfo, this->rinfo);
+    int NiKeep = int(m_iKeep.size());
+    HSL::ma57a<real>(
+      m_nRows,
+      m_nnz,
+      &m_i_Row.front(),
+      &m_j_Col.front(),
+      NiKeep,
+      &m_iKeep.front(),
+      &m_iPivotSeq.front(),
+      m_icntl,
+      m_iinfo,
+      m_rinfo
+    );
     // Restize memory for factorization:
-    this->fact.resize(size_t(2 * this->iinfo[8]));
-    this->ifact.resize(size_t(2 * this->iinfo[9]));
+    m_fact.resize(size_t(2 * m_iinfo[8]));
+    m_ifact.resize(size_t(2 * m_iinfo[9]));
     // Restize memory for workspace:
-    this->Work.resize(size_t(3 * this->nnz));
+    m_Work.resize(size_t(3 * m_nnz));
     // allocate reintinmet memory:
-    this->RHSReinfinement.resize(size_t(this->numRows));
-    this->residualVec.resize(size_t(this->numRows));
-    this->isInitialized = true;
-    this->isFactorized  = false;
+    m_RHSReinfinement.resize(size_t(m_nRows));
+    m_residualVec.resize(size_t(m_nRows));
+    m_isInitialized = true;
+    m_isFactorized  = false;
     return true;
   }
 
   template <typename real>
   bool
   MA57<real>::factorize( real const ArrayA[] ) {
-    if (!this->isInitialized) {
-      this->last_error   = "The function factorize can only be called after calling CPPMA57<real>::init!";
-      this->isFactorized = false;
+    if (!m_isInitialized) {
+      m_last_error   = "The function factorize can only be called after calling CPPMA57<real>::init!";
+      m_isFactorized = false;
       return false;
     }
 
-    a_stored.resize(size_t(this->nnz));
-    std::copy_n(ArrayA, this->nnz, a_stored.begin());
+    m_a_stored.resize(size_t(m_nnz));
+    std::copy_n(ArrayA, m_nnz, m_a_stored.begin());
 
     // Now factorize the system:
-    int NiKeep = int(this->iKeep.size());
-    int lifact = int(this->ifact.size());
-    int lfact  = int(this->fact.size());
+    int NiKeep = int(m_iKeep.size());
+    int lifact = int(m_ifact.size());
+    int lfact  = int(m_fact.size());
     HSL::ma57b<real>(
-      this->numRows,
-      this->nnz,
-      &a_stored.front(),
-      &this->fact.front(),
+      m_nRows,
+      m_nnz,
+      &m_a_stored.front(),
+      &m_fact.front(),
       lfact,
-      &this->ifact.front(),
+      &m_ifact.front(),
       lifact,
       NiKeep,
-      &this->iKeep.front(),
-      &this->iPivotSeq.front(),
-      this->icntl,
-      this->cntl,
-      this->iinfo,
-      this->rinfo
+      &m_iKeep.front(),
+      &m_iPivotSeq.front(),
+      m_icntl,
+      m_cntl,
+      m_iinfo,
+      m_rinfo
     );
 
-    this->isFactorized = this->iinfo[0] == 0;
-    return this->isFactorized;
+    m_isFactorized = m_iinfo[0] == 0;
+    return m_isFactorized;
   }
 
   template <typename real>
@@ -120,52 +131,52 @@ namespace lapack_wrapper {
     int        ldX
   ) const {
     // Check valid call:
-    if (!this->isInitialized) {
-      this->last_error = "Can not solve uninitialized system with CPPMA57::solve!";
+    if (!m_isInitialized) {
+      m_last_error = "Can not solve uninitialized system with CPPMA57::solve!";
       return false;
     }
-    if (!this->isFactorized) {
-      this->last_error = "Can not solve unfactorized system with CPPMA57::solve!";
+    if (!m_isFactorized) {
+      m_last_error = "Can not solve unfactorized system with CPPMA57::solve!";
       return false;
     }
 
     // Solve system:
-    if (this->doRefinement) {
-      std::copy( RHS, RHS+this->numRows, this->RHSReinfinement.begin() );
+    if ( m_doRefinement ) {
+      std::copy( RHS, RHS+m_nRows, m_RHSReinfinement.begin() );
       real residual = 10.0;
       int  localjob = 0;
       for ( int counter = 0;
-            counter < this->MaxRefinements && std::abs(residual) > this->tolRes;
+            counter < m_MaxRefinements && std::abs(residual) > m_tolRes;
             ++counter ) {
         // Löse mit rechter Seite: (iterative reinfinement)
-        int lifact = int(this->ifact.size());
-        int lfact  = int(this->fact.size());
+        int lifact = int(m_ifact.size());
+        int lfact  = int(m_fact.size());
         HSL::ma57d<real>(
           localjob,
-          this->numRows,
-          int(a_stored.size()),
-          &a_stored.front(),
-          &this->i_Row.front(),
-          &this->j_Col.front(),
-          &this->fact.front(),
+          m_nRows,
+          int(m_a_stored.size()),
+          &m_a_stored.front(),
+          &m_i_Row.front(),
+          &m_j_Col.front(),
+          &m_fact.front(),
           lfact,
-          &this->ifact.front(),
+          &m_ifact.front(),
           lifact,
-          &this->RHSReinfinement.front(),
+          &m_RHSReinfinement.front(),
           X,
-          &this->residualVec.front(),
-          &this->Work.front(),
-          &this->iPivotSeq.front(),
-          this->icntl,
-          this->cntl,
-          this->iinfo,
-          this->rinfo
+          &m_residualVec.front(),
+          &m_Work.front(),
+          &m_iPivotSeq.front(),
+          m_icntl,
+          m_cntl,
+          m_iinfo,
+          m_rinfo
         );
-        residual = this->getResidual(this->residualVec);
+        residual = this->getResidual(m_residualVec);
         localjob = 2;
-        if(this->iinfo[0] < 0) return false;
-        if (counter >= this->MaxRefinements - 1) {
-          this->last_error = "Refinement of HSL MA57 failed (Maxiter)";
+        if(m_iinfo[0] < 0) return false;
+        if (counter >= m_MaxRefinements - 1) {
+          m_last_error = "Refinement of HSL MA57 failed (Maxiter)";
           if ( residual > real(1e-5) ) return false;
           fmt::print("Residual: {:g}\n", residual);
         }
@@ -174,28 +185,28 @@ namespace lapack_wrapper {
       // Solve with right side:
       if (RHS != X)
         for (int j = 0; j < nrhs; ++j)
-           std::copy_n(RHS + j * ldRHS, this->numRows, X + j * ldX);
-      int lfact  = int(this->fact.size());
-      int lifact = int(this->ifact.size());
-      int NWork  = int(this->Work.size());
+           std::copy_n(RHS + j * ldRHS, m_nRows, X + j * ldX);
+      int lfact  = int(m_fact.size());
+      int lifact = int(m_ifact.size());
+      int NWork  = int(m_Work.size());
       HSL::ma57c<real>(
-        this->job,
-        this->numRows,
-        &this->fact.front(),
+        m_job,
+        m_nRows,
+        &m_fact.front(),
         lfact,
-        &this->ifact.front(),
+        &m_ifact.front(),
         lifact,
         nrhs,
         X,
         ldX,
-        &this->Work.front(),
+        &m_Work.front(),
         NWork,
-        &this->iPivotSeq.front(),
-        this->icntl,
-        this->iinfo
+        &m_iPivotSeq.front(),
+        m_icntl,
+        m_iinfo
       );
     }
-    return this->iinfo[0] == 0;
+    return m_iinfo[0] == 0;
   }
 
   template class MA57<double>;

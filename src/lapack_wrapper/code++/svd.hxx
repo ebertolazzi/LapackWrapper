@@ -224,8 +224,8 @@ namespace lapack_wrapper {
 
   protected:
 
-    Malloc<valueType> allocReals;
-    Malloc<integer>   allocIntegers;
+    Malloc<valueType> m_allocReals;
+    Malloc<integer>   m_allocIntegers;
 
   public:
 
@@ -255,15 +255,10 @@ namespace lapack_wrapper {
     using SVD_no_alloc<T>::Vt_mul;
     using SVD_no_alloc<T>::no_allocate;
 
-    SVD( SVD_USED _svd_used = SVD_no_alloc<T>::USE_GESVD )
-    : SVD_no_alloc<T>(_svd_used)
-    , allocReals("SVD-allocReals")
-    , allocIntegers("SVD-allocIntegers")
-    {}
+    SVD( SVD_USED _svd_used = SVD_no_alloc<T>::USE_GESVD );
 
     virtual
-    ~SVD() LAPACK_WRAPPER_OVERRIDE
-    { allocReals.free(); allocIntegers.free(); }
+    ~SVD() LAPACK_WRAPPER_OVERRIDE;
 
     void
     allocate( integer NR, integer NC );

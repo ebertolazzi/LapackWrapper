@@ -39,10 +39,13 @@ namespace lapack_wrapper {
 
   protected:
 
+    mutable Malloc<valueType> m_allocReals;
+    mutable integer           L_mm_work;
+    mutable valueType       * mm_work;
+
     integer     m_nRows;
     integer     m_nCols;
     integer     m_rank;
-    integer     m_minRC;
     valueType   m_epsi;
     valueType * m_Rscale;
     valueType * m_Cscale;
@@ -51,11 +54,9 @@ namespace lapack_wrapper {
 
     integer     m_LWorkQR2;
     valueType * m_WorkQR2;
-    integer   * m_iWorkQR2;
 
     QRP_no_alloc<valueType> m_QR1;
-    //QRP_no_alloc<valueType> m_QR2;
-    QR_no_alloc<valueType> m_QR2;
+    QR_no_alloc<valueType>  m_QR2;
 
     EquilibrationType m_equ;
 
@@ -95,10 +96,20 @@ namespace lapack_wrapper {
     factorize( valueType const A[], integer LDA );
 
     bool
-    mult_inv( valueType const b[], valueType x[] ) const;
+    mult_inv(
+      valueType const b[],
+      integer         incb,
+      valueType       x[],
+      integer         incx
+    ) const;
 
     bool
-    t_mult_inv( valueType const b[], valueType x[] ) const;
+    t_mult_inv(
+      valueType const b[],
+      integer         incb,
+      valueType       x[],
+      integer         incx
+    ) const;
 
     bool
     mult_inv(
@@ -135,7 +146,7 @@ namespace lapack_wrapper {
     bool
     solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE {
       if ( m_nRows != m_nCols ) return false;
-      return mult_inv( xb, xb );
+      return mult_inv( xb, 1, xb, 1 );
     }
 
     /*!
@@ -147,7 +158,7 @@ namespace lapack_wrapper {
     bool
     t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE {
       if ( m_nRows != m_nCols ) return false;
-      return t_mult_inv( xb, xb );
+      return t_mult_inv( xb, 1, xb, 1 );
     }
 
     virtual

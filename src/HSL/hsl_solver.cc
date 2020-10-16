@@ -12,9 +12,9 @@ namespace lapack_wrapper {
 
   template <typename real>
   HSLsolver<real>::HSLsolver()
-  : isInitialized(false)
-  , isFactorized(false)
-  , last_error("")
+  : m_isInitialized(false)
+  , m_isFactorized(false)
+  , m_last_error("")
   { }
 
   template <typename real>

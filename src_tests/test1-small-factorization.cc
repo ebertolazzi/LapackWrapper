@@ -599,7 +599,7 @@ test9() {
 
   msg.green(
     fmt::format(
-      "residual = {}\n||res||_2 = {}\ndone test8\n",
+      "residual = {}\n||res||_2 = {}\ndone test9\n",
       lapack_wrapper::print_matrix( 1, M, b, 1 ), res
     )
   );
@@ -610,59 +610,137 @@ void
 test10() {
   lapack_wrapper::PINV<valueType> pinv;
 
-  integer const M   = 3;
-  integer const LDA = 3;
+
+  integer const M   = 6;
+  integer const N   = 4;
+  integer const LDA = 6;
   valueType A[] = {
-    2, 1, 1,
-    1, 2, 1,
-    3, 3, 2
+    2,   1,  2,  1, 1, 1,
+    2,   1,  2,  1, 1, 1,
+    20, 10, 20, 10, 1, 1,
+     1,  2,  3,  4, 5, 6,
   };
 
-  valueType rhs[M], b[M], x[M];
-  valueType const xe[M] = {1,2,3};
+  valueType rhs[M], b[M], b2[2*M], x[N], x2[2*N];
+  valueType const xe[N] = {1,2,3,4};
   lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, M, 1, A, LDA, xe, 1, 0, rhs, 1
+    lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
   );
   lapack_wrapper::copy( M, rhs, 1, b, 1 );
-
+  lapack_wrapper::copy( M, rhs, 1, b2, 1 );
+  lapack_wrapper::copy( M, rhs, 1, b2+M, 1 );
   cout
     << "\n\n\nTest10:\n\nInitial A\n"
-    << lapack_wrapper::print_matrix( M, M, A, M )
-    << "\nb^T\n"
-    << lapack_wrapper::print_matrix( 1, M, b, 1 );
+    << lapack_wrapper::print_matrix( M, N, A, M )
+    << "\nb2\n"
+    << lapack_wrapper::print_matrix( M, 2, b2, M );
 
   cout << "\n\nDo PINV factorization of A\n";
-  pinv.factorize( M, M, A, LDA );
+  pinv.factorize( M, N, A, LDA );
 
   cout << "\nPINV solution of A x = b\n";
-  lapack_wrapper::copy( M, b, 1, x, 1 );
-  pinv.solve( x );
+  pinv.mult_inv( b, 1, x, 1 );
+  pinv.mult_inv( 2, b2, M, x2, N );
+
   //pinv.t_solve( 1, x, M );
   cout
     << "x^T      = "
-    << lapack_wrapper::print_matrix( 1, M, x, 1 );
+    << lapack_wrapper::print_matrix( 1, N, x, 1 )
+    << "x2^T     = "
+    << lapack_wrapper::print_matrix( 1, N, x2, 1 );
 
-  valueType e[M] = { x[0]-xe[0],x[1]-xe[1],x[2]-xe[2]};
+  valueType e[N] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2] };
 
   cout
     << "e^T      = "
-    << lapack_wrapper::print_matrix( 1, M, e, 1 );
+    << lapack_wrapper::print_matrix( 1, N, e, 1 );
 
   lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
+    lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
+
+  cout
+    << "res^T    = "
+    << lapack_wrapper::print_matrix( 1, M, b, 1 );
 
   valueType res = lapack_wrapper::nrm2( M, b, 1 );
   LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(
-      "residual = {}\n||res||_2 = {}\ndone test8\n",
+      "residual = {}\n||res||_2 = {}\ndone test10\n",
       lapack_wrapper::print_matrix( 1, M, b, 1 ), res
     )
   );
 }
 
+static
+void
+test11() {
+  lapack_wrapper::PINV<valueType> pinv;
+
+  integer const M   = 6;
+  integer const N   = 4;
+  integer const LDA = 6;
+  valueType A[] = {
+    2,   1,  2,  1, 1, 1,
+    2,   1,  2,  1, 1, 1,
+    20, 10, 20, 10, 1, 1,
+     1,  2,  3,  4, 5, 6,
+  };
+
+  valueType rhs[N], b[N], b2[2*N], x[M], x2[2*M];
+  valueType const xe[M] = {1,2,3,4,5,6};
+  lapack_wrapper::gemv(
+    lapack_wrapper::TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
+  );
+  lapack_wrapper::copy( N, rhs, 1, b, 1 );
+  lapack_wrapper::copy( N, rhs, 1, b2, 1 );
+  lapack_wrapper::copy( N, rhs, 1, b2+N, 1 );
+  cout
+    << "\n\n\nTest11:\n\nInitial A\n"
+    << lapack_wrapper::print_matrix( M, N, A, M )
+    << "\nb2\n"
+    << lapack_wrapper::print_matrix( N, 2, b2, N );
+
+  cout << "\n\nDo PINV factorization of A\n";
+  pinv.factorize( M, N, A, LDA );
+
+  cout << "\nPINV solution of A x = b\n";
+  pinv.t_mult_inv( b, 1, x, 1 );
+  pinv.t_mult_inv( 2, b2, N, x2, M );
+
+  //pinv.t_solve( 1, x, M );
+  cout
+    << "x^T      = "
+    << lapack_wrapper::print_matrix( 1, M, x, 1 )
+    << "x2^T     = "
+    << lapack_wrapper::print_matrix( 1, M, x2, 1 );
+
+  valueType e[M] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2], x[3]-xe[3] };
+
+  cout
+    << "e^T      = "
+    << lapack_wrapper::print_matrix( 1, M, e, 1 );
+
+  lapack_wrapper::gemv(
+    lapack_wrapper::TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
+  );
+
+  cout
+    << "res^T    = "
+    << lapack_wrapper::print_matrix( 1, N, b, 1 );
+
+  valueType res = lapack_wrapper::nrm2( N, b, 1 );
+  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+
+  msg.green(
+    fmt::format(
+      "residual = {}\n||res||_2 = {}\ndone test11\n",
+      lapack_wrapper::print_matrix( 1, N, b, 1 ), res
+    )
+  );
+}
 
 
 int
@@ -679,6 +757,7 @@ main() {
     test8();
     test9();
     test10();
+    test11();
   } catch ( exception const & exc ) {
     msg.error( exc.what() );
   } catch ( ... ) {

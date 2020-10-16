@@ -48,6 +48,49 @@
 
 namespace lapack_wrapper {
 
+  char const *Transposition_name[] = {
+    "NO_TRANSPOSE",
+    "TRANSPOSE",
+    "CONJUGATE_TRANSPOSE"
+  };
+
+  char const *ULselect_name[] = { "UPPER", "LOWER" };
+  char const *DiagonalType_name[] = { "UNIT", "NON_UNIT" };
+  char const *SideMultiply_name[] = { "LEFT", "RIGHT" };
+  char const *BalanceType_name[] = {
+    "NO_BALANCE",
+    "PERMUTE_ONLY",
+    "SCALE_ONLY"
+    "PERMUTE_AND_SCALE"
+  };
+  char const *JobType_name[] = {
+    "ALL",
+    "REDUCED",
+    "INPLACE",
+    "NO_JOB"
+  };
+  char const *SenseType_name[] = {
+    "NONE",
+    "EIGENVALUES_ONLY",
+    "EIGENVECTORS_ONLY",
+    "EIGENVALUES_AND_EIGENVECTORS"
+  };
+  char const *DirectionType_name[] = { "FORWARD", "BACKWARD" };
+  char const *StorageType_name[] = { "COLUMNWISE", "ROWWISE" };
+  char const *MatrixType_name[] = {
+    "FULL_MATRIX",
+    "LOWER_TRIANGULAR_MATRIX",
+    "UPPER_TRIANGULAR_MATRIX",
+    "HESSENBERG_MATRIX",
+    "BANDED_MATRIX"
+  };
+  char const *EquilibrationType_name[] = {
+    "NO_EQUILIBRATE",
+    "EQUILIBRATE_ROWS",
+    "EQUILIBRATE_COLUMNS",
+    "EQUILIBRATE_BOTH"
+  };
+
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
       defined(LAPACK_WRAPPER_USE_ATLAS)      || \
       defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \

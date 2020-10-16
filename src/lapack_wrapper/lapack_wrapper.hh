@@ -290,20 +290,28 @@ namespace lapack_wrapper {
     CONJUGATE_TRANSPOSE = 2
   } Transposition;
 
+  extern char const *Transposition_name[];
+
   typedef enum {
     UPPER = 0,
     LOWER = 1
   } ULselect;
+
+  extern char const *ULselect_name[];
 
   typedef enum {
     UNIT     = 0,
     NON_UNIT = 1
   } DiagonalType;
 
+  extern char const *DiagonalType_name[];
+
   typedef enum {
     LEFT  = 0,
     RIGHT = 1
   } SideMultiply;
+
+  extern char const *SideMultiply_name[];
 
   typedef enum {
     NO_BALANCE        = 0, // 'N'
@@ -312,12 +320,16 @@ namespace lapack_wrapper {
     PERMUTE_AND_SCALE = 3  // 'B'
   } BalanceType;
 
+  extern char const *BalanceType_name[];
+
   typedef enum {
     ALL     = 0, // 'A'
     REDUCED = 1, // 'S'
     INPLACE = 2, // 'O'
     NO_JOB  = 3  // 'N'
   } JobType;
+
+  extern char const *JobType_name[];
 
   typedef enum {
     NONE                         = 0, // 'N'
@@ -326,15 +338,21 @@ namespace lapack_wrapper {
     EIGENVALUES_AND_EIGENVECTORS = 3  // 'B'
   } SenseType;
 
+  extern char const *SenseType_name[];
+
   typedef enum {
     FORWARD  = 0,
     BACKWARD = 1
   } DirectionType;
 
+  extern char const *DirectionType_name[];
+
   typedef enum {
     COLUMNWISE = 0,
     ROWWISE    = 1
   } StorageType;
+
+  extern char const *StorageType_name[];
 
   typedef enum {
     FULL_MATRIX             = 0,
@@ -344,12 +362,16 @@ namespace lapack_wrapper {
     BANDED_MATRIX           = 4
   } MatrixType;
 
+  extern char const *MatrixType_name[];
+
   typedef enum {
     NO_EQUILIBRATE      = 0,
     EQUILIBRATE_ROWS    = 1,
     EQUILIBRATE_COLUMNS = 2,
     EQUILIBRATE_BOTH    = 3
   } EquilibrationType;
+
+  extern char const *EquilibrationType_name[];
 
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
     typedef __CLPK_integer    integer;

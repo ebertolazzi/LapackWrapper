@@ -18,40 +18,47 @@ namespace lapack_wrapper {
   class MA48 : public HSLsolver<real> {
   private:
     // Memory vectors for int.
-    std::vector<int> i_Row_stored;
-    std::vector<int> j_Col_stored;
-    std::vector<int> irn;
-    std::vector<int> jcn;
-    std::vector<int> iw;
-    std::vector<int> keep;
+    std::vector<int> m_i_Row_stored;
+    std::vector<int> m_j_Col_stored;
+    std::vector<int> m_irn;
+    std::vector<int> m_jcn;
+    std::vector<int> m_iw;
+    std::vector<int> m_keep;
 
     // Memory vectors for real.
-    std::vector<real> a;
-    std::vector<real> w;
+    std::vector<real> m_a;
+    std::vector<real> m_w;
 
     /// Integer specifying task (1 for solve AX = B).
-    int job;
+    int m_job;
 
     /// Length of the arrays a, irn and jcn (mostly 3 * DimSparse).
-    int la;
+    int m_la;
 
     /// Array of length 5 with real control parameters.
-    real cntl[10];
+    real m_cntl[10];
 
     /// Array of length 20 with int control parameters.
-    int icntl[20];
+    int m_icntl[20];
 
     /// Error Array von MA48.
     mutable real ma48errors[3];
 
     /// Integer Info Variables.
-    mutable int info[20];
+    mutable int m_info[20];
     /// Real Info Variables.
-    mutable real rinfo[10];
+    mutable real m_rinfo[10];
 
     void load_error_string( int info ) const;
 
   public:
+
+    using HSLsolver<real>::m_nRows;
+    using HSLsolver<real>::m_nCols;
+    using HSLsolver<real>::m_nnz;
+    using HSLsolver<real>::m_isInitialized;
+    using HSLsolver<real>::m_isFactorized;
+    using HSLsolver<real>::m_last_error;
 
     /**
      * \brief MA48:

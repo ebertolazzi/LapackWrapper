@@ -37,14 +37,14 @@ namespace lapack_wrapper {
   public:
     typedef T valueType;
 
-    Malloc<valueType> allocReals;
-    Malloc<integer>   allocIntegers;
+    Malloc<valueType> m_allocReals;
+    Malloc<integer>   m_allocIntegers;
 
-    integer     m, n, nL, nU, ldAB;
-    integer   * ipiv;
-    valueType * AB;
+    integer     m_m, m_n, m_nL, m_nU, m_ldAB;
+    integer   * m_ipiv;
+    valueType * m_AB;
 
-    bool is_factorized;
+    bool        m_is_factorized;
 
   public:
 
@@ -63,8 +63,8 @@ namespace lapack_wrapper {
 
     integer
     iaddr( integer i, integer j ) const {
-      integer d = (i-j+nL+nU);
-      return d+j*ldAB;
+      integer d = (i-j+m_nL+m_nU);
+      return d+j*m_ldAB;
     }
 
     void
@@ -72,11 +72,11 @@ namespace lapack_wrapper {
 
     valueType const &
     operator () ( integer i, integer j ) const
-    { return AB[iaddr(i,j)]; }
+    { return m_AB[iaddr(i,j)]; }
 
     valueType &
     operator () ( integer i, integer j )
-    { return AB[iaddr(i,j)]; }
+    { return m_AB[iaddr(i,j)]; }
 
     void
     insert( integer i, integer j, valueType v, bool sym );

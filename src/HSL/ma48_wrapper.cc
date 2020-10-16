@@ -35,31 +35,31 @@ namespace lapack_wrapper {
   MA48<real>::load_error_string( int _info ) const {
     switch (_info) {
     case -1:
-      this->last_error = "MA48::factorize, Number of row or columns < 1";
+      m_last_error = "MA48::factorize, Number of row or columns < 1";
       break;
     case -2:
-      this->last_error = "MA48::factorize, Number of nonzeros < 1";
+      m_last_error = "MA48::factorize, Number of nonzeros < 1";
       break;
     case -3:
-      this->last_error = "MA48::factorize, Correction of LA failed!";
+      m_last_error = "MA48::factorize, Correction of LA failed!";
       break;
     case -4:
-      this->last_error = "MA48::factorize, matrix is structurally rank deficient";
+      m_last_error = "MA48::factorize, matrix is structurally rank deficient";
       break;
     case -5:
-      this->last_error = "MA48::factorize, faulty permutation inputin KEEP when JOB=2.";
+      m_last_error = "MA48::factorize, faulty permutation inputin KEEP when JOB=2.";
       break;
     case -6:
-      this->last_error = "MA48::factorize, JOB has a value less than 1 or greater than 3";
+      m_last_error = "MA48::factorize, JOB has a value less than 1 or greater than 3";
       break;
     case -7:
-      this->last_error = "MA48::factorize, On a call with JOB = 2, the matrix entries are unsuitable for the pivot sequence chosen on the previous call";
+      m_last_error = "MA48::factorize, On a call with JOB = 2, the matrix entries are unsuitable for the pivot sequence chosen on the previous call";
       break;
     case -8:
-      this->last_error = "MA48::factorize, Iterative refinement has not converged";
+      m_last_error = "MA48::factorize, Iterative refinement has not converged";
       break;
     case -9:
-      this->last_error = "MA48::factorize, A problem has occurred in the calculation of matrix norms using MC71A/AD";
+      m_last_error = "MA48::factorize, A problem has occurred in the calculation of matrix norms using MC71A/AD";
       break;
     case 2:
     case 3:
@@ -67,13 +67,13 @@ namespace lapack_wrapper {
     case 5:
     case 6:
     case 7:
-      this->last_error = "CPPMA48::factorize";
-      if ((this->info[0] & 0x01) != 0)
-        this->last_error += "\nOne or more row or columns indices are out of range or one or more entries are for the same position in the matrix, or both are true";
-      if ((this->info[0] & 0x02) != 0)
-        this->last_error += "\nThe matrix is rank deficient";
-      if ((this->info[0] & 0x04) != 0)
-        this->last_error += "\nNot possible to choose all pivots from diagonal";
+      m_last_error = "CPPMA48::factorize";
+      if ((m_info[0] & 0x01) != 0)
+        m_last_error += "\nOne or more row or columns indices are out of range or one or more entries are for the same position in the matrix, or both are true";
+      if ((m_info[0] & 0x02) != 0)
+        m_last_error += "\nThe matrix is rank deficient";
+      if ((m_info[0] & 0x04) != 0)
+        m_last_error += "\nNot possible to choose all pivots from diagonal";
       break;
     }
   }
@@ -90,50 +90,50 @@ namespace lapack_wrapper {
     int const j_Col[],
     bool      isFortranIndexing
   ) {
-    this->isFactorized = false;
-    this->nnz          = Nnz;
-    this->numRows      = N_Row;
-    this->numCols      = N_Col;
-    this->la           = 3 * this->nnz;
-    this->job          = 1;
-    this->a.resize(size_t(this->la));
-    this->irn.resize(size_t(this->la));
-    this->jcn.resize(size_t(this->la));
-    this->i_Row_stored.resize(size_t(this->nnz));
-    this->j_Col_stored.resize(size_t(this->nnz));
+    m_isFactorized = false;
+    m_nnz          = Nnz;
+    m_nRows        = N_Row;
+    m_nCols        = N_Col;
+    m_la           = 3 * m_nnz;
+    m_job          = 1;
+    m_a.resize(size_t(m_la));
+    m_irn.resize(size_t(m_la));
+    m_jcn.resize(size_t(m_la));
+    m_i_Row_stored.resize(size_t(m_nnz));
+    m_j_Col_stored.resize(size_t(m_nnz));
 
     // Copy data:
-    std::copy(i_Row, i_Row+this->nnz, this->i_Row_stored.begin());
-    std::copy(j_Col, j_Col+this->nnz, this->j_Col_stored.begin());
+    std::copy( i_Row, i_Row+m_nnz, m_i_Row_stored.begin() );
+    std::copy( j_Col, j_Col+m_nnz, m_j_Col_stored.begin() );
     if ( !isFortranIndexing) {
       // Correct fortran indexing:
-      for ( size_t i = 0; i < size_t(this->nnz); ++i ) {
-        ++this->i_Row_stored[i];
-        ++this->j_Col_stored[i];
+      for ( size_t i = 0; i < size_t(m_nnz); ++i ) {
+        ++m_i_Row_stored[i];
+        ++m_j_Col_stored[i];
       }
     }
 
-    std::copy(i_Row_stored.begin(), i_Row_stored.end(), this->irn.begin());
-    std::copy(j_Col_stored.begin(), j_Col_stored.end(), this->jcn.begin());
+    std::copy( m_i_Row_stored.begin(), m_i_Row_stored.end(), m_irn.begin() );
+    std::copy( m_j_Col_stored.begin(), m_j_Col_stored.end(), m_jcn.begin() );
 
     // Initialize MA48:
-    HSL::ma48i<real>(this->cntl, this->icntl);
+    HSL::ma48i<real>( m_cntl, m_icntl );
 
-    int ihlp = this->icntl[5];
+    int ihlp = m_icntl[5];
     if ( ihlp <= 0 ) {
-      ihlp                = 1;
-      this->last_error    = "CPPMA48::init, wrong value of icntl[5] in MA48. Set to 1!";
-      this->isInitialized = false;
+      ihlp            = 1;
+      m_last_error    = "CPPMA48::init, wrong value of icntl[5] in MA48. Set to 1!";
+      m_isInitialized = false;
       return false;
     }
-    int N_RC_Max = std::max(this->numRows, this->numCols);
-    int N_keep   = this->numRows + 5 * this->numCols + 4 * (this->numCols / ihlp) + 7;
-    int N_iw     = this->numRows * 6 + this->numCols * 3;
+    int N_RC_Max = std::max( m_nRows, m_nCols );
+    int N_keep   = m_nRows + 5 * m_nCols + 4 * (m_nCols / ihlp) + 7;
+    int N_iw     = m_nRows * 6 + m_nCols * 3;
     int N_w      = 4 * N_RC_Max;
-    this->keep.resize(size_t(N_keep));
-    this->iw.resize(size_t(N_iw));
-    this->w.resize(size_t(N_w));
-    this->isInitialized = true;
+    m_keep.resize(size_t(N_keep));
+    m_iw.resize(size_t(N_iw));
+    m_w.resize(size_t(N_w));
+    m_isInitialized = true;
     return true;
   }
 
@@ -143,97 +143,97 @@ namespace lapack_wrapper {
   bool
   MA48<real>::factorize( real const ArrayA[] ) {
     // Check valid call:
-    if (!this->isInitialized) {
-      this->last_error   = "MA48::factorize, The function factorize can only be called after calling init!";
-      this->isFactorized = false;
+    if (!m_isInitialized) {
+      m_last_error   = "MA48::factorize, The function factorize can only be called after calling init!";
+      m_isFactorized = false;
       return false;
     }
 
     // Copy Memory:
-    std::copy( ArrayA, ArrayA+this->nnz, this->a.begin() );
+    std::copy( ArrayA, ArrayA+m_nnz, m_a.begin() );
     // Pivoting:
     HSL::ma48a<real>(
-      this->numRows,
-      this->numCols,
-      this->nnz,
-      this->job,
-      this->la,
-      &this->a.front(),
-      &this->irn.front(),
-      &this->jcn.front(),
-      &this->keep.front(),
-      this->cntl,
-      this->icntl,
-      &this->iw.front(),
-      this->info,
-      this->rinfo
+      m_nRows,
+      m_nCols,
+      m_nnz,
+      m_job,
+      m_la,
+      &m_a.front(),
+      &m_irn.front(),
+      &m_jcn.front(),
+      &m_keep.front(),
+      m_cntl,
+      m_icntl,
+      &m_iw.front(),
+      m_info,
+      m_rinfo
     );
 
-    if ( this->info[3] > this->la ) {
+    if ( m_info[3] > m_la ) {
       // Increase internal workspace:
-      this->la = this->info[3];
-      this->a.resize(size_t(this->la));
-      this->irn.resize(size_t(this->la));
-      this->jcn.resize(size_t(this->la));
-      std::copy(ArrayA, ArrayA+this->nnz, this->a.begin());
+      m_la = m_info[3];
+      m_a.resize(size_t(m_la));
+      m_irn.resize(size_t(m_la));
+      m_jcn.resize(size_t(m_la));
+      std::copy( ArrayA, ArrayA+m_nnz, m_a.begin());
       std::copy(
-        this->i_Row_stored.begin(),
-        this->i_Row_stored.end(),
-        this->irn.begin()
+        m_i_Row_stored.begin(),
+        m_i_Row_stored.end(),
+        m_irn.begin()
       );
       std::copy(
-        this->j_Col_stored.begin(),
-        this->j_Col_stored.end(),
-        this->jcn.begin()
+        m_j_Col_stored.begin(),
+        m_j_Col_stored.end(),
+        m_jcn.begin()
       );
 
       HSL::ma48a<real>(
-        this->numRows,
-        this->numCols,
-        this->nnz,
-        this->job,
-        this->la,
-        &this->a.front(),
-        &this->irn.front(),
-        &this->jcn.front(),
-        &this->keep.front(),
-        this->cntl,
-        this->icntl,
-        &this->iw.front(),
-        this->info,
-        this->rinfo
+        m_nRows,
+        m_nCols,
+        m_nnz,
+        m_job,
+        m_la,
+        &m_a.front(),
+        &m_irn.front(),
+        &m_jcn.front(),
+        &m_keep.front(),
+        m_cntl,
+        m_icntl,
+        &m_iw.front(),
+        m_info,
+        m_rinfo
       );
       // Errors::set_Warning("Workspace of MA48 to small! Correcting!");
     }
 
-    load_error_string(this->info[0]);
+    load_error_string( m_info[0] );
 
-    this->isFactorized = false;
-    if ( this->info[0] != 0 ) return false;
+    m_isFactorized = false;
+    if ( m_info[0] != 0 ) return false;
 
     // Factorize:
     HSL::ma48b<real>(
-      this->numRows,
-      this->numCols,
-      this->nnz,
-      this->job,
-      this->la,
-      &this->a.front(),
-      &this->irn.front(),
-      &this->jcn.front(),
-      &this->keep.front(),
-      this->cntl,
-      this->icntl,
-      &this->w.front(),
-      &this->iw.front(),
-      this->info,
-      this->rinfo
+      m_nRows,
+      m_nCols,
+      m_nnz,
+      m_job,
+      m_la,
+      &m_a.front(),
+      &m_irn.front(),
+      &m_jcn.front(),
+      &m_keep.front(),
+      m_cntl,
+      m_icntl,
+      &m_w.front(),
+      &m_iw.front(),
+      m_info,
+      m_rinfo
     );
 
-    load_error_string(this->info[0]);
+    load_error_string( m_info[0] );
 
-    this->isFactorized = this->info[0] == 0;
-    return this->isFactorized;
+    m_isFactorized = m_info[0] == 0;
+    return m_isFactorized;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -242,37 +242,37 @@ namespace lapack_wrapper {
   bool
   MA48<real>::solve( real const RHS[], real X[], bool transposed ) const {
     // Check valid call:
-    if (!this->isInitialized) {
-      this->last_error = "MA48::solve, Can not solve uninitialized system!";
+    if (!m_isInitialized) {
+      m_last_error = "MA48::solve, Can not solve uninitialized system!";
       return false;
     }
-    if (!this->isFactorized) {
-      this->last_error = "MA48::solve, Can not solve unfactorized system!";
+    if (!m_isFactorized) {
+      m_last_error = "MA48::solve, Can not solve unfactorized system!";
       return false;
     }
 
     // Solve with right hand side:
     HSL::ma48c<real>(
-      this->numRows,
-      this->numCols,
+      m_nRows,
+      m_nCols,
       transposed ? 1 : 0,
-      this->job,
-      this->la,
-      &this->a.front(),
-      &this->irn.front(),
-      &this->keep.front(),
-      this->cntl,
-      this->icntl,
+      m_job,
+      m_la,
+      &m_a.front(),
+      &m_irn.front(),
+      &m_keep.front(),
+      m_cntl,
+      m_icntl,
       RHS,
       X,
-      this->ma48errors,
-      &this->w.front(),
-      &this->iw.front(),
-      this->info
+      ma48errors,
+      &m_w.front(),
+      &m_iw.front(),
+      m_info
     );
 
-    load_error_string(this->info[0]);
-    return this->info[0] == 0;
+    load_error_string( m_info[0] );
+    return m_info[0] == 0;
   }
 
   template <typename real>
@@ -287,10 +287,10 @@ namespace lapack_wrapper {
     bool ok = true;
     if ( RHS == X ) {
       std::vector<real> tmpRHS;
-      tmpRHS.resize(size_t(this->numRows));
+      tmpRHS.resize(size_t(m_nRows));
       for ( int j = 0; ok && j < nrhs; ++j ) {
         real const * RHSj = RHS + j * ldRHS;
-        std::copy( RHSj, RHSj+this->numRows, tmpRHS.begin() );
+        std::copy( RHSj, RHSj+m_nRows, tmpRHS.begin() );
         ok = this->solve( &tmpRHS.front(), X + j * ldX, false );
       }
     } else {
@@ -312,10 +312,10 @@ namespace lapack_wrapper {
     bool ok = true;
     if ( RHS == X ) {
       std::vector<real> tmpRHS;
-      tmpRHS.resize(size_t(this->numCols));
+      tmpRHS.resize(size_t(m_nCols));
       for ( int j = 0; ok && j < nrhs; ++j ) {
         real const * RHSj = RHS + j * ldRHS;
-        std::copy( RHSj, RHSj+this->numCols, tmpRHS.begin() );
+        std::copy( RHSj, RHSj+m_nCols, tmpRHS.begin() );
         ok = this->solve(&tmpRHS.front(), X + j * ldX, true);
       }
     } else {

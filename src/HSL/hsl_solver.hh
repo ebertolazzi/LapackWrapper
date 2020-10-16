@@ -19,16 +19,16 @@ namespace lapack_wrapper {
   template <typename real>
   class HSLsolver {
   protected:
-    int numRows;
-    int numCols;
-    int nnz;
+    int m_nRows;
+    int m_nCols;
+    int m_nnz;
 
     /// True if the HSL solver is initialized.
-    bool isInitialized;
+    bool m_isInitialized;
     /// True if the HSL solver is factorized.
-    bool isFactorized;
+    bool m_isFactorized;
 
-    mutable std::string last_error;
+    mutable std::string m_last_error;
 
     /**
      * \brief HSLsolver:
@@ -123,11 +123,8 @@ namespace lapack_wrapper {
      *
      */
     bool
-    solve(
-      real const RHS[],
-      real       X[]
-    ) const {
-      return solve( 1, RHS, this->numRows, X, this->numRows );
+    solve( real const RHS[], real X[] ) const {
+      return solve( 1, RHS, m_nRows, X, m_nRows );
     }
 
     /**
@@ -165,11 +162,8 @@ namespace lapack_wrapper {
      *
      */
     bool
-    solve_transposed(
-      real const RHS[],
-      real       X[]
-    ) const {
-      return solve_transposed( 1, RHS, this->numCols, X, this->numCols );
+    solve_transposed( real const RHS[], real X[] ) const {
+      return solve_transposed( 1, RHS, m_nCols, X, m_nCols );
     }
 
     /**
@@ -181,7 +175,7 @@ namespace lapack_wrapper {
      */
     bool
     checkInitialized()
-    { return this->isInitialized; }
+    { return m_isInitialized; }
 
     /**
      * \brief checkFactorized:
@@ -192,7 +186,7 @@ namespace lapack_wrapper {
      */
     bool
     checkFactorized()
-    { return this->isFactorized; }
+    { return m_isFactorized; }
   };
 
   #ifdef __clang__

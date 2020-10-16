@@ -117,6 +117,8 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
@@ -132,8 +134,12 @@ namespace lapack_wrapper {
     LW_ASSERT(
       (SIDE == lapack_wrapper::LEFT  && NR == m_nRows) ||
       (SIDE == lapack_wrapper::RIGHT && NC == m_nRows),
-      "QR_no_alloc::applyQ NR = {} NC = {} nRow = {}\n",
-      NR, NC, m_nRows
+      "QR_no_alloc::applyQ( SIDE = {}, TRANS = {}, Nrefl = {}, NR = {}, NC = {}, C, ldC = {})\n"
+      "original matrix is {} x {}\n",
+      SideMultiply_name[SIDE],
+      Transposition_name[TRANS],
+      nRefl, NR, NC, ldC,
+      m_nRows, m_nCols
     );
     integer info = ormqr(
       SIDE, TRANS,
@@ -148,6 +154,151 @@ namespace lapack_wrapper {
       info == 0,
       "QR_no_alloc::applyQ call lapack_wrapper::ormqr return info = {} Lwork = {}\n",
       info, m_LworkQR
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::Q_mul( valueType x[] ) const {
+    applyQ( LEFT, NO_TRANSPOSE, m_nReflector, m_nRows, 1, x, m_nRows );
+  }
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::Qt_mul( valueType x[] ) const {
+    applyQ( LEFT, TRANSPOSE, m_nReflector, m_nRows, 1, x, m_nRows );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::Q_mul(
+    integer   nr,
+    integer   nc,
+    valueType C[],
+    integer   ldC
+  ) const {
+    applyQ( LEFT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::Qt_mul(
+    integer   nr,
+    integer   nc,
+    valueType C[],
+    integer   ldC
+  ) const {
+    applyQ( LEFT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::mul_Q(
+    integer   nr,
+    integer   nc,
+    valueType C[],
+    integer   ldC
+  ) const {
+    applyQ( RIGHT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::mul_Qt(
+    integer   nr,
+    integer   nc,
+    valueType C[],
+    integer   ldC
+  ) const {
+    applyQ( RIGHT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::invR_mul( valueType x[], integer incx ) const {
+    trsv( // m_nRows = leading dimension
+      UPPER, NO_TRANSPOSE, NON_UNIT,
+      m_nReflector, m_Afactorized, m_nRows, x, incx
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::invR_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
+    trsm(
+      LEFT, UPPER, NO_TRANSPOSE, NON_UNIT,
+      nr, nc, 1.0, m_Afactorized, m_nRows, C, ldC
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::invRt_mul( valueType x[], integer incx ) const {
+    trsv( // m_nRows = leading dimension
+      UPPER, TRANSPOSE, NON_UNIT,
+      m_nReflector, m_Afactorized, m_nRows, x, incx
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::invRt_mul(
+    integer   nr,
+    integer   nc,
+    valueType C[],
+    integer   ldC
+  ) const {
+    trsm(
+      LEFT, UPPER, TRANSPOSE, NON_UNIT,
+      nr, nc, 1.0, m_Afactorized, m_nRows, C, ldC
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::mul_invR(
+    integer nr,
+    integer nc,
+    valueType C[],
+    integer ldC
+  ) const {
+    trsm(
+      RIGHT, UPPER, NO_TRANSPOSE, NON_UNIT,
+      nr, nc, 1.0, m_Afactorized, m_nRows, C, ldC
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  QR_no_alloc<T>::mul_invRt( integer nr, integer nc, valueType C[], integer ldC ) const {
+    trsm(
+      RIGHT, UPPER, TRANSPOSE, NON_UNIT,
+      nr, nc, 1.0, m_Afactorized, m_nRows, C, ldC
     );
   }
 

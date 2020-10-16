@@ -113,239 +113,114 @@ namespace lapack_wrapper {
     ) const;
 
     //! x <- Q*x
-    void
-    Q_mul( valueType x[] ) const {
-      applyQ( LEFT, NO_TRANSPOSE, m_nReflector, m_nRows, 1, x, m_nRows );
-    }
+    void Q_mul( valueType x[] ) const;
 
     //! x <- Q'*x
-    void
-    Qt_mul( valueType x[] ) const {
-      applyQ( LEFT, TRANSPOSE, m_nReflector, m_nRows, 1, x, m_nRows );
-    }
+    void Qt_mul( valueType x[] ) const;
 
     //! C <- Q*C
-    void
-    Q_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
-      applyQ( LEFT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
-    }
+    void Q_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
     Q_mul( MatrixWrapper<T> & C ) const {
-      applyQ(
-        LEFT, NO_TRANSPOSE, m_nReflector,
-        C.numRows(), C.numCols(), C.data(), C.lDim()
-      );
+      this->Q_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     //! C <- Q'*C
-    void
-    Qt_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
-      applyQ( LEFT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
-    }
+    void Qt_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
     Qt_mul( MatrixWrapper<T> & C ) const {
-      applyQ(
-        LEFT, TRANSPOSE, m_nReflector,
-        C.numRows(), C.numCols(), C.data(), C.lDim()
-      );
+      this->Qt_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     //! C <- C*Q
-    void
-    mul_Q( integer nr, integer nc, valueType C[], integer ldC ) const {
-      applyQ( RIGHT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
-    }
+    void mul_Q( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
     mul_Q( MatrixWrapper<T> & C ) const {
-      applyQ(
-        RIGHT, NO_TRANSPOSE, m_nReflector,
-        C.numRows(), C.numCols(), C.data(), C.lDim()
-      );
+      this->mul_Q( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     //! C <- C*Q'
-    void
-    mul_Qt( integer nr, integer nc, valueType C[], integer ldC ) const {
-      applyQ( RIGHT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
-    }
+    void mul_Qt( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
     mul_Qt( MatrixWrapper<T> & C ) const {
-      applyQ(
-        RIGHT, TRANSPOSE, m_nReflector,
-        C.numRows(), C.numCols(), C.data(), C.lDim()
-      );
-    }
-
-    // -------------------------------------------------------------------------
-
-    void
-    Rsolve(
-      Transposition TRANS,
-      integer       rk,
-      valueType     x[],
-      integer       incx
-    ) const { // m_nRows = leading dimension
-      trsv( UPPER, TRANS, NON_UNIT, rk, m_Afactorized, m_nRows, x, incx );
-    }
-
-    void
-    Rsolve(
-      SideMultiply  SIDE,
-      Transposition TRANS,
-      integer       nr,
-      integer       nc,
-      valueType     alpha,
-      valueType     Bmat[],
-      integer       ldB
-    ) const { // m_nRows = leading dimension
-      trsm(
-        SIDE, UPPER, TRANS, NON_UNIT,
-        nr, nc, alpha, m_Afactorized, m_nRows, Bmat, ldB
-      );
-    }
-
-    void
-    Rsolve(
-      SideMultiply               SIDE,
-      Transposition              TRANS,
-      valueType                  alpha,
-      MatrixWrapper<valueType> & Bmat
-    ) const { // m_nRows = leading dimension
-      trsm(
-        SIDE, UPPER, TRANS, NON_UNIT,
-        Bmat.numRows(), Bmat.numCols(),
-        alpha, m_Afactorized, m_nRows,
-        Bmat.data(), Bmat.lDim()
-      );
+      this->mul_Q( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     // -------------------------------------------------------------------------
 
     //! x <- R^(-1) * x
-    void
-    invR_mul( valueType x[], integer incx = 1 ) const {
-      trsv( // m_nRows = leading dimension
-        UPPER, NO_TRANSPOSE, NON_UNIT,
-        m_nReflector, m_Afactorized, m_nRows, x, incx
-      );
-    }
+    void invR_mul( valueType x[], integer incx = 1 ) const;
 
     //! C <- R^(-1) * C
-    void
-    invR_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
-      Rsolve( LEFT, NO_TRANSPOSE, nr, nc, 1.0, C, ldC );
-    }
+    void invR_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
     invR_mul( MatrixWrapper<valueType> & C ) const {
-      Rsolve(
-        LEFT, NO_TRANSPOSE, C.numRows(), C.numCols(), 1.0, C.data(), C.lDim()
-      );
+      this->invR_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     // -------------------------------------------------------------------------
 
     //! x <- R^(-T) * x
-    void
-    invRt_mul( valueType x[], integer incx = 1 ) const {
-      trsv( // m_nRows = leading dimension
-        UPPER, TRANSPOSE, NON_UNIT,
-        m_nReflector, m_Afactorized, m_nRows, x, incx
-      );
-    }
+    void invRt_mul( valueType x[], integer incx = 1 ) const;
 
     //! C <- R^(-T) * C
-    void
-    invRt_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
-      Rsolve( LEFT, TRANSPOSE, nr, nc, 1.0, C, ldC );
-    }
+    void invRt_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
     invRt_mul( MatrixWrapper<valueType> & C ) const {
-      Rsolve(
-        LEFT, TRANSPOSE, C.numRows(), C.numCols(), 1.0, C.data(), C.lDim()
-      );
+      this->invRt_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     // -------------------------------------------------------------------------
 
     //! C <- C * R^(-1)
-    void
-    mul_invR( integer nr, integer nc, valueType C[], integer ldC ) const {
-      Rsolve( RIGHT, NO_TRANSPOSE, nr, nc, 1.0, C, ldC );
-    }
+    void mul_invR( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
     mul_invR( MatrixWrapper<valueType> & C ) const {
-      Rsolve(
-        RIGHT, NO_TRANSPOSE,
-        C.numRows(), C.numCols(), 1.0, C.data(), C.lDim()
-      );
+      this->mul_invR( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     // -------------------------------------------------------------------------
 
-    void
-    mul_invRt( integer nr, integer nc, valueType C[], integer ldC ) const {
-      Rsolve( RIGHT, TRANSPOSE, nr, nc, 1.0, C, ldC );
-    }
+    void mul_invRt( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
     mul_invRt( MatrixWrapper<valueType> & C ) const {
-      Rsolve(
-        RIGHT, TRANSPOSE, C.numRows(), C.numCols(), 1.0, C.data(), C.lDim()
-      );
+      this->mul_invRt( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     // -------------------------------------------------------------------------
 
-    void
-    getR( valueType R[], integer ldR ) const;
-
-    void
-    getR( Matrix<T> & R ) const;
-
-    void
-    getRt( valueType R[], integer ldR ) const;
-
-    void
-    getRt( Matrix<T> & R ) const;
+    void getR( valueType R[], integer ldR ) const;
+    void getR( Matrix<T> & R ) const;
+    void getRt( valueType R[], integer ldR ) const;
+    void getRt( Matrix<T> & R ) const;
 
     // -------------------------------------------------------------------------
 
-    void
-    getQ( valueType Q[], integer ldQ ) const;
-
-    void
-    getQ( Matrix<T> & Q ) const;
+    void getQ( valueType Q[], integer ldQ ) const;
+    void getQ( Matrix<T> & Q ) const;
 
     // -------------------------------------------------------------------------
 
-    void
-    getQreduced( valueType Q[], integer ldQ ) const;
-
-    void
-    getQreduced( Matrix<T> & Q ) const;
+    void getQreduced( valueType Q[], integer ldQ ) const;
+    void getQreduced( Matrix<T> & Q ) const;
 
     // -------------------------------------------------------------------------
 
-    void
-    getA( valueType A[], integer ldA ) const;
-
-    void
-    getA( Matrix<T> & A ) const;
+    void getA( valueType A[], integer ldA ) const;
+    void getA( Matrix<T> & A ) const;
 
     // -------------------------------------------------------------------------
 
-    void
-    getTau( valueType tau[] ) const;
-
-    void
-    getTau( Matrix<T> & tau ) const;
+    void getTau( valueType tau[] ) const;
+    void getTau( Matrix<T> & tau ) const;
 
     /*\
     :|:         _      _               _

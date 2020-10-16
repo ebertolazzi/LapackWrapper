@@ -3078,9 +3078,6 @@ namespace lapack_wrapper {
   #endif
 
   /*\
-   *  #ifdef LAPACK_WRAPPER_OS_OSX
-
-=====
    *
    *  DLASCL2 performs a diagonal scaling on a vector:
    *    x <-- D * x

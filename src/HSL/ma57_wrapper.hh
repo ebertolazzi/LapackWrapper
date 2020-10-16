@@ -19,42 +19,42 @@ namespace lapack_wrapper {
   class MA57 : public HSLsolver<real> {
   private:
     // Memory vectors for int.
-    std::vector<int> i_Row;
-    std::vector<int> j_Col;
-    std::vector<int> iKeep;
-    std::vector<int> ifact;
-    mutable std::vector<int> iPivotSeq;
+    std::vector<int> m_i_Row;
+    std::vector<int> m_j_Col;
+    std::vector<int> m_iKeep;
+    std::vector<int> m_ifact;
+    mutable std::vector<int> m_iPivotSeq;
 
     // Memory vectors for real.
-    std::vector<real> a_stored;
-    std::vector<real> fact;
-    mutable std::vector<real> RHSReinfinement;
-    mutable std::vector<real> Work;
-    mutable std::vector<real> residualVec;
+    std::vector<real> m_a_stored;
+    std::vector<real> m_fact;
+    mutable std::vector<real> m_RHSReinfinement;
+    mutable std::vector<real> m_Work;
+    mutable std::vector<real> m_residualVec;
 
     // MA57 Storage:
     /// Array of length 5 with real control parameters.
-    real cntl[5];
+    real m_cntl[5];
     /// Array of length 20 with int control parameters.
-    int icntl[20];
+    int m_icntl[20];
     /// Integer Info variables.
-    mutable int iinfo[40];
+    mutable int m_iinfo[40];
     /// Real Info variables.
-    mutable real rinfo[20];
+    mutable real m_rinfo[20];
 
     // Factors in MA57:
     // Workspace MA57:
 
     /// Integer specifying task (1 for solve AX = B).
-    int job;
+    int m_job;
 
     /// Specifies whether to refine iteratively.
-    bool doRefinement;
+    bool m_doRefinement;
 
     /// Residuum tolerance.
-    real tolRes;
+    real m_tolRes;
     /// Maximum number of refinements.
-    int MaxRefinements;
+    int m_MaxRefinements;
 
     /**
      * \brief getResidual:
@@ -77,15 +77,22 @@ namespace lapack_wrapper {
 
   public:
 
+    using HSLsolver<real>::m_nRows;
+    using HSLsolver<real>::m_nCols;
+    using HSLsolver<real>::m_nnz;
+    using HSLsolver<real>::m_isInitialized;
+    using HSLsolver<real>::m_isFactorized;
+    using HSLsolver<real>::m_last_error;
+
     /**
      * \brief MA57:
      *        Constructor of the class MA57.
      */
     MA57() : HSLsolver<real>() {
       // Default values:
-      this->doRefinement   = true;
-      this->tolRes         = real(1e-11);
-      this->MaxRefinements = 100;
+      m_doRefinement   = true;
+      m_tolRes         = real(1e-11);
+      m_MaxRefinements = 100;
     }
 
     /**
@@ -177,9 +184,9 @@ namespace lapack_wrapper {
       real TolRes         = real(1e-11),
       int  maxRefinements = 100
     ) {
-      this->doRefinement   = DoRefinement;
-      this->tolRes         = TolRes;
-      this->MaxRefinements = maxRefinements;
+      m_doRefinement   = DoRefinement;
+      m_tolRes         = TolRes;
+      m_MaxRefinements = maxRefinements;
     }
   };
 
