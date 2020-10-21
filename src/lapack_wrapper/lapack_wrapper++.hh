@@ -92,84 +92,31 @@ namespace lapack_wrapper {
     ~Malloc() { free(); }
 
     //! allocate memory for `n` objects
-    void
-    allocate( size_t n ) {
-      try {
-        if ( n > m_numTotReserved ) {
-          delete [] m_pMalloc;
-          m_numTotValues   = n;
-          m_numTotReserved = n + (n>>3); // 12% more values
-          m_pMalloc        = new T[m_numTotReserved];
-        }
-      }
-      catch ( std::exception const & exc ) {
-        std::string reason = fmt::format(
-          "Memory allocation failed: {}\nTry to allocate {} bytes for {}\n",
-          exc.what(), n, m_name
-        );
-        printTrace( __LINE__, __FILE__, reason, std::cerr );
-        std::exit(0);
-      }
-      catch (...) {
-        std::string reason = fmt::format(
-          "Memory allocation failed for {}: memory exausted\n", m_name
-        );
-        printTrace( __LINE__, __FILE__, reason, std::cerr );
-        std::exit(0);
-      }
-      m_numTotValues = n;
-      m_numAllocated = 0;
-    }
+    void allocate( size_t n );
 
     //! free memory
-    void
-    free(void) {
-      if ( m_pMalloc != nullptr ) {
-        delete [] m_pMalloc; m_pMalloc = nullptr;
-        m_numTotValues   = 0;
-        m_numTotReserved = 0;
-        m_numAllocated   = 0;
-      }
-    }
+    void free(void);
 
     //! number of objects allocated
     size_t size(void) const { return m_numTotValues; }
 
     //! get pointer of allocated memory for `sz` objets
-    T * operator () ( size_t sz ) {
-      size_t offs = m_numAllocated;
-      m_numAllocated += sz;
-      if ( m_numAllocated > m_numTotValues ) {
-        std::string reason = fmt::format(
-          "nMalloc<{}>::operator () ({}) -- Memory EXAUSTED\n", m_name, sz
-        );
-        printTrace( __LINE__, __FILE__, reason, std::cerr );
-        std::exit(0);
-      }
-      return m_pMalloc + offs;
-    }
+    T * operator () ( size_t sz );
 
     bool is_empty() const { return m_numAllocated <= m_numTotValues; }
 
-    void
-    must_be_empty( char const where[] ) const {
-      if ( m_numAllocated < m_numTotValues ) {
-        std::string tmp = fmt::format(
-          "in {} {}: not fully used!\nUnused: {} values\n",
-          m_name, where, m_numTotValues - m_numAllocated
-        );
-        printTrace( __LINE__,__FILE__, tmp, std::cerr );
-      }
-      if ( m_numAllocated > m_numTotValues ) {
-        std::string tmp = fmt::format(
-          "in {} {}: too much used!\nMore used: {} values\n",
-          m_name, where, m_numAllocated - m_numTotValues
-        );
-        printTrace( __LINE__,__FILE__, tmp, std::cerr );
-      }
-    }
+    void must_be_empty( char const where[] ) const;
 
   };
+
+  extern template class Malloc<uint16_t>;
+  extern template class Malloc<int16_t>;
+  extern template class Malloc<uint32_t>;
+  extern template class Malloc<int32_t>;
+  extern template class Malloc<uint64_t>;
+  extern template class Malloc<int64_t>;
+  extern template class Malloc<float>;
+  extern template class Malloc<double>;
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

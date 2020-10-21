@@ -88,12 +88,12 @@ end
 #
 # https://stackoverflow.com/questions/856891/unzip-zip-tar-tag-gz-files-with-ruby
 #
-TAR_LONGLINK = '././@LongLink'
 def extract_tgz( tar_gz_archive, destination = '.' )
+  tar_longlink = '././@LongLink'
   Gem::Package::TarReader.new( Zlib::GzipReader.open tar_gz_archive ) do |tar|
     dest = nil
     tar.each do |entry|
-      if entry.full_name == TAR_LONGLINK
+      if entry.full_name == tar_longlink
         dest = File.join destination, entry.read.strip
         next
       end
@@ -104,12 +104,15 @@ def extract_tgz( tar_gz_archive, destination = '.' )
       elsif entry.file?
         FileUtils.rm_rf dest if File.directory? dest
         FileUtils.mkdir_p File.dirname(dest), :mode => 0777, :verbose => false
-        File.open dest, "wb" do |f|
-          f.print entry.read
-        end
+        File.open dest, "wb" do |f| f.print entry.read end
+        FileUtils.chmod entry.header.mode, dest, :verbose => false
+      elsif entry.header.typeflag == '' #file?
+        File.open dest, "wb" do |f| f.print entry.read end
         FileUtils.chmod entry.header.mode, dest, :verbose => false
       elsif entry.header.typeflag == '2' #Symlink!
         File.symlink entry.header.linkname, dest
+      else
+        puts "Unkown tar entry: #{entry.full_name} type: #{entry.header.typeflag}."
       end
       dest = nil
     end
