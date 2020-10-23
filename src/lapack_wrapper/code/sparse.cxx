@@ -216,7 +216,7 @@ namespace lapack_wrapper {
     valueType       y[],
     integer         incY
   ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       DimX == this->nCols && DimY == this->nRows,
       "SparseCCOOR::gemv, bad dimensions, "
       "dimX = {}, dimY = {} matrix is {} x {}\n",
@@ -265,7 +265,7 @@ namespace lapack_wrapper {
     valueType       y[],
     integer         incY
   ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       DimY == this->nCols && DimX == this->nRows,
       "SparseCCOOR::gemv_Transposed, bad dimensions, "
       "dimX = {}, dimY = {} matrix is {} x {}\n",
@@ -314,7 +314,7 @@ namespace lapack_wrapper {
     valueType       y[],
     integer         incY
   ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       DimY == this->nCols && DimX == this->nRows && DimX == DimY,
       "SparseCCOOR::gemv_Symmetric, bad dimensions, "
       "dimX = {}, dimY = {} matrix is {} x {}\n",
@@ -432,7 +432,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseCCOOR<T>::fill( valueType const V[], integer M ) {
-    LW_ASSERT0(
+    UTILS_ASSERT0(
       M == this->nnz,
       "SparseCCOOR::fill(...) bad size input vector\n"
     );
@@ -443,7 +443,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseCCOOR<T>::fill( std::vector<valueType> const & V ) {
-    LW_ASSERT0(
+    UTILS_ASSERT0(
       V.size() == this->vals.size(),
       "SparseCCOOR::fill(...) bad size input vector\n"
     );
@@ -487,7 +487,7 @@ namespace lapack_wrapper {
     integer   col,
     valueType val
   ) {
-    LW_ASSERT(
+    UTILS_ASSERT(
       row >= 0 && row < this->nRows && col >= 0 && col < this->nCols,
       "SparseCCOOR::push_value_C({},{}) out of bound\n", row, col
     );
@@ -510,7 +510,7 @@ namespace lapack_wrapper {
     integer   col,
     valueType val
   ) {
-    LW_ASSERT(
+    UTILS_ASSERT(
       row > 0 && row <= this->nRows && col > 0 && col <= this->nCols,
       "SparseCCOOR::push_value_F({},{}) out of bound\n", row, col
     );

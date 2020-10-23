@@ -56,7 +56,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::t_solve;
 
     LU_no_alloc();
-    virtual ~LU_no_alloc() LAPACK_WRAPPER_OVERRIDE {}
+    virtual ~LU_no_alloc() UTILS_OVERRIDE {}
 
     void
     no_allocate(
@@ -95,19 +95,19 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     void
-    solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     void
-    t_solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -115,7 +115,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     void
@@ -124,7 +124,7 @@ namespace lapack_wrapper {
       integer    nrhs,
       valueType  B[],
       integer    ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -132,7 +132,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     void
@@ -141,7 +141,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
   };
 
@@ -173,7 +173,7 @@ namespace lapack_wrapper {
     using LU_no_alloc<T>::condInf;
 
     LU();
-    virtual ~LU() LAPACK_WRAPPER_OVERRIDE;
+    virtual ~LU() UTILS_OVERRIDE;
 
     void allocate( integer NR, integer NC );
 
@@ -184,7 +184,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       this->factorize( who, A, LDA );
     }
@@ -195,7 +195,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       return this->factorize( A, LDA );
     }
@@ -231,7 +231,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::t_solve;
 
     LUPQ_no_alloc();
-    virtual ~LUPQ_no_alloc() LAPACK_WRAPPER_OVERRIDE {}
+    virtual ~LUPQ_no_alloc() UTILS_OVERRIDE {}
 
     void
     no_allocate(
@@ -262,11 +262,11 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -274,7 +274,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -282,7 +282,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
   };
 
@@ -310,7 +310,7 @@ namespace lapack_wrapper {
     using LUPQ_no_alloc<T>::factorize;
 
     LUPQ();
-    virtual ~LUPQ() LAPACK_WRAPPER_OVERRIDE;
+    virtual ~LUPQ() UTILS_OVERRIDE;
 
     void allocate( integer NRC );
 
@@ -332,8 +332,8 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
-      LW_ASSERT(
+    ) UTILS_OVERRIDE {
+      UTILS_ASSERT(
         NR == NC, "LUPQ::factorize, non square matrix: {} x {}\n", NR, NC
       );
       factorize( who, NR, A, LDA );
@@ -355,7 +355,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       if ( NR != NC ) return false;
       return factorize( NR, A, LDA );
     }

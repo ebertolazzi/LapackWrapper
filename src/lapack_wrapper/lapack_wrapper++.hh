@@ -179,11 +179,11 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    solve( valueType xb[] ) const UTILS_PURE_VIRTUAL;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    t_solve( valueType xb[] ) const UTILS_PURE_VIRTUAL;
 
     virtual
     bool
@@ -204,7 +204,7 @@ namespace lapack_wrapper {
     virtual
     void
     solve( char const who[], valueType xb[] ) const {
-      LW_ASSERT(
+      UTILS_ASSERT(
         this->solve( xb ),
         "LinearSystemSolver::solve failed at {}\n", who
       );
@@ -213,7 +213,7 @@ namespace lapack_wrapper {
     virtual
     void
     t_solve( char const who[], valueType xb[] ) const {
-      LW_ASSERT(
+      UTILS_ASSERT(
         this->t_solve( xb ),
         "LinearSystemSolver::t_solve failed at {}\n", who
       );
@@ -222,7 +222,7 @@ namespace lapack_wrapper {
     virtual
     void
     solve( char const who[], integer nrhs, valueType B[], integer ldB ) const {
-      LW_ASSERT(
+      UTILS_ASSERT(
         this->solve( nrhs, B, ldB ),
         "LinearSystemSolver::solve failed at {}\n", who
       );
@@ -231,7 +231,7 @@ namespace lapack_wrapper {
     virtual
     void
     t_solve( char const who[], integer nrhs, valueType B[], integer ldB ) const {
-      LW_ASSERT(
+      UTILS_ASSERT(
         this->t_solve( nrhs, B, ldB ),
         "LinearSystemSolver::solve failed at {}\n", who
       );
@@ -246,7 +246,7 @@ namespace lapack_wrapper {
       valueType const /* A   */ [],
       integer         /* LDA */
     ) {
-      LW_ERROR0( "LinearSystemSolver::factorize, not defined in derived class\n" );
+      UTILS_ERROR0( "LinearSystemSolver::factorize, not defined in derived class\n" );
     }
 
     virtual

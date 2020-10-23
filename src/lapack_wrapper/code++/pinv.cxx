@@ -79,7 +79,7 @@ namespace lapack_wrapper {
     integer   * iWork
   ) {
 
-    LW_ASSERT(
+    UTILS_ASSERT(
       NR >= NC,
       "PINV_no_alloc::no_allocate( NR = {}, NC = {},...)\n"
       "must be NR >= NC\n",
@@ -89,7 +89,7 @@ namespace lapack_wrapper {
     integer L1   = m_QR1.get_Lwork( NR, NC ) + (NR+1)*(NC+1);
     integer L2   = m_QR2.get_Lwork( NC, NC ) + (NC+1)*(NC+1);
     integer Ltot = L1 + L2 + (NR+1)*(NC+1) + NC*NC;
-    LW_ASSERT(
+    UTILS_ASSERT(
       Lwork >= Ltot && Liwork >= NC,
       "PINV_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {},...)\n"
       "Lwork must be >= {} and Liwork >= {}\n",
@@ -121,7 +121,7 @@ namespace lapack_wrapper {
   ) {
     // copy matrix and scale
     integer info = gecopy( m_nRows, m_nCols, A, LDA, m_Ascaled, m_nRows );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "{}, call to gecopy( N = {}, M = {}, A, LDA = {}, B, LDB = {}\n"
       "return info = {}\n",
@@ -138,7 +138,7 @@ namespace lapack_wrapper {
       ROWCND, COLCND, AMAX
     );
 
-    LW_ASSERT(
+    UTILS_ASSERT(
       info >= 0,
       "{}, call to geequ( N = {}, M = {}, A, LDA = {}, ...)\n"
       "return info = {}\n",

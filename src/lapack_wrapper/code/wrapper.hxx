@@ -101,7 +101,7 @@ namespace lapack_wrapper {
     }
 
     DMatW & operator = ( DMatW const & COPY ) {
-      LW_ASSERT0(
+      UTILS_ASSERT0(
         m_dim == COPY.m_dim,
         "DiagMatrixWrapper operator = bad matrix dimensions\n"
       );
@@ -162,7 +162,7 @@ namespace lapack_wrapper {
     #if defined(DEBUG) || defined(_DEBUG)
     integer
     iaddr( integer i,  integer j ) const {
-      LW_ASSERT_TRACE(
+      UTILS_ASSERT_TRACE(
         i >= 0 && i < m_nRows && j >= 0 && j < m_nCols,
         "iaddr({},{}) out of range [0,{}) x [0,{})\n",
         i, j, m_nRows, m_nCols
@@ -439,7 +439,7 @@ namespace lapack_wrapper {
       integer         irow = 0,
       integer         icol = 0
     ) {
-      LW_ASSERT(
+      UTILS_ASSERT(
         irow + nr <= m_nRows &&
         icol + nc <= m_nCols &&
         irow >= 0 && icol >= 0,
@@ -451,7 +451,7 @@ namespace lapack_wrapper {
         B, ldB,
         m_data + this->iaddr(irow,icol), m_ldData
       );
-      LW_ASSERT(
+      UTILS_ASSERT(
         info == 0,
         "load_block call lapack_wrapper::gecopy return info = {}\n", info
       );
@@ -477,7 +477,7 @@ namespace lapack_wrapper {
       integer         irow = 0,
       integer         icol = 0
     ) {
-      LW_ASSERT(
+      UTILS_ASSERT(
         irow + nc <= m_nRows &&
         icol + nr <= m_nCols &&
         irow >= 0 && icol >= 0,
@@ -507,7 +507,7 @@ namespace lapack_wrapper {
       integer         irow = 0,
       integer         icol = 0
     ) {
-      LW_ASSERT(
+      UTILS_ASSERT(
         irow + n <= m_nRows &&
         icol + n <= m_nCols &&
         irow >= 0 && icol >= 0,
@@ -772,7 +772,7 @@ namespace lapack_wrapper {
     void
     add( valueType alpha, MatW const & A ) {
       #if defined(DEBUG) || defined(_DEBUG)
-      LW_ASSERT0(
+      UTILS_ASSERT0(
         m_nRows == A.m_nRows && m_nCols == A.m_nCols,
         "add(..) incompatible dimensions\n"
       );
@@ -783,7 +783,7 @@ namespace lapack_wrapper {
     void
     add( MatW const & A ) {
       #if defined(DEBUG) || defined(_DEBUG)
-      LW_ASSERT0(
+      UTILS_ASSERT0(
         m_nRows == A.m_nRows && m_nCols == A.m_nCols,
         "add(..) incompatible dimensions\n"
       );
@@ -884,7 +884,7 @@ namespace lapack_wrapper {
     ) {
       if ( nrow > 0 && ncol > 0 ) {
         #if defined(DEBUG) || defined(_DEBUG)
-        LW_ASSERT_TRACE(
+        UTILS_ASSERT_TRACE(
           i_offs >= 0 && i_offs+nrow <= m_nRows &&
           j_offs >= 0 && j_offs+ncol <= m_nCols,
           "view_block(i_offs={}, j_offs={}, nrow={}, ncol={}) "
@@ -908,7 +908,7 @@ namespace lapack_wrapper {
     void
     get_transposed( MatW & out ) {
       #if defined(DEBUG) || defined(_DEBUG)
-      LW_ASSERT0(
+      UTILS_ASSERT0(
         m_nRows == out.m_nCols && m_nCols == out.m_nRows,
         "get_transposed(...) incompatible matrices\n"
       );
@@ -934,7 +934,7 @@ namespace lapack_wrapper {
       integer j_offs
     ) {
       #if defined(DEBUG) || defined(_DEBUG)
-      LW_ASSERT_TRACE(
+      UTILS_ASSERT_TRACE(
         i_offs >= 0 && i_offs+to.m_nRows <= m_nRows &&
         j_offs >= 0 && j_offs+to.m_nCols <= m_nCols,
         "get_block(i_offs={}, j_offs={}, ...) "
@@ -965,7 +965,7 @@ namespace lapack_wrapper {
       integer j_offs
     ) {
       #if defined(DEBUG) || defined(_DEBUG)
-      LW_ASSERT_TRACE(
+      UTILS_ASSERT_TRACE(
         i_offs >= 0 && i_offs+to.m_nCols <= m_nRows &&
         j_offs >= 0 && j_offs+to.m_nRows <= m_nCols,
         "get_block_transposed(i_offs={}, j_offs={}, ...) "
@@ -1111,7 +1111,7 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numCols() == B.numRows() &&
       A.numRows() == C.numRows() &&
       B.numCols() == C.numCols(),
@@ -1156,7 +1156,7 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numCols() == B.numRows() &&
       A.numRows() == C.numRows() &&
       B.numCols() == C.numCols(),
@@ -1208,7 +1208,7 @@ namespace lapack_wrapper {
     integer Ac = TRANSA == NO_TRANSPOSE ? A.numCols() : A.numRows();
     integer Br = TRANSB == NO_TRANSPOSE ? B.numRows() : B.numCols();
     integer Bc = TRANSB == NO_TRANSPOSE ? B.numCols() : B.numRows();
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       C.numRows() == Ar && C.numCols() == Bc && Ac == Br,
       "gemm, at `{}' inconsistent dimensions:"
       "\nA = {} x {}\nB = {} x {}\nC = {} x {}"
@@ -1262,7 +1262,7 @@ namespace lapack_wrapper {
     integer Ac = TRANSA == NO_TRANSPOSE ? A.numCols() : A.numRows();
     integer Br = TRANSB == NO_TRANSPOSE ? B.numRows() : B.numCols();
     integer Bc = TRANSB == NO_TRANSPOSE ? B.numCols() : B.numRows();
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       C.numRows() == Ar && C.numCols() == Bc && Ac == Br,
       "gemm, inconsistent dimensions:"
       "\nA = {} x {}\nB = {} x {}\nC = {} x {}"
@@ -1308,7 +1308,7 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmv, matrix is {} x {} expected square\n",
       A.numRows(), A.numCols()
@@ -1344,7 +1344,7 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmv at `{}` matrix is {} x {} expected square\n",
       where, A.numRows(), A.numRows()
@@ -1378,7 +1378,7 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trsv, matrix is {} x {} expected square\n",
       A.numRows(), A.numCols()
@@ -1414,7 +1414,7 @@ namespace lapack_wrapper {
     T                        x[],
     integer                  incx
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trsv at `{}` matrix is {} x {} expected square\n",
       where, A.numRows(), A.numRows()
@@ -1452,7 +1452,7 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmm, matrix is {} x {} expected square\n",
       A.numRows(), A.numCols()
@@ -1495,7 +1495,7 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmm, at `{}` matrix is {} x {} expected square\n",
       where, A.numRows(), A.numRows()
@@ -1536,7 +1536,7 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trsm, matrix is {} x {} expected square\n",
       A.numRows(), A.numCols()
@@ -1579,7 +1579,7 @@ namespace lapack_wrapper {
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       A.numRows() == A.numCols(),
       "trmm, at `{}` matrix is {} x {} expected square\n",
       where, A.numRows(), A.numRows()

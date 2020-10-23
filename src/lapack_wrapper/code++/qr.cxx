@@ -37,7 +37,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::get_Lwork( integer NR, integer NC ) const {
     valueType tmp; // get optimal allocation
     integer info = geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "QR_no_alloc::get_Lwork call lapack_wrapper::geqrf return info = {}\n", info
     );
@@ -58,7 +58,7 @@ namespace lapack_wrapper {
     m_nCols      = NC;
     m_nReflector = std::min(NR,NC);
     integer Lwmin = this->get_Lwork( NR, NC ) + NR*NC + m_nReflector;
-    LW_ASSERT(
+    UTILS_ASSERT(
       Lwork >= Lwmin,
       "QR_no_alloc::no_allocate( NR = {}, NC = {}, Lwork {}, .. )\n"
       "Lwork must be >= {}\n",
@@ -83,7 +83,7 @@ namespace lapack_wrapper {
     integer info = gecopy(
       m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "QR_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
@@ -91,7 +91,7 @@ namespace lapack_wrapper {
     info = geqrf(
       m_nRows, m_nCols, m_Afactorized, m_nRows, m_Tau, m_WorkQR, m_LworkQR
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "QR_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}\n",
       who, info
@@ -131,7 +131,7 @@ namespace lapack_wrapper {
     valueType     C[],
     integer       ldC
   ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       (SIDE == lapack_wrapper::LEFT  && NR == m_nRows) ||
       (SIDE == lapack_wrapper::RIGHT && NC == m_nRows),
       "QR_no_alloc::applyQ( SIDE = {}, TRANS = {}, Nrefl = {}, NR = {}, NC = {}, C, ldC = {})\n"
@@ -150,7 +150,7 @@ namespace lapack_wrapper {
       C, ldC,
       m_WorkQR, m_LworkQR
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "QR_no_alloc::applyQ call lapack_wrapper::ormqr return info = {} Lwork = {}\n",
       info, m_LworkQR
@@ -507,7 +507,7 @@ namespace lapack_wrapper {
     integer   * iWork
   ) {
     integer Lwmin = this->get_Lwork( NR, NC ) + NR*NC + NR+NC;
-    LW_ASSERT(
+    UTILS_ASSERT(
       Liwork >= NC && Lwork >= Lwmin,
       "QRP_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {}, ...)\n"
       "Lwork must be >= {} amd Liwork = NC",
@@ -530,7 +530,7 @@ namespace lapack_wrapper {
     integer info = gecopy(
       m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "QRP_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
@@ -540,7 +540,7 @@ namespace lapack_wrapper {
       m_nRows, m_nCols, m_Afactorized, m_nRows,
       m_JPVT, m_Tau, m_WorkQR, m_LworkQR
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "QRP_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}\n",
       who, info
@@ -598,7 +598,7 @@ namespace lapack_wrapper {
     valueType C[],
     integer   ldC
   ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       nr == m_nCols,
       "QRP_no_alloc::permute_rows, bad number of row, expected {} found {}\n",
       m_nCols, nr
@@ -614,7 +614,7 @@ namespace lapack_wrapper {
     valueType C[],
     integer   ldC
   ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       nr == m_nCols,
       "QRP_no_alloc::inv_permute_rows, bad number of row, expected {} found {}\n",
       m_nCols, nr
@@ -630,7 +630,7 @@ namespace lapack_wrapper {
     valueType C[],
     integer   ldC
   ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       nc == m_nCols,
       "QRP_no_alloc::permute_cols, bad number of cols, expected {} found {}\n",
       m_nCols, nc
@@ -646,7 +646,7 @@ namespace lapack_wrapper {
     valueType C[],
     integer   ldC
   ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       nc == m_nCols,
       "QRP_no_alloc::inv_permute_cols, bad number of cols, expected {} found {}\n",
       m_nCols, nc
@@ -711,7 +711,7 @@ namespace lapack_wrapper {
   QRP<T>::get_Lwork( integer NR, integer NC ) const {
     valueType tmp; // get optimal allocation
     integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "QRP::allocate call lapack_wrapper::geqp3 return info = {}\n", info
     );

@@ -48,7 +48,7 @@ namespace lapack_wrapper {
       nullptr, minRC,
       &tmp, -1
     );
-    LW_ASSERT( info == 0, "SVD::allocate, in gesvd info = {}\n", info );
+    UTILS_ASSERT( info == 0, "SVD::allocate, in gesvd info = {}\n", info );
     integer L = integer(tmp);
     info = gesdd(
       REDUCED,
@@ -59,7 +59,7 @@ namespace lapack_wrapper {
       nullptr, minRC,
       &tmp, -1, nullptr
     );
-    LW_ASSERT( info == 0, "SVD::allocate, in gesdd info = {}\n", info );
+    UTILS_ASSERT( info == 0, "SVD::allocate, in gesdd info = {}\n", info );
     if ( integer(tmp) > L ) L = integer(tmp);
     return L;
   }
@@ -83,7 +83,7 @@ namespace lapack_wrapper {
     integer Lmin  = ibf+this->get_Lwork( NR, NC );
     integer Limin = 8*m_minRC;
     m_LworkSVD = Lwork - ibf;
-    LW_ASSERT(
+    UTILS_ASSERT(
       Lwork >= Lmin && Liwork >= Limin,
       "SVD_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {},...)\n"
       "Lwork must be >= {} and Liwork >= {}\n",
@@ -110,7 +110,7 @@ namespace lapack_wrapper {
     integer info = gecopy(
       m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "SVD_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
@@ -126,7 +126,7 @@ namespace lapack_wrapper {
         m_VTmat,   m_minRC,
         m_WorkSVD, m_LworkSVD
       );
-      LW_ASSERT(
+      UTILS_ASSERT(
         info == 0,
         "SVD_no_alloc::factorize[{}] call lapack_wrapper::gesvd return info = {}\n",
         who, info
@@ -141,7 +141,7 @@ namespace lapack_wrapper {
         m_VTmat,   m_minRC,
         m_WorkSVD, m_LworkSVD, m_IWorkSVD
       );
-      LW_ASSERT(
+      UTILS_ASSERT(
         info == 0,
         "SVD_no_alloc::factorize[{}] call lapack_wrapper::gesdd return info = {}\n",
         who, info
@@ -396,7 +396,7 @@ namespace lapack_wrapper {
       -1,
       nullptr
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "GeneralizedSVD<T>::allocate(m={},n={},p={}) failed, info = {}\n",
       m, n, p, info
@@ -445,7 +445,7 @@ namespace lapack_wrapper {
       m_Lwork,
       m_IWork
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0, "GeneralizedSVD<T>::compute() failed, info = {}\n", info
     );
     // R is stored in A(1:K+L,N-K-L+1:N) on exit.
@@ -470,12 +470,12 @@ namespace lapack_wrapper {
   ) {
     this->allocate( m, n, p );
     integer info = gecopy( m, n, A, ldA, m_A_saved, m );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "GeneralizedSVD<T>::setup(...) failed to copy A, info = {}\n", info
     );
     info = gecopy( p, n, B, ldB, m_B_saved, p );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "GeneralizedSVD<T>::setup(...) failed to copy B, info = {}\n", info
     );
@@ -490,7 +490,7 @@ namespace lapack_wrapper {
     integer m = A.numRows();
     integer n = A.numCols();
     integer p = B.numRows();
-    LW_ASSERT(
+    UTILS_ASSERT(
       n == B.numCols(),
       "GeneralizedSVD<T>::setup( A, B ) incompatible matrices\n"
       "A is {} x {} and B is {} x {}\n",

@@ -99,7 +99,7 @@ namespace lapack_wrapper {
      * \brief ~MA57:
      *        Virtual destructor of the class MA57.
      */
-    virtual ~MA57() LAPACK_WRAPPER_OVERRIDE { }
+    virtual ~MA57() UTILS_OVERRIDE { }
 
     /*\
     :|:   ___      _    _ _      __  __           _
@@ -131,7 +131,7 @@ namespace lapack_wrapper {
       int const i_Row[],
       int const j_Col[],
       bool      isFortranIndexing
-    ) LAPACK_WRAPPER_OVERRIDE;
+    ) UTILS_OVERRIDE;
 
     /**
      * \brief factorize:
@@ -144,7 +144,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    factorize( real const ArrayA[] ) LAPACK_WRAPPER_OVERRIDE;
+    factorize( real const ArrayA[] ) UTILS_OVERRIDE;
 
     virtual
     bool
@@ -154,7 +154,7 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -164,7 +164,7 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const LAPACK_WRAPPER_OVERRIDE {
+    ) const UTILS_OVERRIDE {
       // Symmetric matrix:
       return this->solve(nrhs, RHS, ldRHS, X, ldX);
     }

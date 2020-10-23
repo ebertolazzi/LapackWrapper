@@ -95,7 +95,7 @@ test1() {
 
   lapack_wrapper::gemv( -1.0, Amat, x, 1, 1.0, b, 1 );
   valueType res = lapack_wrapper::nrm2( M, b, 1 );
-  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(
@@ -160,7 +160,7 @@ test2() {
   );
 
   valueType res = lapack_wrapper::nrm2( M, b, 1 );
-  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(
@@ -227,7 +227,7 @@ test3() {
   );
 
   valueType res = lapack_wrapper::nrm2( M, b, 1 );
-  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(
@@ -254,7 +254,7 @@ test3() {
        << lapack_wrapper::print_matrix( 1, M, b, 1 ); \
   res = lapack_wrapper::nrm2( M, b, 1 ); \
   cout << "||res||_2 = " << res << '\n'; \
-  LW_ASSERT0( res < 1e-6, "test failed!\n" );
+  UTILS_ASSERT0( res < 1e-6, "test failed!\n" );
 
 static
 void
@@ -318,7 +318,7 @@ test4() {
        << lapack_wrapper::print_matrix( 1, M, b, 1 ); \
   res = lapack_wrapper::nrm2( M, b, 1 ); \
   cout << "||res||_2 = " << res << '\n'; \
-  LW_ASSERT0( res < 1e-6, "test failed!\n" );
+  UTILS_ASSERT0( res < 1e-6, "test failed!\n" );
 
 
 static
@@ -417,7 +417,7 @@ test6() {
   qr.axpy( N, -1.0, L, D, U, x, 1.0, b );
 
   valueType res = lapack_wrapper::nrm2( N, b, 1 );
-  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(
@@ -472,7 +472,7 @@ test7() {
   );
 
   valueType res = lapack_wrapper::nrm2( M, b, 1 );
-  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(
@@ -532,7 +532,7 @@ test8() {
   );
 
   valueType res = lapack_wrapper::nrm2( M, b, 1 );
-  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(
@@ -594,7 +594,7 @@ test9() {
   );
 
   valueType res = lapack_wrapper::nrm2( M, b, 1 );
-  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(
@@ -663,7 +663,7 @@ test10() {
     << lapack_wrapper::print_matrix( 1, M, b, 1 );
 
   valueType res = lapack_wrapper::nrm2( M, b, 1 );
-  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(
@@ -731,7 +731,7 @@ test11() {
     << lapack_wrapper::print_matrix( 1, N, b, 1 );
 
   valueType res = lapack_wrapper::nrm2( N, b, 1 );
-  LW_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
+  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
     fmt::format(

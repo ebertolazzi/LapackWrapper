@@ -78,7 +78,7 @@ namespace lapack_wrapper {
     copy( N, _L, 1, m_L, 1 );
     copy( N, _D, 1, m_D, 1 );
     integer info = pttrf( N, m_L, m_D );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "TridiagonalSPD::factorize[{}], return info = {}\n", who, info
     );
@@ -113,7 +113,7 @@ namespace lapack_wrapper {
   TridiagonalSPD<T>::cond1( valueType norm1 ) const {
     valueType rcond;
     integer info = ptcon1( m_nRC, m_D, m_L, norm1, rcond, m_WORK );
-    LW_ASSERT( info == 0, "TridiagonalSPD::cond1, return info = {}\n", info );
+    UTILS_ASSERT( info == 0, "TridiagonalSPD::cond1, return info = {}\n", info );
     return rcond;
   }
 
@@ -203,7 +203,7 @@ namespace lapack_wrapper {
     copy( N, _D, 1, m_D, 1 );
     copy( N, _U, 1, m_U, 1 );
     integer info = gttrf( N, m_L, m_D, m_U, m_U2, m_IPIV );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0, "TridiagonalLU::factorize[{}], return info = {}\n", who, info
     );
   }
@@ -246,7 +246,7 @@ namespace lapack_wrapper {
     integer info = gtcon1(
       m_nRC, m_L, m_D, m_U, m_U2, m_IPIV, norm1, rcond, m_WORK, m_IWORK
     );
-    LW_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
+    UTILS_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
     return rcond;
   }
 
@@ -259,7 +259,7 @@ namespace lapack_wrapper {
     integer info = gtconInf(
       m_nRC, m_L, m_D, m_U, m_U2, m_IPIV, normInf, rcond, m_WORK, m_IWORK
     );
-    LW_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
+    UTILS_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
     return rcond;
   }
 
@@ -283,7 +283,7 @@ namespace lapack_wrapper {
     integer info = gttrs(
       NO_TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "TridiagonalLU::solve, return info = {}\nat {}\n",
       info, who
@@ -310,7 +310,7 @@ namespace lapack_wrapper {
     integer info = gttrs(
       TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "TridiagonalLU::t_solve, return info = {}\nat {}\n",
       info, who
@@ -342,7 +342,7 @@ namespace lapack_wrapper {
     integer info = gttrs(
       NO_TRANSPOSE, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "TridiagonalLU::solve, return info = {}\nat {}\n",
       info, who
@@ -374,7 +374,7 @@ namespace lapack_wrapper {
     integer info = gttrs(
       TRANSPOSE, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "TridiagonalLU::t_solve, return info = {}\nat {}\n",
       info, who
@@ -469,7 +469,7 @@ namespace lapack_wrapper {
     valueType const U[]
   ) {
     bool ok = this->factorize( N, L, D, U );
-    LW_ASSERT( ok, "TridiagonalQR<T>::factorize failed at {}\n", who );
+    UTILS_ASSERT( ok, "TridiagonalQR<T>::factorize failed at {}\n", who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

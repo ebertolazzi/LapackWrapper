@@ -75,7 +75,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~LSS_no_alloc() LAPACK_WRAPPER_OVERRIDE
+    ~LSS_no_alloc() UTILS_OVERRIDE
     { m_allocWork.free(); }
 
     integer getL( integer NR, integer NC, integer nrhs ) const;
@@ -118,19 +118,19 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    solve( integer nrhs, valueType B[], integer ldB ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( integer nrhs, valueType B[], integer ldB ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( integer nrhs, valueType B[], integer ldB ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( integer nrhs, valueType B[], integer ldB ) const UTILS_OVERRIDE;
 
   };
 
@@ -174,7 +174,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~LSS() LAPACK_WRAPPER_OVERRIDE
+    ~LSS() UTILS_OVERRIDE
     { m_allocReals.free(); }
 
     void
@@ -195,7 +195,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       this->factorize( who, A, LDA );
     }
@@ -206,7 +206,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       return this->factorize( A, LDA );
     }
@@ -265,7 +265,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~LSY_no_alloc() LAPACK_WRAPPER_OVERRIDE
+    ~LSY_no_alloc() UTILS_OVERRIDE
     {}
 
     integer getL( integer NR, integer NC, integer nrhs ) const;
@@ -313,19 +313,19 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    solve( integer nrhs, valueType B[], integer ldB ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( integer nrhs, valueType B[], integer ldB ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( integer nrhs, valueType B[], integer ldB ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( integer nrhs, valueType B[], integer ldB ) const UTILS_OVERRIDE;
 
   };
 
@@ -369,7 +369,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~LSY() LAPACK_WRAPPER_OVERRIDE
+    ~LSY() UTILS_OVERRIDE
     { m_allocReals.free(); m_allocInts.free(); }
 
     void
@@ -389,7 +389,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE;
+    ) UTILS_OVERRIDE;
 
     bool
     factorize(
@@ -397,7 +397,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE;
+    ) UTILS_OVERRIDE;
 
   };
 

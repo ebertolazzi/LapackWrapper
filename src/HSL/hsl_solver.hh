@@ -74,7 +74,7 @@ namespace lapack_wrapper {
       int const i_Row[],
       int const j_Col[],
       bool      isFortranIndexing
-    ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) UTILS_PURE_VIRTUAL;
 
     /**
      * \brief factorize:
@@ -87,7 +87,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    factorize( real const ArrayA[] ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    factorize( real const ArrayA[] ) UTILS_PURE_VIRTUAL;
 
     /**
      * \brief solve:
@@ -110,7 +110,7 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) const UTILS_PURE_VIRTUAL;
 
     /**
      * \brief solve:
@@ -148,7 +148,7 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) const UTILS_PURE_VIRTUAL;
 
     /**
      * \brief solve_transposed:

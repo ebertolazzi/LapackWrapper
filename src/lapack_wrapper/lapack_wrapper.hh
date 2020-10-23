@@ -90,7 +90,7 @@
   #error "linear algebra package NOT selected"
 #endif
 
-#ifdef LAPACK_WRAPPER_OS_WINDOWS
+#ifdef UTILS_OS_WINDOWS
   // se in windows includo PRIMA windows.h per evitare conflitti!
   #ifndef WIN32_LEAN_AND_MEAN
     #define WIN32_LEAN_AND_MEAN
@@ -124,39 +124,39 @@
 // set macro for used LAPACK name
 
 #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  #ifdef LAPACK_WRAPPER_ARCH64
+  #ifdef UTILS_ARCH64
     #define LAPACK_WRAPPER_LAPACK_NAME "Accelerate OSX (x64)"
   #else
     #define LAPACK_WRAPPER_LAPACK_NAME "Accelerate OSX (x86)"
   #endif
 #elif defined(LAPACK_WRAPPER_USE_LAPACK)
   #if defined(_DEBUG) || defined(DEBUG)
-    #ifdef LAPACK_WRAPPER_ARCH64
+    #ifdef UTILS_ARCH64
       #define LAPACK_WRAPPER_LAPACK_NAME "Standard BLAS/LAPACK (x64,DEBUG)"
     #else
       #define LAPACK_WRAPPER_LAPACK_NAME "Standard BLAS/LAPACK (x86,DEBUG)"
     #endif
   #else
-    #ifdef LAPACK_WRAPPER_ARCH64
+    #ifdef UTILS_ARCH64
       #define LAPACK_WRAPPER_LAPACK_NAME "Standard BLAS/LAPACK (x64)"
     #else
       #define LAPACK_WRAPPER_LAPACK_NAME "Standard BLAS/LAPACK (x86)"
     #endif
   #endif
 #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-  #ifdef LAPACK_WRAPPER_ARCH64
+  #ifdef UTILS_ARCH64
     #define LAPACK_WRAPPER_LAPACK_NAME "OPENBLAS (x64,RELEASE)"
   #else
     #define LAPACK_WRAPPER_LAPACK_NAME "OPENBLAS (x86,RELEASE)"
   #endif
 #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-  #ifdef LAPACK_WRAPPER_ARCH64
+  #ifdef UTILS_ARCH64
     #define LAPACK_WRAPPER_LAPACK_NAME "BLASFEO (x64,RELEASE)"
   #else
     #define LAPACK_WRAPPER_LAPACK_NAME "BLASFEO (x86,RELEASE)"
   #endif
 #elif defined(LAPACK_WRAPPER_USE_MKL)
-  #ifdef LAPACK_WRAPPER_ARCH64
+  #ifdef UTILS_ARCH64
     #define LAPACK_WRAPPER_LAPACK_NAME "MKL (x64)"
   #else
     #define LAPACK_WRAPPER_LAPACK_NAME "MKL (x86)"
@@ -182,7 +182,7 @@
   }
 
   #define CBLASNAME(A) cblas_##A
-  #ifdef LAPACK_WRAPPER_OS_OSX
+  #ifdef UTILS_OS_OSX
     #define CLAPACKNAME(A) A##_
   #else
     #define CLAPACKNAME(A) clapack_##A
@@ -196,7 +196,7 @@
 #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
       defined(LAPACK_WRAPPER_USE_BLASFEO)
   // workaround for OPENBLAS on OSX
-  #ifdef LAPACK_WRAPPER_OS_OSX
+  #ifdef UTILS_OS_OSX
     #ifdef __clang__
       #pragma clang diagnostic ignored "-Wreserved-id-macro"
     #endif
@@ -208,13 +208,13 @@
   #define lapack_complex_float  std::complex<float>
   #define lapack_complex_double std::complex<double>
 
-  #ifdef LAPACK_WRAPPER_OS_WINDOWS
+  #ifdef UTILS_OS_WINDOWS
     // on windows the defaul is too use local openblas
     #ifdef LAPACK_WRAPPER_USE_SYSTEM_OPENBLAS
       #include <openblas/cblas.h>
       #include <openblas/lapack.h>
     #else
-      #ifdef LAPACK_WRAPPER_ARCH64
+      #ifdef UTILS_ARCH64
         #include "../openblas/x64/cblas.h"
         #include "../openblas/x64/lapack.h"
       #else
@@ -222,7 +222,7 @@
         #include "../openblas/x86/lapack.h"
       #endif
     #endif
-  #elif defined(LAPACK_WRAPPER_OS_LINUX)
+  #elif defined(UTILS_OS_LINUX)
     // on linux/osx the defaul is too use SYSTEM openblas
     #ifdef LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS
       #include "../openblas/cblas.h"
@@ -1121,7 +1121,7 @@ namespace lapack_wrapper {
     T       WORK[],
     integer LWORK
   ) {
-    LW_ASSERT(
+    UTILS_ASSERT(
       LWORK >= 2*N,
       "large, LWORK = {} must be >= {}\n", LWORK, 2*N
     );
@@ -1254,11 +1254,11 @@ namespace lapack_wrapper {
   ) {
 
     if ( LR == LEFT ) {
-      LW_ASSERT(
+      UTILS_ASSERT(
         LWORK >= 2*M + N, "laror, LWORK = {} must be >= {}\n", LWORK, 2*M + N
       );
     } else if ( LR == RIGHT ) {
-      LW_ASSERT(
+      UTILS_ASSERT(
         LWORK >= 2*N + M, "laror, LWORK = {} must be >= {}\n", LWORK, 2*N + M
       );
     } else {
@@ -1275,7 +1275,7 @@ namespace lapack_wrapper {
     // Initialize A to the identity matrix if desired
     if ( init ) geid( M, N, A, LDA );
 
-    LW_ASSERT(
+    UTILS_ASSERT(
       LWORK >= 2*N, "large, LWORK = {} must be >= {}\n", LWORK, 2*N
     );
     // Test the input arguments

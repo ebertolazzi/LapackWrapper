@@ -66,7 +66,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~QR_no_alloc() LAPACK_WRAPPER_OVERRIDE {}
+    ~QR_no_alloc() UTILS_OVERRIDE {}
 
     integer
     get_Lwork( integer NR, integer NC ) const;
@@ -237,7 +237,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     /*!
      *  In case of QR factorization of a square matrix solve the
@@ -246,7 +246,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -254,7 +254,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -262,7 +262,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
   };
 
@@ -312,7 +312,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~QR() LAPACK_WRAPPER_OVERRIDE
+    ~QR() UTILS_OVERRIDE
     { m_allocReals.free(); }
 
     void
@@ -332,7 +332,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       this->factorize( who, A, LDA );
     }
@@ -343,7 +343,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       return this->factorize( A, LDA );
     }
@@ -400,7 +400,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~QRP_no_alloc() LAPACK_WRAPPER_OVERRIDE
+    ~QRP_no_alloc() UTILS_OVERRIDE
     {}
 
     void
@@ -511,7 +511,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     /*!
      *  In case of QR factorization of a square matrix solve the
@@ -520,7 +520,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -528,7 +528,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -536,7 +536,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
   };
 
   //============================================================================
@@ -585,7 +585,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~QRP() LAPACK_WRAPPER_OVERRIDE
+    ~QRP() UTILS_OVERRIDE
     { m_allocIntegers.free(); }
 
     integer
@@ -608,7 +608,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       this->QRP_no_alloc<T>::factorize( who, A, LDA );
     }
@@ -626,7 +626,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       return this->QRP_no_alloc<T>::factorize( A, LDA );
     }

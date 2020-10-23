@@ -160,15 +160,15 @@ namespace lapack_wrapper {
     std::vector<T> Wmin( MN ), Wmax( MN );
 
     // Test the input scalar arguments.
-    LW_ASSERT(
+    UTILS_ASSERT(
       M >= 0 && N >= 0,
       "rankEstimate, bad size matrix {} x {}\n", M, N
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       LDA >= max_index(1,M),
       "rankEstimate, bad leading dimension ldA = {}\n", LDA
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       RCOND >= 0,
       "rankEstimate, bad condision number rcond = {}\n", RCOND
     );

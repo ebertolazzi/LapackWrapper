@@ -70,7 +70,7 @@ namespace lapack_wrapper {
       * \brief ~MA48:
       *        Virtual destructor of the class MA48.
       */
-    virtual ~MA48() LAPACK_WRAPPER_OVERRIDE { }
+    virtual ~MA48() UTILS_OVERRIDE { }
 
     /*\
     :|:   ___      _    _ _      __  __           _
@@ -102,7 +102,7 @@ namespace lapack_wrapper {
       int const i_Row[],
       int const j_Col[],
       bool      isFortranIndexing
-    ) LAPACK_WRAPPER_OVERRIDE;
+    ) UTILS_OVERRIDE;
 
     /**
      * \brief factorize:
@@ -115,7 +115,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    factorize( real const ArrayA[] ) LAPACK_WRAPPER_OVERRIDE;
+    factorize( real const ArrayA[] ) UTILS_OVERRIDE;
 
     bool
     solve(
@@ -132,7 +132,7 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -142,7 +142,7 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
   };
 
   #ifdef __clang__

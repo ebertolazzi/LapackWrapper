@@ -45,7 +45,7 @@ namespace lapack_wrapper {
     integer minRC  = std::min(NR,NC);
     integer NRC    = NR*NC;
     integer Lwmin  = 2*NRC+minRC;
-    LW_ASSERT(
+    UTILS_ASSERT(
       Lwork >= 2*NRC,
       "LSS_no_alloc( NR = {}, NC = {}, LWork = {}, ...)\n"
       "LWork must be >= {}\n",
@@ -69,7 +69,7 @@ namespace lapack_wrapper {
       nullptr, NR, nullptr, NR, nullptr,
       m_rcond, m_rank, &tmp, -1
     );
-    LW_ASSERT( info == 0, "LSS_no_alloc::getL, in gelss info = {}\n", info );
+    UTILS_ASSERT( info == 0, "LSS_no_alloc::getL, in gelss info = {}\n", info );
     return integer(tmp);
   }
 
@@ -85,7 +85,7 @@ namespace lapack_wrapper {
     integer info = gecopy(
       m_nRows, m_nCols, A, LDA, m_Amat, m_nRows
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "LSS_no_alloc::factorize( who={},...) call lapack_wrapper::gecopy return info = {}\n",
       who, info
@@ -247,7 +247,7 @@ namespace lapack_wrapper {
   ) {
     integer NRC   = NR*NC;
     integer Lwmin = 2*NRC;
-    LW_ASSERT(
+    UTILS_ASSERT(
       Lwork >= 2*NRC && Liwork >= NC,
       "LSS_no_alloc( NR = {}, NC = {}, LWork = {}, ..., Liwork = {})\n"
       "LWork must be >= {} and Liwork must be >= {}\n",
@@ -271,7 +271,7 @@ namespace lapack_wrapper {
       nullptr, NR, nullptr, NR, nullptr,
       m_rcond, m_rank, &tmp, -1
     );
-    LW_ASSERT( info == 0, "LSY_no_alloc::getL, in gelss info = {}\n", info );
+    UTILS_ASSERT( info == 0, "LSY_no_alloc::getL, in gelss info = {}\n", info );
     return integer(tmp);
   }
 
@@ -287,7 +287,7 @@ namespace lapack_wrapper {
     integer info = gecopy(
       m_nRows, m_nCols, A, LDA, m_Amat, m_nRows
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
@@ -445,7 +445,7 @@ namespace lapack_wrapper {
     integer info = gecopy(
       m_nRows, m_nCols, A, LDA, m_Amat, m_nRows
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info

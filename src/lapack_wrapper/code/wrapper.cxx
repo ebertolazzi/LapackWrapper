@@ -45,7 +45,7 @@ namespace lapack_wrapper {
   , m_ldData(ld)
   , m_data(_data)
   {
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       nr >= 0 && nc >= 0 && m_ldData >= nr,
       "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions\n",
       nr, nc, ld
@@ -66,7 +66,7 @@ namespace lapack_wrapper {
     m_nRows  = nr;
     m_nCols  = nc;
     m_ldData = ld;
-    LW_ASSERT_DEBUG(
+    UTILS_ASSERT_DEBUG(
       nr >= 0 && nc >= 0 && m_ldData >= nr,
       "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions\n",
       nr, nc, ld
@@ -92,7 +92,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::check( MatW const & A ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       A.numRows() == m_nRows && A.numCols() == m_nCols,
       "MatrixWrapper::check(A) size(A) = {} x {} expected {} x {}\n",
       A.numRows(), A.numCols(), m_nRows, m_nCols
@@ -104,7 +104,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::check( Sparse const & sp ) const {
-    LW_ASSERT(
+    UTILS_ASSERT(
       sp.get_number_of_rows() <= m_nRows &&
       sp.get_number_of_cols() <= m_nCols,
       "MatrixWrapper::check(sp) size(sp) = {} x {} must be contained in {} x {}\n",
@@ -121,7 +121,7 @@ namespace lapack_wrapper {
     integer info = gecopy(
       m_nRows, m_nCols, data_in, ldData_in, m_data, m_ldData
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info
     );
@@ -149,7 +149,7 @@ namespace lapack_wrapper {
       A.numRows(), A.numCols(), A.data(), A.lDim(),
       m_data, m_ldData
     );
-    LW_ASSERT(
+    UTILS_ASSERT(
       info == 0,
       "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info
     );
@@ -161,7 +161,7 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::load_transposed( MatW const & A ) {
     #ifndef LAPACK_WRAPPER_NO_DEBUG
-    LW_ASSERT(
+    UTILS_ASSERT(
       A.numCols() == m_nRows && A.numRows() == m_nCols,
       "MatrixWrapper::load_transposed(A) size(A) = {} x {} expected {} x {}\n",
       A.numRows(), A.numCols(), m_nCols, m_nRows

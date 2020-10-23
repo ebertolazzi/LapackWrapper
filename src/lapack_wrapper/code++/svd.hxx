@@ -79,7 +79,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~SVD_no_alloc() LAPACK_WRAPPER_OVERRIDE
+    ~SVD_no_alloc() UTILS_OVERRIDE
     {}
 
     integer
@@ -206,11 +206,11 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
   };
 
@@ -258,7 +258,7 @@ namespace lapack_wrapper {
     SVD( SVD_USED _svd_used = SVD_no_alloc<T>::USE_GESVD );
 
     virtual
-    ~SVD() LAPACK_WRAPPER_OVERRIDE;
+    ~SVD() UTILS_OVERRIDE;
 
     void
     allocate( integer NR, integer NC );
@@ -278,7 +278,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       this->factorize( who, A, LDA );
     }
@@ -290,7 +290,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       return this->factorize( A, LDA );
     }

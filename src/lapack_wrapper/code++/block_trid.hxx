@@ -73,7 +73,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~BlockTridiagonalSymmetic() LAPACK_WRAPPER_OVERRIDE {
+    ~BlockTridiagonalSymmetic() UTILS_OVERRIDE {
       m_allocReals.free();
       m_allocIntegers.free();
       m_allocRpointers.free();
@@ -156,11 +156,11 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -168,7 +168,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType xb[],
       integer   ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -176,7 +176,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType xb[],
       integer   ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
   };
 

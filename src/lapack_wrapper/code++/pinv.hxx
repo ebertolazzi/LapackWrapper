@@ -69,7 +69,7 @@ namespace lapack_wrapper {
     PINV_no_alloc();
 
     virtual
-    ~PINV_no_alloc() LAPACK_WRAPPER_OVERRIDE {}
+    ~PINV_no_alloc() UTILS_OVERRIDE {}
 
     void
     no_allocate(
@@ -144,7 +144,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE {
+    solve( valueType xb[] ) const UTILS_OVERRIDE {
       if ( m_nRows != m_nCols ) return false;
       return mult_inv( xb, 1, xb, 1 );
     }
@@ -156,7 +156,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE {
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE {
       if ( m_nRows != m_nCols ) return false;
       return t_mult_inv( xb, 1, xb, 1 );
     }
@@ -167,7 +167,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE {
+    ) const UTILS_OVERRIDE {
       if ( m_nRows != m_nCols ) return false;
       return mult_inv( nrhs, B, ldB, B, ldB );
     }
@@ -178,7 +178,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const LAPACK_WRAPPER_OVERRIDE {
+    ) const UTILS_OVERRIDE {
       if ( m_nRows != m_nCols ) return false;
       return t_mult_inv( nrhs, B, ldB, B, ldB );
     }
@@ -216,7 +216,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~PINV() LAPACK_WRAPPER_OVERRIDE
+    ~PINV() UTILS_OVERRIDE
     { m_allocReals.free(); }
 
     void
@@ -235,7 +235,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       this->PINV_no_alloc<T>::factorize( who, A, LDA );
     }
@@ -252,7 +252,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) LAPACK_WRAPPER_OVERRIDE {
+    ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
       return this->PINV_no_alloc<T>::factorize( A, LDA );
     }

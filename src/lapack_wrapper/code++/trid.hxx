@@ -57,7 +57,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~TridiagonalSPD() LAPACK_WRAPPER_OVERRIDE
+    ~TridiagonalSPD() UTILS_OVERRIDE
     { m_allocReals.free(); }
 
     valueType cond1( valueType norm1 ) const;
@@ -87,11 +87,11 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -99,7 +99,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType xb[],
       integer   ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -107,7 +107,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType xb[],
       integer   ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     /*\
     :|:     _
@@ -172,7 +172,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~TridiagonalLU() LAPACK_WRAPPER_OVERRIDE {
+    ~TridiagonalLU() UTILS_OVERRIDE {
       m_allocReals.free();
       m_allocIntegers.free();
     }
@@ -207,19 +207,19 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     void
-    solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     void
-    t_solve( char const who[], valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -227,7 +227,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType xb[],
       integer   ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     void
@@ -236,7 +236,7 @@ namespace lapack_wrapper {
       integer    nrhs,
       valueType  xb[],
       integer    ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -244,7 +244,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType xb[],
       integer   ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     void
@@ -253,7 +253,7 @@ namespace lapack_wrapper {
       integer    nrhs,
       valueType  xb[],
       integer    ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     /*\
     :|:     _
@@ -318,7 +318,7 @@ namespace lapack_wrapper {
     {}
 
     virtual
-    ~TridiagonalQR() LAPACK_WRAPPER_OVERRIDE {
+    ~TridiagonalQR() UTILS_OVERRIDE {
       m_allocReals.free();
     }
 
@@ -357,11 +357,11 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const LAPACK_WRAPPER_OVERRIDE;
+    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -369,7 +369,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType xb[],
       integer   ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     bool
@@ -377,7 +377,7 @@ namespace lapack_wrapper {
       integer   nrhs,
       valueType xb[],
       integer   ldXB
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     /*\
     :|:     _

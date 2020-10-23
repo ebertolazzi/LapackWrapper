@@ -93,7 +93,7 @@ namespace lapack_wrapper {
       integer M,
       integer reserve_nnz,
       bool    fi = false
-    ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief Destroy the sparse matrix
@@ -101,7 +101,7 @@ namespace lapack_wrapper {
     \*/
     virtual
     void
-    clear() LAPACK_WRAPPER_PURE_VIRTUAL;
+    clear() UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief Clean to zero the sparse matrix
@@ -109,14 +109,14 @@ namespace lapack_wrapper {
     \*/
     virtual
     void
-    setZero() LAPACK_WRAPPER_PURE_VIRTUAL;
+    setZero() UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief Return true if index are 1-based
     \*/
     virtual
     bool
-    FORTRAN_indexing() const LAPACK_WRAPPER_PURE_VIRTUAL;
+    FORTRAN_indexing() const UTILS_PURE_VIRTUAL;
 
     integer
     get_number_of_rows() const
@@ -176,28 +176,28 @@ namespace lapack_wrapper {
       integer   const * & pRows,
       integer   const * & pCols,
       valueType const * & pValues
-    ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) const UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief transpose the matrix
     \*/
     virtual
     void
-    transpose() LAPACK_WRAPPER_PURE_VIRTUAL;
+    transpose() UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief convert the matrix to 1-based index
     \*/
     virtual
     void
-    to_FORTRAN_indexing() LAPACK_WRAPPER_PURE_VIRTUAL;
+    to_FORTRAN_indexing() UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief convert the matrix to 0-based index
     \*/
     virtual
     void
-    to_C_indexing() LAPACK_WRAPPER_PURE_VIRTUAL;
+    to_C_indexing() UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief insert a value into matrix using 0-based index
@@ -213,7 +213,7 @@ namespace lapack_wrapper {
       integer   row,
       integer   col,
       valueType val
-    ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief insert a value into matrix using 1-based index
@@ -229,7 +229,7 @@ namespace lapack_wrapper {
       integer   row,
       integer   col,
       valueType val
-    ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief insert a matrix into the sparse matrix
@@ -289,7 +289,7 @@ namespace lapack_wrapper {
     \*/
     virtual
     void
-    get_matrix( MatW & M ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    get_matrix( MatW & M ) const UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief extract the sparse matrix to a full matrix
@@ -300,7 +300,7 @@ namespace lapack_wrapper {
     \*/
     virtual
     void
-    get_matrix_symmetric( MatW & M ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    get_matrix_symmetric( MatW & M ) const UTILS_PURE_VIRTUAL;
 
     /*!
      *  \brief extract the sparse matrix to a full matrix
@@ -311,14 +311,14 @@ namespace lapack_wrapper {
     \*/
     virtual
     void
-    get_matrix_transposed( MatW & M ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    get_matrix_transposed( MatW & M ) const UTILS_PURE_VIRTUAL;
 
     /*!
      *  \return true if Inf or NaN are found in the sparse data
     \*/
     virtual
     bool
-    foundNaN() const LAPACK_WRAPPER_PURE_VIRTUAL;
+    foundNaN() const UTILS_PURE_VIRTUAL;
 
     /*!
      * \brief gemv:
@@ -345,7 +345,7 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) const UTILS_PURE_VIRTUAL;
 
     /*!
      * \brief gemv:
@@ -373,7 +373,7 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) const UTILS_PURE_VIRTUAL;
 
     /*!
      * \brief gemv:
@@ -400,12 +400,12 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) const UTILS_PURE_VIRTUAL;
 
     virtual
     void
     get_full_view( MatrixWrapper<valueType> & ) {
-      LW_ERROR0( "get_full_view not defined\n");
+      UTILS_ERROR0( "get_full_view not defined\n");
     }
 
     /*!
@@ -469,16 +469,16 @@ namespace lapack_wrapper {
     );
 
     virtual
-    ~SparseCCOOR() LAPACK_WRAPPER_OVERRIDE
+    ~SparseCCOOR() UTILS_OVERRIDE
     {}
 
     virtual
     void
-    clear() LAPACK_WRAPPER_OVERRIDE;
+    clear() UTILS_OVERRIDE;
 
     virtual
     void
-    setZero() LAPACK_WRAPPER_OVERRIDE;
+    setZero() UTILS_OVERRIDE;
 
     virtual
     void
@@ -487,27 +487,27 @@ namespace lapack_wrapper {
       integer M,
       integer reserve_nnz,
       bool    fi = false
-    ) LAPACK_WRAPPER_OVERRIDE;
+    ) UTILS_OVERRIDE;
 
     virtual
     bool
-    FORTRAN_indexing() const LAPACK_WRAPPER_OVERRIDE
+    FORTRAN_indexing() const UTILS_OVERRIDE
     { return this->fortran_indexing; }
 
     virtual
     void
-    transpose() LAPACK_WRAPPER_OVERRIDE {
+    transpose() UTILS_OVERRIDE {
       this->rows.swap(this->cols);
       std::swap( this->nRows, this->nCols );
     }
 
     virtual
     void
-    to_FORTRAN_indexing() LAPACK_WRAPPER_OVERRIDE;
+    to_FORTRAN_indexing() UTILS_OVERRIDE;
 
     virtual
     void
-    to_C_indexing() LAPACK_WRAPPER_OVERRIDE;
+    to_C_indexing() UTILS_OVERRIDE;
 
     virtual
     void
@@ -515,7 +515,7 @@ namespace lapack_wrapper {
       integer   row,
       integer   col,
       valueType val
-    ) LAPACK_WRAPPER_OVERRIDE;
+    ) UTILS_OVERRIDE;
 
     virtual
     void
@@ -523,23 +523,23 @@ namespace lapack_wrapper {
       integer   row,
       integer   col,
       valueType val
-    ) LAPACK_WRAPPER_OVERRIDE;
+    ) UTILS_OVERRIDE;
 
     virtual
     void
-    get_matrix( MatW & M ) const LAPACK_WRAPPER_OVERRIDE;
+    get_matrix( MatW & M ) const UTILS_OVERRIDE;
 
     virtual
     void
-    get_matrix_symmetric( MatW & M ) const LAPACK_WRAPPER_OVERRIDE;
+    get_matrix_symmetric( MatW & M ) const UTILS_OVERRIDE;
 
     virtual
     void
-    get_matrix_transposed( MatW & M ) const LAPACK_WRAPPER_OVERRIDE;
+    get_matrix_transposed( MatW & M ) const UTILS_OVERRIDE;
 
     virtual
     bool
-    foundNaN() const LAPACK_WRAPPER_OVERRIDE;
+    foundNaN() const UTILS_OVERRIDE;
 
     virtual
     void
@@ -547,7 +547,7 @@ namespace lapack_wrapper {
       integer   const * & pRows,
       integer   const * & pCols,
       valueType const * & pValues
-    ) const LAPACK_WRAPPER_OVERRIDE {
+    ) const UTILS_OVERRIDE {
       pRows   = &this->rows.front();
       pCols   = &this->cols.front();
       pValues = &this->vals.front();
@@ -564,7 +564,7 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     void
@@ -577,7 +577,7 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     virtual
     void
@@ -590,7 +590,7 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const LAPACK_WRAPPER_OVERRIDE;
+    ) const UTILS_OVERRIDE;
 
     /*\
     :|:           _    _ _ _   _               _             _   _            _
@@ -608,7 +608,7 @@ namespace lapack_wrapper {
       r_type  val[],
       bool    fi
     ) {
-      LW_ASSERT0(
+      UTILS_ASSERT0(
         NNZ == this->rows.size() &&
         NNZ == this->cols.size() &&
         NNZ == this->vals.size(),
@@ -669,8 +669,8 @@ namespace lapack_wrapper {
     reserve( integer reserve_nnz );
 
     void
-    get_full_view( MatrixWrapper<valueType> & MW ) LAPACK_WRAPPER_OVERRIDE {
-      LW_ASSERT0(
+    get_full_view( MatrixWrapper<valueType> & MW ) UTILS_OVERRIDE {
+      UTILS_ASSERT0(
         this->matrix_is_full,
         "get_full_view, matrix is sparse\n"
       );

@@ -145,7 +145,7 @@ namespace lapack_wrapper {
     update(
       valueType const y[],
       valueType const s[]
-    ) LAPACK_WRAPPER_PURE_VIRTUAL;
+    ) UTILS_PURE_VIRTUAL;
 
   };
 
@@ -187,7 +187,7 @@ namespace lapack_wrapper {
     update(
       valueType const _y[],
       valueType const _s[]
-    ) LAPACK_WRAPPER_OVERRIDE;
+    ) UTILS_OVERRIDE;
 
   };
 
@@ -229,7 +229,7 @@ namespace lapack_wrapper {
     update(
       valueType const _y[],
       valueType const _s[]
-    ) LAPACK_WRAPPER_OVERRIDE;
+    ) UTILS_OVERRIDE;
   };
 
 }
