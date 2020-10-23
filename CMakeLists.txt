@@ -45,6 +45,23 @@ ELSE()
   SET( TARGETHSLS HSL_win_${BITS}_static${DEBUG_SUFFIX} )
 ENDIF()
 
+IF (APPLE )
+  FIND_LIBRARY(
+    UTILS Utils_osx_static${DEBUG_SUFFIX}
+    HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
+  )
+ELSEIF ( UNIX OR LINUX )
+  FIND_LIBRARY(
+    UTILS Utils_linux_static${DEBUG_SUFFIX}
+    HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
+  )
+ELSE()
+  FIND_LIBRARY(
+    UTILS Utils_win_${BITS}_static${DEBUG_SUFFIX}
+    HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
+  )
+ENDIF()
+
 IF ( BUILD_SHARED )
   IF(APPLE)
     SET( TARGET    lapack_wrapper_osx${DEBUG_SUFFIX} )
@@ -100,7 +117,7 @@ ADD_LIBRARY( ${TARGETHSLS} STATIC src/HSL/hsl_fake.cc )
 IF ( BUILD_SHARED )
   ADD_LIBRARY( ${TARGET}     SHARED ${SOURCES} ${HEADERS} )
   ADD_LIBRARY( ${TARGETHSL}  SHARED src/HSL/hsl_fake.cc )
-  TARGET_LINK_LIBRARIES( ${TARGET} ${TARGETHSL} ${lapackblas_libraries} )
+  TARGET_LINK_LIBRARIES( ${TARGET} ${TARGETHSL} ${lapackblas_libraries} ${UTILS} )
 ENDIF()
 
 SET(
@@ -144,14 +161,14 @@ IF( BUILD_EXECUTABLE )
   FILE(MAKE_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/bin )
   FOREACH( S ${EXELISTCPP} )
   	ADD_EXECUTABLE( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc ${HEADERS} )
-  	TARGET_LINK_LIBRARIES( ${S} ${TARGETS} ${lapackblas_libraries} )
+  	TARGET_LINK_LIBRARIES( ${S} ${TARGETS} ${lapackblas_libraries} ${UTILS} )
   	ADD_TEST( ${S} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/bin/${S} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} )
     ADD_DEPENDENCIES( all_tests ${S} )
   ENDFOREACH( S $(EXELIST) )
 
   FOREACH( S ${EXELISTC} )
   	ADD_EXECUTABLE( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.c ${HEADERS} )
-  	TARGET_LINK_LIBRARIES( ${S} ${TARGETS} ${lapackblas_libraries} )
+  	TARGET_LINK_LIBRARIES( ${S} ${TARGETS} ${lapackblas_libraries} ${UTILS} )
   	ADD_TEST( ${S} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/bin/${S} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} )
     ADD_DEPENDENCIES( all_tests ${S} )
   ENDFOREACH( S $(EXELIST) )
@@ -166,7 +183,6 @@ IF( BUILD_EXECUTABLE )
 ENDIF()
 
 FILE( GLOB HDR       ./src/*.h* )
-FILE( GLOB HDR_FMT   ./src/fmt/*.h* )
 FILE( GLOB HDR_HSL   ./src/HSL/*.h* )
 FILE( GLOB HDR_LW    ./src/lapack_wrapper/*.h* )
 FILE( GLOB HDR_LW1   ./src/lapack_wrapper/code/*.h* )
@@ -175,7 +191,6 @@ FILE( GLOB HDR_ST    ./src/sparse_tool/*.h* )
 FILE( GLOB HDR_ST1   ./src/sparse_tool/interfaces/*.h* )
 FILE( GLOB HDR_ST2   ./src/sparse_tool/iterative/*.h* )
 FILE( GLOB HDR_ST3   ./src/sparse_tool/preconditioner/*.h* )
-FILE( GLOB HDR_ZS    ./src/zstream/*.h* )
 FILE( GLOB HDR_OBx64 ./src/openblas/x64/*.h* )
 FILE( GLOB HDR_OBx86 ./src/openblas/x66/*.h* )
 
@@ -196,7 +211,6 @@ ELSE()
 ENDIF()
 
 INSTALL(FILES ${HDR}       DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
-INSTALL(FILES ${HDR_FMT}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/fmt )
 INSTALL(FILES ${HDR_HSL}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/HSL )
 INSTALL(FILES ${HDR_LW}    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper )
 INSTALL(FILES ${HDR_LW1}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/lapack_wrapper/code )
@@ -205,7 +219,6 @@ INSTALL(FILES ${HDR_ST}    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_to
 INSTALL(FILES ${HDR_ST1}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/interfaces )
 INSTALL(FILES ${HDR_ST2}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/iterative )
 INSTALL(FILES ${HDR_ST3}   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/sparse_tool/preconditioner )
-INSTALL(FILES ${HDR_ZS}    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/zstream )
 INSTALL(FILES ${HDR_OBx64} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/openblas/x64 )
 INSTALL(FILES ${HDR_OBx86} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/openblas/x86 )
 
@@ -226,3 +239,4 @@ IF(APPLE)
 ENDIF()
 
 MESSAGE( STATUS "lapackblas_libraries        = ${lapackblas_libraries}" )
+MESSAGE( STATUS "Utils                       = ${UTILS}" )
