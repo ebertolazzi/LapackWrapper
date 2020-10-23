@@ -1,7 +1,6 @@
+#pragma once
 #ifndef SPARSETOOL_ITERATIVE_PRECO_HSS_CHEBYSHEV_HH
 #define SPARSETOOL_ITERATIVE_PRECO_HSS_CHEBYSHEV_HH
-
-using namespace std;
 
 namespace SparseTool {
 
@@ -98,7 +97,7 @@ namespace SparseTool {
       }
 
       // step 4: sort structure
-      for ( indexType i = 0; i < PRECO::pr_size; ++i ) sort( &A_J(A_R(i)), &A_J(A_R(i+1)) );
+      for ( indexType i = 0; i < PRECO::pr_size; ++i ) std::sort( &A_J(A_R(i)), &A_J(A_R(i+1)) );
         
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {

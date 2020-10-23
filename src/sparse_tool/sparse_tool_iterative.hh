@@ -65,6 +65,7 @@
   - \c residual : the residual of the approximated solution;
 */
 
+#pragma once
 #ifndef SPARSETOOL_ITERATIVE_HH
 #define SPARSETOOL_ITERATIVE_HH
 

@@ -1326,10 +1326,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     typedef T valueType;  //!< assign to \c valueType the type of the vector
 
     //! Build an empty Vector with 0 elements
-    Vector() : vector<T>(0) {};
+    Vector() : vector<T>(0) {}
 
     //! Build a Vector with \a numElement elements
-    Vector( indexType numElement ) : vector<T>(numElement) {};
+    Vector( indexType numElement ) : vector<T>(numElement) {}
 
     //! Return the total number of elements of the vector
     indexType size() const { return indexType(vector<T>::size()); }
@@ -1463,7 +1463,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   public:
 
     //! Build an empty Vector with 0 elements
-    VectorSlice() : len(0), values(nullptr) {};
+    VectorSlice() : len(0), values(nullptr) {}
 
     /*!
      *  \brief  Map the vector \c v from \c v(begin) to \c v(end-1) in
@@ -1474,14 +1474,14 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       values = &v(begin);
       len    = end - begin;
       return *this;
-    };
+    }
 
     VectorSlice<T> const &
     slice( Vector<T> const & v, indexType begin, indexType end ) {
       values = &v(begin);
       len    = end - begin;
       return *this;
-    };
+    }
 
     /*!
      *  \brief  Map the piece of memory from \c pBegin to \c pEnd-1 in
@@ -1489,7 +1489,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
      */
     VectorSlice<T> &
     slice( T * pBegin, T * pEnd )
-    { values = pBegin; len = pEnd - pBegin; return *this; };
+    { values = pBegin; len = pEnd - pBegin; return *this; }
 
     //! return the total number of element of the vector slice
     indexType size() const { return len; }
@@ -2821,7 +2821,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   public:
 
     SparseBase(void) { setup(0, 0); }
-    ~SparseBase(void) {};
+    ~SparseBase(void) {}
 
     // common data
     indexType numRows (void) const { return sp_nrows; }    //!< return the number of rows of the \c Sparse object
@@ -2928,7 +2928,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     typedef T valueType; //!< type of the element of the matrix
 
     Sparse(void) { SBASE::setup(0, 0); }
-    ~Sparse(void) {};
+    ~Sparse(void) {}
 
     //! The \a value of the pointed element
     valueType value (void) const { return static_cast<Matrix const *>(this) -> value(); }
@@ -3405,7 +3405,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       VectorBase<T,VB> const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)&res != (void*)&x,
+        (void*)(&res) != (void*)(&x),
         "add_S_mul_M_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
@@ -3424,7 +3424,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       VectorBase<T,VB> const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)&res != (void*)&x,
+        (void*)(&res) != (void*)(&x),
         "add_S_mul_M_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
@@ -3453,7 +3453,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   public:
     //! Create an empty preconditioner
     Preco(void) : pr_size(0) {}
-    ~Preco(void) {};
+    ~Preco(void) {}
     //! return the number of row/column of the preconditioner matrix
     indexType size(void) const { return pr_size; }
   };
@@ -3922,7 +3922,7 @@ CCoorMatrix<double> ccoor(sobj);
      *  Initialize and empty sparse compressed coordinate matrix
      *  of \c 0 rows and \c 0 columns.
      */
-    CCoorMatrix(void) {};
+    CCoorMatrix(void) {}
 
     /*! \brief
      *  Initialize and empty empty sparse compressed coordinate matrix
@@ -4190,7 +4190,7 @@ CCoorMatrix<double> ccoor(sobj);
       VectorBase<T,VB> const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)&res != (void*)&x,
+        (void*)(&res) != (void*)(&x),
         "add_S_mul_M_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
@@ -4212,7 +4212,7 @@ CCoorMatrix<double> ccoor(sobj);
       VectorBase<T,VB> const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)&res != (void*)&x,
+        (void*)(&res) != (void*)(&x),
         "add_S_mul_Mt_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
@@ -4263,7 +4263,7 @@ CCoorMatrix<double> ccoor(sobj);
     VectorBase<T,VX>  const & x
   ) {
     SPARSETOOL_TEST(
-      (void*)&res != (void*)&x,
+      (void*)(&res) != (void*)(&x),
       "M_mul_V equal pointer"
     )
     SPARSETOOL_TEST(
@@ -4304,7 +4304,7 @@ CCoorMatrix<double> ccoor(sobj);
     VectorBase<T,VX>  const & x
   ) {
     SPARSETOOL_TEST(
-      (void*)&res != (void*)&x,
+      (void*)(&res) != (void*)(&x),
       "M_mul_V equal pointer"
     )
     SPARSETOOL_TEST(
@@ -4491,7 +4491,7 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
      *  Initialize and empty sparse compressed row matrix
      *  of \c 0 rows and \c 0 columns.
      */
-    CRowMatrix(void) {};
+    CRowMatrix(void) {}
 
     /*! \brief
      *  Insert the element of the sparse compressed row matrix \c M
@@ -4872,7 +4872,7 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
      *  Initialize and empty sparse compressed column matrix
      *  of \c 0 rows and \c 0 columns.
      */
-    CColMatrix(void) {};
+    CColMatrix(void) {}
 
     /*! \brief
      *  Insert the element of the sparse compressed column matrix \c M
@@ -5652,7 +5652,7 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
       VectorBase<T,VB> const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)&res != (void*)&x,
+        (void*)(&res) != (void*)(&x),
         "add_S_mul_M_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
@@ -5673,7 +5673,7 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
       VectorBase<T,VB> const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)&res != (void*)&x,
+        (void*)(&res) != (void*)(&x),
         "add_S_mul_Mt_mul_V equal pointer"
       )
       SPARSETOOL_TEST(

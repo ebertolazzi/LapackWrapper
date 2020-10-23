@@ -12,10 +12,13 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-#ifndef SPARSETOOL_SUPERLU_HH
-#define SPARSETOOL_SUPERLU_HH
+#pragma once
+#ifndef SPARSETOOL_SUPERLU_dot_HH
+#define SPARSETOOL_SUPERLU_dot_HH
 
 #include "../sparse_tool.hh"
+#include "../../lapack_wrapper_config.hh"
+
 #include <complex>
 
 /* 

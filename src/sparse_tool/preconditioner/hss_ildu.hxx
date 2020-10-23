@@ -1,7 +1,6 @@
+#pragma once
 #ifndef SPARSETOOL_ITERATIVE_PRECO_HSS_ILDU_HH
 #define SPARSETOOL_ITERATIVE_PRECO_HSS_ILDU_HH
-
-using namespace std;
 
 namespace SparseTool {
 

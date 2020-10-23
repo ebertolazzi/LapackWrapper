@@ -5,6 +5,8 @@ CXX     = g++ -std=c++11 -pthread $(WARN)
 AR      = ar rcs
 LIBSGCC = -lstdc++ -lm -pthread
 
+override LIBS += lib3rd/lib/libUtils_static_$(BITS).lib 
+
 ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
   override LIBS += -llapack -lblas
 endif
@@ -40,7 +42,7 @@ ifneq (,$(findstring LAPACK_WRAPPER_USE_ACCELERATE,$(USED_LIB)))
   $(error error is "Accelerate is supported only on Darwin!")
 endif
 
-ALL_LIBS = $(LIBS) -Llib/lib  -Llib/dll -llapack_wrapper_mingw_$(BITS).dll
+ALL_LIBS = $(LIBS) -Llib/lib  -Llib/dll -llapack_wrapper_mingw_$(BITS).dll -lHSL_mingw_$(BITS).dll -lUtils_mingw$(BITS).dll
 # -lHSL_mingw_$(BITS)
 
 override DEFS += -DMINGW
@@ -56,7 +58,7 @@ lib/dll/liblapack_wrapper_mingw_$(BITS).dll.a: $(OBJS) lib/dll/libHSL_mingw_$(BI
 	$(CXX) -shared -o lib/bin/liblapack_wrapper_mingw_$(BITS).dll $(OBJS) \
 	-Wl,--out-implib=lib/dll/liblapack_wrapper_mingw_$(BITS).dll.a \
 	-Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--no-whole-archive \
-	$(LIBS) lib/dll/libHSL_mingw_$(BITS).dll.a
+	$(LIBS) lib/dll/libHSL_mingw_$(BITS).dll.a lib/dll/libUtils_mingw_$(BITS).dll.a
 
 lib/lib/liblapack_wrapper_mingw_$(BITS)_static.a: $(OBJS)
 	@$(MKDIR) lib

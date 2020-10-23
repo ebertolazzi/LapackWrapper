@@ -12,6 +12,7 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
+#pragma once
 #ifndef SPARSETOOL_EXTRA_HH
 #define SPARSETOOL_EXTRA_HH
 

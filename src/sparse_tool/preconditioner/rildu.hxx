@@ -1,7 +1,6 @@
+#pragma once
 #ifndef SPARSETOOL_ITERATIVE_PRECO_RILDU_HH
 #define SPARSETOOL_ITERATIVE_PRECO_RILDU_HH
-
-using namespace std;
 
 namespace SparseTool {
 
@@ -113,8 +112,8 @@ namespace SparseTool {
 
       // step 4: sort structure
       for ( indexType i = 0; i < PRECO::pr_size; ++i ) {
-        sort( &L_J(L_R(i)), &L_J(L_R(i+1)) );
-        sort( &U_I(U_C(i)), &U_I(U_C(i+1)) );
+        std::sort( &L_J(L_R(i)), &L_J(L_R(i+1)) );
+        std::sort( &U_I(U_C(i)), &U_I(U_C(i+1)) );
       }
 
       // insert values

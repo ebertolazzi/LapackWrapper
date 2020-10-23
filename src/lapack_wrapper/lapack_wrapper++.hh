@@ -21,15 +21,16 @@
 /// file: lapack_wrapper++.hh
 ///
 
-#ifndef LAPACK_WRAPPERPP_HH
-#define LAPACK_WRAPPERPP_HH
+#pragma once
+
+#ifndef LAPACK_WRAPPERPP_dot_HH
+#define LAPACK_WRAPPERPP_dot_HH
 
 #include "lapack_wrapper.hh"
-#include "TicToc.hh"
 
 #include <complex>
 
-#ifdef __GNUC__ 
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpadded"
 #endif
@@ -50,73 +51,6 @@
 \*/
 
 namespace lapack_wrapper {
-
-  /*\
-  :|:   __  __       _ _
-  :|:  |  \/  | __ _| | | ___   ___
-  :|:  | |\/| |/ _` | | |/ _ \ / __|
-  :|:  | |  | | (_| | | | (_) | (__
-  :|:  |_|  |_|\__,_|_|_|\___/ \___|
-  \*/
-
-  //! Allocate memory
-  template <typename T>
-  class Malloc {
-  public:
-    typedef T valueType;
-
-  private:
-
-    std::string m_name;
-    size_t      m_numTotValues;
-    size_t      m_numTotReserved;
-    size_t      m_numAllocated;
-    valueType * m_pMalloc;
-
-    Malloc(Malloc<T> const &); // blocco costruttore di copia
-    Malloc<T> const & operator = (Malloc<T> &) const; // blocco copia
-
-  public:
-
-    //! malloc object constructor
-    explicit
-    Malloc( std::string const & name )
-    : m_name(name)
-    , m_numTotValues(0)
-    , m_numTotReserved(0)
-    , m_numAllocated(0)
-    , m_pMalloc(nullptr)
-    { }
-
-    //! malloc object destructor
-    ~Malloc() { free(); }
-
-    //! allocate memory for `n` objects
-    void allocate( size_t n );
-
-    //! free memory
-    void free(void);
-
-    //! number of objects allocated
-    size_t size(void) const { return m_numTotValues; }
-
-    //! get pointer of allocated memory for `sz` objets
-    T * operator () ( size_t sz );
-
-    bool is_empty() const { return m_numAllocated <= m_numTotValues; }
-
-    void must_be_empty( char const where[] ) const;
-
-  };
-
-  extern template class Malloc<uint16_t>;
-  extern template class Malloc<int16_t>;
-  extern template class Malloc<uint32_t>;
-  extern template class Malloc<int32_t>;
-  extern template class Malloc<uint64_t>;
-  extern template class Malloc<int64_t>;
-  extern template class Malloc<float>;
-  extern template class Malloc<double>;
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -509,7 +443,7 @@ namespace lapack_wrapper {
 
 } // end namespace lapack_wrapper
 
-#ifdef __GNUC__ 
+#ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif
 #ifdef __clang__

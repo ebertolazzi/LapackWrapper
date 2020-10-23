@@ -38,7 +38,7 @@ namespace lapack_wrapper {
     valueType       beta,
     valueType       y[]
   ) {
-    if ( isZero(beta) ) {
+    if ( Utils::isZero(beta) ) {
       y[0] = alpha*(D[0]*x[0] + U[0] * x[1]);
       for ( integer i = 1; i < N-1; ++i )
         y[i] = alpha*(D[i]*x[i] + U[i] * x[i+1] + L[i-1] * x[i-1]);

@@ -1,7 +1,6 @@
+#pragma once
 #ifndef SPARSETOOL_ITERATIVE_PRECO_HSS_OPOLY_SSOR_HH
 #define SPARSETOOL_ITERATIVE_PRECO_HSS_OPOLY_SSOR_HH
-
-using namespace std;
 
 namespace SparseTool {
 

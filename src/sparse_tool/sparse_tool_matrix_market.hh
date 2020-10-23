@@ -14,6 +14,7 @@
  
 */
 
+#pragma once
 #ifndef SPARSETOOL_MATRIX_MARKET_HH
 #define SPARSETOOL_MATRIX_MARKET_HH
 

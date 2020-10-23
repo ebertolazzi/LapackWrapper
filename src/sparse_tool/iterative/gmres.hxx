@@ -1,7 +1,6 @@
-#ifndef SPARSETOOL_ITERATIVE_GMRES_HH
-#define SPARSETOOL_ITERATIVE_GMRES_HH
-
-using namespace std;
+#pragma once
+#ifndef SPARSETOOL_ITERATIVE_GMRES_dot_HH
+#define SPARSETOOL_ITERATIVE_GMRES_dot_HH
 
 namespace SparseTool {
 
@@ -15,7 +14,7 @@ namespace SparseTool {
   //   ######   #     #  #     # #####   ####
   */
   //! \cond NODOC
- 
+
   template <class T>
   inline
   void
@@ -25,10 +24,10 @@ namespace SparseTool {
     T       & cs,
     T       & sn
   ) {
-    
+
     using ::SparseToolFun::absval;
     using ::SparseToolFun::sqrt;
-    
+
     if ( dy == 0.0 ) {
       cs = 1.0;
       sn = 0.0;
@@ -57,7 +56,7 @@ namespace SparseTool {
     dx = temp;
   }
   //! \endcond
-  
+
   /*!
    *  Generalized Minimal Residual Iterative Solver
    *  \param A       coefficient matrix

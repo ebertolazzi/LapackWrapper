@@ -10,7 +10,8 @@ CXX    += $(WARN)
 AR      = ar rcs
 LIBSGCC = -lstdc++ -lm -ldl
 
-override CXXFLAGS += -floop-interchange -floop-block 
+override CXXFLAGS += -floop-interchange -floop-block
+override LIBS     += -Llib3rd/dll -Llib3rd/lib -Wl,-rpath,./lib/dll  -Wl,-rpath,lib/lib -llapack_wrapper_linux_static -lHSL_linux -lUtils_linux_static
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
   override LIBS += -llapack -lblas
@@ -18,7 +19,7 @@ endif
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_OPENBLAS,$(USED_LIB)))
   FPATH=$(dir $(shell gfortran -print-libgcc-file-name))
-  override LIBS += -Llib3rd/dll -Llib3rd/lib -Wl,-rpath,./lib/dll -lopenblas -lgomp -L$(FPATH) -lgfortran
+  override LIBS += -lopenblas -lgomp -L$(FPATH) -lgfortran
   override INC  += -I/usr/include/x86_64-linux-gnu/
 endif
 
@@ -48,7 +49,7 @@ ifneq (,$(findstring LAPACK_WRAPPER_USE_ACCELERATE,$(USED_LIB)))
   $(error error is "Accelerate is supported only on Darwin!")
 endif
 
-ALL_LIBS = $(LIBS) -Llib/lib -Llib/dll -llapack_wrapper_linux -lHSL_linux
+ALL_LIBS = $(LIBS) -Llib/lib -Llib/dll -llapack_wrapper_linux -lHSL_linux -lUtils_linux_static
 
 all_libs: config lib/dll/liblapack_wrapper_linux.so lib/lib/liblapack_wrapper_linux_static.a lib/dll/libHSL_linux.so
 
@@ -56,7 +57,7 @@ lib/dll/liblapack_wrapper_linux.so: lib/dll/libHSL_linux.so $(OBJS)
 	@$(MKDIR) lib
 	@$(MKDIR) lib/lib
 	@$(MKDIR) lib/dll
-	$(CXX) -shared -o lib/dll/liblapack_wrapper_linux.so $(OBJS) $(LIBS) -Llib/dll -Llib/lib -lHSL_linux
+	$(CXX) -shared -o lib/dll/liblapack_wrapper_linux.so $(OBJS) $(LIBS) -Llib/dll -Llib/lib -lHSL_linux -lUtils_linux_static
 
 lib/lib/liblapack_wrapper_linux_static.a: $(OBJS)
 	@$(MKDIR) lib

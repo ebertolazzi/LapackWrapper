@@ -1,7 +1,6 @@
-#ifndef SPARSETOOL_ITERATIVE_COCG_HH
-#define SPARSETOOL_ITERATIVE_COCG_HH
-
-using namespace std;
+#pragma once
+#ifndef SPARSETOOL_ITERATIVE_COCG_dot_HH
+#define SPARSETOOL_ITERATIVE_COCG_dot_HH
 
 namespace SparseTool {
 

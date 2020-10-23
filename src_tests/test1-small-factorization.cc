@@ -21,7 +21,6 @@
 #include <vector>
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
-#include <lapack_wrapper/TicToc.hh>
 
 #include <fmt/format.h>
 #include <fmt/chrono.h>
@@ -43,7 +42,7 @@ using namespace std;
 typedef double valueType;
 using lapack_wrapper::integer;
 
-static lapack_wrapper::Console msg(&std::cout);
+static Utils::Console msg(&std::cout);
 
 static
 void

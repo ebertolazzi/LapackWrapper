@@ -27,8 +27,6 @@
 #include <sparse_tool/interfaces/mkl_pardiso.hh>
 #include <sparse_tool/interfaces/Pardiso.hh>
 
-#include <lapack_wrapper/TicToc.hh>
-
 #include <fstream>
 #include <iostream>
 

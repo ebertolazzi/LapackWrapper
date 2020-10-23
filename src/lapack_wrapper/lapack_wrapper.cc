@@ -26,7 +26,6 @@
 
 #include "lapack_wrapper.hh"
 #include "lapack_wrapper++.hh"
-#include "TicToc.hh"
 
 #include <vector>
 #include <limits>
@@ -154,7 +153,7 @@ namespace lapack_wrapper {
       integer MX = iamax( N-j, Ajj, LDA );
       IPIV[j] = MX + j; // C-based
       if ( j < IPIV[j] ) swap( M, A + j*LDA, 1, A + IPIV[j]*LDA, 1 );
-      if ( isZero(Ajj[0]) ) return j;
+      if ( Utils::isZero(Ajj[0]) ) return j;
       REAL COLM = 1/Ajj[0];
       ++j;
       scal(M-j, COLM, Ajj+1, 1);
@@ -232,7 +231,7 @@ namespace lapack_wrapper {
       integer MX = iamax( M-j, Ajj, 1 );
       IPIV[j] = MX + j; // C-based
       if ( j < IPIV[j] ) swap( N, A + j, LDA, A + IPIV[j], LDA );
-      if ( isZero(Ajj[0]) ) return j;
+      if ( Utils::isZero(Ajj[0]) ) return j;
       REAL ROWM = 1/Ajj[0];
       ++j;
       scal(M-j, ROWM, Ajj+1, 1);

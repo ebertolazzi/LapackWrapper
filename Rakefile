@@ -209,6 +209,8 @@ desc 'install third parties for osx'
 task :osx_3rd do
   FileUtils.cd 'third_parties'
   sh "rake install_osx"
+  FileUtils.cd '../submodules'
+  sh "rake build_osx"
   FileUtils.cd '..'
 end
 
@@ -216,6 +218,8 @@ desc 'install third parties for linux'
 task :linux_3rd do
   FileUtils.cd 'third_parties'
   sh "rake install_linux"
+  FileUtils.cd '../submodules'
+  sh "rake build_linux"
   FileUtils.cd '..'
 end
 
@@ -228,6 +232,8 @@ task :win_3rd, [:year, :bits, :lapack] do |t, args|
   )
   FileUtils.cd 'third_parties'
   sh "rake install_win[#{args.year},#{args.bits},#{args.lapack}]"
+  FileUtils.cd '../submodules'
+  sh "rake build_win[#{args.year},#{args.bits}]"
   FileUtils.cd '..'
 end
 

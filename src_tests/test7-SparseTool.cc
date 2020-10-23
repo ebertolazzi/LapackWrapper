@@ -23,8 +23,6 @@
 #include <sparse_tool/sparse_tool_iterative.hh>
 #include <sparse_tool/sparse_tool_matrix_market.hh>
 
-#include <lapack_wrapper/TicToc.hh>
-
 #include <sparse_tool/interfaces/MA41.hh>
 #include <sparse_tool/interfaces/MA48.hh>
 #include <sparse_tool/interfaces/SuperLU.hh>

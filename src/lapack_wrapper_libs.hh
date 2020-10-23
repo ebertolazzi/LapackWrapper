@@ -23,8 +23,8 @@
 
 #pragma once
 
-#ifndef LAPACK_WRAPPER_LIBS_HH
-#define LAPACK_WRAPPER_LIBS_HH
+#ifndef LAPACK_WRAPPER_LIBS_dot_HH
+#define LAPACK_WRAPPER_LIBS_dot_HH
 
 #include "lapack_wrapper_config.hh"
 

@@ -24,7 +24,6 @@
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
 #include <lapack_wrapper/lapack_wrapper_tmpl.hh>
-#include <lapack_wrapper/TicToc.hh>
 
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wsign-conversion"

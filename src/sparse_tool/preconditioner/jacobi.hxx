@@ -1,7 +1,6 @@
+#pragma once
 #ifndef SPARSETOOL_ITERATIVE_PRECO_JACOBI_HH
 #define SPARSETOOL_ITERATIVE_PRECO_JACOBI_HH
-
-using namespace std;
 
 namespace SparseTool {
 
@@ -97,7 +96,7 @@ namespace SparseTool {
 
       // step 4: sort structure
       for ( indexType i = 0; i < PRECO::pr_size; ++i )
-        sort( &LU_J(LU_R(i)), &LU_J(LU_R(i+1)) );
+        std::sort( &LU_J(LU_R(i)), &LU_J(LU_R(i+1)) );
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {

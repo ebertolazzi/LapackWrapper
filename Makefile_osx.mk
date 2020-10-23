@@ -11,7 +11,8 @@ CXX    += $(WARN)
 AR      = libtool -static -o
 LIBSGCC = -lstdc++ -lm
 
-override INC += -I/opt/intel/mkl/include
+override INC  += -I/opt/intel/mkl/include
+override LIBS += -Llib3rd/dll -Llib3rd/lib -Wl,-rpath,./lib/dll -Wl,-rpath,lib/lib -lUtils_osx_static
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_LAPACK,$(USED_LIB)))
   override LIBS += -llapack -lblas
@@ -19,8 +20,7 @@ endif
 
 ifneq (,$(findstring LAPACK_WRAPPER_USE_OPENBLAS,$(USED_LIB)))
   FPATH=$(dir $(shell gfortran -print-libgcc-file-name))
-  override LIBS += -Llib3rd/lib -Llib3rd/dll -Wl,-rpath,lib3rd/dll -Wl,-rpath,lib/lib -L$(FPATH)/../../..  -lgfortran
-  override LIBS += -L/usr/local/opt/openblas/lib -lopenblas
+  override LIBS += -L$(FPATH)/../../.. -lgfortran -L/usr/local/opt/openblas/lib -lopenblas
   override INC  += -I/usr/local/opt/openblas/include
 endif
 
@@ -46,7 +46,7 @@ ifneq (,$(findstring LAPACK_WRAPPER_USE_ACCELERATE,$(USED_LIB)))
   override LIBS += -framework Accelerate
 endif
 
-ALL_LIBS = $(LIBS) -Llib/lib -Llib/dll -llapack_wrapper_osx_static -lHSL_osx
+ALL_LIBS = $(LIBS) -Llib/lib -Llib/dll -llapack_wrapper_osx_static -lHSL_osx -lUtils_osx_static
 
 all_libs: config lib/dll/liblapack_wrapper_osx.dylib lib/lib/liblapack_wrapper_osx_static.a lib/dll/libHSL_osx.dylib
 ##all_libs: config lib/liblapack_wrapper_osx_static.a
@@ -56,7 +56,7 @@ lib/dll/liblapack_wrapper_osx.dylib: lib/dll/libHSL_osx.dylib $(OBJS)
 	@$(MKDIR) lib/lib
 	@$(MKDIR) lib/dll
 	@$(MKDIR) lib/bin
-	$(CXX) -dynamiclib -o lib/dll/liblapack_wrapper_osx.dylib lib/dll/libHSL_osx.dylib $(OBJS) $(LIBS) -Llib/lib -Llib/dll -lHSL_osx
+	$(CXX) -dynamiclib -o lib/dll/liblapack_wrapper_osx.dylib lib/dll/libHSL_osx.dylib $(OBJS) $(LIBS) -Llib/lib -Llib/dll -lHSL_osx -lUtils_osx_static
 
 lib/lib/liblapack_wrapper_osx_static.a: $(OBJS)
 	@$(MKDIR) lib

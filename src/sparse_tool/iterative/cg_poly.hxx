@@ -1,10 +1,9 @@
-#ifndef SPARSETOOL_ITERATIVE_CG_POLY_HH
-#define SPARSETOOL_ITERATIVE_CG_POLY_HH
-
-using namespace std;
+#pragma once
+#ifndef SPARSETOOL_ITERATIVE_CG_POLY_dot_HH
+#define SPARSETOOL_ITERATIVE_CG_POLY_dot_HH
 
 namespace SparseTool {
-  
+
   template <typename valueType, typename indexType>
   void
   mulPoly(
@@ -139,7 +138,7 @@ namespace SparseTool {
     }
     
     // step 4: sort structure
-    for ( indexType i = 0; i < neq; ++i ) sort( &A_J(A_R(i)), &A_J(A_R(i+1)) );
+    for ( indexType i = 0; i < neq; ++i ) std::sort( &A_J(A_R(i)), &A_J(A_R(i+1)) );
     
     // insert values
     for ( A.Begin(); A.End(); A.Next() ) {

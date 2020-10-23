@@ -15,6 +15,7 @@
  
 */
 
+#pragma once
 #ifndef SPARSETOOL_LIBS_HH
 #define SPARSETOOL_LIBS_HH
 

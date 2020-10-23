@@ -31,7 +31,7 @@ namespace lapack_wrapper {
     real    const * vals;
     this->data(iRow, jCol, vals);
     for ( size_t i = 0; i < size_t(this->get_nnz()); ++i)
-      fmt::print( stream, "{}, {}, {}\n", iRow[i], jCol[i], vals[i]);
+      fmt::print( stream, "{}, {}, {}\n", iRow[i], jCol[i], vals[i] );
   }
 
   template <typename T>
@@ -202,7 +202,7 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   SparseCCOOR<T>::foundNaN() const
-  { return lapack_wrapper::foundNaN( &this->vals.front(), this->nnz ); }
+  { return Utils::foundNaN( &this->vals.front(), this->nnz ); }
 
   template <typename T>
   void

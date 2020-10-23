@@ -12,11 +12,13 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-#ifndef SPARSETOOL_MA48_HH
-#define SPARSETOOL_MA48_HH
+#pragma once
+#ifndef SPARSETOOL_MA48_dot_HH
+#define SPARSETOOL_MA48_dot_HH
 
 #include "../sparse_tool.hh"
 #include "../../HSL/hsl.h"
+#include "../../lapack_wrapper_config.hh"
 
 namespace SparseTool {
 

@@ -62,9 +62,9 @@ namespace lapack_wrapper {
       valueType y[],
       integer   incY
     ) const {
-      if ( isZero(beta) ) {
+      if ( Utils::isZero(beta) ) {
         for ( integer i = 0; i < DimY; ++i ) y[i*incY] = 0;
-      } else if ( !isZero(beta-1) ) {
+      } else if ( !Utils::isZero(beta-1) ) {
         for ( integer i = 0; i < DimY; ++i ) y[i*incY] *= beta;
       }
     }

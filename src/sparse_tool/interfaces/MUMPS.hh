@@ -12,10 +12,12 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-#ifndef SPARSETOOL_MUMPS_HH
-#define SPARSETOOL_MUMPS_HH
+#pragma once
+#ifndef SPARSETOOL_MUMPS_dot_HH
+#define SPARSETOOL_MUMPS_dot_HH
 
 #include "../sparse_tool.hh"
+#include "../../lapack_wrapper_config.hh"
 
 #include <smumps_c.h>
 #include <dmumps_c.h>

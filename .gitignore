@@ -1,11 +1,12 @@
+.lapack_wrapper_config
+.vscode
+*.o
+*.bak
 bin
 build
-*.o
 lib
-.vscode
 docs
 lib3rd
-.lapack_wrapper_config
 lapack_wrapper_config.hh
 Testing
 DerivedData

@@ -1,7 +1,6 @@
+#pragma once
 #ifndef SPARSETOOL_ITERATIVE_PRECO_ID_HH
 #define SPARSETOOL_ITERATIVE_PRECO_ID_HH
-
-using namespace std;
 
 namespace SparseTool {
 
@@ -30,7 +29,7 @@ namespace SparseTool {
 
     //! build the preconditioner from matrix \c A
     template <typename MAT>
-    void build(Sparse<T,MAT> const & A) {}
+    void build(Sparse<T,MAT> const &) {}
 
     //! apply preconditioner to vector \c v and store result to vector \c res
     template <typename VECTOR>

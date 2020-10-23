@@ -12,10 +12,13 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-#ifndef SPARSETOOL_PARDISO_HH
-#define SPARSETOOL_PARDISO_HH
+#pragma once
+#ifndef SPARSETOOL_PARDISO_dot_HH
+#define SPARSETOOL_PARDISO_dot_HH
 
 #include "../sparse_tool.hh"
+#include "../../lapack_wrapper_config.hh"
+
 #include <numeric>
 #include <algorithm>
 #include <complex>

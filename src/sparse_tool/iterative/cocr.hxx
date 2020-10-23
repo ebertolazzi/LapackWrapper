@@ -1,18 +1,16 @@
-#ifndef SPARSETOOL_ITERATIVE_COCR_HH
-#define SPARSETOOL_ITERATIVE_COCR_HH
-
-using namespace std;
+#pragma once
+#ifndef SPARSETOOL_ITERATIVE_COCR_dot_HH
+#define SPARSETOOL_ITERATIVE_COCR_dot_HH
 
 namespace SparseTool {
 
   /*
-  //                              
-  //   ####   ####   ####  #####  
-  //  #    # #    # #    # #    # 
-  //  #      #    # #      #    # 
-  //  #      #    # #      #####  
-  //  #    # #    # #    # #   #  
-  //   ####   ####   ####  #    #                             
+  //   ####   ####   ####  #####
+  //  #    # #    # #    # #    #
+  //  #      #    # #      #    #
+  //  #      #    # #      #####
+  //  #    # #    # #    # #   #
+  //   ####   ####   ####  #    #
   */
   /*!
    *  Preconditioned Conjugate Gradient Iterative Solver

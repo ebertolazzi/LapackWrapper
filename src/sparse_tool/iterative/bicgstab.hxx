@@ -1,7 +1,6 @@
-#ifndef SPARSETOOL_ITERATIVE_BICGSTAB_HH
-#define SPARSETOOL_ITERATIVE_BICGSTAB_HH
-
-using namespace std;
+#pragma once
+#ifndef SPARSETOOL_ITERATIVE_BICGSTAB_dot_HH
+#define SPARSETOOL_ITERATIVE_BICGSTAB_dot_HH
 
 namespace SparseTool {
 
