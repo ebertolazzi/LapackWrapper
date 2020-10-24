@@ -239,6 +239,8 @@ end
 
 desc "clean for OSX"
 task :clean_osx do
+  FileUtils.rm_rf 'lib'
+  FileUtils.rm_rf 'lib3rd'
   sh "make clean"
   FileUtils.cd 'third_parties'
   sh "rake clean_osx"
@@ -247,6 +249,8 @@ end
 
 desc "clean for LINUX"
 task :clean_linux do
+  FileUtils.rm_rf 'lib'
+  FileUtils.rm_rf 'lib3rd'
   sh "make clean"
   FileUtils.cd 'third_parties'
   sh "rake clean_linux"
@@ -255,6 +259,8 @@ end
 
 desc "clean for WINDOWS"
 task :clean_win do
+  FileUtils.rm_rf 'lib'
+  FileUtils.rm_rf 'lib3rd'
   FileUtils.rm_rf 'vs_*'
   FileUtils.cd 'third_parties'
   sh "rake clean_win"
