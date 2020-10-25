@@ -1,0 +1,62 @@
+language: bash
+matrix:
+  include:
+    - os: linux
+      script:
+        - rake build_linux
+        - rake run
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - gcc-5
+      env:
+         - COMPILER="CC=gcc-5 && CXX=g++-5"
+      before_install: eval "${COMPILER}"
+      script:
+        - rake build_linux
+        - rake run
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+            - gcc-9
+      env:
+         - COMPILER="CC=gcc-9 && CXX=g++-9"
+      before_install: eval "${COMPILER}"
+      script:
+        - rake build_linux
+        - rake run
+  - os: linux
+      compiler: clang
+      script:
+        - rake build_linux
+        - rake run
+  - os: osx
+      script:
+        - rake build_osx
+        - rake run
+  - os: osx
+      osx_image: xcode10
+      script:
+        - rake build_osx
+        - rake run
+    - os: windows
+      install:
+        - choco install mingw
+        - choco install ruby
+        - gem install colorize
+        - gem install fileutils
+        - gem install zip
+      env:
+        - CMAKE_PATH="/c/Program Files/CMake/bin"
+      script:
+        - export PATH=$CMAKE_PATH:$PATH
+        - rake build_win
+        - rake run_win
