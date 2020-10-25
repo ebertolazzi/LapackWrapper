@@ -22,10 +22,6 @@
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
 
-#include <fmt/format.h>
-#include <fmt/chrono.h>
-#include <rang.hpp>
-
 #ifdef __GNUC__ 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"

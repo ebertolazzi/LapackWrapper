@@ -120,18 +120,6 @@ IF ( BUILD_SHARED )
   TARGET_LINK_LIBRARIES( ${TARGET} ${TARGETHSL} ${lapackblas_libraries} ${UTILS} )
 ENDIF()
 
-SET(
-  EXELISTCPP
-  test1-small-factorization
-  test2-Timing
-  test3-BandedMatrix
-  test4-BFGS
-  test5-BLOCKTRID
-  test6-EIGS
-  #test7-SparseTool
-  #test6-SparseToolComplex
-)
-
 MESSAGE( STATUS "YEAR = ${YEAR}" )
 MESSAGE( STATUS "BITS = ${BITS}" )
 
@@ -154,6 +142,18 @@ ELSE()
 ENDIF()
 
 IF( BUILD_EXECUTABLE )
+
+  SET(
+    EXELISTCPP
+    test1-small-factorization
+    test2-Timing
+    test3-BandedMatrix
+    test4-BFGS
+    test5-BLOCKTRID
+    test6-EIGS
+    #test7-SparseTool
+    #test8-SparseToolComplex
+  )
 
   ADD_CUSTOM_TARGET( all_tests ALL )
 

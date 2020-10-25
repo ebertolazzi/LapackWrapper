@@ -154,24 +154,98 @@ clean:
 	rm -rf lib/* src/*.o src/*/*.o src/*/*/*.o src_tests/*.o src/*.obj src/*/*.obj src/*/*/*.obj src_tests/*.obj
 	rm -rf bin
 
+travis: all_libs tests
+	make run
+
 depend:
 	makedepend -- $(INC) $(CXXFLAGS) $(DEFS) -- $(SRCS)
 # DO NOT DELETE
 
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/lapack_wrapper++.hh
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/lapack_wrapper.hh
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper_config.hh
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils.hh
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/Utils.hxx
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/rang.hpp
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/printf.h
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/ostream.h
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/format.h
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/core.h
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/chrono.h
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/locale.h
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/ostream.h
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/zstream_common.hpp
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/ozstream_impl.hpp
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/Trace.hxx
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/Console.hxx
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/Malloc.hxx
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/Numbers.hxx
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/TicToc.hxx
+src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/ThreadPool.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/blas.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/general.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/general_qr.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/triangular.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/tridiagonal.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/banded.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/symmetric.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/sparse.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/wrapper.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/lu.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/qr.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/svd.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/band.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/block_trid.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/eig.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/ls.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/lsc.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/pinv.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/qn.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/trid.hxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/wrapper.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/sparse.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code/rank_estimate.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/band.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/block_trid.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/eig.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/ls.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/lsc.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/lu.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/pinv.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/qn.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/qr.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/svd.cxx
+src/lapack_wrapper/lapack_wrapper++.o: src/lapack_wrapper/code++/trid.cxx
 src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/lapack_wrapper.hh
 src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper_config.hh
 src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils.hh
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/rang.hpp
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/fmt/printf.h
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/fmt/ostream.h
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/fmt/format.h
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/fmt/core.h
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/OS.hxx
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Trace.hxx
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Console.hxx
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Malloc.hxx
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Numbers.hxx
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/TicToc.hxx
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/Utils.hxx
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/rang.hpp
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/printf.h
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/ostream.h
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/format.h
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/core.h
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/chrono.h
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/locale.h
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/ostream.h
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/zstream_common.hpp
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/ozstream_impl.hpp
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/Trace.hxx
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/Console.hxx
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/Malloc.hxx
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/Numbers.hxx
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/TicToc.hxx
+src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/ThreadPool.hxx
 src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/blas.hxx
 src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/general.hxx
 src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code/general_qr.hxx
@@ -196,27 +270,75 @@ src/lapack_wrapper/lapack_wrapper.o: src/lapack_wrapper/code++/trid.hxx
 src/HSL/hsl_fake.o: src/HSL/hsl.h
 src/HSL/hsl_solver.o: src/HSL/hsl_solver.hh src/HSL/hsl.h
 src/HSL/hsl_solver.o: src/lapack_wrapper_config.hh lib3rd/include/Utils.hh
-src/HSL/hsl_solver.o: lib3rd/include/rang.hpp lib3rd/include/fmt/printf.h
-src/HSL/hsl_solver.o: lib3rd/include/fmt/ostream.h
-src/HSL/hsl_solver.o: lib3rd/include/fmt/format.h lib3rd/include/fmt/core.h
-src/HSL/hsl_solver.o: lib3rd/include/OS.hxx lib3rd/include/Trace.hxx
-src/HSL/hsl_solver.o: lib3rd/include/Console.hxx lib3rd/include/Malloc.hxx
-src/HSL/hsl_solver.o: lib3rd/include/Numbers.hxx lib3rd/include/TicToc.hxx
+src/HSL/hsl_solver.o: lib3rd/include/Utils/Utils.hxx
+src/HSL/hsl_solver.o: lib3rd/include/Utils/rang.hpp
+src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/printf.h
+src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/ostream.h
+src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/format.h
+src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/core.h
+src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/chrono.h
+src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/locale.h
+src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/ostream.h
+src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/zstream_common.hpp
+src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
+src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/ozstream_impl.hpp
+src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/HSL/hsl_solver.o: lib3rd/include/Utils/Trace.hxx
+src/HSL/hsl_solver.o: lib3rd/include/Utils/Console.hxx
+src/HSL/hsl_solver.o: lib3rd/include/Utils/Malloc.hxx
+src/HSL/hsl_solver.o: lib3rd/include/Utils/Numbers.hxx
+src/HSL/hsl_solver.o: lib3rd/include/Utils/TicToc.hxx
+src/HSL/hsl_solver.o: lib3rd/include/Utils/ThreadPool.hxx
 src/HSL/ma48_wrapper.o: src/HSL/ma48_wrapper.hh src/HSL/hsl_solver.hh
 src/HSL/ma48_wrapper.o: src/HSL/hsl.h src/lapack_wrapper_config.hh
-src/HSL/ma48_wrapper.o: lib3rd/include/Utils.hh lib3rd/include/rang.hpp
-src/HSL/ma48_wrapper.o: lib3rd/include/fmt/printf.h
-src/HSL/ma48_wrapper.o: lib3rd/include/fmt/ostream.h
-src/HSL/ma48_wrapper.o: lib3rd/include/fmt/format.h lib3rd/include/fmt/core.h
-src/HSL/ma48_wrapper.o: lib3rd/include/OS.hxx lib3rd/include/Trace.hxx
-src/HSL/ma48_wrapper.o: lib3rd/include/Console.hxx lib3rd/include/Malloc.hxx
-src/HSL/ma48_wrapper.o: lib3rd/include/Numbers.hxx lib3rd/include/TicToc.hxx
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils.hh
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/Utils.hxx
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/rang.hpp
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/printf.h
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/ostream.h
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/format.h
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/core.h
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/chrono.h
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/locale.h
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/ostream.h
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/zstream_common.hpp
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/ozstream_impl.hpp
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/Trace.hxx
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/Console.hxx
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/Malloc.hxx
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/Numbers.hxx
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/TicToc.hxx
+src/HSL/ma48_wrapper.o: lib3rd/include/Utils/ThreadPool.hxx
 src/HSL/ma57_wrapper.o: src/HSL/ma57_wrapper.hh src/HSL/hsl_solver.hh
 src/HSL/ma57_wrapper.o: src/HSL/hsl.h src/lapack_wrapper_config.hh
-src/HSL/ma57_wrapper.o: lib3rd/include/Utils.hh lib3rd/include/rang.hpp
-src/HSL/ma57_wrapper.o: lib3rd/include/fmt/printf.h
-src/HSL/ma57_wrapper.o: lib3rd/include/fmt/ostream.h
-src/HSL/ma57_wrapper.o: lib3rd/include/fmt/format.h lib3rd/include/fmt/core.h
-src/HSL/ma57_wrapper.o: lib3rd/include/OS.hxx lib3rd/include/Trace.hxx
-src/HSL/ma57_wrapper.o: lib3rd/include/Console.hxx lib3rd/include/Malloc.hxx
-src/HSL/ma57_wrapper.o: lib3rd/include/Numbers.hxx lib3rd/include/TicToc.hxx
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils.hh
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/Utils.hxx
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/rang.hpp
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/printf.h
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/ostream.h
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/format.h
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/core.h
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/chrono.h
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/locale.h
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/ostream.h
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/zstream_common.hpp
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/ozstream_impl.hpp
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/ozstream.hpp
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/Trace.hxx
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/Console.hxx
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/Malloc.hxx
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/Numbers.hxx
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/TicToc.hxx
+src/HSL/ma57_wrapper.o: lib3rd/include/Utils/ThreadPool.hxx
