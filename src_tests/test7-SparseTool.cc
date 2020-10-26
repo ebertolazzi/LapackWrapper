@@ -49,7 +49,7 @@ using namespace zstream;
 
 void
 testSparseTool( istream & mm_file ) {
-  TicToc                     tm;
+  Utils::TicToc              tm;
   MatrixMarket               mm;
   ILDUpreconditioner<double> ildu;
   //ILDUKpreconditioner<double> ildu;

@@ -49,7 +49,7 @@ typedef std::complex<double> cplx;
 
 void
 testSparseTool( istream & mm_file ) {
-  TicToc                   tm;
+  Utils::TicToc            tm;
   MatrixMarket             mm;
   ILDUpreconditioner<cplx> ildu;
   //ILDUKpreconditioner<cplx> ildu;
