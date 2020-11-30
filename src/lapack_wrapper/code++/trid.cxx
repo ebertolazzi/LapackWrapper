@@ -183,9 +183,9 @@ namespace lapack_wrapper {
   TridiagonalLU<T>::factorize(
     char const      who[],
     integer         N,
-    valueType const _L[],
-    valueType const _D[],
-    valueType const _U[]
+    valueType const L[],
+    valueType const D[],
+    valueType const U[]
   ) {
     if ( m_nRC != N ) {
       m_nRC = N;
@@ -199,9 +199,9 @@ namespace lapack_wrapper {
       m_IPIV  = m_allocIntegers(N);
       m_IWORK = m_allocIntegers(N);
     }
-    copy( N, _L, 1, m_L, 1 );
-    copy( N, _D, 1, m_D, 1 );
-    copy( N, _U, 1, m_U, 1 );
+    copy( N, L, 1, m_L, 1 );
+    copy( N, D, 1, m_D, 1 );
+    copy( N, U, 1, m_U, 1 );
     integer info = gttrf( N, m_L, m_D, m_U, m_U2, m_IPIV );
     UTILS_ASSERT(
       info == 0, "TridiagonalLU::factorize[{}], return info = {}\n", who, info
@@ -214,9 +214,9 @@ namespace lapack_wrapper {
   bool
   TridiagonalLU<T>::factorize(
     integer         N,
-    valueType const _L[],
-    valueType const _D[],
-    valueType const _U[]
+    valueType const L[],
+    valueType const D[],
+    valueType const U[]
   ) {
     if ( m_nRC != N ) {
       m_nRC = N;
@@ -230,9 +230,9 @@ namespace lapack_wrapper {
       m_IPIV  = m_allocIntegers(N);
       m_IWORK = m_allocIntegers(N);
     }
-    copy( N, _L, 1, m_L, 1 );
-    copy( N, _D, 1, m_D, 1 );
-    copy( N, _U, 1, m_U, 1 );
+    copy( N, L, 1, m_L, 1 );
+    copy( N, D, 1, m_D, 1 );
+    copy( N, U, 1, m_U, 1 );
     integer info = gttrf( N, m_L, m_D, m_U, m_U2, m_IPIV );
     return info == 0;
   }
@@ -388,14 +388,14 @@ namespace lapack_wrapper {
   TridiagonalLU<T>::axpy(
     integer         N,
     valueType       alpha,
-    valueType const _L[],
-    valueType const _D[],
-    valueType const _U[],
+    valueType const L[],
+    valueType const D[],
+    valueType const U[],
     valueType const x[],
     valueType       beta,
     valueType       y[]
   ) const {
-    tridiag_axpy( N, alpha, _L, _D, _U, x, beta, y );
+    tridiag_axpy( N, alpha, L, D, U, x, beta, y );
   }
 
   //============================================================================

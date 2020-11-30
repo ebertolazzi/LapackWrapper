@@ -40,8 +40,8 @@ namespace lapack_wrapper {
     integer     nc,
     integer     ld
   )
-  : m_nRows(nr)
-  , m_nCols(nc)
+  : m_nrows(nr)
+  , m_ncols(nc)
   , m_ldData(ld)
   , m_data(_data)
   {
@@ -63,8 +63,8 @@ namespace lapack_wrapper {
     integer     ld
   ) {
     m_data   = _data;
-    m_nRows  = nr;
-    m_nCols  = nc;
+    m_nrows  = nr;
+    m_ncols  = nc;
     m_ldData = ld;
     UTILS_ASSERT_DEBUG(
       nr >= 0 && nc >= 0 && m_ldData >= nr,
@@ -78,12 +78,12 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::scale_by( T sc ) {
-    if ( m_ldData == m_nRows ) {
-      scal( m_nRows*m_nCols, sc, m_data, 1 );
+    if ( m_ldData == m_nrows ) {
+      scal( m_nrows*m_ncols, sc, m_data, 1 );
     } else {
       T * p = m_data;
-      for ( integer i = 0; i < m_nCols; ++i, p += m_ldData )
-        scal( m_nRows, sc, p, 1 );
+      for ( integer i = 0; i < m_ncols; ++i, p += m_ldData )
+        scal( m_nrows, sc, p, 1 );
     }
   }
 
@@ -93,9 +93,9 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::check( MatW const & A ) const {
     UTILS_ASSERT(
-      A.numRows() == m_nRows && A.numCols() == m_nCols,
+      A.numRows() == m_nrows && A.numCols() == m_ncols,
       "MatrixWrapper::check(A) size(A) = {} x {} expected {} x {}\n",
-      A.numRows(), A.numCols(), m_nRows, m_nCols
+      A.numRows(), A.numCols(), m_nrows, m_ncols
     );
   }
 
@@ -105,11 +105,11 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::check( Sparse const & sp ) const {
     UTILS_ASSERT(
-      sp.get_number_of_rows() <= m_nRows &&
-      sp.get_number_of_cols() <= m_nCols,
+      sp.get_number_of_rows() <= m_nrows &&
+      sp.get_number_of_cols() <= m_ncols,
       "MatrixWrapper::check(sp) size(sp) = {} x {} must be contained in {} x {}\n",
       sp.get_number_of_rows(), sp.get_number_of_cols(),
-      m_nRows, m_nCols
+      m_nrows, m_ncols
     );
   }
 
@@ -119,7 +119,7 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::load( valueType const data_in[], integer ldData_in ) {
     integer info = gecopy(
-      m_nRows, m_nCols, data_in, ldData_in, m_data, m_ldData
+      m_nrows, m_ncols, data_in, ldData_in, m_data, m_ldData
     );
     UTILS_ASSERT(
       info == 0,
@@ -132,8 +132,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::load_transposed( valueType const data_in[], integer ldData_in ) {
-    for ( integer i = 0; i < m_nRows; ++i )
-      for ( integer j = 0; j < m_nCols; ++j )
+    for ( integer i = 0; i < m_nrows; ++i )
+      for ( integer j = 0; j < m_ncols; ++j )
         m_data[i+j*m_ldData] = data_in[j+i*ldData_in];
   }
 
@@ -162,13 +162,13 @@ namespace lapack_wrapper {
   MatrixWrapper<T>::load_transposed( MatW const & A ) {
     #ifndef LAPACK_WRAPPER_NO_DEBUG
     UTILS_ASSERT(
-      A.numCols() == m_nRows && A.numRows() == m_nCols,
+      A.numCols() == m_nrows && A.numRows() == m_ncols,
       "MatrixWrapper::load_transposed(A) size(A) = {} x {} expected {} x {}\n",
-      A.numRows(), A.numCols(), m_nCols, m_nRows
+      A.numRows(), A.numCols(), m_ncols, m_nrows
     );
     #endif
-    for ( integer i=0; i < m_nRows; ++i )
-      for ( integer j=0; j < m_nCols; ++j )
+    for ( integer i=0; i < m_nrows; ++i )
+      for ( integer j=0; j < m_ncols; ++j )
         m_data[iaddr(i,j)] = A(j,i);
   }
 
@@ -340,7 +340,7 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::add( valueType alpha, valueType const data_in[], integer ldData_in ) {
     geadd(
-      m_nRows, m_nCols,
+      m_nrows, m_ncols,
       alpha, data_in, ldData_in,
       1.0, m_data, m_ldData,
       m_data, m_ldData
@@ -353,7 +353,7 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::add( valueType const data_in[], integer ldData_in ) {
     geadd(
-      m_nRows, m_nCols,
+      m_nrows, m_ncols,
       1.0, data_in, ldData_in,
       1.0, m_data, m_ldData,
       m_data, m_ldData
@@ -444,14 +444,16 @@ namespace lapack_wrapper {
 
   template <typename T>
   Matrix<T>::Matrix( Matrix<T> const & rhs )
-  : MatrixWrapper<T>( nullptr, rhs.m_nRows, rhs.m_nCols, rhs.m_nRows )
+  : MatrixWrapper<T>( nullptr, rhs.m_nrows, rhs.m_ncols, rhs.m_nrows )
   , m_mem("Matrix")
   {
-    size_t sz = rhs.m_nRows*rhs.m_nCols;
+    size_t sz = rhs.m_nrows*rhs.m_ncols;
     m_mem.allocate( sz );
     m_data = m_mem( sz );
-    gecopy( rhs.m_nRows, rhs.m_nCols, rhs.m_data, rhs.m_ldData,
-            m_data, m_ldData );
+    gecopy(
+      rhs.m_nrows, rhs.m_ncols, rhs.m_data, rhs.m_ldData,
+      m_data, m_ldData
+    );
   }
 
   template <typename T>
@@ -473,14 +475,16 @@ namespace lapack_wrapper {
   template <typename T>
   Matrix<T> const &
   Matrix<T>::operator = ( Matrix<T> const & rhs ) {
-    size_t sz = rhs.m_nRows*rhs.m_nCols;
+    size_t sz = rhs.m_nrows*rhs.m_ncols;
     m_mem.allocate( sz );
     m_data   = m_mem( sz );
-    m_nRows  = rhs.m_nRows;
-    m_nCols  = rhs.m_nCols;
-    m_ldData = rhs.m_nRows;
-    gecopy( rhs.m_nRows,  rhs.m_nCols, rhs.m_data, rhs.m_ldData,
-            m_data, m_ldData );
+    m_nrows  = rhs.m_nrows;
+    m_ncols  = rhs.m_ncols;
+    m_ldData = rhs.m_nrows;
+    gecopy(
+      rhs.m_nrows,  rhs.m_ncols, rhs.m_data, rhs.m_ldData,
+      m_data, m_ldData
+    );
     return *this;
   }
 
@@ -510,30 +514,30 @@ namespace lapack_wrapper {
   }
 
   template <typename T>
-  DiagMatrix<T>::DiagMatrix( integer _dim )
-  : DiagMatrixWrapper<T>( nullptr, _dim )
+  DiagMatrix<T>::DiagMatrix( integer dim )
+  : DiagMatrixWrapper<T>( nullptr, dim )
   , m_mem("DiagMatrix")
   {
-    m_mem.allocate( size_t(this->dim) );
-    this->data = m_mem( size_t(this->dim) );
+    m_mem.allocate( size_t(m_dim) );
+    m_data = m_mem( size_t(m_dim) );
   }
 
   template <typename T>
   void
-  DiagMatrix<T>::setup( integer _dim ) {
-    this->dim = _dim;
-    m_mem.allocate( size_t(this->dim) );
-    this->dim  = _dim;
-    this->data = m_mem( size_t(this->dim) );
+  DiagMatrix<T>::setup( integer dim ) {
+    m_dim = dim;
+    m_mem.allocate( size_t(m_dim) );
+    m_dim  = dim;
+    m_data = m_mem( size_t(m_dim) );
   }
 
   template <typename T>
   DiagMatrix<T> const &
   DiagMatrix<T>::operator = ( DiagMatrix<T> const & rhs ) {
-    m_mem.allocate( size_t(rhs.dim) );
-    this->dim  = rhs.dim;
-    this->data = m_mem( size_t(rhs.dim) );
-    std::copy_n( rhs.data, rhs.dim, this->data );
+    m_mem.allocate( size_t(rhs.m_dim) );
+    m_dim  = rhs.m_dim;
+    m_data = m_mem( size_t(rhs.m_dim) );
+    std::copy_n( rhs.m_data, rhs.m_dim, m_data );
   }
 
   template class MatrixWrapper<real>;

@@ -148,12 +148,12 @@ namespace lapack_wrapper {
   template <typename T>
   integer
   rankEstimate(
-    integer   M,
-    integer   N,
-    T         A[],
-    integer   LDA,
-    T         RCOND,
-    T         SVAL[3]
+    integer M,
+    integer N,
+    T       A[],
+    integer LDA,
+    T       RCOND,
+    T       SVAL[3]
   ) {
 
     integer MN = std::min(M, N);

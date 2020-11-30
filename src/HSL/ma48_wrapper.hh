@@ -53,8 +53,8 @@ namespace lapack_wrapper {
 
   public:
 
-    using HSLsolver<real>::m_nRows;
-    using HSLsolver<real>::m_nCols;
+    using HSLsolver<real>::m_nrows;
+    using HSLsolver<real>::m_ncols;
     using HSLsolver<real>::m_nnz;
     using HSLsolver<real>::m_isInitialized;
     using HSLsolver<real>::m_isFactorized;

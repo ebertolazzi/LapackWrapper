@@ -35,24 +35,24 @@ namespace lapack_wrapper {
     typedef MatrixWrapper<T>    MatW;
 
   protected:
-    integer nRows; //!< Number of rows
-    integer nCols; //!< Number of columns
-    integer nnz;   //!< Total number of nonzeros
+    integer m_nrows; //!< Number of rows
+    integer m_ncols; //!< Number of columns
+    integer m_nnz;   //!< Total number of nonzeros
 
     /*!
      * \brief SparseMatrixBase:
      *        Protected Constructor of the class SparseMatrixBase.
     \*/
     SparseMatrixBase()
-    : nRows(0)
-    , nCols(0)
-    , nnz(0)
+    : m_nrows(0)
+    , m_ncols(0)
+    , m_nnz(0)
     {}
 
     SparseMatrixBase( integer N, integer M )
-    : nRows(N)
-    , nCols(M)
-    , nnz(0)
+    : m_nrows(N)
+    , m_ncols(M)
+    , m_nnz(0)
     {}
 
     void
@@ -118,36 +118,28 @@ namespace lapack_wrapper {
     bool
     FORTRAN_indexing() const UTILS_PURE_VIRTUAL;
 
-    integer
-    get_number_of_rows() const
-    { return this->nRows; }
-
-    integer
-    get_number_of_cols() const
-    { return this->nCols; }
-
-    integer
-    get_nnz() const
-    { return this->nnz; }
+    integer get_number_of_rows() const { return m_nrows; }
+    integer get_number_of_cols() const { return m_ncols; }
+    integer get_nnz()            const { return m_nnz; }
 
     /*!
      * \brief get_info:
      *        Returns the number of nonzeroes and dimension of the sparse matrix.
-     * \param[out] _numRows Row dimension of the matrix
-     * \param[out] _numCols Column dimension of the matrix
-     * \param[out] _nnz     the number of nonzeroes
+     * \param[out] numRows Row dimension of the matrix
+     * \param[out] numCols Column dimension of the matrix
+     * \param[out] nnz     the number of nonzeroes
      *
     \*/
     virtual
     void
     get_info(
-      integer & _numRows,
-      integer & _numCols,
-      integer & _nnz
+      integer & numRows,
+      integer & numCols,
+      integer & nnz
     ) const {
-      _numRows = this->nRows;
-      _numCols = this->nCols;
-      _nnz     = this->nnz;
+      numRows = m_nrows;
+      numCols = m_ncols;
+      nnz     = m_nnz;
     }
 
     /*!
@@ -440,25 +432,25 @@ namespace lapack_wrapper {
     typedef typename Sparse::valueType valueType;
 
   protected:
-    std::vector<valueType> vals;  //!< the values of the sparse matrix
-    std::vector<integer>   rows;  //!< the rows index
-    std::vector<integer>   cols;  //!< the columns index
+    std::vector<valueType> m_vals;  //!< the values of the sparse matrix
+    std::vector<integer>   m_rows;  //!< the rows index
+    std::vector<integer>   m_cols;  //!< the columns index
 
-    bool fortran_indexing;
-    bool matrix_is_full;
-    bool matrix_is_row_major;
+    bool m_fortran_indexing;
+    bool m_matrix_is_full;
+    bool m_matrix_is_row_major;
 
   public:
 
-    using SparseMatrixBase<real>::nRows;
-    using SparseMatrixBase<real>::nCols;
-    using SparseMatrixBase<real>::nnz;
+    using SparseMatrixBase<real>::m_nrows;
+    using SparseMatrixBase<real>::m_ncols;
+    using SparseMatrixBase<real>::m_nnz;
 
     SparseCCOOR()
     : SparseMatrixBase<real>()
-    , fortran_indexing(false)
-    , matrix_is_full(false)
-    , matrix_is_row_major(false)
+    , m_fortran_indexing(false)
+    , m_matrix_is_full(false)
+    , m_matrix_is_row_major(false)
     {}
 
     SparseCCOOR(
@@ -492,13 +484,13 @@ namespace lapack_wrapper {
     virtual
     bool
     FORTRAN_indexing() const UTILS_OVERRIDE
-    { return this->fortran_indexing; }
+    { return m_fortran_indexing; }
 
     virtual
     void
     transpose() UTILS_OVERRIDE {
-      this->rows.swap(this->cols);
-      std::swap( this->nRows, this->nCols );
+      m_rows.swap(m_cols);
+      std::swap( m_nrows, m_ncols );
     }
 
     virtual
@@ -548,9 +540,9 @@ namespace lapack_wrapper {
       integer   const * & pCols,
       valueType const * & pValues
     ) const UTILS_OVERRIDE {
-      pRows   = &this->rows.front();
-      pCols   = &this->cols.front();
-      pValues = &this->vals.front();
+      pRows   = &m_rows.front();
+      pCols   = &m_cols.front();
+      pValues = &m_vals.front();
     }
 
     virtual
@@ -608,19 +600,21 @@ namespace lapack_wrapper {
       r_type  val[],
       bool    fi
     ) {
-      UTILS_ASSERT0(
-        NNZ == this->rows.size() &&
-        NNZ == this->cols.size() &&
-        NNZ == this->vals.size(),
+      UTILS_ASSERT(
+        NNZ == m_rows.size() &&
+        NNZ == m_cols.size() &&
+        NNZ == m_vals.size(),
         "export_data, bad dimension\n"
+        "NNZ = {}, |rows| = {}, |cols| = {}, |vals| = {}\n",
+        NNZ, m_rows.size(), m_cols.size(), m_vals.size()
       );
       integer offs = 0;
       if ( fi ) ++offs;
-      if ( this->fortran_indexing ) --offs;
+      if ( m_fortran_indexing ) --offs;
       for ( integer index = 0; index < NNZ; ++index ) {
-        i[index]   = i_type(this->rows[index]+offs);
-        j[index]   = i_type(this->cols[index]+offs);
-        val[index] = r_type(this->vals[index]);
+        i[index]   = i_type(m_rows[index]+offs);
+        j[index]   = i_type(m_cols[index]+offs);
+        val[index] = r_type(m_vals[index]);
       }
     }
 
@@ -634,14 +628,14 @@ namespace lapack_wrapper {
     ) {
       integer offs = 0;
       if ( fi ) ++offs;
-      if ( this->fortran_indexing ) --offs;
-      i.clear(); i.reserve( this->nnz );
-      j.clear(); j.reserve( this->nnz );
-      v.clear(); v.reserve( this->nnz );
-      for ( integer index = 0; index < this->nnz; ++index ) {
-        i.push_back( i_type(this->rows[index]+offs) );
-        j.push_back( i_type(this->cols[index]+offs) );
-        v.push_back( r_type(this->vals[index]) );
+      if ( m_fortran_indexing ) --offs;
+      i.clear(); i.reserve( m_nnz );
+      j.clear(); j.reserve( m_nnz );
+      v.clear(); v.reserve( m_nnz );
+      for ( integer index = 0; index < m_nnz; ++index ) {
+        i.push_back( i_type(m_rows[index]+offs) );
+        j.push_back( i_type(m_cols[index]+offs) );
+        v.push_back( r_type(m_vals[index]) );
       }
     }
 
@@ -671,13 +665,13 @@ namespace lapack_wrapper {
     void
     get_full_view( MatrixWrapper<valueType> & MW ) UTILS_OVERRIDE {
       UTILS_ASSERT0(
-        this->matrix_is_full,
+        m_matrix_is_full,
         "get_full_view, matrix is sparse\n"
       );
-      if ( this->matrix_is_row_major ) {
-        MW.setup( &this->vals.front(), nCols, nRows, nCols );
+      if ( m_matrix_is_row_major ) {
+        MW.setup( &m_vals.front(), m_ncols, m_nrows, m_ncols );
       } else {
-        MW.setup( &this->vals.front(), nRows, nCols, nRows );
+        MW.setup( &m_vals.front(), m_nrows, m_ncols, m_nrows );
       }
     }
   };

@@ -76,8 +76,8 @@ namespace lapack_wrapper {
     integer     Liwork,
     integer   * iWork
   ) {
-    m_nRows = NR;
-    m_nCols = NC;
+    m_nrows = NR;
+    m_ncols = NC;
     m_minRC = std::min( NR, NC );
     integer ibf   = (m_minRC*(NR+NC+1)+NR*NC);
     integer Lmin  = ibf+this->get_Lwork( NR, NC );
@@ -108,7 +108,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );
     UTILS_ASSERT(
       info == 0,
@@ -120,9 +120,9 @@ namespace lapack_wrapper {
       info = gesvd(
         REDUCED,
         REDUCED,
-        m_nRows, m_nCols, m_Afactorized, m_nRows,
+        m_nrows, m_ncols, m_Afactorized, m_nrows,
         m_Svec,
-        m_Umat,    m_nRows,
+        m_Umat,    m_nrows,
         m_VTmat,   m_minRC,
         m_WorkSVD, m_LworkSVD
       );
@@ -135,9 +135,9 @@ namespace lapack_wrapper {
     case USE_GESDD:
       info = gesdd(
         REDUCED,
-        m_nRows, m_nCols, m_Afactorized, m_nRows,
+        m_nrows, m_ncols, m_Afactorized, m_nrows,
         m_Svec,
-        m_Umat,    m_nRows,
+        m_Umat,    m_nrows,
         m_VTmat,   m_minRC,
         m_WorkSVD, m_LworkSVD, m_IWorkSVD
       );
@@ -156,7 +156,7 @@ namespace lapack_wrapper {
   bool
   SVD_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );
     if ( info != 0 ) return false;
     switch ( m_svd_used ) {
@@ -164,9 +164,9 @@ namespace lapack_wrapper {
       info = gesvd(
         REDUCED,
         REDUCED,
-        m_nRows, m_nCols, m_Afactorized, m_nRows,
+        m_nrows, m_ncols, m_Afactorized, m_nrows,
         m_Svec,
-        m_Umat,    m_nRows,
+        m_Umat,    m_nrows,
         m_VTmat,   m_minRC,
         m_WorkSVD, m_LworkSVD
       );
@@ -174,9 +174,9 @@ namespace lapack_wrapper {
     case USE_GESDD:
       info = gesdd(
         REDUCED,
-        m_nRows, m_nCols, m_Afactorized, m_nRows,
+        m_nrows, m_ncols, m_Afactorized, m_nrows,
         m_Svec,
-        m_Umat,    m_nRows,
+        m_Umat,    m_nrows,
         m_VTmat,   m_minRC,
         m_WorkSVD, m_LworkSVD, m_IWorkSVD
       );
@@ -239,7 +239,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SVD<T>::allocate( integer NR, integer NC ) {
-    if ( m_nRows != NR || m_nCols != NC ) {
+    if ( m_nrows != NR || m_ncols != NC ) {
       integer minRC = std::min(NR,NC);
       integer L     = NR*NC+minRC*(NR+NC+1)+this->get_Lwork( NR, NC );
       integer L1    = 8*minRC;

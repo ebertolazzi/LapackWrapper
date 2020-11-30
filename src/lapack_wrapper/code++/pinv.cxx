@@ -38,8 +38,8 @@ namespace lapack_wrapper {
   , m_allocReals("PINV_no_alloc")
   , L_mm_work(0)
   , mm_work(nullptr)
-  , m_nRows(0)
-  , m_nCols(0)
+  , m_nrows(0)
+  , m_ncols(0)
   , m_rank(0)
   , m_Rscale(nullptr)
   , m_Cscale(nullptr)
@@ -105,8 +105,8 @@ namespace lapack_wrapper {
     m_LWorkQR2 = L2;
     m_WorkQR2  = ptr;
 
-    m_nRows    = NR;
-    m_nCols    = NC;
+    m_nrows    = NR;
+    m_ncols    = NC;
     m_rank     = 0;
   }
 
@@ -120,21 +120,21 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     // copy matrix and scale
-    integer info = gecopy( m_nRows, m_nCols, A, LDA, m_Ascaled, m_nRows );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Ascaled, m_nrows );
     UTILS_ASSERT(
       info == 0,
       "{}, call to gecopy( N = {}, M = {}, A, LDA = {}, B, LDB = {}\n"
       "return info = {}\n",
-      who, m_nRows, m_nCols, LDA, m_nRows, info
+      who, m_nrows, m_ncols, LDA, m_nrows, info
     );
 
     // balance matrix
     valueType ROWCND, COLCND, AMAX;
     ROWCND = COLCND = 1; AMAX = 0;
-    fill( m_nRows, m_Rscale, 1, 1 );
-    fill( m_nCols, m_Cscale, 1, 1 );
+    fill( m_nrows, m_Rscale, 1, 1 );
+    fill( m_ncols, m_Cscale, 1, 1 );
     info = geequ(
-      m_nRows, m_nCols, m_Ascaled, m_nRows, m_Rscale, m_Cscale,
+      m_nrows, m_ncols, m_Ascaled, m_nrows, m_Rscale, m_Cscale,
       ROWCND, COLCND, AMAX
     );
 
@@ -142,33 +142,33 @@ namespace lapack_wrapper {
       info >= 0,
       "{}, call to geequ( N = {}, M = {}, A, LDA = {}, ...)\n"
       "return info = {}\n",
-      who, m_nRows, m_nCols, LDA, info
+      who, m_nrows, m_ncols, LDA, info
     );
 
     // equilibrate
     laqge(
-      m_nRows, m_nCols, m_Ascaled, m_nRows, m_Rscale, m_Cscale,
+      m_nrows, m_ncols, m_Ascaled, m_nrows, m_Rscale, m_Cscale,
       ROWCND, COLCND, AMAX, m_equ
     );
 
     // perform QR factorization
-    m_QR1.factorize( who, m_Ascaled, m_nRows );
+    m_QR1.factorize( who, m_Ascaled, m_nrows );
 
     // evaluate rank
-    m_QR1.getRt( m_Rt, m_nCols );
+    m_QR1.getRt( m_Rt, m_ncols );
 
-    m_rank = m_nCols;
-    valueType threshold = absmax( m_nCols, m_Rt, m_nCols+1 ) * m_epsi;
+    m_rank = m_ncols;
+    valueType threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
     for ( integer i = 1; i < m_rank; ++i ) {
-      if ( std::abs(m_Rt[i*(m_nCols+1)]) < threshold )
+      if ( std::abs(m_Rt[i*(m_ncols+1)]) < threshold )
         { m_rank = i; break; }
     }
 
-    if ( m_rank < m_nCols ) {
+    if ( m_rank < m_ncols ) {
       // allocate for QR factorization
-      m_QR2.no_allocate( m_nCols, m_rank, m_LWorkQR2, m_WorkQR2 );
+      m_QR2.no_allocate( m_ncols, m_rank, m_LWorkQR2, m_WorkQR2 );
       // perform QR factorization
-      m_QR2.factorize( who, m_Rt, m_nCols );
+      m_QR2.factorize( who, m_Rt, m_ncols );
     }
   }
 
@@ -181,16 +181,16 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     // copy matrix and scale
-    integer info = gecopy( m_nRows, m_nCols, A, LDA, m_Ascaled, m_nRows );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Ascaled, m_nrows );
     if ( info != 0 ) return false;
 
     // balance matrix
     valueType ROWCND, COLCND, AMAX;
     ROWCND = COLCND = 1; AMAX = 0;
-    fill( m_nRows, m_Rscale, 1, 1 );
-    fill( m_nCols, m_Cscale, 1, 1 );
+    fill( m_nrows, m_Rscale, 1, 1 );
+    fill( m_ncols, m_Cscale, 1, 1 );
     info = geequ(
-      m_nRows, m_nCols, m_Ascaled, m_nRows, m_Rscale, m_Cscale,
+      m_nrows, m_ncols, m_Ascaled, m_nrows, m_Rscale, m_Cscale,
       ROWCND, COLCND, AMAX
     );
 
@@ -198,29 +198,29 @@ namespace lapack_wrapper {
 
     // equilibrate
     laqge(
-      m_nRows, m_nCols, m_Ascaled, m_nRows, m_Rscale, m_Cscale,
+      m_nrows, m_ncols, m_Ascaled, m_nrows, m_Rscale, m_Cscale,
       ROWCND, COLCND, AMAX, m_equ
     );
 
     // perform QR factorization
-    bool ok = m_QR1.factorize( m_Ascaled, m_nRows );
+    bool ok = m_QR1.factorize( m_Ascaled, m_nrows );
     if ( !ok ) return false;
 
     // evaluate rank
-    m_QR1.getRt( m_Rt, m_nCols );
+    m_QR1.getRt( m_Rt, m_ncols );
 
-    m_rank = m_nCols;
-    valueType threshold = absmax( m_nCols, m_Rt, m_nCols+1 ) * m_epsi;
+    m_rank = m_ncols;
+    valueType threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
     for ( integer i = 1; i < m_rank; ++i ) {
-      if ( std::abs(m_Rt[i*(m_nCols+1)]) < threshold )
+      if ( std::abs(m_Rt[i*(m_ncols+1)]) < threshold )
         { m_rank = i; break; }
     }
 
-    if ( m_rank < m_nCols ) {
+    if ( m_rank < m_ncols ) {
       // allocate for QR factorization
-      m_QR2.no_allocate( m_nCols, m_rank, m_LWorkQR2, m_WorkQR2 );
+      m_QR2.no_allocate( m_ncols, m_rank, m_LWorkQR2, m_WorkQR2 );
       // perform QR factorization
-      ok = m_QR2.factorize( m_Rt, m_nCols );
+      ok = m_QR2.factorize( m_Rt, m_ncols );
       if ( !ok ) return false;
     }
 
@@ -238,8 +238,8 @@ namespace lapack_wrapper {
     integer         incx
   ) const {
 
-    if ( L_mm_work < m_nRows ) {
-      L_mm_work = m_nRows;
+    if ( L_mm_work < m_nrows ) {
+      L_mm_work = m_nrows;
       m_allocReals.free();
       m_allocReals.allocate( size_t(L_mm_work) );
       mm_work = m_allocReals( size_t(L_mm_work) );
@@ -247,13 +247,13 @@ namespace lapack_wrapper {
 
     // (S*A*C)*P = Q*R --> A = S^(-1) * Q * R * P^(-1) * C^(-1)
     // A^+ = C P R^(-1) Q^T S
-    copy( m_nRows, b, incb, mm_work, 1 );
+    copy( m_nrows, b, incb, mm_work, 1 );
     if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_ROWS )
-      lascl2( m_nRows, 1, m_Rscale, mm_work, 1 );
+      lascl2( m_nrows, 1, m_Rscale, mm_work, 1 );
 
     m_QR1.Qt_mul( mm_work );
 
-    if ( m_rank < m_nCols ) {
+    if ( m_rank < m_ncols ) {
       /*
       // computation of R^+
       //        / L1 | 0 \
@@ -276,7 +276,7 @@ namespace lapack_wrapper {
       //                                            \   0       0 /
       */
       m_QR2.invRt_mul( mm_work );
-      std::fill_n( mm_work+m_rank, m_nRows-m_rank, 0 );
+      std::fill_n( mm_work+m_rank, m_nrows-m_rank, 0 );
       m_QR2.Q_mul( mm_work );
     } else {
       m_QR1.invR_mul( mm_work );
@@ -285,9 +285,9 @@ namespace lapack_wrapper {
     m_QR1.permute( mm_work );
 
     if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_COLUMNS )
-      lascl2( m_nCols, 1, m_Cscale, mm_work, 1 );
+      lascl2( m_ncols, 1, m_Cscale, mm_work, 1 );
 
-    copy( m_nCols, mm_work, 1, x, incx );
+    copy( m_ncols, mm_work, 1, x, incx );
     return true;
   }
 
@@ -300,24 +300,24 @@ namespace lapack_wrapper {
     integer         incx
   ) const {
 
-    if ( L_mm_work < m_nRows ) {
-      L_mm_work = m_nRows;
+    if ( L_mm_work < m_nrows ) {
+      L_mm_work = m_nrows;
       m_allocReals.free();
       m_allocReals.allocate( size_t(L_mm_work) );
       mm_work = m_allocReals( size_t(L_mm_work) );
     }
 
-    copy( m_nCols, b, incb, mm_work, 1 );
+    copy( m_ncols, b, incb, mm_work, 1 );
 
     if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_COLUMNS )
-      lascl2( m_nCols, 1, m_Cscale, mm_work, 1 );
+      lascl2( m_ncols, 1, m_Cscale, mm_work, 1 );
 
     m_QR1.inv_permute( mm_work );
 
-    if ( m_rank < m_nCols ) {
+    if ( m_rank < m_ncols ) {
       m_QR2.Qt_mul( mm_work );
       m_QR2.invR_mul( mm_work );
-      std::fill_n( mm_work+m_rank, m_nRows-m_rank, 0 );
+      std::fill_n( mm_work+m_rank, m_nrows-m_rank, 0 );
     } else {
       m_QR1.invRt_mul( mm_work );
     }
@@ -325,9 +325,9 @@ namespace lapack_wrapper {
     m_QR1.Q_mul( mm_work );
 
     if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_ROWS )
-      lascl2( m_nRows, 1, m_Rscale, mm_work, 1 );
+      lascl2( m_nrows, 1, m_Rscale, mm_work, 1 );
 
-    copy( m_nRows, mm_work, 1, x, incx );
+    copy( m_nrows, mm_work, 1, x, incx );
 
     return true;
   }
@@ -344,7 +344,7 @@ namespace lapack_wrapper {
     integer         ldX
   ) const {
 
-    integer NR = m_nRows*nrhs;
+    integer NR = m_nrows*nrhs;
     if ( L_mm_work < NR ) {
       L_mm_work = NR;
       m_allocReals.free();
@@ -354,26 +354,26 @@ namespace lapack_wrapper {
 
     // (S*A*C)*P = Q*R --> A = S^(-1) * Q * R * P^(-1) * C^(-1)
     // A^+ = C P R^(-1) Q^T S
-    gecopy( m_nRows, nrhs, B, ldB, mm_work, m_nRows );
+    gecopy( m_nrows, nrhs, B, ldB, mm_work, m_nrows );
     if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_ROWS )
-      lascl2( m_nRows, nrhs, m_Rscale, mm_work, m_nRows );
+      lascl2( m_nrows, nrhs, m_Rscale, mm_work, m_nrows );
 
-    m_QR1.Qt_mul( m_nRows, nrhs, mm_work, m_nRows );
+    m_QR1.Qt_mul( m_nrows, nrhs, mm_work, m_nrows );
 
-    if ( m_rank < m_nCols ) {
-      m_QR2.invRt_mul( m_rank, nrhs, mm_work, m_nRows );
-      gezero( m_nRows-m_rank, nrhs, mm_work+m_rank, m_nRows );
-      m_QR2.Q_mul( m_nCols, nrhs, mm_work, m_nRows );
+    if ( m_rank < m_ncols ) {
+      m_QR2.invRt_mul( m_rank, nrhs, mm_work, m_nrows );
+      gezero( m_nrows-m_rank, nrhs, mm_work+m_rank, m_nrows );
+      m_QR2.Q_mul( m_ncols, nrhs, mm_work, m_nrows );
     } else {
-      m_QR1.invR_mul( m_nRows, nrhs, mm_work, m_nRows );
+      m_QR1.invR_mul( m_nrows, nrhs, mm_work, m_nrows );
     }
 
-    m_QR1.permute_rows( m_nCols, nrhs, mm_work, m_nRows );
+    m_QR1.permute_rows( m_ncols, nrhs, mm_work, m_nrows );
 
     if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_COLUMNS )
-      lascl2( m_nCols, nrhs, m_Cscale, mm_work, m_nRows );
+      lascl2( m_ncols, nrhs, m_Cscale, mm_work, m_nrows );
 
-    gecopy( m_nCols, nrhs, mm_work, m_nRows, X, ldX );
+    gecopy( m_ncols, nrhs, mm_work, m_nrows, X, ldX );
 
     return true;
   }
@@ -390,7 +390,7 @@ namespace lapack_wrapper {
     integer         ldX
   ) const {
 
-    integer NR = m_nRows*nrhs;
+    integer NR = m_nrows*nrhs;
     if ( L_mm_work < NR ) {
       L_mm_work = NR;
       m_allocReals.free();
@@ -398,27 +398,27 @@ namespace lapack_wrapper {
       mm_work = m_allocReals( size_t(L_mm_work) );
     }
 
-    gecopy( m_nCols, nrhs, B, ldB, mm_work, m_nRows );
+    gecopy( m_ncols, nrhs, B, ldB, mm_work, m_nrows );
 
     if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_COLUMNS )
-      lascl2( m_nCols, nrhs, m_Cscale, mm_work, m_nRows );
+      lascl2( m_ncols, nrhs, m_Cscale, mm_work, m_nrows );
 
-    m_QR1.inv_permute_rows( m_nCols, nrhs, mm_work, m_nRows );
+    m_QR1.inv_permute_rows( m_ncols, nrhs, mm_work, m_nrows );
 
-    if ( m_rank < m_nCols ) {
-      m_QR2.Qt_mul( m_nCols, nrhs, mm_work, m_nRows );
-      m_QR2.invR_mul( m_rank, nrhs, mm_work, m_nRows );
-      gezero( m_nRows-m_rank, nrhs, mm_work+m_rank, m_nRows );
+    if ( m_rank < m_ncols ) {
+      m_QR2.Qt_mul( m_ncols, nrhs, mm_work, m_nrows );
+      m_QR2.invR_mul( m_rank, nrhs, mm_work, m_nrows );
+      gezero( m_nrows-m_rank, nrhs, mm_work+m_rank, m_nrows );
     } else {
-      m_QR1.invRt_mul( m_nRows, nrhs, mm_work, m_nRows );
+      m_QR1.invRt_mul( m_nrows, nrhs, mm_work, m_nrows );
     }
 
-    m_QR1.Q_mul( m_nRows, nrhs, mm_work, m_nRows );
+    m_QR1.Q_mul( m_nrows, nrhs, mm_work, m_nrows );
 
     if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_ROWS )
-      lascl2( m_nRows, nrhs, m_Rscale, mm_work, m_nRows );
+      lascl2( m_nrows, nrhs, m_Rscale, mm_work, m_nrows );
 
-    gecopy( m_nRows, nrhs, mm_work, m_nRows, X, ldX );
+    gecopy( m_nrows, nrhs, mm_work, m_nrows, X, ldX );
 
     return true;
   }

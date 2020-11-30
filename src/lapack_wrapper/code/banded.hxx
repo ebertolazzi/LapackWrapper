@@ -191,12 +191,12 @@ namespace lapack_wrapper {
     ULselect      const & UPLO,
     Transposition const & TRANS,
     DiagonalType  const & DIAG,
-    integer             N,
-    integer             K,
-    real          const A[],
-    integer             ldA,
-    real                xb[],
-    integer             incx
+    integer               N,
+    integer               K,
+    real          const   A[],
+    integer               ldA,
+    real                  xb[],
+    integer               incx
   ) {
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \
@@ -233,12 +233,12 @@ namespace lapack_wrapper {
     ULselect      const & UPLO,
     Transposition const & TRANS,
     DiagonalType  const & DIAG,
-    integer             N,
-    integer             K,
-    doublereal    const A[],
-    integer             ldA,
-    doublereal          xb[],
-    integer             incx
+    integer               N,
+    integer               K,
+    doublereal    const   A[],
+    integer               ldA,
+    doublereal            xb[],
+    integer               incx
   ) {
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \
@@ -432,12 +432,12 @@ namespace lapack_wrapper {
     ULselect      const & UPLO,
     Transposition const & TRANS,
     DiagonalType  const & DIAG,
-    integer             N,
-    integer             K,
-    real          const A[],
-    integer             ldA,
-    real                xb[],
-    integer             incx
+    integer               N,
+    integer               K,
+    real          const   A[],
+    integer               ldA,
+    real                  xb[],
+    integer               incx
   ) {
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \
@@ -474,12 +474,12 @@ namespace lapack_wrapper {
     ULselect      const & UPLO,
     Transposition const & TRANS,
     DiagonalType  const & DIAG,
-    integer             N,
-    integer             K,
-    doublereal    const A[],
-    integer             ldA,
-    doublereal          xb[],
-    integer             incx
+    integer               N,
+    integer               K,
+    doublereal    const   A[],
+    integer               ldA,
+    doublereal            xb[],
+    integer               incx
   ) {
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \

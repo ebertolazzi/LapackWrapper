@@ -35,12 +35,12 @@ namespace lapack_wrapper {
       m_last_error    = "CPPMA57<real>::init N_Row != N_Col!";
       return false;
     }
-    m_nRows = m_nCols = N_Row;
+    m_nrows = m_ncols = N_Row;
     // allocate memory:
     m_i_Row.resize(size_t(m_nnz));
     m_j_Col.resize(size_t(m_nnz));
-    m_iKeep.resize(size_t(5 * m_nRows + 2 * m_nnz + 42));
-    m_iPivotSeq.resize(size_t(5 * m_nRows));
+    m_iKeep.resize(size_t(5 * m_nrows + 2 * m_nnz + 42));
+    m_iPivotSeq.resize(size_t(5 * m_nrows));
 
     // Copy row and column arrays:
     std::copy_n(iRow, m_nnz, m_i_Row.begin());
@@ -60,7 +60,7 @@ namespace lapack_wrapper {
     // Analyse the structure of the linear system:
     int NiKeep = int(m_iKeep.size());
     HSL::ma57a<real>(
-      m_nRows,
+      m_nrows,
       m_nnz,
       &m_i_Row.front(),
       &m_j_Col.front(),
@@ -77,8 +77,8 @@ namespace lapack_wrapper {
     // Restize memory for workspace:
     m_Work.resize(size_t(3 * m_nnz));
     // allocate reintinmet memory:
-    m_RHSReinfinement.resize(size_t(m_nRows));
-    m_residualVec.resize(size_t(m_nRows));
+    m_RHSRefinement.resize(size_t(m_nrows));
+    m_residualVec.resize(size_t(m_nrows));
     m_isInitialized = true;
     m_isFactorized  = false;
     return true;
@@ -101,7 +101,7 @@ namespace lapack_wrapper {
     int lifact = int(m_ifact.size());
     int lfact  = int(m_fact.size());
     HSL::ma57b<real>(
-      m_nRows,
+      m_nrows,
       m_nnz,
       &m_a_stored.front(),
       &m_fact.front(),
@@ -142,7 +142,7 @@ namespace lapack_wrapper {
 
     // Solve system:
     if ( m_doRefinement ) {
-      std::copy( RHS, RHS+m_nRows, m_RHSReinfinement.begin() );
+      std::copy_n( RHS, m_nrows, m_RHSRefinement.begin() );
       real residual = 10.0;
       int  localjob = 0;
       for ( int counter = 0;
@@ -153,7 +153,7 @@ namespace lapack_wrapper {
         int lfact  = int(m_fact.size());
         HSL::ma57d<real>(
           localjob,
-          m_nRows,
+          m_nrows,
           int(m_a_stored.size()),
           &m_a_stored.front(),
           &m_i_Row.front(),
@@ -162,7 +162,7 @@ namespace lapack_wrapper {
           lfact,
           &m_ifact.front(),
           lifact,
-          &m_RHSReinfinement.front(),
+          &m_RHSRefinement.front(),
           X,
           &m_residualVec.front(),
           &m_Work.front(),
@@ -185,13 +185,13 @@ namespace lapack_wrapper {
       // Solve with right side:
       if (RHS != X)
         for (int j = 0; j < nrhs; ++j)
-           std::copy_n(RHS + j * ldRHS, m_nRows, X + j * ldX);
+           std::copy_n(RHS + j * ldRHS, m_nrows, X + j * ldX);
       int lfact  = int(m_fact.size());
       int lifact = int(m_ifact.size());
       int NWork  = int(m_Work.size());
       HSL::ma57c<real>(
         m_job,
-        m_nRows,
+        m_nrows,
         &m_fact.front(),
         lfact,
         &m_ifact.front(),

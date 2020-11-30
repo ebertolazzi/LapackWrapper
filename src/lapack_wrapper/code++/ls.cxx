@@ -51,8 +51,8 @@ namespace lapack_wrapper {
       "LWork must be >= {}\n",
       NR, NC, Lwork, Lwmin
     );
-    m_nRows    = NR;
-    m_nCols    = NC;
+    m_nrows    = NR;
+    m_ncols    = NC;
     m_Amat     = Work;
     m_AmatWork = Work+NRC;
     m_sigma    = Work+2*NRC;
@@ -83,7 +83,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Amat, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Amat, m_nrows
     );
     UTILS_ASSERT(
       info == 0,
@@ -98,7 +98,7 @@ namespace lapack_wrapper {
   bool
   LSS_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Amat, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Amat, m_nrows
     );
     return info == 0;
   }
@@ -109,18 +109,18 @@ namespace lapack_wrapper {
   bool
   LSS_no_alloc<T>::solve( valueType xb[] ) const {
     // check memory
-    integer L = getL( m_nRows, m_nCols, 1 );
+    integer L = getL( m_nrows, m_ncols, 1 );
     if ( L > m_Lwork ) {
       m_allocWork.allocate( L );
       m_Lwork = L;
       m_Work  = m_allocWork( L );
     }
     // save matrix
-    copy( m_nRows*m_nCols, m_Amat, 1, m_AmatWork, 1);
+    copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1);
     integer info = gelss(
-      m_nRows, m_nCols, 1,
-      m_AmatWork, m_nRows,
-      xb, m_nRows,
+      m_nrows, m_ncols, 1,
+      m_AmatWork, m_nrows,
+      xb, m_nrows,
       m_sigma, m_rcond, m_rank,
       m_Work, m_Lwork
     );
@@ -133,19 +133,19 @@ namespace lapack_wrapper {
   bool
   LSS_no_alloc<T>::t_solve( valueType xb[] ) const {
     // check memory
-    integer L = getL( m_nCols, m_nRows, 1 );
+    integer L = getL( m_ncols, m_nrows, 1 );
     if ( L > m_Lwork ) {
       m_allocWork.allocate( L );
       m_Lwork = L;
       m_Work  = m_allocWork( L );
     }
     // save matrix
-    for ( integer i = 0; i < m_nCols; ++i )
-      copy( m_nRows, m_Amat+i*m_nRows, 1, m_AmatWork+i, m_nCols );
+    for ( integer i = 0; i < m_ncols; ++i )
+      copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
     integer info = gelss(
-      m_nCols, m_nRows, 1,
-      m_AmatWork, m_nCols,
-      xb, m_nCols,
+      m_ncols, m_nrows, 1,
+      m_AmatWork, m_ncols,
+      xb, m_ncols,
       m_sigma, m_rcond, m_rank,
       m_Work, m_Lwork
     );
@@ -162,17 +162,17 @@ namespace lapack_wrapper {
     integer   ldB
   ) const {
     // check memory
-    integer L = getL( m_nRows, m_nCols, nrhs );
+    integer L = getL( m_nrows, m_ncols, nrhs );
     if ( L > m_Lwork ) {
       m_allocWork.allocate( L );
       m_Lwork = L;
       m_Work  = m_allocWork( L );
     }
     // save matrix
-    copy( m_nRows*m_nCols, m_Amat, 1, m_AmatWork, 1 );
+    copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1 );
     integer info = gelss(
-      m_nRows, m_nCols, nrhs,
-      m_AmatWork, m_nRows,
+      m_nrows, m_ncols, nrhs,
+      m_AmatWork, m_nrows,
       B, ldB,
       m_sigma, m_rcond, m_rank,
       m_Work, m_Lwork
@@ -190,19 +190,19 @@ namespace lapack_wrapper {
     integer   ldB
   ) const {
     // check memory
-    integer L = getL( m_nCols, m_nRows, nrhs );
+    integer L = getL( m_ncols, m_nrows, nrhs );
     if ( L > m_Lwork ) {
       m_allocWork.allocate( L );
       m_Lwork = L;
       m_Work  = m_allocWork( L );
     }
     // save matrix
-    for ( integer i = 0; i < m_nCols; ++i )
-      copy( m_nRows, m_Amat+i*m_nRows, 1, m_AmatWork+i, m_nCols );
+    for ( integer i = 0; i < m_ncols; ++i )
+      copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
 
     integer info = gelss(
-      m_nCols, m_nRows, nrhs,
-      m_AmatWork, m_nCols,
+      m_ncols, m_nrows, nrhs,
+      m_AmatWork, m_ncols,
       B, ldB,
       m_sigma, m_rcond, m_rank,
       m_Work, m_Lwork
@@ -217,7 +217,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LSS<T>::allocate( integer NR, integer NC ) {
-    if ( m_nRows != NR || m_nCols != NC ) {
+    if ( m_nrows != NR || m_ncols != NC ) {
       integer Lwork = 2*NR*NC+std::min(NR,NC);
       m_allocReals.allocate( size_t(Lwork) );
       this->no_allocate( NR, NC, Lwork, m_allocReals( size_t(Lwork) ) );
@@ -253,8 +253,8 @@ namespace lapack_wrapper {
       "LWork must be >= {} and Liwork must be >= {}\n",
       NR, NC, Lwork, Liwork, Lwmin, NC
     );
-    m_nRows    = NR;
-    m_nCols    = NC;
+    m_nrows    = NR;
+    m_ncols    = NC;
     m_Amat     = Work;
     m_AmatWork = Work+NRC;
     m_jpvt     = iWork;
@@ -285,7 +285,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Amat, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Amat, m_nrows
     );
     UTILS_ASSERT(
       info == 0,
@@ -300,7 +300,7 @@ namespace lapack_wrapper {
   bool
   LSY_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Amat, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Amat, m_nrows
     );
     return info == 0;
   }
@@ -311,18 +311,18 @@ namespace lapack_wrapper {
   bool
   LSY_no_alloc<T>::solve( valueType xb[] ) const {
     // check memory
-    integer L = getL( m_nRows, m_nCols, 1 );
+    integer L = getL( m_nrows, m_ncols, 1 );
     if ( L > m_Lwork ) {
       m_allocWork.allocate( L );
       m_Lwork = L;
       m_Work  = m_allocWork( L );
     }
     // save matrix
-    copy( m_nRows*m_nCols, m_Amat, 1, m_AmatWork, 1 );
+    copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1 );
     integer info = gelsy(
-      m_nRows, m_nCols, 1,
-      m_AmatWork, m_nRows,
-      xb, m_nRows, m_jpvt,
+      m_nrows, m_ncols, 1,
+      m_AmatWork, m_nrows,
+      xb, m_nrows, m_jpvt,
       m_rcond, m_rank,
       m_Work, m_Lwork
     );
@@ -335,19 +335,19 @@ namespace lapack_wrapper {
   bool
   LSY_no_alloc<T>::t_solve( valueType xb[] ) const {
     // check memory
-    integer L = getL( m_nCols, m_nRows, 1 );
+    integer L = getL( m_ncols, m_nrows, 1 );
     if ( L > m_Lwork ) {
       m_allocWork.allocate( L );
       m_Lwork = L;
       m_Work  = m_allocWork( L );
     }
     // save matrix
-    for ( integer i = 0; i < m_nCols; ++i )
-      copy( m_nRows, m_Amat+i*m_nRows, 1, m_AmatWork+i, m_nCols );
+    for ( integer i = 0; i < m_ncols; ++i )
+      copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
     integer info = gelsy(
-      m_nCols, m_nRows, 1,
-      m_AmatWork, m_nCols,
-      xb, m_nCols, m_jpvt,
+      m_ncols, m_nrows, 1,
+      m_AmatWork, m_ncols,
+      xb, m_ncols, m_jpvt,
       m_rcond, m_rank,
       m_Work, m_Lwork
     );
@@ -364,17 +364,17 @@ namespace lapack_wrapper {
     integer   ldB
   ) const {
     // check memory
-    integer L = getL( m_nRows, m_nCols, nrhs );
+    integer L = getL( m_nrows, m_ncols, nrhs );
     if ( L > m_Lwork ) {
       m_allocWork.allocate( L );
       m_Lwork = L;
       m_Work  = m_allocWork( L );
     }
     // save matrix
-    copy( m_nRows*m_nCols, m_Amat, 1, m_AmatWork, 1 );
+    copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1 );
     integer info = gelsy(
-      m_nRows, m_nCols, nrhs,
-      m_AmatWork, m_nRows,
+      m_nrows, m_ncols, nrhs,
+      m_AmatWork, m_nrows,
       B, ldB, m_jpvt,
       m_rcond, m_rank,
       m_Work, m_Lwork
@@ -392,18 +392,18 @@ namespace lapack_wrapper {
     integer   ldB
   ) const {
     // check memory
-    integer L = getL( m_nCols, m_nRows, nrhs );
+    integer L = getL( m_ncols, m_nrows, nrhs );
     if ( L > m_Lwork ) {
       m_allocWork.allocate( L );
       m_Lwork = L;
       m_Work  = m_allocWork( L );
     }
     // save matrix
-    for ( integer i = 0; i < m_nCols; ++i )
-      copy( m_nRows, m_Amat+i*m_nRows, 1, m_AmatWork+i, m_nCols );
+    for ( integer i = 0; i < m_ncols; ++i )
+      copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
     integer info = gelsy(
-      m_nCols, m_nRows, nrhs,
-      m_AmatWork, m_nCols,
+      m_ncols, m_nrows, nrhs,
+      m_AmatWork, m_ncols,
       B, ldB, m_jpvt,
       m_rcond, m_rank,
       m_Work, m_Lwork
@@ -418,7 +418,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LSY<T>::allocate( integer NR, integer NC ) {
-    if ( m_nRows != NR || m_nCols != NC ) {
+    if ( m_nrows != NR || m_ncols != NC ) {
       integer Lwork = 2*NR*NC;
       m_allocReals.allocate( size_t(Lwork) );
       m_allocInts.allocate( size_t(NC) );
@@ -443,7 +443,7 @@ namespace lapack_wrapper {
   ) {
     allocate( NR, NC );
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Amat, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Amat, m_nrows
     );
     UTILS_ASSERT(
       info == 0,
@@ -464,7 +464,7 @@ namespace lapack_wrapper {
   ) {
     allocate( NR, NC );
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Amat, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Amat, m_nrows
     );
     return info == 0;
   }

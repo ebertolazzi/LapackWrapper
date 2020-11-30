@@ -19,8 +19,8 @@ namespace lapack_wrapper {
   template <typename real>
   class HSLsolver {
   protected:
-    int m_nRows;
-    int m_nCols;
+    int m_nrows;
+    int m_ncols;
     int m_nnz;
 
     /// True if the HSL solver is initialized.
@@ -124,7 +124,7 @@ namespace lapack_wrapper {
      */
     bool
     solve( real const RHS[], real X[] ) const {
-      return solve( 1, RHS, m_nRows, X, m_nRows );
+      return solve( 1, RHS, m_nrows, X, m_nrows );
     }
 
     /**
@@ -163,7 +163,7 @@ namespace lapack_wrapper {
      */
     bool
     solve_transposed( real const RHS[], real X[] ) const {
-      return solve_transposed( 1, RHS, m_nCols, X, m_nCols );
+      return solve_transposed( 1, RHS, m_ncols, X, m_ncols );
     }
 
     /**

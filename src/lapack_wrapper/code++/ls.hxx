@@ -43,8 +43,8 @@ namespace lapack_wrapper {
     mutable valueType       * m_Work;
     mutable integer           m_Lwork;
 
-    integer m_nRows;
-    integer m_nCols;
+    integer m_nrows;
+    integer m_ncols;
 
             valueType * m_Amat;
     mutable valueType * m_sigma;
@@ -65,8 +65,8 @@ namespace lapack_wrapper {
     , m_allocWork("LSS_no_alloc-allocReals")
     , m_Work(nullptr)
     , m_Lwork(0)
-    , m_nRows(0)
-    , m_nCols(0)
+    , m_nrows(0)
+    , m_ncols(0)
     , m_Amat(nullptr)
     , m_sigma(nullptr)
     , m_AmatWork(nullptr)
@@ -152,8 +152,8 @@ namespace lapack_wrapper {
     using LSS_no_alloc<T>::m_allocWork;
     using LSS_no_alloc<T>::m_Work;
     using LSS_no_alloc<T>::m_Lwork;
-    using LSS_no_alloc<T>::m_nRows;
-    using LSS_no_alloc<T>::m_nCols;
+    using LSS_no_alloc<T>::m_nrows;
+    using LSS_no_alloc<T>::m_ncols;
     using LSS_no_alloc<T>::m_Amat;
     using LSS_no_alloc<T>::m_sigma;
     using LSS_no_alloc<T>::m_AmatWork;
@@ -232,8 +232,8 @@ namespace lapack_wrapper {
     mutable valueType       * m_Work;
     mutable integer           m_Lwork;
 
-    integer m_nRows;
-    integer m_nCols;
+    integer m_nrows;
+    integer m_ncols;
 
     valueType * m_Amat;
 
@@ -255,8 +255,8 @@ namespace lapack_wrapper {
     , m_allocWork("LSY_no_alloc")
     , m_Work(nullptr)
     , m_Lwork(0)
-    , m_nRows(0)
-    , m_nCols(0)
+    , m_nrows(0)
+    , m_ncols(0)
     , m_Amat(nullptr)
     , m_AmatWork(nullptr)
     , m_jpvt(nullptr)
@@ -348,8 +348,8 @@ namespace lapack_wrapper {
     using LSY_no_alloc<T>::m_allocWork;
     using LSY_no_alloc<T>::m_Work;
     using LSY_no_alloc<T>::m_Lwork;
-    using LSY_no_alloc<T>::m_nRows;
-    using LSY_no_alloc<T>::m_nCols;
+    using LSY_no_alloc<T>::m_nrows;
+    using LSY_no_alloc<T>::m_ncols;
     using LSY_no_alloc<T>::m_Amat;
     using LSY_no_alloc<T>::m_AmatWork;
     using LSY_no_alloc<T>::m_rank;

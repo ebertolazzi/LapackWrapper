@@ -43,8 +43,8 @@ namespace lapack_wrapper {
     mutable integer           L_mm_work;
     mutable valueType       * mm_work;
 
-    integer     m_nRows;
-    integer     m_nCols;
+    integer     m_nrows;
+    integer     m_ncols;
     integer     m_rank;
     valueType   m_epsi;
     valueType * m_Rscale;
@@ -145,7 +145,7 @@ namespace lapack_wrapper {
     virtual
     bool
     solve( valueType xb[] ) const UTILS_OVERRIDE {
-      if ( m_nRows != m_nCols ) return false;
+      if ( m_nrows != m_ncols ) return false;
       return mult_inv( xb, 1, xb, 1 );
     }
 
@@ -157,7 +157,7 @@ namespace lapack_wrapper {
     virtual
     bool
     t_solve( valueType xb[] ) const UTILS_OVERRIDE {
-      if ( m_nRows != m_nCols ) return false;
+      if ( m_nrows != m_ncols ) return false;
       return t_mult_inv( xb, 1, xb, 1 );
     }
 
@@ -168,7 +168,7 @@ namespace lapack_wrapper {
       valueType B[],
       integer   ldB
     ) const UTILS_OVERRIDE {
-      if ( m_nRows != m_nCols ) return false;
+      if ( m_nrows != m_ncols ) return false;
       return mult_inv( nrhs, B, ldB, B, ldB );
     }
 
@@ -179,7 +179,7 @@ namespace lapack_wrapper {
       valueType B[],
       integer   ldB
     ) const UTILS_OVERRIDE {
-      if ( m_nRows != m_nCols ) return false;
+      if ( m_nrows != m_ncols ) return false;
       return t_mult_inv( nrhs, B, ldB, B, ldB );
     }
 

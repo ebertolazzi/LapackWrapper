@@ -98,9 +98,9 @@ namespace lapack_wrapper {
     lapack_wrapper::Malloc<T> m_mem;
   public:
 
-    using MatrixWrapper<T>::m_nRows;   //!< Number of rows
-    using MatrixWrapper<T>::m_nCols;   //!< Number of columns
-    using MatrixWrapper<T>::m_ldData;  //!< Leadind dimension
+    using MatrixWrapper<T>::m_nrows;   //!< Number of rows
+    using MatrixWrapper<T>::m_ncols;   //!< Number of columns
+    using MatrixWrapper<T>::m_ldData;  //!< Leading dimension
     using MatrixWrapper<T>::m_data;    //!< pointer to matrix data
 
     Matrix();
@@ -122,15 +122,19 @@ namespace lapack_wrapper {
   class DiagMatrix : public DiagMatrixWrapper<T> {
     Malloc<T> m_mem;
   public:
+
+    using DiagMatrixWrapper<T>::m_dim;
+    using DiagMatrixWrapper<T>::m_data;
+
     DiagMatrix();
     DiagMatrix( DiagMatrix const & D );
 
-    DiagMatrix( integer _dim );
-    void setup( integer _dim );
+    DiagMatrix( integer dim );
+    void setup( integer dim );
 
     void
     scale_by( T sc )
-    { scal( this->dim, sc, this->data, 1 ); }
+    { scal( m_dim, sc, m_data, 1 ); }
 
     DiagMatrix<T> const & operator = ( DiagMatrix<T> const & rhs );
   };

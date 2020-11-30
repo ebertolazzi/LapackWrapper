@@ -39,8 +39,8 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer     m_nRows;
-    integer     m_nCols;
+    integer     m_nrows;
+    integer     m_ncols;
 
     valueType * m_Afactorized;
     valueType * m_Work;
@@ -67,8 +67,8 @@ namespace lapack_wrapper {
       valueType * _Work  = nullptr,
       integer   * _Iwork = nullptr
     ) {
-      m_nRows       = NR;
-      m_nCols       = NC;
+      m_nrows       = NR;
+      m_ncols       = NC;
       m_Afactorized = _Afactorized;
       m_i_pivot     = _i_pivot;
       // only for condition number
@@ -159,8 +159,8 @@ namespace lapack_wrapper {
 
   public:
 
-    using LU_no_alloc<T>::m_nRows;
-    using LU_no_alloc<T>::m_nCols;
+    using LU_no_alloc<T>::m_nrows;
+    using LU_no_alloc<T>::m_ncols;
     using LU_no_alloc<T>::m_Afactorized;
     using LU_no_alloc<T>::m_Work;
     using LU_no_alloc<T>::m_Iwork;

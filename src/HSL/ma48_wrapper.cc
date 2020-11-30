@@ -92,8 +92,8 @@ namespace lapack_wrapper {
   ) {
     m_isFactorized = false;
     m_nnz          = Nnz;
-    m_nRows        = N_Row;
-    m_nCols        = N_Col;
+    m_nrows        = N_Row;
+    m_ncols        = N_Col;
     m_la           = 3 * m_nnz;
     m_job          = 1;
     m_a.resize(size_t(m_la));
@@ -126,9 +126,9 @@ namespace lapack_wrapper {
       m_isInitialized = false;
       return false;
     }
-    int N_RC_Max = std::max( m_nRows, m_nCols );
-    int N_keep   = m_nRows + 5 * m_nCols + 4 * (m_nCols / ihlp) + 7;
-    int N_iw     = m_nRows * 6 + m_nCols * 3;
+    int N_RC_Max = std::max( m_nrows, m_ncols );
+    int N_keep   = m_nrows + 5 * m_ncols + 4 * (m_ncols / ihlp) + 7;
+    int N_iw     = m_nrows * 6 + m_ncols * 3;
     int N_w      = 4 * N_RC_Max;
     m_keep.resize(size_t(N_keep));
     m_iw.resize(size_t(N_iw));
@@ -153,8 +153,8 @@ namespace lapack_wrapper {
     std::copy( ArrayA, ArrayA+m_nnz, m_a.begin() );
     // Pivoting:
     HSL::ma48a<real>(
-      m_nRows,
-      m_nCols,
+      m_nrows,
+      m_ncols,
       m_nnz,
       m_job,
       m_la,
@@ -188,8 +188,8 @@ namespace lapack_wrapper {
       );
 
       HSL::ma48a<real>(
-        m_nRows,
-        m_nCols,
+        m_nrows,
+        m_ncols,
         m_nnz,
         m_job,
         m_la,
@@ -213,8 +213,8 @@ namespace lapack_wrapper {
 
     // Factorize:
     HSL::ma48b<real>(
-      m_nRows,
-      m_nCols,
+      m_nrows,
+      m_ncols,
       m_nnz,
       m_job,
       m_la,
@@ -253,8 +253,8 @@ namespace lapack_wrapper {
 
     // Solve with right hand side:
     HSL::ma48c<real>(
-      m_nRows,
-      m_nCols,
+      m_nrows,
+      m_ncols,
       transposed ? 1 : 0,
       m_job,
       m_la,
@@ -286,12 +286,13 @@ namespace lapack_wrapper {
   ) const {
     bool ok = true;
     if ( RHS == X ) {
-      std::vector<real> tmpRHS;
-      tmpRHS.resize(size_t(m_nRows));
+      Malloc<real> mem("MA48<real>::solve");
+      mem.allocate( size_t(m_nrows) );
+      real * tmpRHS = mem( size_t(m_nrows) );
       for ( int j = 0; ok && j < nrhs; ++j ) {
         real const * RHSj = RHS + j * ldRHS;
-        std::copy( RHSj, RHSj+m_nRows, tmpRHS.begin() );
-        ok = this->solve( &tmpRHS.front(), X + j * ldX, false );
+        std::copy_n( RHSj, m_nrows, tmpRHS );
+        ok = this->solve( tmpRHS, X + j * ldX, false );
       }
     } else {
       for ( int j = 0; ok && j < nrhs; ++j )
@@ -312,10 +313,10 @@ namespace lapack_wrapper {
     bool ok = true;
     if ( RHS == X ) {
       std::vector<real> tmpRHS;
-      tmpRHS.resize(size_t(m_nCols));
+      tmpRHS.resize(size_t(m_ncols));
       for ( int j = 0; ok && j < nrhs; ++j ) {
         real const * RHSj = RHS + j * ldRHS;
-        std::copy( RHSj, RHSj+m_nCols, tmpRHS.begin() );
+        std::copy( RHSj, RHSj+m_ncols, tmpRHS.begin() );
         ok = this->solve(&tmpRHS.front(), X + j * ldX, true);
       }
     } else {

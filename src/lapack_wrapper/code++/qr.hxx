@@ -39,8 +39,8 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer m_nRows;
-    integer m_nCols;
+    integer m_nrows;
+    integer m_ncols;
     integer m_nReflector;
     integer m_LworkQR;
 
@@ -56,8 +56,8 @@ namespace lapack_wrapper {
 
     QR_no_alloc()
     : LinearSystemSolver<T>()
-    , m_nRows(0)
-    , m_nCols(0)
+    , m_nrows(0)
+    , m_ncols(0)
     , m_nReflector(0)
     , m_LworkQR(0)
     , m_Afactorized(nullptr)
@@ -281,8 +281,8 @@ namespace lapack_wrapper {
 
   public:
 
-    using QR_no_alloc<T>::m_nRows;
-    using QR_no_alloc<T>::m_nCols;
+    using QR_no_alloc<T>::m_nrows;
+    using QR_no_alloc<T>::m_ncols;
     using QR_no_alloc<T>::m_nReflector;
     using QR_no_alloc<T>::m_LworkQR;
 
@@ -370,8 +370,8 @@ namespace lapack_wrapper {
 
   public:
 
-    using QR_no_alloc<T>::m_nRows;
-    using QR_no_alloc<T>::m_nCols;
+    using QR_no_alloc<T>::m_nrows;
+    using QR_no_alloc<T>::m_ncols;
     using QR_no_alloc<T>::m_nReflector;
     using QR_no_alloc<T>::m_LworkQR;
 
@@ -492,7 +492,7 @@ namespace lapack_wrapper {
     rankEstimate( valueType rcond ) const {
       valueType SVAL[3];
       return lapack_wrapper::rankEstimate(
-        m_nRows, m_nCols, m_Afactorized, m_nRows, rcond, SVAL
+        m_nrows, m_ncols, m_Afactorized, m_nrows, rcond, SVAL
       );
     }
 
@@ -554,8 +554,8 @@ namespace lapack_wrapper {
 
   public:
 
-    using QRP_no_alloc<T>::m_nRows;
-    using QRP_no_alloc<T>::m_nCols;
+    using QRP_no_alloc<T>::m_nrows;
+    using QRP_no_alloc<T>::m_ncols;
     using QRP_no_alloc<T>::m_nReflector;
     using QRP_no_alloc<T>::m_LworkQR;
 

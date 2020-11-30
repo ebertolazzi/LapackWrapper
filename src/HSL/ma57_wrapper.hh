@@ -28,7 +28,7 @@ namespace lapack_wrapper {
     // Memory vectors for real.
     std::vector<real> m_a_stored;
     std::vector<real> m_fact;
-    mutable std::vector<real> m_RHSReinfinement;
+    mutable std::vector<real> m_RHSRefinement;
     mutable std::vector<real> m_Work;
     mutable std::vector<real> m_residualVec;
 
@@ -77,8 +77,8 @@ namespace lapack_wrapper {
 
   public:
 
-    using HSLsolver<real>::m_nRows;
-    using HSLsolver<real>::m_nCols;
+    using HSLsolver<real>::m_nrows;
+    using HSLsolver<real>::m_ncols;
     using HSLsolver<real>::m_nnz;
     using HSLsolver<real>::m_isInitialized;
     using HSLsolver<real>::m_isFactorized;

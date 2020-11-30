@@ -35,8 +35,8 @@ namespace lapack_wrapper {
   template <typename T>
   LU_no_alloc<T>::LU_no_alloc()
   : LinearSystemSolver<T>()
-  , m_nRows(0)
-  , m_nCols(0)
+  , m_nrows(0)
+  , m_ncols(0)
   , m_Afactorized(nullptr)
   , m_Work(nullptr)
   , m_Iwork(nullptr)
@@ -53,15 +53,15 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );
     UTILS_ASSERT(
       info == 0,
       "LU::factorize[{}] gecopy(nRow={}, nCol={}, A, LDA={}, B, LDB={}) : INFO = {}\n",
-      who, m_nRows, m_nCols, LDA, m_nRows, info
+      who, m_nrows, m_ncols, LDA, m_nrows, info
     );
     info = getrf(
-      m_nRows, m_nCols, m_Afactorized, m_nRows, m_i_pivot
+      m_nrows, m_ncols, m_Afactorized, m_nrows, m_i_pivot
     );
     UTILS_ASSERT(
       info == 0, "LU::factorize[{}] getrf INFO = {}\n", who, info
@@ -74,12 +74,12 @@ namespace lapack_wrapper {
   bool
   LU_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
     integer info = gecopy(
-      m_nRows, m_nCols, A, LDA, m_Afactorized, m_nRows
+      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );
     bool ok = info == 0;
     if ( ok ) {
       info = getrf(
-        m_nRows, m_nCols, m_Afactorized, m_nRows, m_i_pivot
+        m_nrows, m_ncols, m_Afactorized, m_nrows, m_i_pivot
       );
       ok = info == 0;
     }
@@ -92,8 +92,8 @@ namespace lapack_wrapper {
   void
   LU_no_alloc<T>::check_ls( char const who[] ) const {
     UTILS_ASSERT(
-      m_nRows == m_nCols,
-      "LU<T>::{}, rectangular matrix {} x {}\n", who, m_nRows, m_nCols
+      m_nrows == m_ncols,
+      "LU<T>::{}, rectangular matrix {} x {}\n", who, m_nrows, m_ncols
     );
   }
 
@@ -103,11 +103,11 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   LU_no_alloc<T>::solve( valueType xb[] ) const {
-    if ( m_nRows != m_nCols ) return false;
+    if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
       NO_TRANSPOSE,
-      m_nRows, 1, m_Afactorized, m_nRows, m_i_pivot,
-      xb, m_nRows
+      m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
+      xb, m_nrows
     );
     return info == 0;
   }
@@ -120,8 +120,8 @@ namespace lapack_wrapper {
     check_ls("solve");
     integer info = getrs(
       NO_TRANSPOSE,
-      m_nRows, 1, m_Afactorized, m_nRows, m_i_pivot,
-      xb, m_nRows
+      m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
+      xb, m_nrows
     );
     UTILS_ASSERT( info == 0, "LU::solve, getrs INFO = {}\nat {}\n", info, who );
   }
@@ -132,11 +132,11 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   LU_no_alloc<T>::t_solve( valueType xb[] ) const {
-    if ( m_nRows != m_nCols ) return false;
+    if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
       TRANSPOSE,
-      m_nRows, 1, m_Afactorized, m_nRows, m_i_pivot,
-      xb, m_nRows
+      m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
+      xb, m_nrows
     );
     return info == 0;
   }
@@ -149,8 +149,8 @@ namespace lapack_wrapper {
     check_ls( who );
     integer info = getrs(
       TRANSPOSE,
-      m_nRows, 1, m_Afactorized, m_nRows, m_i_pivot,
-      xb, m_nRows
+      m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
+      xb, m_nrows
     );
     UTILS_ASSERT( info == 0, "LU::t_solve, getrs INFO = {}\nat {}\n", info, who );
   }
@@ -161,10 +161,10 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   LU_no_alloc<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
-    if ( m_nRows != m_nCols ) return false;
+    if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
       NO_TRANSPOSE,
-      m_nRows, nrhs, m_Afactorized, m_nRows, m_i_pivot,
+      m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     );
     return info == 0;
@@ -183,7 +183,7 @@ namespace lapack_wrapper {
     check_ls(who);
     integer info = getrs(
       NO_TRANSPOSE,
-      m_nRows, nrhs, m_Afactorized, m_nRows, m_i_pivot,
+      m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     );
     UTILS_ASSERT( info == 0, "LU::solve getrs INFO = {}\nat {}\n", info, who );
@@ -199,10 +199,10 @@ namespace lapack_wrapper {
     valueType  B[],
     integer    ldB
   ) const {
-    if ( m_nRows != m_nCols ) return false;
+    if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
       TRANSPOSE,
-      m_nRows, nrhs, m_Afactorized, m_nRows, m_i_pivot,
+      m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     );
     return info >= 0;
@@ -221,7 +221,7 @@ namespace lapack_wrapper {
     check_ls( who );
     integer info = getrs(
       TRANSPOSE,
-      m_nRows, nrhs, m_Afactorized, m_nRows, m_i_pivot,
+      m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     );
     UTILS_ASSERT( info >= 0, "LU::t_solve getrs INFO = {}\nat {}\n", info );
@@ -234,7 +234,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::cond1( valueType norm1 ) const {
     valueType rcond;
     integer info = gecon1(
-      m_nRows, m_Afactorized, m_nRows,
+      m_nrows, m_Afactorized, m_nrows,
       norm1, rcond, m_Work, m_Iwork
     );
     UTILS_ASSERT( info == 0, "LU::cond1, gecon1 return info = {}\n", info );
@@ -248,7 +248,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::condInf( valueType normInf ) const {
     valueType rcond;
     integer info = geconInf(
-      m_nRows, m_Afactorized, m_nRows,
+      m_nrows, m_Afactorized, m_nrows,
       normInf, rcond, m_Work, m_Iwork
     );
     UTILS_ASSERT( info == 0, "LU::condInf, geconInf return info = {}\n", info );
@@ -277,9 +277,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LU<T>::allocate( integer NR, integer NC ) {
-    if ( m_nRows != NR || m_nCols != NC ) {
-      m_nRows = NR;
-      m_nCols = NC;
+    if ( m_nrows != NR || m_ncols != NC ) {
+      m_nrows = NR;
+      m_ncols = NC;
       integer NRC = NR*NC;
       integer NW  = 2*(NR+NC);
       m_allocReals.allocate( size_t(NRC+NW) );

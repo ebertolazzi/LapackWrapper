@@ -39,8 +39,8 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer     m_nRows;
-    integer     m_nCols;
+    integer     m_nrows;
+    integer     m_ncols;
 
     valueType * m_Afactorized;
     valueType * m_WorkSVD;
@@ -64,8 +64,8 @@ namespace lapack_wrapper {
 
     SVD_no_alloc( SVD_USED _svd_used = USE_GESVD )
     : LinearSystemSolver<T>()
-    , m_nRows(0)
-    , m_nCols(0)
+    , m_nrows(0)
+    , m_ncols(0)
     , m_Afactorized(nullptr)
     , m_WorkSVD(nullptr)
     , m_Umat(nullptr)
@@ -116,8 +116,8 @@ namespace lapack_wrapper {
     setRcond( valueType r )
     { m_rcond = r; }
 
-    valueType U    ( integer i, integer j ) const { return m_Umat[i+j*m_nRows]; }
-    valueType V    ( integer i, integer j ) const { return m_VTmat[j+i*m_nCols]; }
+    valueType U    ( integer i, integer j ) const { return m_Umat[i+j*m_nrows]; }
+    valueType V    ( integer i, integer j ) const { return m_VTmat[j+i*m_ncols]; }
     valueType sigma( integer i )            const { return m_Svec[i]; }
 
     //! y <- alpha * U * x + beta * y
@@ -132,8 +132,8 @@ namespace lapack_wrapper {
     ) const {
       gemv(
         NO_TRANSPOSE,
-        m_nRows, m_minRC,
-        alpha, m_Umat, m_nRows,
+        m_nrows, m_minRC,
+        alpha, m_Umat, m_nrows,
         x, incx,
         beta, y, incy
       );
@@ -151,8 +151,8 @@ namespace lapack_wrapper {
     ) const {
       gemv(
         TRANSPOSE,
-        m_nRows, m_minRC,
-        alpha, m_Umat, m_nRows,
+        m_nrows, m_minRC,
+        alpha, m_Umat, m_nrows,
         x, incx,
         beta, y, incy
       );
@@ -170,8 +170,8 @@ namespace lapack_wrapper {
     ) const {
       gemv(
         TRANSPOSE,
-        m_minRC, m_nCols,
-        alpha, m_VTmat, m_nRows,
+        m_minRC, m_ncols,
+        alpha, m_VTmat, m_nrows,
         x, incx,
         beta, y, incy
       );
@@ -189,8 +189,8 @@ namespace lapack_wrapper {
     ) const {
       gemv(
         NO_TRANSPOSE,
-        m_minRC, m_nCols,
-        alpha, m_VTmat, m_nRows,
+        m_minRC, m_ncols,
+        alpha, m_VTmat, m_nrows,
         x, incx,
         beta, y, incy
       );
@@ -229,8 +229,8 @@ namespace lapack_wrapper {
 
   public:
 
-    using SVD_no_alloc<T>::m_nRows;
-    using SVD_no_alloc<T>::m_nCols;
+    using SVD_no_alloc<T>::m_nrows;
+    using SVD_no_alloc<T>::m_ncols;
     using SVD_no_alloc<T>::m_Afactorized;
     using SVD_no_alloc<T>::m_WorkSVD;
     using SVD_no_alloc<T>::m_Umat;
