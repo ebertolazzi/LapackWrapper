@@ -271,7 +271,7 @@ namespace SparseTool {
 
     int
     solve( T const b[], T x[], bool transpose = false ) {
-      std::copy( b, b+this->N, x );
+      std::copy_n( b, this->N, x );
       return this->solve( x, transpose );
     }
 

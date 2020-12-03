@@ -103,8 +103,8 @@ namespace lapack_wrapper {
     m_j_Col_stored.resize(size_t(m_nnz));
 
     // Copy data:
-    std::copy( i_Row, i_Row+m_nnz, m_i_Row_stored.begin() );
-    std::copy( j_Col, j_Col+m_nnz, m_j_Col_stored.begin() );
+    std::copy_n( i_Row, m_nnz, m_i_Row_stored.begin() );
+    std::copy_n( j_Col, m_nnz, m_j_Col_stored.begin() );
     if ( !isFortranIndexing) {
       // Correct fortran indexing:
       for ( size_t i = 0; i < size_t(m_nnz); ++i ) {
@@ -150,7 +150,7 @@ namespace lapack_wrapper {
     }
 
     // Copy Memory:
-    std::copy( ArrayA, ArrayA+m_nnz, m_a.begin() );
+    std::copy_n( ArrayA, m_nnz, m_a.begin() );
     // Pivoting:
     HSL::ma48a<real>(
       m_nrows,
@@ -175,7 +175,7 @@ namespace lapack_wrapper {
       m_a.resize(size_t(m_la));
       m_irn.resize(size_t(m_la));
       m_jcn.resize(size_t(m_la));
-      std::copy( ArrayA, ArrayA+m_nnz, m_a.begin());
+      std::copy_n( ArrayA, m_nnz, m_a.begin());
       std::copy(
         m_i_Row_stored.begin(),
         m_i_Row_stored.end(),
@@ -316,7 +316,7 @@ namespace lapack_wrapper {
       tmpRHS.resize(size_t(m_ncols));
       for ( int j = 0; ok && j < nrhs; ++j ) {
         real const * RHSj = RHS + j * ldRHS;
-        std::copy( RHSj, RHSj+m_ncols, tmpRHS.begin() );
+        std::copy_n( RHSj, m_ncols, tmpRHS.begin() );
         ok = this->solve(&tmpRHS.front(), X + j * ldX, true);
       }
     } else {

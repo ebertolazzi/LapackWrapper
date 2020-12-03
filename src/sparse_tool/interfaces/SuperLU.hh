@@ -256,7 +256,7 @@ namespace SparseTool {
       real_type       x[],
       bool transpose = false
     ) {
-      std::copy( b, b+slu_L.nrow, x );
+      std::copy_n( b, slu_L.nrow, x );
       return solve( x, transpose );
     }
 

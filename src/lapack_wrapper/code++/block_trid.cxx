@@ -85,7 +85,7 @@ namespace lapack_wrapper {
 
     this->zero();
     m_nBlocks = nblks;
-    std::copy( rBlocks, rBlocks+nblks+1, m_row_blocks );
+    std::copy_n( rBlocks, nblks+1, m_row_blocks );
     m_is_factorized = false;
   }
 
