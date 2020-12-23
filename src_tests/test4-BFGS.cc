@@ -39,28 +39,30 @@ main() {
 
   lapack_wrapper::BFGS<lapack_wrapper::doublereal> bfgs;
 
+  lapack_wrapper::doublereal epsi = 1e-8;
+
   bfgs.allocate(3);
   bfgs.init();
   cout << "\n\n";
   bfgs.print( cout );
 
-  bfgs.update( y1, s1 );
+  bfgs.update( y1, s1, epsi );
   cout << "\n\n";
   bfgs.print( cout );
 
-  bfgs.update( y2, s2 );
+  bfgs.update( y2, s2, epsi );
   cout << "\n\n";
   bfgs.print( cout );
 
-  bfgs.update( y3, s3 );
+  bfgs.update( y3, s3, epsi );
   cout << "\n\n";
   bfgs.print( cout );
 
 
   for ( int i = 0; i < 90; ++i ) {
-    bfgs.update( y1, s1 );
-    bfgs.update( y2, s2 );
-    bfgs.update( y3, s3 );
+    bfgs.update( y1, s1, epsi );
+    bfgs.update( y2, s2, epsi );
+    bfgs.update( y3, s3, epsi );
   }
   cout << "\n\n";
   bfgs.print( cout );

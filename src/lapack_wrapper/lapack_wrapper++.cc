@@ -17,7 +17,7 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-#ifdef __GNUC__ 
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Wpadded"
 #endif
@@ -142,6 +142,9 @@ namespace lapack_wrapper {
 
   template class DFP<real>;
   template class DFP<doublereal>;
+
+  template class SR1<real>;
+  template class SR1<doublereal>;
 
   template class TridiagonalSPD<real>;
   template class TridiagonalSPD<doublereal>;

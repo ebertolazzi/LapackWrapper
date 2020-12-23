@@ -38,12 +38,12 @@ namespace lapack_wrapper {
       N > 0 && N <= 1000,
       "QN<T>::allocate, N = {} must be > 0 and <= 1000\n", N
     );
-    m_n = N;
-    m_allocReals.allocate( size_t(m_n*(m_n+3)) );
-    m_H = m_allocReals( size_t(m_n*m_n) );
-    m_s = m_allocReals( size_t(m_n) );
-    m_y = m_allocReals( size_t(m_n) );
-    m_z = m_allocReals( size_t(m_n) );
+    m_dim = N;
+    m_allocReals.allocate( size_t(m_dim*(m_dim+3)) );
+    m_H = m_allocReals( size_t(m_dim*m_dim) );
+    m_s = m_allocReals( size_t(m_dim) );
+    m_y = m_allocReals( size_t(m_dim) );
+    m_z = m_allocReals( size_t(m_dim) );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,9 +51,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QN<T>::print( ostream_type & stream ) const {
-    for ( integer i = 0; i < m_n; ++i ) {
-      for ( integer j = 0; j < m_n; ++j )
-        fmt::print( stream, "{:14} ", m_H[i+j*m_n] );
+    for ( integer i = 0; i < m_dim; ++i ) {
+      for ( integer j = 0; j < m_dim; ++j )
+        fmt::print( stream, "{:14} ", m_H[i+j*m_dim] );
       stream << '\n';
     }
   }
@@ -70,14 +70,17 @@ namespace lapack_wrapper {
   void
   BFGS<T>::update(
     valueType const y[],
-    valueType const s[]
+    valueType const s[],
+    valueType       epsi
   ) {
-    valueType sy = dot( m_n, s, 1, y, 1 );
-    if ( sy > 0 ) {
+    valueType sy   = dot( m_dim, s, 1, y, 1 );
+    valueType slen = nrm2( m_dim, s, 1 );
+    valueType ylen = nrm2( m_dim, y, 1 );
+    if ( sy >= epsi*slen*ylen ) {
       mult( y, m_z );
-      valueType yHy = dot( m_n, m_z, 1, y, 1 );
-      syr( LOWER, m_n, (1+yHy/sy)/sy, s, 1, m_H, m_n );
-      syr2( LOWER, m_n, -1/sy, s, 1, m_z, 1, m_H, m_n );
+      valueType yHy = dot( m_dim, m_z, 1, y, 1 );
+      syr( LOWER, m_dim, (1+yHy/sy)/sy, s, 1, m_H, m_dim );
+      syr2( LOWER, m_dim, -1/sy, s, 1, m_z, 1, m_H, m_dim );
     }
   }
 
@@ -93,17 +96,44 @@ namespace lapack_wrapper {
   void
   DFP<T>::update(
     valueType const y[],
-    valueType const s[]
+    valueType const s[],
+    valueType       epsi
   ) {
-    valueType sy = dot( m_n, s, 1, y, 1 );
-    if ( sy > 0 ) {
+    valueType sy   = dot( m_dim, s, 1, y, 1 );
+    valueType slen = nrm2( m_dim, s, 1 );
+    valueType ylen = nrm2( m_dim, y, 1 );
+    if ( sy >= epsi*slen*ylen ) {
       mult( y, m_z );
-      valueType yHy = dot( m_n, m_z, 1, y, 1 );
-      syr( LOWER, m_n, -1/yHy, m_z, 1, m_H, m_n );
-      syr( LOWER, m_n,   1/sy, s, 1, m_H, m_n );
+      valueType yHy = dot( m_dim, m_z, 1, y, 1 );
+      syr( LOWER, m_dim, -1/yHy, m_z, 1, m_H, m_dim );
+      syr( LOWER, m_dim,   1/sy, s,   1, m_H, m_dim );
     }
   }
 
+  /*\
+  :|:   ____  ____  _
+  :|:  / ___||  _ \/ |
+  :|:  \___ \| |_) | |
+  :|:   ___) |  _ <| |
+  :|:  |____/|_| \_\_|
+  \*/
+
+  template <typename T>
+  void
+  SR1<T>::update(
+    valueType const y[],
+    valueType const s[],
+    valueType       epsi
+  ) {
+    // z <- y - H * s
+    copy( m_dim, y, 1, m_z, 1 );
+    mult( valueType(-1), s, 1, valueType(1), m_z, 1 );
+    valueType sz   = dot( m_dim, s, 1, m_z, 1 );
+    valueType slen = nrm2( m_dim, s, 1 );
+    valueType zlen = nrm2( m_dim, m_z, 1 );
+    if ( std::abs(sz) >= epsi*slen*zlen )
+      syr( LOWER, m_dim, 1/sz, m_z, 1, m_H, m_dim );
+  }
 }
 
 ///

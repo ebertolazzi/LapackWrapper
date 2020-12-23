@@ -39,7 +39,7 @@ namespace lapack_wrapper {
   protected:
     Malloc<valueType> m_allocReals;
 
-    integer     m_n;
+    integer     m_dim;
     valueType * m_H;
     valueType * m_s;
     valueType * m_y;
@@ -49,7 +49,7 @@ namespace lapack_wrapper {
 
     QN()
     : m_allocReals("QN reals")
-    , m_n(0)
+    , m_dim(0)
     , m_H(nullptr)
     , m_s(nullptr)
     , m_y(nullptr)
@@ -64,19 +64,19 @@ namespace lapack_wrapper {
 
     valueType const &
     operator () ( integer i, integer j ) const
-    { return m_H[i+j*m_n]; }
+    { return m_H[i+j*m_dim]; }
 
     valueType &
     operator () ( integer i, integer j )
-    { return m_H[i+j*m_n]; }
+    { return m_H[i+j*m_dim]; }
 
     void
     zero()
-    { lapack_wrapper::gezero( m_n, m_n, m_H, m_n ); }
+    { lapack_wrapper::gezero( m_dim, m_dim, m_H, m_dim ); }
 
     void
     init()
-    { lapack_wrapper::geid( m_n, m_n, m_H, m_n ); }
+    { lapack_wrapper::geid( m_dim, m_dim, m_H, m_dim ); }
 
     // r <- beta * r + alpha * H * x
     void
@@ -90,8 +90,8 @@ namespace lapack_wrapper {
     ) const {
       symv(
         LOWER,
-        m_n,
-        alpha, m_H, m_n,
+        m_dim,
+        alpha, m_H, m_dim,
         x, inc_x,
         beta,
         r, inc_r
@@ -104,15 +104,22 @@ namespace lapack_wrapper {
       mult( valueType(1), x, 1, valueType(0), r, 1 );
     }
 
+    // r <- -H * x
+    void
+    minus_mult( valueType const x[], valueType r[] ) const {
+      mult( valueType(-1), x, 1, valueType(0), r, 1 );
+    }
+
     void
     update(
       valueType const f0[],
       valueType const f1[],
-      valueType const ss[]
+      valueType const ss[],
+      valueType       epsi
     ) {
-      copy( m_n,     f1, 1, m_y, 1 );
-      axpy( m_n, -1, f0, 1, m_y, 1 );
-      update( m_y, ss );
+      copy( m_dim,     f1, 1, m_y, 1 );
+      axpy( m_dim, -1, f0, 1, m_y, 1 );
+      update( m_y, ss, epsi );
     }
 
     void
@@ -120,13 +127,14 @@ namespace lapack_wrapper {
       valueType const f0[],
       valueType const f1[],
       valueType const x0[],
-      valueType const x1[]
+      valueType const x1[],
+      valueType       epsi
     ) {
-      copy( m_n,     f1, 1, m_y, 1 );
-      axpy( m_n, -1, f0, 1, m_y, 1 );
-      copy( m_n,     x1, 1, m_s, 1 );
-      axpy( m_n, -1, x0, 1, m_s, 1 );
-      update( m_y, m_s );
+      copy( m_dim,     f1, 1, m_y, 1 );
+      axpy( m_dim, -1, f0, 1, m_y, 1 );
+      copy( m_dim,     x1, 1, m_s, 1 );
+      axpy( m_dim, -1, x0, 1, m_s, 1 );
+      update( m_y, m_s, epsi );
     }
 
     void
@@ -144,7 +152,8 @@ namespace lapack_wrapper {
     void
     update(
       valueType const y[],
-      valueType const s[]
+      valueType const s[],
+      valueType       epsi
     ) UTILS_PURE_VIRTUAL;
 
   };
@@ -168,7 +177,7 @@ namespace lapack_wrapper {
     using QN<T>::mult;
     using QN<T>::update;
 
-    using QN<T>::m_n;
+    using QN<T>::m_dim;
     using QN<T>::m_H;
     using QN<T>::m_z;
 
@@ -185,8 +194,9 @@ namespace lapack_wrapper {
     virtual
     void
     update(
-      valueType const _y[],
-      valueType const _s[]
+      valueType const y[],
+      valueType const s[],
+      valueType       epsi
     ) UTILS_OVERRIDE;
 
   };
@@ -210,7 +220,7 @@ namespace lapack_wrapper {
     using QN<T>::mult;
     using QN<T>::update;
 
-    using QN<T>::m_n;
+    using QN<T>::m_dim;
     using QN<T>::m_H;
     using QN<T>::m_z;
 
@@ -227,8 +237,51 @@ namespace lapack_wrapper {
     virtual
     void
     update(
-      valueType const _y[],
-      valueType const _s[]
+      valueType const y[],
+      valueType const s[],
+      valueType       epsi
+    ) UTILS_OVERRIDE;
+  };
+
+  /*\
+  :|:   ____  ____  _
+  :|:  / ___||  _ \/ |
+  :|:  \___ \| |_) | |
+  :|:   ___) |  _ <| |
+  :|:  |____/|_| \_\_|
+  \*/
+
+  template <typename T>
+  class SR1 : public QN<T> {
+  public:
+    typedef T valueType;
+
+    using QN<T>::allocate;
+    using QN<T>::zero;
+    using QN<T>::init;
+    using QN<T>::mult;
+    using QN<T>::update;
+
+    using QN<T>::m_dim;
+    using QN<T>::m_H;
+    using QN<T>::m_z;
+
+    SR1() {}
+
+    /*\
+    :|:         _      _               _
+    :|:  __   _(_)_ __| |_ _   _  __ _| |___
+    :|:  \ \ / / | '__| __| | | |/ _` | / __|
+    :|:   \ V /| | |  | |_| |_| | (_| | \__ \
+    :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
+    \*/
+
+    virtual
+    void
+    update(
+      valueType const y[],
+      valueType const s[],
+      valueType       epsi
     ) UTILS_OVERRIDE;
   };
 
