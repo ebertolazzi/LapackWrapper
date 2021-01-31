@@ -47,8 +47,6 @@ namespace lapack_wrapper {
     integer     m_ncols;
     integer     m_rank;
     valueType   m_epsi;
-    valueType * m_Rscale;
-    valueType * m_Cscale;
     valueType * m_Ascaled;
     valueType * m_Rt;
 
@@ -58,7 +56,8 @@ namespace lapack_wrapper {
     QRP_no_alloc<valueType> m_QR1;
     QR_no_alloc<valueType>  m_QR2;
 
-    EquilibrationType m_equ;
+    void factorize( char const who[] );
+    bool factorize();
 
   public:
 
@@ -89,11 +88,10 @@ namespace lapack_wrapper {
       integer & Liwork
     ) const;
 
-    void
-    factorize( char const who[], valueType const A[], integer LDA );
-
-    bool
-    factorize( valueType const A[], integer LDA );
+    void factorize_nodim( char const who[], valueType const A[], integer LDA );
+    bool factorize_nodim( valueType const A[], integer LDA );
+    void t_factorize_nodim( char const who[], valueType const A[], integer LDA );
+    bool t_factorize_nodim( valueType const A[], integer LDA );
 
     bool
     mult_inv(
@@ -183,6 +181,9 @@ namespace lapack_wrapper {
       return t_mult_inv( nrhs, B, ldB, B, ldB );
     }
 
+    void
+    info( ostream_type & stream ) const;
+
   };
 
   //============================================================================
@@ -237,7 +238,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      this->PINV_no_alloc<T>::factorize( who, A, LDA );
+      this->PINV_no_alloc<T>::factorize_nodim( who, A, LDA );
     }
 
     /*!
@@ -254,7 +255,42 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      return this->PINV_no_alloc<T>::factorize( A, LDA );
+      return this->PINV_no_alloc<T>::factorize_nodim( A, LDA );
+    }
+
+    /*!
+     *  \param NR  number of rows of the matrix
+     *  \param NC  number of columns of the matrix
+     *  \param A   pointer to the matrix
+     *  \param LDA Leading dimension of the matrix
+     */
+    void
+    t_factorize(
+      char      const who[],
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) UTILS_OVERRIDE {
+      this->allocate( NC, NR );
+      this->PINV_no_alloc<T>::t_factorize_nodim( who, A, LDA );
+    }
+
+    /*!
+     *  \param NR  number of rows of the matrix
+     *  \param NC  number of columns of the matrix
+     *  \param A   pointer to the matrix
+     *  \param LDA Leading dimension of the matrix
+     */
+    bool
+    t_factorize(
+      integer         NR,
+      integer         NC,
+      valueType const A[],
+      integer         LDA
+    ) UTILS_OVERRIDE {
+      this->allocate( NC, NR );
+      return this->PINV_no_alloc<T>::t_factorize_nodim( A, LDA );
     }
 
   };

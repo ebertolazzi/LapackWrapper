@@ -102,7 +102,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  SVD_no_alloc<T>::factorize(
+  SVD_no_alloc<T>::factorize_nodim(
     char const      who[],
     valueType const A[],
     integer         LDA
@@ -154,7 +154,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  SVD_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+  SVD_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );

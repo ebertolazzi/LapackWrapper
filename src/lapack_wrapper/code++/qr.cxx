@@ -75,7 +75,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::factorize(
+  QR_no_alloc<T>::factorize_nodim(
     char const      who[],
     valueType const A[],
     integer         LDA
@@ -102,7 +102,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QR_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+  QR_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );
@@ -521,7 +521,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QRP_no_alloc<T>::factorize(
+  QRP_no_alloc<T>::factorize_nodim(
     char const      who[],
     valueType const A[],
     integer         LDA
@@ -551,7 +551,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QRP_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+  QRP_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
     // calcolo fattorizzazione QR della matrice A
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows

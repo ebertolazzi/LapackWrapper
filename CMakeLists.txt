@@ -153,6 +153,7 @@ IF( BUILD_EXECUTABLE )
     test6-EIGS
     #test7-SparseTool
     #test8-SparseToolComplex
+    test9-RRQR
   )
 
   ADD_CUSTOM_TARGET( all_tests ALL )

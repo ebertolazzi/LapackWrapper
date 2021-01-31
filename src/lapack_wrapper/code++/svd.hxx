@@ -102,7 +102,7 @@ namespace lapack_wrapper {
      */
     virtual
     void
-    factorize(
+    factorize_nodim(
       char const      who[],
       valueType const A[],
       integer         LDA
@@ -110,7 +110,7 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    factorize( valueType const A[], integer LDA );
+    factorize_nodim( valueType const A[], integer LDA );
 
     void
     setRcond( valueType r )
@@ -280,7 +280,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      this->factorize( who, A, LDA );
+      this->factorize_nodim( who, A, LDA );
     }
 
     virtual
@@ -292,7 +292,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      return this->factorize( A, LDA );
+      return this->factorize_nodim( A, LDA );
     }
 
   };

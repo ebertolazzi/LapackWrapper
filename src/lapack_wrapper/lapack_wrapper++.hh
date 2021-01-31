@@ -77,8 +77,101 @@ namespace lapack_wrapper {
   template <typename t_Value>
   inline
   std::string
+  print_matrix2(
+    integer       nr,
+    integer       nc,
+    t_Value const A[],
+    integer       ldA
+  ) {
+    std::string out;
+    for ( integer i = 0; i < nr; ++i ) {
+      for ( integer j = 0; j < nc; ++j )
+        out += fmt::format("{:>8} ",A[i+j*ldA]);
+      out += '\n';
+    }
+    return out;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename t_Value>
+  inline
+  std::string
   print_matrix( MatrixWrapper<t_Value> const & Amat ) {
     return print_matrix(
+      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim()
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename t_Value>
+  inline
+  std::string
+  print_matrix2( MatrixWrapper<t_Value> const & Amat ) {
+    return print_matrix2(
+      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim()
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename t_Value>
+  inline
+  std::string
+  print_matrix_transpose(
+    integer       nr,
+    integer       nc,
+    t_Value const A[],
+    integer       ldA
+  ) {
+    std::string out;
+    for ( integer j = 0; j < nc; ++j ) {
+      for ( integer i = 0; i < nr; ++i )
+        out += fmt::format("{:>14} ",fmt::format("{:.6}",A[i+j*ldA]));
+      out += '\n';
+    }
+    return out;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename t_Value>
+  inline
+  std::string
+  print_matrix_transpose2(
+    integer       nr,
+    integer       nc,
+    t_Value const A[],
+    integer       ldA
+  ) {
+    std::string out;
+    for ( integer j = 0; j < nc; ++j ) {
+      for ( integer i = 0; i < nr; ++i )
+        out += fmt::format("{:>8} ",A[i+j*ldA]);
+      out += '\n';
+    }
+    return out;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename t_Value>
+  inline
+  std::string
+  print_matrix_transpose( MatrixWrapper<t_Value> const & Amat ) {
+    return print_matrix_transpose(
+      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim()
+    );
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename t_Value>
+  inline
+  std::string
+  print_matrix_transpose2( MatrixWrapper<t_Value> const & Amat ) {
+    return print_matrix_transpose2(
       Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim()
     );
   }
@@ -250,7 +343,9 @@ namespace lapack_wrapper {
       valueType const /* A   */ [],
       integer         /* LDA */
     ) {
-      UTILS_ERROR0( "LinearSystemSolver::factorize, not defined in derived class\n" );
+      UTILS_ERROR0(
+        "LinearSystemSolver::factorize, not defined in derived class\n"
+      );
     }
 
     virtual
@@ -295,6 +390,7 @@ namespace lapack_wrapper {
       return this->factorize( M.numRows(), M.numCols(), M.data(), M.lDim() );
     }
 
+    virtual
     void
     t_factorize(
       char const      who[],
@@ -310,6 +406,7 @@ namespace lapack_wrapper {
       this->factorize( who, M );
     }
 
+    virtual
     bool
     t_factorize(
       integer         NR,

@@ -41,8 +41,6 @@ namespace lapack_wrapper {
   , m_nrows(0)
   , m_ncols(0)
   , m_rank(0)
-  , m_Rscale(nullptr)
-  , m_Cscale(nullptr)
   , m_Ascaled(nullptr)
   , m_Rt(nullptr)
   {
@@ -88,7 +86,7 @@ namespace lapack_wrapper {
 
     integer L1   = m_QR1.get_Lwork( NR, NC ) + (NR+1)*(NC+1);
     integer L2   = m_QR2.get_Lwork( NC, NC ) + (NC+1)*(NC+1);
-    integer Ltot = L1 + L2 + (NR+1)*(NC+1) + NC*NC;
+    integer Ltot = L1 + L2 + 2*NC*NC;
     UTILS_ASSERT(
       Lwork >= Ltot && Liwork >= NC,
       "PINV_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {},...)\n"
@@ -97,8 +95,6 @@ namespace lapack_wrapper {
     );
     valueType * ptr = Work;
     m_QR1.no_allocate( NR, NC, L1, ptr, NC, iWork ); ptr += L1;
-    m_Rscale  = ptr; ptr += NR;
-    m_Cscale  = ptr; ptr += NC;
     m_Ascaled = ptr; ptr += NR*NC;
     m_Rt      = ptr; ptr += NC*NC;
 
@@ -114,7 +110,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  PINV_no_alloc<T>::factorize(
+  PINV_no_alloc<T>::factorize_nodim(
     char      const who[],
     valueType const A[],
     integer         LDA
@@ -127,32 +123,32 @@ namespace lapack_wrapper {
       "return info = {}\n",
       who, m_nrows, m_ncols, LDA, m_nrows, info
     );
+    this->factorize( who );
+  }
 
-    // balance matrix
-    valueType ROWCND, COLCND, AMAX;
-    ROWCND = COLCND = 1; AMAX = 0;
-    fill( m_nrows, m_Rscale, 1, 1 );
-    fill( m_ncols, m_Cscale, 1, 1 );
-    info = geequ(
-      m_nrows, m_ncols, m_Ascaled, m_nrows, m_Rscale, m_Cscale,
-      ROWCND, COLCND, AMAX
-    );
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    UTILS_ASSERT(
-      info >= 0,
-      "{}, call to geequ( N = {}, M = {}, A, LDA = {}, ...)\n"
-      "return info = {}\n",
-      who, m_nrows, m_ncols, LDA, info
-    );
+  template <typename T>
+  void
+  PINV_no_alloc<T>::t_factorize_nodim(
+    char      const who[],
+    valueType const A[],
+    integer         LDA
+  ) {
+    for ( integer i = 0; i < m_nrows; ++i )
+      for ( integer j = 0; j < m_ncols; ++j )
+        m_Ascaled[i+j*m_nrows] = A[j+i*LDA];
+    this->factorize( who );
+  }
 
-    // equilibrate
-    laqge(
-      m_nrows, m_ncols, m_Ascaled, m_nrows, m_Rscale, m_Cscale,
-      ROWCND, COLCND, AMAX, m_equ
-    );
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  PINV_no_alloc<T>::factorize( char const who[] ) {
 
     // perform QR factorization
-    m_QR1.factorize( who, m_Ascaled, m_nrows );
+    m_QR1.factorize_nodim( who, m_Ascaled, m_nrows );
 
     // evaluate rank
     m_QR1.getRt( m_Rt, m_ncols );
@@ -168,7 +164,7 @@ namespace lapack_wrapper {
       // allocate for QR factorization
       m_QR2.no_allocate( m_ncols, m_rank, m_LWorkQR2, m_WorkQR2 );
       // perform QR factorization
-      m_QR2.factorize( who, m_Rt, m_ncols );
+      m_QR2.factorize_nodim( who, m_Rt, m_ncols );
     }
   }
 
@@ -176,34 +172,38 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  PINV_no_alloc<T>::factorize(
+  PINV_no_alloc<T>::factorize_nodim(
     valueType const A[],
     integer         LDA
   ) {
     // copy matrix and scale
     integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Ascaled, m_nrows );
     if ( info != 0 ) return false;
+    return this->factorize();
+  }
 
-    // balance matrix
-    valueType ROWCND, COLCND, AMAX;
-    ROWCND = COLCND = 1; AMAX = 0;
-    fill( m_nrows, m_Rscale, 1, 1 );
-    fill( m_ncols, m_Cscale, 1, 1 );
-    info = geequ(
-      m_nrows, m_ncols, m_Ascaled, m_nrows, m_Rscale, m_Cscale,
-      ROWCND, COLCND, AMAX
-    );
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    if ( info < 0 ) return false;
+  template <typename T>
+  bool
+  PINV_no_alloc<T>::t_factorize_nodim(
+    valueType const A[],
+    integer         LDA
+  ) {
+    for ( integer i = 0; i < m_nrows; ++i )
+      for ( integer j = 0; j < m_ncols; ++j )
+        m_Ascaled[i+j*m_nrows] = A[j+i*LDA];
+    return this->factorize();
+  }
 
-    // equilibrate
-    laqge(
-      m_nrows, m_ncols, m_Ascaled, m_nrows, m_Rscale, m_Cscale,
-      ROWCND, COLCND, AMAX, m_equ
-    );
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
+  PINV_no_alloc<T>::factorize() {
 
     // perform QR factorization
-    bool ok = m_QR1.factorize( m_Ascaled, m_nrows );
+    bool ok = m_QR1.factorize_nodim( m_Ascaled, m_nrows );
     if ( !ok ) return false;
 
     // evaluate rank
@@ -220,7 +220,7 @@ namespace lapack_wrapper {
       // allocate for QR factorization
       m_QR2.no_allocate( m_ncols, m_rank, m_LWorkQR2, m_WorkQR2 );
       // perform QR factorization
-      ok = m_QR2.factorize( m_Rt, m_ncols );
+      ok = m_QR2.factorize_nodim( m_Rt, m_ncols );
       if ( !ok ) return false;
     }
 
@@ -245,11 +245,9 @@ namespace lapack_wrapper {
       mm_work = m_allocReals( size_t(L_mm_work) );
     }
 
-    // (S*A*C)*P = Q*R --> A = S^(-1) * Q * R * P^(-1) * C^(-1)
-    // A^+ = C P R^(-1) Q^T S
+    // A*P = Q*R --> A = Q * R * P^(-1)
+    // A^+ = P R^(-1) Q^T
     copy( m_nrows, b, incb, mm_work, 1 );
-    if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_ROWS )
-      lascl2( m_nrows, 1, m_Rscale, mm_work, 1 );
 
     m_QR1.Qt_mul( mm_work );
 
@@ -284,51 +282,7 @@ namespace lapack_wrapper {
 
     m_QR1.permute( mm_work );
 
-    if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_COLUMNS )
-      lascl2( m_ncols, 1, m_Cscale, mm_work, 1 );
-
     copy( m_ncols, mm_work, 1, x, incx );
-    return true;
-  }
-
-  template <typename T>
-  bool
-  PINV_no_alloc<T>::t_mult_inv(
-    valueType const b[],
-    integer         incb,
-    valueType       x[],
-    integer         incx
-  ) const {
-
-    if ( L_mm_work < m_nrows ) {
-      L_mm_work = m_nrows;
-      m_allocReals.free();
-      m_allocReals.allocate( size_t(L_mm_work) );
-      mm_work = m_allocReals( size_t(L_mm_work) );
-    }
-
-    copy( m_ncols, b, incb, mm_work, 1 );
-
-    if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_COLUMNS )
-      lascl2( m_ncols, 1, m_Cscale, mm_work, 1 );
-
-    m_QR1.inv_permute( mm_work );
-
-    if ( m_rank < m_ncols ) {
-      m_QR2.Qt_mul( mm_work );
-      m_QR2.invR_mul( mm_work );
-      std::fill_n( mm_work+m_rank, m_nrows-m_rank, 0 );
-    } else {
-      m_QR1.invRt_mul( mm_work );
-    }
-
-    m_QR1.Q_mul( mm_work );
-
-    if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_ROWS )
-      lascl2( m_nrows, 1, m_Rscale, mm_work, 1 );
-
-    copy( m_nrows, mm_work, 1, x, incx );
-
     return true;
   }
 
@@ -352,11 +306,10 @@ namespace lapack_wrapper {
       mm_work = m_allocReals( size_t(L_mm_work) );
     }
 
-    // (S*A*C)*P = Q*R --> A = S^(-1) * Q * R * P^(-1) * C^(-1)
-    // A^+ = C P R^(-1) Q^T S
     gecopy( m_nrows, nrhs, B, ldB, mm_work, m_nrows );
-    if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_ROWS )
-      lascl2( m_nrows, nrhs, m_Rscale, mm_work, m_nrows );
+
+    // A*P = Q*R --> A =  Q * R * P^(-1)
+    // A^+ = P R^(-1) Q^T
 
     m_QR1.Qt_mul( m_nrows, nrhs, mm_work, m_nrows );
 
@@ -370,10 +323,44 @@ namespace lapack_wrapper {
 
     m_QR1.permute_rows( m_ncols, nrhs, mm_work, m_nrows );
 
-    if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_COLUMNS )
-      lascl2( m_ncols, nrhs, m_Cscale, mm_work, m_nrows );
-
     gecopy( m_ncols, nrhs, mm_work, m_nrows, X, ldX );
+
+    return true;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  bool
+  PINV_no_alloc<T>::t_mult_inv(
+    valueType const b[],
+    integer         incb,
+    valueType       x[],
+    integer         incx
+  ) const {
+
+    if ( L_mm_work < m_nrows ) {
+      L_mm_work = m_nrows;
+      m_allocReals.free();
+      m_allocReals.allocate( size_t(L_mm_work) );
+      mm_work = m_allocReals( size_t(L_mm_work) );
+    }
+
+    copy( m_ncols, b, incb, mm_work, 1 );
+
+    m_QR1.inv_permute( mm_work );
+
+    if ( m_rank < m_ncols ) {
+      m_QR2.Qt_mul( mm_work );
+      m_QR2.invR_mul( mm_work );
+      std::fill_n( mm_work+m_rank, m_nrows-m_rank, 0 );
+    } else {
+      m_QR1.invRt_mul( mm_work );
+    }
+
+    m_QR1.Q_mul( mm_work );
+
+    copy( m_nrows, mm_work, 1, x, incx );
 
     return true;
   }
@@ -400,27 +387,54 @@ namespace lapack_wrapper {
 
     gecopy( m_ncols, nrhs, B, ldB, mm_work, m_nrows );
 
-    if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_COLUMNS )
-      lascl2( m_ncols, nrhs, m_Cscale, mm_work, m_nrows );
-
     m_QR1.inv_permute_rows( m_ncols, nrhs, mm_work, m_nrows );
 
     if ( m_rank < m_ncols ) {
       m_QR2.Qt_mul( m_ncols, nrhs, mm_work, m_nrows );
-      m_QR2.invR_mul( m_rank, nrhs, mm_work, m_nrows );
       gezero( m_nrows-m_rank, nrhs, mm_work+m_rank, m_nrows );
+      m_QR2.invR_mul( m_rank, nrhs, mm_work, m_nrows );
     } else {
-      m_QR1.invRt_mul( m_nrows, nrhs, mm_work, m_nrows );
+      m_QR1.invRt_mul( m_ncols, nrhs, mm_work, m_nrows );
     }
 
     m_QR1.Q_mul( m_nrows, nrhs, mm_work, m_nrows );
 
-    if ( m_equ == EQUILIBRATE_BOTH || m_equ == EQUILIBRATE_ROWS )
-      lascl2( m_nrows, nrhs, m_Rscale, mm_work, m_nrows );
-
     gecopy( m_nrows, nrhs, mm_work, m_nrows, X, ldX );
 
     return true;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  PINV_no_alloc<T>::info( ostream_type & stream ) const {
+    Malloc<integer> memi("PINV_no_alloc<T>::info");
+    memi.allocate( size_t(m_ncols) );
+    integer * jpvt = memi( size_t(m_ncols) );
+    m_QR1.getPerm( jpvt );
+    fmt::print( stream,
+      "PINV INFO\n"
+      "size = {} x {}\n"
+      "rank = {}\n"
+      "perm = {}\n"
+      "R\n{}\n",
+      m_nrows, m_ncols, m_rank,
+      print_matrix_transpose2( m_ncols, 1, jpvt, m_ncols ),
+      print_matrix_transpose( m_ncols, m_ncols, m_Rt, m_ncols )
+    );
+
+    if ( m_rank < m_ncols ) {
+      Malloc<valueType> mem("PINV_no_alloc<T>::info");
+      size_t dim = size_t( m_rank * m_rank );
+      mem.allocate( dim );
+      valueType * R1 = mem( dim );
+      m_QR2.getR( R1, m_rank );
+      fmt::print( stream,
+        "R1\n{}\n",
+        print_matrix( m_rank, m_rank, R1, m_rank )
+      );
+    }
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

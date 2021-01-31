@@ -85,14 +85,14 @@ namespace lapack_wrapper {
      * \param LDA Leading dimension of the matrix
      */
     void
-    factorize(
+    factorize_nodim(
       char const      who[],
       valueType const A[],
       integer         LDA
     );
 
     bool
-    factorize( valueType const A[], integer LDA );
+    factorize_nodim( valueType const A[], integer LDA );
 
     /*\
     :|:  overwrites the general real M-by-N matrix C with
@@ -334,7 +334,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      this->factorize( who, A, LDA );
+      this->factorize_nodim( who, A, LDA );
     }
 
     bool
@@ -345,7 +345,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      return this->factorize( A, LDA );
+      return this->factorize_nodim( A, LDA );
     }
 
   };
@@ -419,14 +419,14 @@ namespace lapack_wrapper {
      *  \param LDA Leading dimension of the matrix
      */
     void
-    factorize(
+    factorize_nodim(
       char const      who[],
       valueType const A[],
       integer         LDA
     );
 
     bool
-    factorize( valueType const A[], integer LDA );
+    factorize_nodim( valueType const A[], integer LDA );
 
     // -------------------------------------------------------------------------
 
@@ -610,7 +610,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      this->QRP_no_alloc<T>::factorize( who, A, LDA );
+      this->QRP_no_alloc<T>::factorize_nodim( who, A, LDA );
     }
 
     /*!
@@ -628,7 +628,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      return this->QRP_no_alloc<T>::factorize( A, LDA );
+      return this->QRP_no_alloc<T>::factorize_nodim( A, LDA );
     }
 
   };

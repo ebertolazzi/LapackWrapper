@@ -47,7 +47,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  LU_no_alloc<T>::factorize(
+  LU_no_alloc<T>::factorize_nodim(
     char const      who[],
     valueType const A[],
     integer         LDA
@@ -72,7 +72,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LU_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+  LU_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );
@@ -339,7 +339,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  LUPQ_no_alloc<T>::factorize(
+  LUPQ_no_alloc<T>::factorize_nodim(
     char const      who[],
     valueType const A[],
     integer         LDA
@@ -362,7 +362,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LUPQ_no_alloc<T>::factorize( valueType const A[], integer LDA ) {
+  LUPQ_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
     integer info = gecopy(
       m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC
     );

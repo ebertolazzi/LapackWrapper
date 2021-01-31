@@ -77,10 +77,10 @@ namespace lapack_wrapper {
     }
 
     void
-    factorize( char const who[], valueType const A[], integer LDA );
+    factorize_nodim( char const who[], valueType const A[], integer LDA );
 
     bool
-    factorize( valueType const A[], integer LDA );
+    factorize_nodim( valueType const A[], integer LDA );
 
     valueType cond1( valueType norm1 ) const;
     valueType condInf( valueType normInf ) const;
@@ -186,7 +186,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      this->factorize( who, A, LDA );
+      this->factorize_nodim( who, A, LDA );
     }
 
     bool
@@ -197,7 +197,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) UTILS_OVERRIDE {
       this->allocate( NR, NC );
-      return this->factorize( A, LDA );
+      return this->factorize_nodim( A, LDA );
     }
 
   };
@@ -243,14 +243,14 @@ namespace lapack_wrapper {
     );
 
     void
-    factorize(
+    factorize_nodim(
       char const      who[],
       valueType const A[],
       integer         LDA
     );
 
     bool
-    factorize( valueType const A[], integer LDA );
+    factorize_nodim( valueType const A[], integer LDA );
 
     /*\
     :|:         _      _               _
@@ -322,7 +322,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) {
       this->allocate( NRC );
-      this->factorize( who, A, LDA );
+      this->factorize_nodim( who, A, LDA );
     }
 
     void
@@ -346,7 +346,7 @@ namespace lapack_wrapper {
       integer         LDA
     ) {
       this->allocate( NRC );
-      return this->factorize( A, LDA );
+      return this->factorize_nodim( A, LDA );
     }
 
     bool
