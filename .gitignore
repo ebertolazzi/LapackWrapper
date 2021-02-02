@@ -10,3 +10,4 @@ lib3rd
 lapack_wrapper_config.hh
 Testing
 DerivedData
+vs_2017*

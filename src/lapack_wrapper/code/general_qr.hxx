@@ -828,9 +828,9 @@ namespace lapack_wrapper {
     );
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_slarf(
-      const_cast<character*>(side_blas[LR]), &M, &N,
-       const_cast<real*>(V), &INCV,
-       const_cast<real*>(TAU) C, &LDC, WORK
+      side_blas[LR], &M, &N,
+      V, &INCV,
+      TAU, C, &LDC, WORK
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     slarf(
@@ -874,9 +874,9 @@ namespace lapack_wrapper {
     );
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dlarf(
-      const_cast<character*>(side_blas[LR]), &M, &N,
-      const_cast<doublereal*>(V), &INCV,
-      const_cast<doublereal*>(TAU), C, &LDC, WORK
+      side_blas[LR], &M, &N,
+      V, &INCV,
+      TAU, C, &LDC, WORK
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlarf(
@@ -1036,8 +1036,7 @@ namespace lapack_wrapper {
     );
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_slarft(
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      direct_blas[DIRECT], store_blas[STOREV],
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
@@ -1081,8 +1080,7 @@ namespace lapack_wrapper {
     );
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dlarft(
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      direct_blas[DIRECT], store_blas[STOREV],
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
