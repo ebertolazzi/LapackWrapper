@@ -35,13 +35,14 @@ namespace lapack_wrapper {
   template <typename T>
   PINV_no_alloc<T>::PINV_no_alloc()
   : LinearSystemSolver<T>()
-  , m_allocReals("PINV_no_alloc")
+  , m_alloc_work("PINV_no_alloc")
   , L_mm_work(0)
   , mm_work(nullptr)
   , m_nrows(0)
   , m_ncols(0)
+  , m_rcmax(0)
   , m_rank(0)
-  , m_Ascaled(nullptr)
+  , m_A_factored(nullptr)
   , m_Rt(nullptr)
   {
     m_epsi = std::pow( std::numeric_limits<T>::epsilon(), T(0.65) );
@@ -57,11 +58,10 @@ namespace lapack_wrapper {
     integer & Lwork,
     integer & Liwork
   ) const {
-    integer minRC = std::min( NR, NC );
-    integer L1    = m_QR1.get_Lwork( NR, NC ) + (NR+1)*(NC+1);
-    integer L2    = m_QR2.get_Lwork( minRC, minRC ) + (minRC+1)*(minRC+1) + 2*minRC;
-    Lwork  = L1+L2 + (NR+1)*(NC+1) + minRC*(minRC+2);
-    Liwork = NC+minRC;
+    integer L1   = m_QR1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1);
+    integer L2   = m_QR2.get_Lwork_QR( NC, NC ) + (NC+1)*(NC+1);
+    Lwork  = L1 + L2 + (NR+NC)*NC;
+    Liwork = NC;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -84,9 +84,9 @@ namespace lapack_wrapper {
       NR, NC
     );
 
-    integer L1   = m_QR1.get_Lwork( NR, NC ) + (NR+1)*(NC+1);
-    integer L2   = m_QR2.get_Lwork( NC, NC ) + (NC+1)*(NC+1);
-    integer Ltot = L1 + L2 + 2*NC*NC;
+    integer L1   = m_QR1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1);
+    integer L2   = m_QR2.get_Lwork_QR( NC, NC ) + (NC+1)*(NC+1);
+    integer Ltot = L1 + L2 + (NR+NC)*NC;
     UTILS_ASSERT(
       Lwork >= Ltot && Liwork >= NC,
       "PINV_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {},...)\n"
@@ -95,15 +95,16 @@ namespace lapack_wrapper {
     );
     valueType * ptr = Work;
     m_QR1.no_allocate( NR, NC, L1, ptr, NC, iWork ); ptr += L1;
-    m_Ascaled = ptr; ptr += NR*NC;
-    m_Rt      = ptr; ptr += NC*NC;
+    m_A_factored = ptr; ptr += NR*NC;
+    m_Rt         = ptr; ptr += NC*NC;
 
-    m_LWorkQR2 = L2;
+    m_LWorkQR2 = Lwork-L1-(NR+NC)*NC;
     m_WorkQR2  = ptr;
 
     m_nrows    = NR;
     m_ncols    = NC;
     m_rank     = 0;
+    m_rcmax    = NR > NC ? NR : NC;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -116,7 +117,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     // copy matrix and scale
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Ascaled, m_nrows );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_A_factored, m_nrows );
     UTILS_ASSERT(
       info == 0,
       "{}, call to gecopy( N = {}, M = {}, A, LDA = {}, B, LDB = {}\n"
@@ -137,7 +138,7 @@ namespace lapack_wrapper {
   ) {
     for ( integer i = 0; i < m_nrows; ++i )
       for ( integer j = 0; j < m_ncols; ++j )
-        m_Ascaled[i+j*m_nrows] = A[j+i*LDA];
+        m_A_factored[i+j*m_nrows] = A[j+i*LDA];
     this->factorize( who );
   }
 
@@ -148,7 +149,7 @@ namespace lapack_wrapper {
   PINV_no_alloc<T>::factorize( char const who[] ) {
 
     // perform QR factorization
-    m_QR1.factorize_nodim( who, m_Ascaled, m_nrows );
+    m_QR1.factorize_nodim( who, m_A_factored, m_nrows );
 
     // evaluate rank
     m_QR1.getRt( m_Rt, m_ncols );
@@ -177,7 +178,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     // copy matrix and scale
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Ascaled, m_nrows );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_A_factored, m_nrows );
     if ( info != 0 ) return false;
     return this->factorize();
   }
@@ -192,7 +193,7 @@ namespace lapack_wrapper {
   ) {
     for ( integer i = 0; i < m_nrows; ++i )
       for ( integer j = 0; j < m_ncols; ++j )
-        m_Ascaled[i+j*m_nrows] = A[j+i*LDA];
+        m_A_factored[i+j*m_nrows] = A[j+i*LDA];
     return this->factorize();
   }
 
@@ -203,7 +204,7 @@ namespace lapack_wrapper {
   PINV_no_alloc<T>::factorize() {
 
     // perform QR factorization
-    bool ok = m_QR1.factorize_nodim( m_Ascaled, m_nrows );
+    bool ok = m_QR1.factorize_nodim( m_A_factored, m_nrows );
     if ( !ok ) return false;
 
     // evaluate rank
@@ -238,11 +239,9 @@ namespace lapack_wrapper {
     integer         incx
   ) const {
 
-    if ( L_mm_work < m_nrows ) {
-      L_mm_work = m_nrows;
-      m_allocReals.free();
-      m_allocReals.allocate( size_t(L_mm_work) );
-      mm_work = m_allocReals( size_t(L_mm_work) );
+    if ( L_mm_work < m_rcmax ) {
+      L_mm_work = m_rcmax;
+      mm_work   = m_alloc_work.malloc( size_t(L_mm_work) );
     }
 
     // A*P = Q*R --> A = Q * R * P^(-1)
@@ -298,12 +297,17 @@ namespace lapack_wrapper {
     integer         ldX
   ) const {
 
-    integer NR = m_nrows*nrhs;
-    if ( L_mm_work < NR ) {
-      L_mm_work = NR;
-      m_allocReals.free();
-      m_allocReals.allocate( size_t(L_mm_work) );
-      mm_work = m_allocReals( size_t(L_mm_work) );
+    UTILS_ASSERT(
+      ldB >= m_nrows && ldX >= m_ncols,
+      "PINV_no_alloc::mult_inv( nrhs = {}, B, ldB = {}, X, ldX = {}\n"
+      "ldB must be >= {} and ldX must be >= {}\n",
+      nrhs, ldB, ldX, m_nrows, m_ncols
+    );
+
+    integer msize = m_rcmax*nrhs;
+    if ( L_mm_work < msize ) {
+      L_mm_work = msize;
+      mm_work   = m_alloc_work.malloc( size_t(L_mm_work) );
     }
 
     gecopy( m_nrows, nrhs, B, ldB, mm_work, m_nrows );
@@ -313,13 +317,27 @@ namespace lapack_wrapper {
 
     m_QR1.Qt_mul( m_nrows, nrhs, mm_work, m_nrows );
 
+    #if 0
+    fmt::print(
+      "Q^T rhs\n{}",
+      lapack_wrapper::print_matrix( m_nrows, nrhs, mm_work, m_nrows )
+    );
+    #endif
+
     if ( m_rank < m_ncols ) {
       m_QR2.invRt_mul( m_rank, nrhs, mm_work, m_nrows );
       gezero( m_nrows-m_rank, nrhs, mm_work+m_rank, m_nrows );
       m_QR2.Q_mul( m_ncols, nrhs, mm_work, m_nrows );
     } else {
-      m_QR1.invR_mul( m_nrows, nrhs, mm_work, m_nrows );
+      m_QR1.invR_mul( m_ncols, nrhs, mm_work, m_nrows );
     }
+
+    #if 0
+    fmt::print(
+    "R^(-1) Q^T rhs\n{}",
+      lapack_wrapper::print_matrix( m_ncols, nrhs, mm_work, m_nrows )
+    );
+    #endif
 
     m_QR1.permute_rows( m_ncols, nrhs, mm_work, m_nrows );
 
@@ -339,14 +357,13 @@ namespace lapack_wrapper {
     integer         incx
   ) const {
 
-    if ( L_mm_work < m_nrows ) {
-      L_mm_work = m_nrows;
-      m_allocReals.free();
-      m_allocReals.allocate( size_t(L_mm_work) );
-      mm_work = m_allocReals( size_t(L_mm_work) );
+    if ( L_mm_work < m_rcmax ) {
+      L_mm_work = m_rcmax;
+      mm_work   = m_alloc_work.malloc( size_t(L_mm_work) );
     }
 
     copy( m_ncols, b, incb, mm_work, 1 );
+    if ( m_nrows > m_ncols ) std::fill_n( mm_work+m_ncols, m_nrows-m_ncols, 0 );
 
     m_QR1.inv_permute( mm_work );
 
@@ -377,15 +394,22 @@ namespace lapack_wrapper {
     integer         ldX
   ) const {
 
-    integer NR = m_nrows*nrhs;
-    if ( L_mm_work < NR ) {
-      L_mm_work = NR;
-      m_allocReals.free();
-      m_allocReals.allocate( size_t(L_mm_work) );
-      mm_work = m_allocReals( size_t(L_mm_work) );
+    UTILS_ASSERT(
+      ldB >= m_ncols && ldX >= m_nrows,
+      "PINV_no_alloc::t_mult_inv( nrhs = {}, B, ldB = {}, X, ldX = {}\n"
+      "ldB must be >= {} and ldX must be >= {}\n",
+      nrhs, ldB, ldX, m_ncols, m_nrows
+    );
+
+    integer msize = m_rcmax*nrhs;
+    if ( L_mm_work < msize ) {
+      L_mm_work = msize;
+      mm_work   = m_alloc_work.malloc( size_t(L_mm_work) );
     }
 
     gecopy( m_ncols, nrhs, B, ldB, mm_work, m_nrows );
+    if ( m_nrows > m_ncols )
+      gezero( m_nrows-m_ncols, nrhs, mm_work+m_ncols, m_nrows );
 
     m_QR1.inv_permute_rows( m_ncols, nrhs, mm_work, m_nrows );
 
@@ -410,8 +434,7 @@ namespace lapack_wrapper {
   void
   PINV_no_alloc<T>::info( ostream_type & stream ) const {
     Malloc<integer> memi("PINV_no_alloc<T>::info");
-    memi.allocate( size_t(m_ncols) );
-    integer * jpvt = memi( size_t(m_ncols) );
+    integer * jpvt = memi.malloc( size_t(m_ncols) );
     m_QR1.getPerm( jpvt );
     fmt::print( stream,
       "PINV INFO\n"
@@ -427,8 +450,7 @@ namespace lapack_wrapper {
     if ( m_rank < m_ncols ) {
       Malloc<valueType> mem("PINV_no_alloc<T>::info");
       size_t dim = size_t( m_rank * m_rank );
-      mem.allocate( dim );
-      valueType * R1 = mem( dim );
+      valueType * R1 = mem.malloc( dim );
       m_QR2.getR( R1, m_rank );
       fmt::print( stream,
         "R1\n{}\n",
@@ -444,12 +466,10 @@ namespace lapack_wrapper {
   PINV<T>::allocate( integer NR, integer NC ) {
     integer Ltot, Litot;
     this->get_required_allocation( NR, NC, Ltot, Litot );
-    m_allocReals.allocate( size_t(Ltot) );
-    m_allocIntegers.allocate( size_t(Litot) );
     this->no_allocate(
       NR, NC,
-      Ltot,  m_allocReals( size_t(Ltot) ),
-      Litot, m_allocIntegers( size_t(Litot) )
+      Ltot,  m_allocReals.malloc( size_t(Ltot) ),
+      Litot, m_allocIntegers.malloc( size_t(Litot) )
     );
   }
 

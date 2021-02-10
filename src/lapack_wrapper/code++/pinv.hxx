@@ -39,15 +39,16 @@ namespace lapack_wrapper {
 
   protected:
 
-    mutable Malloc<valueType> m_allocReals;
+    mutable Malloc<valueType> m_alloc_work;
     mutable integer           L_mm_work;
     mutable valueType       * mm_work;
 
     integer     m_nrows;
     integer     m_ncols;
     integer     m_rank;
+    integer     m_rcmax;
     valueType   m_epsi;
-    valueType * m_Ascaled;
+    valueType * m_A_factored;
     valueType * m_Rt;
 
     integer     m_LWorkQR2;

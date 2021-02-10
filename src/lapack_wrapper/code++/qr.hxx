@@ -69,7 +69,7 @@ namespace lapack_wrapper {
     ~QR_no_alloc() UTILS_OVERRIDE {}
 
     integer
-    get_Lwork( integer NR, integer NC ) const;
+    get_Lwork_QR( integer NR, integer NC ) const;
 
     void
     no_allocate(
@@ -302,7 +302,7 @@ namespace lapack_wrapper {
     using QR_no_alloc<T>::getQ;
     using QR_no_alloc<T>::getA;
     using QR_no_alloc<T>::getTau;
-    using QR_no_alloc<T>::get_Lwork;
+    using QR_no_alloc<T>::get_Lwork_QR;
     using QR_no_alloc<T>::no_allocate;
     using QR_no_alloc<T>::factorize;
 
@@ -402,6 +402,9 @@ namespace lapack_wrapper {
     virtual
     ~QRP_no_alloc() UTILS_OVERRIDE
     {}
+
+    integer
+    get_Lwork_QRP( integer NR, integer NC ) const;
 
     void
     no_allocate(
@@ -587,9 +590,6 @@ namespace lapack_wrapper {
     virtual
     ~QRP() UTILS_OVERRIDE
     { m_allocIntegers.free(); }
-
-    integer
-    get_Lwork( integer NR, integer NC ) const;
 
     void
     allocate( integer nr, integer nc );

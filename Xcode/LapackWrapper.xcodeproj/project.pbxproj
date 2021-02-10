@@ -14,10 +14,10 @@
 		D95739D025C8ACCB004D4F10 /* hsl_fake.cc in Sources */ = {isa = PBXBuildFile; fileRef = D957398E25C8ACCB004D4F10 /* hsl_fake.cc */; };
 		D95739D125C8ACCB004D4F10 /* ma57_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = D957398F25C8ACCB004D4F10 /* ma57_wrapper.cc */; };
 		D95739D225C8ACCB004D4F10 /* NoFLA_HQRRP_WY_blk_var4.cc in Sources */ = {isa = PBXBuildFile; fileRef = D95739B925C8ACCB004D4F10 /* NoFLA_HQRRP_WY_blk_var4.cc */; };
-		D95739DE25C8ACEF004D4F10 /* test1-small-factorization.cc in Sources */ = {isa = PBXBuildFile; fileRef = D95739D925C8ACD1004D4F10 /* test1-small-factorization.cc */; };
 		D95739E225C8AD02004D4F10 /* libUtils_osx_static_debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D95739E025C8AD02004D4F10 /* libUtils_osx_static_debug.a */; };
 		D95739E325C8AD02004D4F10 /* libsuperlu_osx_static_debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D95739E125C8AD02004D4F10 /* libsuperlu_osx_static_debug.a */; };
 		D9573A5725C8B057004D4F10 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9573A5625C8B057004D4F10 /* Accelerate.framework */; };
+		D9DD39EE25D3FD0E0060E1B6 /* test1-small-factorization.cc in Sources */ = {isa = PBXBuildFile; fileRef = D95739D925C8ACD1004D4F10 /* test1-small-factorization.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,7 +33,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D957394F25C8ACAA004D4F10 /* test1-small-factorization */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "test1-small-factorization"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D957394F25C8ACAA004D4F10 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		D957395E25C8ACCA004D4F10 /* lapack_wrapper.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lapack_wrapper.hh; sourceTree = "<group>"; };
 		D957396025C8ACCA004D4F10 /* sparse.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sparse.cxx; sourceTree = "<group>"; };
 		D957396125C8ACCA004D4F10 /* banded.hxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = banded.hxx; sourceTree = "<group>"; };
@@ -202,7 +202,7 @@
 		D957395025C8ACAA004D4F10 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D957394F25C8ACAA004D4F10 /* test1-small-factorization */,
+				D957394F25C8ACAA004D4F10 /* test */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -267,10 +267,10 @@
 				D957397F25C8ACCB004D4F10 /* lsc.hxx */,
 				D957397925C8ACCB004D4F10 /* lsc.cxx */,
 				D957397225C8ACCB004D4F10 /* svd.hxx */,
-				D957397525C8ACCB004D4F10 /* qn.cxx */,
 				D957397725C8ACCB004D4F10 /* qr.hxx */,
 				D957397D25C8ACCB004D4F10 /* qr.cxx */,
 				D957397B25C8ACCB004D4F10 /* qn.hxx */,
+				D957397525C8ACCB004D4F10 /* qn.cxx */,
 				D957397C25C8ACCB004D4F10 /* trid.cxx */,
 				D957398125C8ACCB004D4F10 /* band.hxx */,
 				D957397025C8ACCB004D4F10 /* band.cxx */,
@@ -479,9 +479,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D957394E25C8ACAA004D4F10 /* test1-small-factorization */ = {
+		D957394E25C8ACAA004D4F10 /* test */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D957395625C8ACAA004D4F10 /* Build configuration list for PBXNativeTarget "test1-small-factorization" */;
+			buildConfigurationList = D957395625C8ACAA004D4F10 /* Build configuration list for PBXNativeTarget "test" */;
 			buildPhases = (
 				D957394B25C8ACAA004D4F10 /* Sources */,
 				D957394C25C8ACAA004D4F10 /* Frameworks */,
@@ -491,9 +491,9 @@
 			);
 			dependencies = (
 			);
-			name = "test1-small-factorization";
+			name = test;
 			productName = LapackWrapper;
-			productReference = D957394F25C8ACAA004D4F10 /* test1-small-factorization */;
+			productReference = D957394F25C8ACAA004D4F10 /* test */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -522,7 +522,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D957394E25C8ACAA004D4F10 /* test1-small-factorization */,
+				D957394E25C8ACAA004D4F10 /* test */,
 			);
 		};
 /* End PBXProject section */
@@ -533,9 +533,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D95739CF25C8ACCB004D4F10 /* hsl_solver.cc in Sources */,
+				D9DD39EE25D3FD0E0060E1B6 /* test1-small-factorization.cc in Sources */,
 				D95739D225C8ACCB004D4F10 /* NoFLA_HQRRP_WY_blk_var4.cc in Sources */,
 				D95739D025C8ACCB004D4F10 /* hsl_fake.cc in Sources */,
-				D95739DE25C8ACEF004D4F10 /* test1-small-factorization.cc in Sources */,
 				D95739CD25C8ACCB004D4F10 /* lapack_wrapper++.cc in Sources */,
 				D95739C125C8ACCB004D4F10 /* lapack_wrapper.cc in Sources */,
 				D95739D125C8ACCB004D4F10 /* ma57_wrapper.cc in Sources */,
@@ -689,7 +689,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D957395625C8ACAA004D4F10 /* Build configuration list for PBXNativeTarget "test1-small-factorization" */ = {
+		D957395625C8ACAA004D4F10 /* Build configuration list for PBXNativeTarget "test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D957395725C8ACAA004D4F10 /* Debug */,

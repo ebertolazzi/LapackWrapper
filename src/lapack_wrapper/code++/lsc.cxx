@@ -96,15 +96,12 @@ namespace lapack_wrapper {
       if ( row_select[i] ) ++m_NRA; else ++m_NRB;
     }
 
-    m_allocReals.allocate( size_t(m_NRA*NC) );
-    m_Amat = m_allocReals( size_t(m_NRA*NC) );
+    m_Amat = m_allocReals.malloc( size_t(m_NRA*NC) );
+    m_work = m_allocWorks.malloc( size_t(NN2) );
 
     m_allocIntegers.allocate( size_t(NR) );
     m_to_rowA = m_allocIntegers( size_t(m_NRA) );
     m_to_rowB = m_allocIntegers( size_t(m_NRB) );
-
-    m_allocWorks.allocate( size_t(NN2) );
-    m_work = m_allocWorks( size_t(NN2) );
 
     integer LDA = m_NRA;
     m_NRA = m_NRB = 0;

@@ -59,16 +59,13 @@ namespace lapack_wrapper {
     integer _nL,
     integer _nU
   ) {
-    m_m    = _m;
-    m_n    = _n;
-    m_nL   = _nL;
-    m_nU   = _nU;
-    m_ldAB = 2*m_nL+m_nU+1;
-    integer nnz = m_n*m_ldAB;
-    m_allocReals.allocate( nnz );
-    m_allocIntegers.allocate( m_m );
-    m_AB            = m_allocReals( nnz );
-    m_ipiv          = m_allocIntegers( m_m );
+    m_m             = _m;
+    m_n             = _n;
+    m_nL            = _nL;
+    m_nU            = _nU;
+    m_ldAB          = 2*m_nL+m_nU+1;
+    m_AB            = m_allocReals.malloc( m_n*m_ldAB );
+    m_ipiv          = m_allocIntegers.malloc( m_m );
     m_is_factorized = false;
   }
 
@@ -395,9 +392,7 @@ namespace lapack_wrapper {
     m_n    = _N;
     m_nD   = _nD;
     m_ldAB = _nD+1;
-    integer nnz = m_n*m_ldAB;
-    m_allocReals.allocate( nnz );
-    m_AB   = m_allocReals( nnz );
+    m_AB   = m_allocReals.malloc( size_t(m_n*m_ldAB) );
     m_is_factorized = false;
   }
 

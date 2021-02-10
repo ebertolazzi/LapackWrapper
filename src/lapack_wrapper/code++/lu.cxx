@@ -507,12 +507,10 @@ namespace lapack_wrapper {
   LUPQ<T>::allocate( integer NRC ) {
     if ( m_nRC != NRC ) {
       integer NRC2 = NRC*NRC;
-      m_allocReals.allocate( size_t(NRC2) );
-      m_allocIntegers.allocate( size_t(2*NRC) );
       this->no_allocate(
         NRC,
-        NRC2,  m_allocReals( size_t(NRC2) ),
-        2*NRC, m_allocIntegers( size_t(2*NRC) )
+        NRC2,  m_allocReals.malloc( size_t(NRC2) ),
+        2*NRC, m_allocIntegers.malloc( size_t(2*NRC) )
       );
     }
   }

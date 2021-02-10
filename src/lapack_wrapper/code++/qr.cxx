@@ -34,12 +34,12 @@ namespace lapack_wrapper {
 
   template <typename T>
   integer
-  QR_no_alloc<T>::get_Lwork( integer NR, integer NC ) const {
+  QR_no_alloc<T>::get_Lwork_QR( integer NR, integer NC ) const {
     valueType tmp; // get optimal allocation
     integer info = geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 );
     UTILS_ASSERT(
       info == 0,
-      "QR_no_alloc::get_Lwork call lapack_wrapper::geqrf return info = {}\n", info
+      "QR_no_alloc::get_Lwork_QR call lapack_wrapper::geqrf return info = {}\n", info
     );
     return std::max( integer(tmp), std::max( NR, NC ) );
   }
@@ -57,17 +57,17 @@ namespace lapack_wrapper {
     m_nrows      = NR;
     m_ncols      = NC;
     m_nReflector = std::min(NR,NC);
-    integer Lwmin = this->get_Lwork( NR, NC ) + NR*NC + m_nReflector;
+    integer Lwmin = this->get_Lwork_QR( NR, NC ) + NR*NC + m_nReflector;
     UTILS_ASSERT(
       Lwork >= Lwmin,
       "QR_no_alloc::no_allocate( NR = {}, NC = {}, Lwork {}, .. )\n"
       "Lwork must be >= {}\n",
       NR, NC, Lwork, Lwmin
     );
-    m_LworkQR = Lwork-NR*NC-m_nReflector;
     valueType * ptr = Work;
     m_Afactorized = ptr; ptr += NR*NC;
     m_Tau         = ptr; ptr += m_nReflector;
+    m_LworkQR     = Lwork - NR*NC - m_nReflector;
     m_WorkQR      = ptr;
   }
 
@@ -481,9 +481,8 @@ namespace lapack_wrapper {
   void
   QR<T>::allocate( integer NR, integer NC ) {
     if ( m_nrows != NR || m_ncols != NC ) {
-      integer Lwork = NR*NC + std::min( NR, NC ) + this->get_Lwork( NR, NC );
-      m_allocReals.allocate( size_t(Lwork) );
-      this->no_allocate( NR, NC, Lwork, m_allocReals( size_t(Lwork) ) );
+      integer Lwork = NR*NC + std::min( NR, NC ) + this->get_Lwork_QR( NR, NC );
+      this->no_allocate( NR, NC, Lwork, m_allocReals.malloc( size_t(Lwork) ) );
     }
   }
 
@@ -497,6 +496,23 @@ namespace lapack_wrapper {
   \*/
 
   template <typename T>
+  integer
+  QRP_no_alloc<T>::get_Lwork_QRP( integer NR, integer NC ) const {
+    valueType tmp; // get optimal allocation
+    integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
+    UTILS_ASSERT(
+      info == 0,
+      "QRP::get_Lwork_QRP call lapack_wrapper::geqp3 return info = {}\n", info
+    );
+
+    integer maxRC = std::max( NR, NC );
+    integer L     = std::max( integer(tmp), maxRC );
+    return L;
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
   void
   QRP_no_alloc<T>::no_allocate(
     integer     NR,
@@ -506,7 +522,7 @@ namespace lapack_wrapper {
     integer     Liwork,
     integer   * iWork
   ) {
-    integer Lwmin = this->get_Lwork( NR, NC ) + NR*NC + NR+NC;
+    integer Lwmin = this->get_Lwork_QRP( NR, NC ) + NR*NC + NR+NC;
     UTILS_ASSERT(
       Liwork >= NC && Lwork >= Lwmin,
       "QRP_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {}, ...)\n"
@@ -518,6 +534,8 @@ namespace lapack_wrapper {
     m_WorkPermute = Work;
     m_JPVT        = iWork;
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
@@ -622,6 +640,8 @@ namespace lapack_wrapper {
     for ( integer j = 0; j < nc; ++j ) inv_permute( C + ldC*j, 1 );
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   template <typename T>
   void
   QRP_no_alloc<T>::permute_cols(
@@ -637,6 +657,8 @@ namespace lapack_wrapper {
     );
     for ( integer i = 0; i < nr; ++i ) permute( C + i, ldC );
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
@@ -707,33 +729,14 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  integer
-  QRP<T>::get_Lwork( integer NR, integer NC ) const {
-    valueType tmp; // get optimal allocation
-    integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
-    UTILS_ASSERT(
-      info == 0,
-      "QRP::allocate call lapack_wrapper::geqp3 return info = {}\n", info
-    );
-
-    integer maxRC = std::max( NR, NC );
-    integer L     = std::max( integer(tmp), maxRC );
-    return L;
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
   void
   QRP<T>::allocate( integer NR, integer NC ) {
     if ( m_nrows != NR || m_ncols != NC ) {
-      integer Lwork = this->get_Lwork( NR, NC ) + NR*NC + NR+NC;
-      m_allocReals.allocate( size_t(Lwork) );
-      m_allocIntegers.allocate( size_t(NC) );
+      integer Lwork = this->get_Lwork_QRP( NR, NC ) + NR*NC + NR+NC;
       this->no_allocate(
         NR, NC,
-        Lwork, m_allocReals( size_t(Lwork) ),
-        NC,    m_allocIntegers( size_t(NC) )
+        Lwork, m_allocReals.malloc( size_t(Lwork) ),
+        NC,    m_allocIntegers.malloc( size_t(NC) )
       );
     }
   }

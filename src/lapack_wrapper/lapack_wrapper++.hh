@@ -61,12 +61,19 @@ namespace lapack_wrapper {
     integer       nr,
     integer       nc,
     t_Value const A[],
-    integer       ldA
+    integer       ldA,
+    t_Value       epsi=1e-10
   ) {
     std::string out;
     for ( integer i = 0; i < nr; ++i ) {
-      for ( integer j = 0; j < nc; ++j )
-        out += fmt::format("{:>14} ",fmt::format("{:.6}",A[i+j*ldA]));
+      for ( integer j = 0; j < nc; ++j ) {
+        t_Value Aij = A[i+j*ldA];
+        if ( std::abs(Aij) < epsi )
+          //out += fmt::format("{:>14} ",".");
+          out += "             . ";
+        else
+          out += fmt::format("{:>14} ",fmt::format("{:.6}",Aij));
+      }
       out += '\n';
     }
     return out;
@@ -81,12 +88,19 @@ namespace lapack_wrapper {
     integer       nr,
     integer       nc,
     t_Value const A[],
-    integer       ldA
+    integer       ldA,
+    t_Value       epsi=1e-10
   ) {
     std::string out;
     for ( integer i = 0; i < nr; ++i ) {
-      for ( integer j = 0; j < nc; ++j )
-        out += fmt::format("{:>8} ",A[i+j*ldA]);
+      for ( integer j = 0; j < nc; ++j ) {
+        t_Value Aij = A[i+j*ldA];
+        if ( std::abs(Aij) < epsi )
+          //out += fmt::format("{:>8} ",".");
+          out += "       . ";
+        else
+          out += fmt::format("{:>8} ",Aij);
+      }
       out += '\n';
     }
     return out;
@@ -97,9 +111,9 @@ namespace lapack_wrapper {
   template <typename t_Value>
   inline
   std::string
-  print_matrix( MatrixWrapper<t_Value> const & Amat ) {
+  print_matrix( MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10 ) {
     return print_matrix(
-      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim()
+      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim(), epsi
     );
   }
 
@@ -108,9 +122,9 @@ namespace lapack_wrapper {
   template <typename t_Value>
   inline
   std::string
-  print_matrix2( MatrixWrapper<t_Value> const & Amat ) {
+  print_matrix2( MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10 ) {
     return print_matrix2(
-      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim()
+      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim(), epsi
     );
   }
 
@@ -123,12 +137,19 @@ namespace lapack_wrapper {
     integer       nr,
     integer       nc,
     t_Value const A[],
-    integer       ldA
+    integer       ldA,
+    t_Value       epsi=1e-10
   ) {
     std::string out;
     for ( integer j = 0; j < nc; ++j ) {
-      for ( integer i = 0; i < nr; ++i )
-        out += fmt::format("{:>14} ",fmt::format("{:.6}",A[i+j*ldA]));
+      for ( integer i = 0; i < nr; ++i ) {
+        t_Value Aij = A[i+j*ldA];
+        if ( std::abs(Aij) < epsi )
+          //out += fmt::format("{:>14} ",".");
+          out += "             . ";
+        else
+          out += fmt::format("{:>14} ",fmt::format("{:.6}",Aij));
+      }
       out += '\n';
     }
     return out;
@@ -143,12 +164,19 @@ namespace lapack_wrapper {
     integer       nr,
     integer       nc,
     t_Value const A[],
-    integer       ldA
+    integer       ldA,
+    t_Value       epsi=1e-10
   ) {
     std::string out;
     for ( integer j = 0; j < nc; ++j ) {
-      for ( integer i = 0; i < nr; ++i )
-        out += fmt::format("{:>8} ",A[i+j*ldA]);
+      for ( integer i = 0; i < nr; ++i ) {
+        t_Value Aij = A[i+j*ldA];
+        if ( std::abs(Aij) < epsi )
+          //out += fmt::format("{:>8} ",".");
+          out += "       . ";
+        else
+          out += fmt::format("{:>8} ",Aij);
+      }
       out += '\n';
     }
     return out;
@@ -159,9 +187,11 @@ namespace lapack_wrapper {
   template <typename t_Value>
   inline
   std::string
-  print_matrix_transpose( MatrixWrapper<t_Value> const & Amat ) {
+  print_matrix_transpose(
+    MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10
+  ) {
     return print_matrix_transpose(
-      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim()
+      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim(), epsi
     );
   }
 
@@ -170,9 +200,11 @@ namespace lapack_wrapper {
   template <typename t_Value>
   inline
   std::string
-  print_matrix_transpose2( MatrixWrapper<t_Value> const & Amat ) {
+  print_matrix_transpose2(
+    MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10
+  ) {
     return print_matrix_transpose2(
-      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim()
+      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim(), epsi
     );
   }
 

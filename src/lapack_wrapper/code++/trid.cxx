@@ -199,9 +199,9 @@ namespace lapack_wrapper {
       m_IPIV  = m_allocIntegers(N);
       m_IWORK = m_allocIntegers(N);
     }
-    copy( N, L, 1, m_L, 1 );
-    copy( N, D, 1, m_D, 1 );
-    copy( N, U, 1, m_U, 1 );
+    copy( N-1, L, 1, m_L, 1 );
+    copy( N,   D, 1, m_D, 1 );
+    copy( N-1, U, 1, m_U, 1 );
     integer info = gttrf( N, m_L, m_D, m_U, m_U2, m_IPIV );
     UTILS_ASSERT(
       info == 0, "TridiagonalLU::factorize[{}], return info = {}\n", who, info

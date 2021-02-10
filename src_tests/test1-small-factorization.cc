@@ -758,15 +758,15 @@ void
 test12() {
   lapack_wrapper::PINV<valueType> pinv;
 
-  integer const M   = 6;
+  integer const M   = 8;
   integer const N   = 5;
   integer const LDA = M;
   valueType A[] = {
-    0.001, 1e-9,  1e-9,  1e-9, 0, 0,
-    1,    -1e+9, -1e+9, -1e+9, 0, 0,
-    0,     1e-9,     1,  1e-9, 0, 0,
-    2,    -1e-9, -1e-9,     1, 0, 0,
-    1,        1,     1,     1, 0, 0
+    0.001, 1e-9,  1e-9,  1e-9, 1, 1, 0, 0,
+    1,    -1e+9, -1e+9, -1e+9, 1, 1, 0, 0,
+    0,     1e-9,     1,  1e-9, 1, 1, 0, 0,
+    2,    -1e-9, -1e-9,     1, 1, 1, 0, 0,
+    1,        1,     1,     1, 1, 1, 0, 0
   };
 
   /*
@@ -774,11 +774,11 @@ test12() {
 format shortG;
 
 A = [ ...
-  0.001, 1e-9,  1e-9,  1e-9, 0, 0; ...
-  1,    -1e+9, -1e+9, -1e+9, 0, 0; ...
-  0,     1e-9,     1,  1e-9, 0, 0; ...
-  2,    -1e-9, -1e-9,     1, 0, 0; ...
-  1,        1,     1,     1, 0, 0; ...
+    0.001, 1e-9,  1e-9,  1e-9, 1, 1, 0, 0; ...
+    1,    -1e+9, -1e+9, -1e+9, 1, 1, 0, 0; ...
+    0,     1e-9,     1,  1e-9, 1, 1, 0, 0; ...
+    2,    -1e-9, -1e-9,     1, 1, 1, 0, 0; ...
+    1,        1,     1,     1, 1, 1, 0, 0; ...
 ].';
 
 disp('pinv(A)');
@@ -800,18 +800,18 @@ R1
 
 */
 
-  valueType MAT[6*6], MAT1[6*6];
+  valueType MAT[M*M], MAT1[M*M], MM[M*M];
 
-  valueType rhs[M], b[M], x[N];
-  valueType const xe[M] = {1,2,3,4,5};
+  valueType rhs[N], b[N], x[M];
+  valueType const xe[M] = {1,2,3,4,5,6,7,8};
   lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
+    lapack_wrapper::TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
   );
 
   msg.green( fmt::format(
-    "\n\n\nTest12:\n\nInitial A\n{}\nb^T{}\n",
+    "\n\n\nTest12:\n\nInitial A\n{}\n(A^T * x)^T = {}\n",
     lapack_wrapper::print_matrix( M, N, A, M ),
-    lapack_wrapper::print_matrix( 1, M, rhs, 1 )
+    lapack_wrapper::print_matrix( 1, N, rhs, 1 )
   ) );
 
   cout << "\n\nDo PINV factorization of A\n";
@@ -821,33 +821,78 @@ R1
   lapack_wrapper::geid( M, M, MAT, M );
 
   pinv.mult_inv( M, MAT, M, MAT1, N );
+  //for ( integer i = 0; i < M; ++i )
+  //  pinv.mult_inv( MAT+M*i, 1, MAT1+N*i, 1 );
+
   msg.blue( fmt::format(
-    "pinv(A)\n{}",
+    "\n\npinv(A)\n{}\n\n",
     lapack_wrapper::print_matrix( N, M, MAT1, N )
   ) );
 
-  lapack_wrapper::geid( N, N, MAT, N );
-  pinv.t_mult_inv( N, MAT, N, MAT1, M );
+  lapack_wrapper::gemm(
+    lapack_wrapper::NO_TRANSPOSE, lapack_wrapper::NO_TRANSPOSE,
+    M, M, N,
+    1.0, A, LDA,
+    MAT1, N,
+    0.0, MM, M
+  );
   msg.blue( fmt::format(
-    "pinv(A)\n{}",
-    lapack_wrapper::print_matrix_transpose( M, N, MAT1, M )
+    "\n\nA*pinv(A)\n{}\n\n",
+    lapack_wrapper::print_matrix( M, M, MM, M )
   ) );
 
-  lapack_wrapper::copy( M, rhs, 1, b, 1 );
-  pinv.mult_inv( b, 1, x, 1 );
-  lapack_wrapper::gemv(
-    lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
+  lapack_wrapper::gemm(
+    lapack_wrapper::NO_TRANSPOSE, lapack_wrapper::NO_TRANSPOSE,
+    N, N, M,
+    1.0, MAT1, N,
+    A, LDA,
+    0.0, MM, N
   );
-  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  msg.blue( fmt::format(
+    "\n\npinv(A)*A\n{}\n\n",
+    lapack_wrapper::print_matrix( N, N, MM, N )
+  ) );
 
-  fmt::print(
-    "res = {}\n"
-    "r = {}"
-    "x = {}\n",
-    res,
-    lapack_wrapper::print_matrix_transpose( M, 1, b, M ),
-    lapack_wrapper::print_matrix_transpose( N, 1, x, N )
+
+  lapack_wrapper::geid( N, N, MAT, N );
+
+  pinv.t_mult_inv( N, MAT, N, MAT1, M );
+  //for ( integer i = 0; i < N; ++i )
+  //  pinv.t_mult_inv( MAT+N*i, 1, MAT1+M*i, 1 );
+
+  msg.blue( fmt::format(
+    "pinv(A)^T\n{}\n\n",
+    lapack_wrapper::print_matrix( M, N, MAT1, M )
+  ) );
+
+  lapack_wrapper::gemm(
+    lapack_wrapper::TRANSPOSE, lapack_wrapper::NO_TRANSPOSE,
+    N, N, M,
+    1.0, A, LDA,
+    MAT1, M,
+    0.0, MM, N
   );
+  msg.blue( fmt::format(
+    "\n\nA^T*pinv(A)^T\n{}\n\n",
+    lapack_wrapper::print_matrix( N, N, MM, N )
+  ) );
+
+  exit(0);
+
+  lapack_wrapper::gemm(
+    lapack_wrapper::NO_TRANSPOSE, lapack_wrapper::TRANSPOSE,
+    M, M, N,
+    1.0,
+    MAT1, M,
+    A, LDA,
+    0.0, MM, M
+  );
+  msg.blue( fmt::format(
+    "\n\npinv(A)^T*A^T\n{}\n\n",
+    lapack_wrapper::print_matrix( M, M, MM, M )
+  ) );
+
+  msg.green( "\n\ndone test10\n" );
 
 }
 
@@ -856,7 +901,7 @@ int
 main() {
 
   try {
-    /*
+  /*
     test1();
     test2();
     test3();

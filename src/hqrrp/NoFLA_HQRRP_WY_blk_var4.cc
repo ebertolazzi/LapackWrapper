@@ -182,7 +182,7 @@ namespace lapack_wrapper {
     //
     integer INB = 1;
     int     iws, nb, num_factorized_fixed_cols,
-            minus_info, lwkopt, j, k, num_fixed_cols, n_rest, itmp;
+            lwkopt, j, k, num_fixed_cols, n_rest, itmp;
 
     // Some initializations.
     integer mn_A   = min( m_A, n_A );
@@ -209,7 +209,7 @@ namespace lapack_wrapper {
     }
 
     if ( info != 0 ) {
-      minus_info = -info;
+      //minus_info = -info;
       // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       //xerbla_( "DGEQP3", & minus_info );
       return;
@@ -277,8 +277,7 @@ namespace lapack_wrapper {
 
     // Create intermediate jpvt vector.
     Malloc<integer> mem("dgeqp4");
-    mem.allocate( n_A );
-    integer * previous_jpvt = mem( n_A );
+    integer * previous_jpvt = mem.malloc( size_t(n_A) );
 
     // Save a copy of jpvt vector.
     if ( num_factorized_fixed_cols > 0 ) {
@@ -680,8 +679,7 @@ namespace lapack_wrapper {
     // Create object B.
     //// FLA_Obj_create_conf_to( FLA_NO_TRANSPOSE, G1, & B );
     Malloc<double> mem("NoFLA_Downdate_Y");
-    mem.allocate( m_B * n_B );
-    double * buff_B = mem( m_B * n_B );
+    double * buff_B = mem.malloc( m_B * n_B );
 
     // B = G1.
     //// FLA_Copy( G1, B );
@@ -776,8 +774,7 @@ namespace lapack_wrapper {
     // Create auxiliary object.
     //// FLA_Obj_create_conf_to( FLA_NO_TRANSPOSE, B1, & W );
     Malloc<double> mem("NoFLA_Apply_Q_WY_lhfc_blk_var4");
-    mem.allocate( n_B * n_U );
-    double * buff_W = mem( n_B * n_U );
+    double * buff_W = mem.malloc( n_B * n_U );
     integer  ldim_W = max( 1, n_B );
  
     // Apply the block transformation.
@@ -807,8 +804,7 @@ namespace lapack_wrapper {
     // Create auxiliary object.
     //// FLA_Obj_create_conf_to( FLA_TRANSPOSE, B1, & W );
     Malloc<double> mem("NoFLA_Apply_Q_WY_rnfc_blk_var4");
-    mem.allocate( m_B * n_U );
-    double * buff_W = mem( m_B * n_U );
+    double * buff_W = mem.malloc( m_B * n_U );
     integer  ldim_W = max( 1, m_B );
   
     // Apply the block transformation.
