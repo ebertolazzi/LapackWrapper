@@ -282,8 +282,8 @@ namespace lapack_wrapper {
       m_ncols = NC;
       integer NRC = NR*NC;
       integer NW  = 2*(NR+NC);
-      m_allocReals.allocate( size_t(NRC+NW) );
-      m_allocIntegers.allocate( size_t(2*NR) );
+      m_allocReals.reallocate( size_t(NRC+NW) );
+      m_allocIntegers.reallocate( size_t(2*NR) );
 
       this->no_allocate(
         NR, NC,
@@ -509,8 +509,8 @@ namespace lapack_wrapper {
       integer NRC2 = NRC*NRC;
       this->no_allocate(
         NRC,
-        NRC2,  m_allocReals.malloc( size_t(NRC2) ),
-        2*NRC, m_allocIntegers.malloc( size_t(2*NRC) )
+        NRC2,  m_allocReals.realloc( size_t(NRC2) ),
+        2*NRC, m_allocIntegers.realloc( size_t(2*NRC) )
       );
     }
   }

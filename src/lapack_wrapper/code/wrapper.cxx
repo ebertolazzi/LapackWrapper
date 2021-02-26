@@ -448,7 +448,7 @@ namespace lapack_wrapper {
   , m_mem("Matrix")
   {
     size_t sz = rhs.m_nrows*rhs.m_ncols;
-    m_data = m_mem.malloc( sz );
+    m_data = m_mem.realloc( sz );
     gecopy(
       rhs.m_nrows, rhs.m_ncols, rhs.m_data, rhs.m_ldData,
       m_data, m_ldData
@@ -460,14 +460,14 @@ namespace lapack_wrapper {
   : MatrixWrapper<T>( nullptr, nr, nc, nr )
   , m_mem("Matrix")
   {
-    m_data = m_mem.malloc( size_t(nr*nc) );
+    m_data = m_mem.realloc( size_t(nr*nc) );
   }
 
   template <typename T>
   void
   Matrix<T>::setup( integer nr, integer nc ) {
     this->MatrixWrapper<T>::setup(
-      m_mem.malloc( size_t(nr*nc) ), nr, nc, nr
+      m_mem.realloc( size_t(nr*nc) ), nr, nc, nr
     );
   }
 
@@ -475,12 +475,12 @@ namespace lapack_wrapper {
   Matrix<T> const &
   Matrix<T>::operator = ( Matrix<T> const & rhs ) {
     size_t sz = rhs.m_nrows*rhs.m_ncols;
-    m_data   = m_mem.malloc( sz );
+    m_data   = m_mem.realloc( sz );
     m_nrows  = rhs.m_nrows;
     m_ncols  = rhs.m_ncols;
     m_ldData = rhs.m_nrows;
     gecopy(
-      rhs.m_nrows,  rhs.m_ncols, rhs.m_data, rhs.m_ldData,
+      rhs.m_nrows, rhs.m_ncols, rhs.m_data, rhs.m_ldData,
       m_data, m_ldData
     );
     return *this;
@@ -506,7 +506,7 @@ namespace lapack_wrapper {
   : MatrixWrapper<T>( nullptr, D.dim )
   , m_mem("DiagMatrix")
   {
-    this->data = m_mem.malloc( size_t(D.dim) );
+    this->data = m_mem.realloc( size_t(D.dim) );
     std::copy_n( D.data, D.dim, this->data );
   }
 
@@ -515,21 +515,21 @@ namespace lapack_wrapper {
   : DiagMatrixWrapper<T>( nullptr, dim )
   , m_mem("DiagMatrix")
   {
-    m_data = m_mem.malloc( size_t(m_dim) );
+    m_data = m_mem.realloc( size_t(m_dim) );
   }
 
   template <typename T>
   void
   DiagMatrix<T>::setup( integer dim ) {
     m_dim  = dim;
-    m_data = m_mem.malloc( size_t(m_dim) );
+    m_data = m_mem.realloc( size_t(m_dim) );
   }
 
   template <typename T>
   DiagMatrix<T> const &
   DiagMatrix<T>::operator = ( DiagMatrix<T> const & rhs ) {
     m_dim  = rhs.m_dim;
-    m_data = m_mem.malloc( size_t(m_dim) );
+    m_data = m_mem.realloc( size_t(m_dim) );
     std::copy_n( rhs.m_data, rhs.m_dim, m_data );
   }
 

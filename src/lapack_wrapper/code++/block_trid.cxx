@@ -44,9 +44,9 @@ namespace lapack_wrapper {
     integer const rBlocks[]
   ) {
     integer N = rBlocks[nblks], nrmax = 0;
-    m_allocIntegers.allocate( N + nblks+1 );
-    m_allocRpointers.allocate( 2*nblks-1 );
-    m_allocIpointers.allocate( nblks );
+    m_allocIntegers.reallocate( N + nblks+1 );
+    m_allocRpointers.reallocate( 2*nblks-1 );
+    m_allocIpointers.reallocate( nblks );
     m_row_blocks    = m_allocIntegers( nblks+1 );
     m_D_blocks      = m_allocRpointers( nblks );
     m_L_blocks      = m_allocRpointers( nblks-1 );
@@ -69,7 +69,7 @@ namespace lapack_wrapper {
       if ( nr > nrmax ) nrmax = nr;
       nr0 = nr;
     }
-    m_allocReals.allocate( m_nnz + nrmax * nrmax );
+    m_allocReals.reallocate( m_nnz + nrmax * nrmax );
     nr0 = rBlocks[1] - rBlocks[0];
     m_D_blocks[0] = m_allocReals( nr0 * nr0 );
     m_B_permutation[0] = m_allocIntegers( nr0 );

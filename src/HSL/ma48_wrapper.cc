@@ -287,7 +287,7 @@ namespace lapack_wrapper {
     bool ok = true;
     if ( RHS == X ) {
       Malloc<real> mem("MA48<real>::solve");
-      real * tmpRHS = mem.malloc( size_t(m_nrows) );
+      real * tmpRHS = mem.realloc( size_t(m_nrows) );
       for ( int j = 0; ok && j < nrhs; ++j ) {
         real const * RHSj = RHS + j * ldRHS;
         std::copy_n( RHSj, m_nrows, tmpRHS );

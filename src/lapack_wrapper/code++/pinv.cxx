@@ -40,8 +40,8 @@ namespace lapack_wrapper {
   , mm_work(nullptr)
   , m_nrows(0)
   , m_ncols(0)
-  , m_rcmax(0)
   , m_rank(0)
+  , m_rcmax(0)
   , m_A_factored(nullptr)
   , m_Rt(nullptr)
   {
@@ -241,7 +241,7 @@ namespace lapack_wrapper {
 
     if ( L_mm_work < m_rcmax ) {
       L_mm_work = m_rcmax;
-      mm_work   = m_alloc_work.malloc( size_t(L_mm_work) );
+      mm_work   = m_alloc_work.realloc( size_t(L_mm_work) );
     }
 
     // A*P = Q*R --> A = Q * R * P^(-1)
@@ -307,7 +307,7 @@ namespace lapack_wrapper {
     integer msize = m_rcmax*nrhs;
     if ( L_mm_work < msize ) {
       L_mm_work = msize;
-      mm_work   = m_alloc_work.malloc( size_t(L_mm_work) );
+      mm_work   = m_alloc_work.realloc( size_t(L_mm_work) );
     }
 
     gecopy( m_nrows, nrhs, B, ldB, mm_work, m_nrows );
@@ -359,7 +359,7 @@ namespace lapack_wrapper {
 
     if ( L_mm_work < m_rcmax ) {
       L_mm_work = m_rcmax;
-      mm_work   = m_alloc_work.malloc( size_t(L_mm_work) );
+      mm_work   = m_alloc_work.realloc( size_t(L_mm_work) );
     }
 
     copy( m_ncols, b, incb, mm_work, 1 );
@@ -404,7 +404,7 @@ namespace lapack_wrapper {
     integer msize = m_rcmax*nrhs;
     if ( L_mm_work < msize ) {
       L_mm_work = msize;
-      mm_work   = m_alloc_work.malloc( size_t(L_mm_work) );
+      mm_work   = m_alloc_work.realloc( size_t(L_mm_work) );
     }
 
     gecopy( m_ncols, nrhs, B, ldB, mm_work, m_nrows );
@@ -468,8 +468,8 @@ namespace lapack_wrapper {
     this->get_required_allocation( NR, NC, Ltot, Litot );
     this->no_allocate(
       NR, NC,
-      Ltot,  m_allocReals.malloc( size_t(Ltot) ),
-      Litot, m_allocIntegers.malloc( size_t(Litot) )
+      Ltot,  m_allocReals.realloc( size_t(Ltot) ),
+      Litot, m_allocIntegers.realloc( size_t(Litot) )
     );
   }
 

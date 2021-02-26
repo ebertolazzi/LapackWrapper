@@ -901,7 +901,6 @@ int
 main() {
 
   try {
-  /*
     test1();
     test2();
     test3();
@@ -913,7 +912,6 @@ main() {
     test9();
     test10();
     test11();
-    */
     test12();
   } catch ( exception const & exc ) {
     msg.error( exc.what() );

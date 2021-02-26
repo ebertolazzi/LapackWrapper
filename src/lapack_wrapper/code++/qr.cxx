@@ -482,7 +482,7 @@ namespace lapack_wrapper {
   QR<T>::allocate( integer NR, integer NC ) {
     if ( m_nrows != NR || m_ncols != NC ) {
       integer Lwork = NR*NC + std::min( NR, NC ) + this->get_Lwork_QR( NR, NC );
-      this->no_allocate( NR, NC, Lwork, m_allocReals.malloc( size_t(Lwork) ) );
+      this->no_allocate( NR, NC, Lwork, m_allocReals.realloc( size_t(Lwork) ) );
     }
   }
 
@@ -735,8 +735,8 @@ namespace lapack_wrapper {
       integer Lwork = this->get_Lwork_QRP( NR, NC ) + NR*NC + NR+NC;
       this->no_allocate(
         NR, NC,
-        Lwork, m_allocReals.malloc( size_t(Lwork) ),
-        NC,    m_allocIntegers.malloc( size_t(NC) )
+        Lwork, m_allocReals.realloc( size_t(Lwork) ),
+        NC,    m_allocIntegers.realloc( size_t(NC) )
       );
     }
   }

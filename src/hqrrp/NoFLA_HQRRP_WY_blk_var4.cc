@@ -181,7 +181,7 @@ namespace lapack_wrapper {
     // constants THRESHOLD_FOR_DGEQPF and THRESHOLD_FOR_DGEQP3.
     //
     integer INB = 1;
-    int     iws, nb, num_factorized_fixed_cols,
+    int     iws = 0, nb, num_factorized_fixed_cols,
             lwkopt, j, k, num_fixed_cols, n_rest, itmp;
 
     // Some initializations.
@@ -679,7 +679,7 @@ namespace lapack_wrapper {
     // Create object B.
     //// FLA_Obj_create_conf_to( FLA_NO_TRANSPOSE, G1, & B );
     Malloc<double> mem("NoFLA_Downdate_Y");
-    double * buff_B = mem.malloc( m_B * n_B );
+    double * buff_B = mem.realloc( m_B * n_B );
 
     // B = G1.
     //// FLA_Copy( G1, B );

@@ -119,7 +119,7 @@ namespace lapack_wrapper {
     integer L = getL( m_nrows, m_ncols, 1 );
     if ( L > m_Lwork ) {
       m_Lwork = L;
-      m_Work  = m_allocWork.malloc( size_t(L) );
+      m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
     copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1);
@@ -143,7 +143,7 @@ namespace lapack_wrapper {
     integer L = getL( m_ncols, m_nrows, 1 );
     if ( L > m_Lwork ) {
       m_Lwork = L;
-      m_Work  = m_allocWork.malloc( size_t(L) );
+      m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
     for ( integer i = 0; i < m_ncols; ++i )
@@ -172,7 +172,7 @@ namespace lapack_wrapper {
     integer L = getL( m_nrows, m_ncols, nrhs );
     if ( L > m_Lwork ) {
       m_Lwork = L;
-      m_Work  = m_allocWork.malloc( size_t(L) );
+      m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
     copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1 );
@@ -199,7 +199,7 @@ namespace lapack_wrapper {
     integer L = getL( m_ncols, m_nrows, nrhs );
     if ( L > m_Lwork ) {
       m_Lwork = L;
-      m_Work  = m_allocWork.malloc( size_t(L) );
+      m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
     for ( integer i = 0; i < m_ncols; ++i )
@@ -225,7 +225,7 @@ namespace lapack_wrapper {
     if ( m_nrows != NR || m_ncols != NC ) {
       integer Lwork = 2*NR*NC+std::min(NR,NC);
       this->no_allocate(
-        NR, NC, Lwork, m_allocReals.malloc( size_t(Lwork) )
+        NR, NC, Lwork, m_allocReals.realloc( size_t(Lwork) )
       );
     }
   }
@@ -326,7 +326,7 @@ namespace lapack_wrapper {
     integer L = getL( m_nrows, m_ncols, 1 );
     if ( L > m_Lwork ) {
       m_Lwork = L;
-      m_Work  = m_allocWork.malloc( size_t(L) );
+      m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
     copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1 );
@@ -350,7 +350,7 @@ namespace lapack_wrapper {
     integer L = getL( m_ncols, m_nrows, 1 );
     if ( L > m_Lwork ) {
       m_Lwork = L;
-      m_Work  = m_allocWork.malloc( size_t( L ) );
+      m_Work  = m_allocWork.realloc( size_t( L ) );
     }
     // save matrix
     for ( integer i = 0; i < m_ncols; ++i )
@@ -379,7 +379,7 @@ namespace lapack_wrapper {
     integer L = getL( m_nrows, m_ncols, nrhs );
     if ( L > m_Lwork ) {
       m_Lwork = L;
-      m_Work  = m_allocWork.malloc( size_t(L) );
+      m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
     copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1 );
@@ -406,7 +406,7 @@ namespace lapack_wrapper {
     integer L = getL( m_ncols, m_nrows, nrhs );
     if ( L > m_Lwork ) {
       m_Lwork = L;
-      m_Work  = m_allocWork.malloc( size_t(L) );
+      m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
     for ( integer i = 0; i < m_ncols; ++i )
@@ -432,8 +432,8 @@ namespace lapack_wrapper {
       integer Lwork = 2*NR*NC;
       this->no_allocate(
         NR, NC,
-        Lwork, m_allocReals.malloc( size_t(Lwork) ),
-        NC,    m_allocInts.malloc( size_t(NC) )
+        Lwork, m_allocReals.realloc( size_t(Lwork) ),
+        NC,    m_allocInts.realloc( size_t(NC) )
       );
     }
   }

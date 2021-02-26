@@ -58,7 +58,7 @@ namespace lapack_wrapper {
       info == 0, "Eigenvalues<T>::allocate, call geev return info = {}\n", info
     );
     m_Lwork = integer( Lworkdummy );
-    m_mem.allocate( size_t( m_Lwork + (2+m_N) * m_N) );
+    m_mem.reallocate( size_t( m_Lwork + (2+m_N) * m_N) );
     m_Re      = m_mem( size_t(m_N) );
     m_Im      = m_mem( size_t(m_N) );
     m_Work    = m_mem( size_t(m_Lwork) );
@@ -268,7 +268,7 @@ namespace lapack_wrapper {
       info == 0, "Eigenvectors::allocate, call geev return info = {}\n", info
     );
     m_Lwork = integer(Lworkdummy);
-    m_mem.allocate( size_t( m_Lwork + (2+3*m_N) * m_N) );
+    m_mem.reallocate( size_t( m_Lwork + (2+3*m_N) * m_N) );
     m_Re      = m_mem( size_t(m_N) );
     m_Im      = m_mem( size_t(m_N) );
     m_A_saved = m_mem( size_t(m_N*m_N) );
@@ -545,7 +545,7 @@ namespace lapack_wrapper {
       "GeneralizedEigenvalues::allocate, call geev return info = {}\n", info
     );
     m_Lwork = integer(Lworkdummy);
-    m_mem.allocate( size_t( m_Lwork + (3+2*m_N) * m_N) );
+    m_mem.reallocate( size_t( m_Lwork + (3+2*m_N) * m_N) );
     m_alphaRe = m_mem( size_t(m_N) );
     m_alphaIm = m_mem( size_t(m_N) );
     m_beta    = m_mem( size_t(m_N) );
@@ -811,8 +811,8 @@ namespace lapack_wrapper {
       "GeneralizedEigenvectors::allocate, call geev return info = {}\n", info
     );
     m_Lwork = integer(Lworkdummy);
-    m_mem_real.allocate( size_t( m_Lwork + (7+4*m_N) * m_N) );
-    m_mem_int.allocate( size_t( 2*m_N + 6 ) );
+    m_mem_real.reallocate( size_t( m_Lwork + (7+4*m_N) * m_N) );
+    m_mem_int.reallocate( size_t( 2*m_N + 6 ) );
     m_alphaRe = m_mem_real( size_t(m_N) );
     m_alphaIm = m_mem_real( size_t(m_N) );
     m_beta    = m_mem_real( size_t(m_N) );

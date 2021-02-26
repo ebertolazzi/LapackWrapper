@@ -96,10 +96,10 @@ namespace lapack_wrapper {
       if ( row_select[i] ) ++m_NRA; else ++m_NRB;
     }
 
-    m_Amat = m_allocReals.malloc( size_t(m_NRA*NC) );
-    m_work = m_allocWorks.malloc( size_t(NN2) );
+    m_Amat = m_allocReals.realloc( size_t(m_NRA*NC) );
+    m_work = m_allocWorks.realloc( size_t(NN2) );
 
-    m_allocIntegers.allocate( size_t(NR) );
+    m_allocIntegers.reallocate( size_t(NR) );
     m_to_rowA = m_allocIntegers( size_t(m_NRA) );
     m_to_rowB = m_allocIntegers( size_t(m_NRB) );
 
@@ -153,7 +153,7 @@ namespace lapack_wrapper {
   bool
   LSC<T>::solve( valueType xb[] ) const {
 
-    m_allocWorks.allocate( size_t(m_NRA+m_NR+m_NC) );
+    m_allocWorks.reallocate( size_t(m_NRA+m_NR+m_NC) );
     m_work = m_allocWorks( size_t(m_NRA) );
     m_rhs  = m_allocWorks( size_t(m_NR+m_NC) );
 
@@ -181,6 +181,9 @@ namespace lapack_wrapper {
 
     bool ok = m_lu.solve( m_rhs );
     if ( ok ) lapack_wrapper::copy( m_NC, m_rhs, 1, xb, 1 );
+
+    m_allocWorks.free();
+
     return ok;
   }
 
@@ -194,7 +197,7 @@ namespace lapack_wrapper {
     integer   ldB
   ) const {
 
-    m_allocWorks.allocate( size_t( (m_NRA+m_NR+m_NC)*nrhs ) );
+    m_allocWorks.reallocate( size_t( (m_NRA+m_NR+m_NC)*nrhs ) );
     m_work = m_allocWorks( size_t( m_NRA*nrhs ) );
     m_rhs  = m_allocWorks( size_t( (m_NR+m_NC)*nrhs ) );
 
@@ -236,6 +239,8 @@ namespace lapack_wrapper {
     for ( integer i = 0; i < m_NRB; ++i )
       m_rhs[m_NC+m_NRA+i] = xb[m_to_rowB[i]];
 */
+
+    m_allocWorks.free();
 
     return true;
   }

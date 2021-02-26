@@ -39,7 +39,7 @@ namespace lapack_wrapper {
       "QN<T>::allocate, N = {} must be > 0 and <= 1000\n", N
     );
     m_dim = N;
-    m_allocReals.allocate( size_t(m_dim*(m_dim+3)) );
+    m_allocReals.reallocate( size_t(m_dim*(m_dim+3)) );
     m_H = m_allocReals( size_t(m_dim*m_dim) );
     m_s = m_allocReals( size_t(m_dim) );
     m_y = m_allocReals( size_t(m_dim) );

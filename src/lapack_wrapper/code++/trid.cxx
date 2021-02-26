@@ -69,7 +69,7 @@ namespace lapack_wrapper {
     valueType const _D[]
   ) {
     if ( m_nRC != N ) {
-      m_allocReals.allocate(3*N);
+      m_allocReals.reallocate(3*N);
       m_nRC  = N;
       m_L    = m_allocReals(N);
       m_D    = m_allocReals(N);
@@ -94,7 +94,7 @@ namespace lapack_wrapper {
     valueType const _D[]
   ) {
     if ( m_nRC != N ) {
-      m_allocReals.allocate(3*N);
+      m_allocReals.reallocate(3*N);
       m_nRC  = N;
       m_L    = m_allocReals(N);
       m_D    = m_allocReals(N);
@@ -189,8 +189,8 @@ namespace lapack_wrapper {
   ) {
     if ( m_nRC != N ) {
       m_nRC = N;
-      m_allocReals.allocate(6*N);
-      m_allocIntegers.allocate(2*N);
+      m_allocReals.reallocate(6*N);
+      m_allocIntegers.reallocate(2*N);
       m_L     = m_allocReals(N);
       m_D     = m_allocReals(N);
       m_U     = m_allocReals(N);
@@ -220,8 +220,8 @@ namespace lapack_wrapper {
   ) {
     if ( m_nRC != N ) {
       m_nRC = N;
-      m_allocReals.allocate(6*N);
-      m_allocIntegers.allocate(2*N);
+      m_allocReals.reallocate(6*N);
+      m_allocIntegers.reallocate(2*N);
       m_L     = m_allocReals(N);
       m_D     = m_allocReals(N);
       m_U     = m_allocReals(N);
@@ -416,7 +416,7 @@ namespace lapack_wrapper {
     valueType const D[],
     valueType const U[]
   ) {
-    m_allocReals.allocate(size_t(5*(N-1)));
+    m_allocReals.reallocate(size_t(5*(N-1)));
     m_nRC = N;
     m_C   = m_allocReals(size_t(N-1));
     m_S   = m_allocReals(size_t(N-1));

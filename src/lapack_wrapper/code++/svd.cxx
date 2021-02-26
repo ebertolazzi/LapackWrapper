@@ -245,8 +245,8 @@ namespace lapack_wrapper {
       integer L1    = 8*minRC;
       this->no_allocate(
         NR, NC,
-        L,  m_allocReals.malloc( size_t(L) ),
-        L1, m_allocIntegers.malloc( size_t(L1) )
+        L,  m_allocReals.realloc( size_t(L) ),
+        L1, m_allocIntegers.realloc( size_t(L1) )
       );
     }
   }
@@ -403,9 +403,9 @@ namespace lapack_wrapper {
     m_N     = n;
     m_P     = p;
     m_Lwork = integer(wL);
-    m_IWork = m_mem_int.malloc( size_t(n) );
+    m_IWork = m_mem_int.realloc( size_t(n) );
 
-    m_mem_real.allocate( m_Lwork + (m+p+2)*n + m*m + p*p + n*n );
+    m_mem_real.reallocate( m_Lwork + (m+p+2)*n + m*m + p*p + n*n );
     m_Work        = m_mem_real( m_Lwork );
     m_alpha_saved = m_mem_real( n );
     m_beta_saved  = m_mem_real( n );
