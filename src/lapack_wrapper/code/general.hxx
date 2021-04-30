@@ -3150,7 +3150,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     for ( integer i = 0; i < M; ++i ) {
       real s = D[i];
-      for ( integer j = 0; j < 1; ++j ) X[i+j*LDX] *= s;
+      for ( integer j = 0; j < N; ++j ) X[i+j*LDX] *= s;
     }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     slascl2( &M, &N, const_cast<real*>(D), X, &LDX );
@@ -3178,7 +3178,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     for ( integer i = 0; i < M; ++i ) {
       doublereal s = D[i];
-      for ( integer j = 0; j < 1; ++j ) X[i+j*LDX] *= s;
+      for ( integer j = 0; j < N; ++j ) X[i+j*LDX] *= s;
     }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlascl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
@@ -3263,7 +3263,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     for ( integer i = 0; i < M; ++i ) {
       real s = D[i];
-      for ( integer j = 0; j < 1; ++j ) X[i+j*LDX] /= s;
+      for ( integer j = 0; j < N; ++j ) X[i+j*LDX] /= s;
     }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     slarscl2( &M, &N, const_cast<real*>(D), X, &LDX );
@@ -3291,7 +3291,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     for ( integer i = 0; i < M; ++i ) {
       doublereal s = D[i];
-      for ( integer j = 0; j < 1; ++j ) X[i+j*LDX] /= s;
+      for ( integer j = 0; j < N; ++j ) X[i+j*LDX] /= s;
     }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlarscl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
