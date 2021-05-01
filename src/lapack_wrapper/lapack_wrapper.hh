@@ -92,10 +92,6 @@
 
 #ifdef UTILS_OS_WINDOWS
   // se in windows includo PRIMA windows.h per evitare conflitti!
-  #ifndef WIN32_LEAN_AND_MEAN
-    #define WIN32_LEAN_AND_MEAN
-  #endif
-  #include <windows.h>
   #ifdef _MSC_VER
     #include <stdint.h>
   #else
@@ -109,13 +105,6 @@
       typedef unsigned __int32 uint32_t;
       typedef unsigned __int64 uint64_t;
     }
-  #endif
-  // windows define max and min!!!
-  #ifdef max
-    #undef max
-  #endif
-  #ifdef min
-    #undef min
   #endif
 #else
   #include <cstdint>
