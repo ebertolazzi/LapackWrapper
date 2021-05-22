@@ -18,11 +18,11 @@ namespace SparseTool {
   class RILDUpreconditioner : public Preco<RILDUpreconditioner<T> > {
   public:
 
-    //! \cond NODOC
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef RILDUpreconditioner<T> RILDUPRECO;
     typedef Preco<RILDUPRECO>      PRECO;
+    #endif
 
-    //! \endcond
     typedef T valueType; //!< type of the elements of the preconditioner
 
   private:
@@ -298,12 +298,12 @@ namespace SparseTool {
 
   };
 
-  //! \cond NODOC
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   template <typename T, typename TP> inline
   Vector_V_div_P<Vector<T>,RILDUpreconditioner<TP> >
   operator / (Vector<T> const & v, RILDUpreconditioner<TP> const & P)
   { return Vector_V_div_P<Vector<T>,RILDUpreconditioner<TP> >(v,P); }
-  //! \endcond
+  #endif
 
 }
 

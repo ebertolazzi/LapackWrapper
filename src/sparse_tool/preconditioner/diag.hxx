@@ -19,10 +19,10 @@ namespace SparseTool {
   template <typename T>
   class Dpreconditioner : public Preco<Dpreconditioner<T> > {
 
-    // \cond NODOC
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef Dpreconditioner<T> DPRECO;
     typedef Preco<DPRECO>      PRECO;
-    // \endcond
+    #endif
     typedef T valueType; //!< type of the element of the preconditioner
 
     Vector<valueType> D;
@@ -60,12 +60,12 @@ namespace SparseTool {
 
   };
 
-  //! \cond NODOC
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   template <typename T, typename TP> inline
   Vector_V_div_P<Vector<T>,Dpreconditioner<TP> >
   operator / (Vector<T> const & v, Dpreconditioner<TP> const & P)
   { return Vector_V_div_P<Vector<T>,Dpreconditioner<TP> >(v,P); }
-  //! \endcond
+  #endif
 }
 
 namespace SparseToolLoad {

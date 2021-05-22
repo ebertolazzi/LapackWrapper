@@ -26,11 +26,11 @@ namespace SparseTool {
   class CSSORpreconditioner : public Preco<CSSORpreconditioner<T> > {
   public:
 
-    //! \cond NODOC
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef CSSORpreconditioner<T> CSSORPRECO;
     typedef Preco<CSSORPRECO>      PRECO;
+    #endif
 
-    //! \endcond
     typedef typename T::value_type valueType; //!< type of the elements of the preconditioner
 
   private:
@@ -388,12 +388,12 @@ namespace SparseTool {
 
   };
 
-  //! \cond NODOC
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   template <typename T, typename TP> inline
   Vector_V_div_P<Vector<T>,CSSORpreconditioner<TP> >
   operator / (Vector<T> const & v, CSSORpreconditioner<TP> const & P)
   { return Vector_V_div_P<Vector<T>,CSSORpreconditioner<TP> >(v,P); }
-  //! \endcond
+  #endif
 
 }
 

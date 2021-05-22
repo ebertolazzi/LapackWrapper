@@ -17,10 +17,11 @@ namespace SparseTool {
   template <typename T>
   class IdPreconditioner : public Preco<IdPreconditioner<T> > {
 
-    // \cond NODOC
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef IdPreconditioner<T> IDPRECO;
     typedef Preco<IDPRECO>      PRECO;
-    // \endcond
+    #endif
+
     typedef T valueType; //!< type of the element of the preconditioner
 
   public:
@@ -37,12 +38,12 @@ namespace SparseTool {
 
   };
 
-  //! \cond NODOC
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   template <typename T, typename TP> inline
   Vector_V_div_P<Vector<T>,IdPreconditioner<TP> >
   operator / (Vector<T> const & v, IdPreconditioner<TP> const & P)
   { return Vector_V_div_P<Vector<T>,IdPreconditioner<TP> >(v,P); }
-  //! \endcond
+  #endif
 
 }
 

@@ -155,10 +155,10 @@ namespace SparseTool {
   class UMFpreconditioner : public Preco<UMFpreconditioner<T> > {
   public:
 
-    // \cond NODOC
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef UMFpreconditioner<T> UMFPRECO;
     typedef Preco<UMFPRECO>      PRECO;
-    // \endcond
+    #endif
     typedef T valueType; //!< type of the element of the preconditioner
     typedef typename return_trait<T>::valueType realType;
 
@@ -188,12 +188,12 @@ namespace SparseTool {
 
   };
 
-  //! \cond NODOC
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   template <typename T, typename TP> inline
   Vector_V_div_P<Vector<T>,UMFpreconditioner<TP> >
   operator / (Vector<T> const & v, UMFpreconditioner<TP> const & P)
   { return Vector_V_div_P<Vector<T>,UMFpreconditioner<TP> >(v,P); }
-  //! \endcond
+  #endif
 
 }
 

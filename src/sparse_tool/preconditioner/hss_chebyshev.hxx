@@ -17,11 +17,11 @@ namespace SparseTool {
   class HSS_CHEBYSHEV_Preconditioner : public Preco<HSS_CHEBYSHEV_Preconditioner<T> > {
   public:
 
-    //! \cond NODOC
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef HSS_CHEBYSHEV_Preconditioner<T> HSS_CHEBYSHEV_PRECO;
     typedef Preco<HSS_CHEBYSHEV_PRECO>      PRECO;
+    #endif
 
-    //! \endcond
     typedef T valueType; //!< type of the elements of the preconditioner
     typedef typename T::value_type rvalueType; //!< type of the elements of the preconditioner
 
@@ -187,12 +187,12 @@ namespace SparseTool {
 
   };
 
-  //! \cond NODOC
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   template <typename T, typename TP> inline
   Vector_V_div_P<Vector<T>,HSS_CHEBYSHEV_Preconditioner<TP> >
   operator / (Vector<T> const & v, HSS_CHEBYSHEV_Preconditioner<TP> const & P)
   { return Vector_V_div_P<Vector<T>,HSS_CHEBYSHEV_Preconditioner<TP> >(v,P); }
-  //! \endcond
+  #endif
 
 }
 

@@ -47,16 +47,22 @@ namespace SparseTool {
   //  #     # #    # #    # #    # ######   #   
   */
 
-  //! type of storage for sparse matrix
+  //!
+  //! Type of storage for sparse matrix.
+  //!
   typedef enum { MM_COORDINATE = 0, MM_ARRAY = 1 } CoorType;
 
-  //! type of the element of the sparse matrix
+  //!
+  //! Type of the element of the sparse matrix.
+  //!
   typedef enum { MM_PATTERN = 0, MM_INTEGER = 1, MM_REAL = 2, MM_COMPLEX = 3 } ValueType;
 
-  //! the type of the matrix
+  //!
+  //! The type of the matrix.
+  //!
   typedef enum { MM_GENERAL = 0, MM_SYMMETRIC = 1, MM_SKEW_SYMMETRIC = 2, MM_HERMITIAN = 3 } MatrixType;
   
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   static char const *cC[] = { "coordinate", "array" };
   static char const *cV[] = { "pattern", "integer", "real", "complex" };
@@ -65,7 +71,7 @@ namespace SparseTool {
   static char const MM_HEADER[] = "% Generated with saveToMatrixMarket of toolkit SparseTool\n"
                                   "% by Enrico Bertolazzi\n"
                                   "%--------------------------------------------------------\n";
-  /*! \endcond */
+  #endif
 
   /*!
      A standard way to store and exchange large sparse matrix if to save

@@ -13,7 +13,7 @@ namespace SparseTool {
   //  #      #  #     #  #     # #      #    #
   //   ######   #     #  #     # #####   ####
   */
-  //! \cond NODOC
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   template <class T>
   inline
@@ -55,7 +55,7 @@ namespace SparseTool {
     dy = -sn * dx + cs * dy;
     dx = temp;
   }
-  //! \endcond
+  #endif
 
   /*!
    *  Generalized Minimal Residual Iterative Solver

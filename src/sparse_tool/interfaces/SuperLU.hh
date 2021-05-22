@@ -307,10 +307,10 @@ namespace SparseTool {
   class SuperLUpreconditioner : public Preco<SuperLUpreconditioner<T> > {
   public:
 
-    // \cond NODOC
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef SuperLUpreconditioner<T> SLUPRECO;
     typedef Preco<SLUPRECO>          PRECO;
-    // \endcond
+    #endif
     typedef T valueType; //!< type of the element of the preconditioner
     typedef typename RealType<T>::Type realType;
 
@@ -340,12 +340,12 @@ namespace SparseTool {
 
   };
 
-  //! \cond NODOC
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   template <typename T, typename TP> inline
   Vector_V_div_P<Vector<T>,SuperLUpreconditioner<TP> >
   operator / (Vector<T> const & v, SuperLUpreconditioner<TP> const & P)
   { return Vector_V_div_P<Vector<T>,SuperLUpreconditioner<TP> >(v,P); }
-  //! \endcond
+  #endif
 
   template <>
   inline

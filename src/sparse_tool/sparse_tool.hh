@@ -112,7 +112,7 @@ using namespace SparseToolLoad;
          << "' on line " << __LINE__ << "\n";;        \
     exit(0); }
 
-/*! \cond NODOC */
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #define SPARSETOOL_ASSERT(X,W) if ( !(X) ) SPARSETOOL_ERR(W)
 
@@ -129,9 +129,9 @@ using namespace SparseToolLoad;
 #define SPARSELIB_V1LOOP(DO)   SPARSELIB_LOOP(this->size(),DO)
 #define SPARSELIB_V2LOOP(V,DO) SPARSELIB_LOOP(minIndex(V.size(),this->size()),DO)
 
-/*! \endcond */
+#endif
 
-/*! \cond NODOC */
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolFun {
 
   static inline float       conj(float       const & a) { return a; }
@@ -168,7 +168,7 @@ namespace SparseToolFun {
   using namespace ::std;
 
 }
-/*! \endcond */
+#endif
 
 //! The namespace with the SparseTool toolkit
 namespace SparseTool {
@@ -185,7 +185,7 @@ namespace SparseTool {
 
   // FROM BLITZ++
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   /*! \brief
    * This class is copied from \c BLITZ++.
@@ -218,9 +218,9 @@ namespace SparseTool {
   SPARSELIB_DECLARE_PRECISION(std::complex<double> ,900)
   SPARSELIB_DECLARE_PRECISION(std::complex<long double> ,1000)
 
-  /*! \endcond */
+  #endif
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   template<typename T>
   struct return_trait {
@@ -255,9 +255,9 @@ namespace SparseTool {
   template<typename T1, typename T2>
   struct promote2<T1,T2,false> { typedef T2 T_promote; };
 
-  /*! \endco; */
+  #endif
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   template<typename T1_orig, typename T2_orig>
   class promote_trait {
@@ -358,9 +358,9 @@ namespace SparseTool {
 
   template <typename T> class Vector;
 
-  /*! \endcond */
+  #endif
 
-  //! define \c uint32_t as the type for indexing vector and matrices
+  //! define `uint32_t` as the type for indexing vector and matrices
   typedef uint32_t indexType;
 
   //! return minimum value between \c a and \c b
@@ -429,8 +429,6 @@ namespace SparseTool {
   //    #    #   #   #       #
   //    #    #    #  ######  ######
   */
-
-  //! \cond NODOC
 
   //! \defgroup MVStructures Structures Storing Matrix/Vector operations
   //@{
@@ -547,7 +545,7 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c a-M*b
+  //! structure storing the operation `a-M*b`
   template <typename VA, typename MATRIX, typename VB>
   struct Vector_V_sub_M_mul_V {
     VA     const & a;
@@ -648,9 +646,6 @@ namespace SparseTool {
   };
   
   //@}
-  
-  //! \endcond
-
 
 //! macro to define the standar matrix/vector operators
 #define SPARSELIB_VECTOR_OPERATIONS(VECTOR) \
@@ -1540,7 +1535,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
 
   };
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   #define SPARSELIB_V(OP,OP_V)                                                \
   template<typename A>                                                        \
@@ -1667,9 +1662,9 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     return VectorE<T,op>(op(v,s));                                            \
   }
   
-  /*! \endcond */
+  #endif
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   SPARSELIB_V(-,Vector_neg_V)
 
@@ -1688,9 +1683,9 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   SPARSELIB_VS(*,Vector_V_mul_S)
   SPARSELIB_VS(/,Vector_V_div_S)
 
-  /*! \endcond */
+  #endif
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   #define SPARSELIB_F_V(FUN)                                                  \
   template<typename A>                                                        \
@@ -1764,9 +1759,9 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     typedef Vector_##FUN<VectorE<T,A>,VectorE<T,B> > op;                      \
     return VectorE<T,op>(op(a,b));                                            \
   }
-  /*! \endcond */
+  #endif
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   SPARSELIB_F_V(absval)
   SPARSELIB_F_V(sin)
@@ -1794,9 +1789,9 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   SPARSELIB_F_VV(minabsval)
   SPARSELIB_F_VV(maxabsval)
 
-  /*! \endcond */
+  #endif
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   template<typename A>
   class F1 {
@@ -1937,9 +1932,9 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
 
   };
   
-  /*! \endcond */
+  #endif
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   SPARSELIB_F_V_TREE(absval)
   SPARSELIB_F_V_TREE(sin)
@@ -1965,7 +1960,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   SPARSELIB_F_VV_TREE(minabsval)
   SPARSELIB_F_VV_TREE(maxabsval)
 
-  /*! \endcond */
+  #endif
 
   #undef SPARSELIB_V
   #undef SPARSELIB_VV
@@ -2208,7 +2203,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   //! \name Sorting Structures
   //@{
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   typedef struct { indexType lo, hi; } stack_node;
 
@@ -2221,7 +2216,7 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
            indexType i1, indexType j1 )
   { return j==j1 ? i>i1 : j>j1; }
 
-  /*! \endcond */
+  #endif
 
   /*! 
    * Function to sort two vector of indexes and values
@@ -3565,7 +3560,7 @@ sp.resize(sobj);
     Vector<indexType> J;    //!< Vector of column index
     mutable indexType ipos; //!< Actual position of iterator
 
-    //! \cond NODOC
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     template <typename MAT, typename Compare>
     void
     convert( SparseBase<MAT> const & M, Compare cmp ) {
@@ -3583,7 +3578,7 @@ sp.resize(sobj);
       }
       internalOrder();
     }
-    //! \endcond
+    #endif
 
   public:
 
@@ -4226,9 +4221,9 @@ CCoorMatrix<double> ccoor(sobj);
     }
   };
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   SPARSELIB_MUL_STRUCTURES(CCoorMatrix)
-  /*! \endcond */
+  #endif
 
   /*
   //  #     # #     # #       ####### ### ######  #       #     #
@@ -4705,9 +4700,9 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
 
   };
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   SPARSELIB_MUL_STRUCTURES(CRowMatrix)
-  /*! \endcond */
+  #endif
 
   /*
   //  #####   #####
@@ -5086,9 +5081,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
 
   };
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   SPARSELIB_MUL_STRUCTURES(CColMatrix)
-  /*! \endcond */
+  #endif
 
   /*
   // #######
@@ -5694,7 +5689,7 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
 
   };
 
-  /*! \cond NODOC */
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   SPARSELIB_MUL_STRUCTURES(TridMatrix)
 
   template <typename TM, typename T> inline
@@ -5702,7 +5697,7 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
   operator / (Vector<T> const & a, TridMatrix<TM> const & M) {
     return Vector_V_div_M<Vector<T>,TridMatrix<TM> >(a,M);
   }
-  /*! \endcond */
+  #endif
 
   /*
    *  ###       # #######
