@@ -58,19 +58,21 @@ namespace SparseTool {
   //  ####   ####          #       ####  ######   #   
   //               #######                            
   */
-  /*!
-   *  Preconditioned Conjugate Gradient Iterative Solver
-   *  \param A       coefficient matrix
-   *  \param b       righ hand side
-   *  \param x       guess and solution
-   *  \param epsi    Admitted tolerance
-   *  \param maxIter maximum number of admitted iteration
-   *  \param iter    total number of performed itaration
-   *  \param pStream pointer to stream object for messages
-   *  \return last computed residual
-   *
-   *  Use preconditioned conjugate gradient to solve \f$ A x = b \f$.
-   */
+  //!
+  //! Preconditioned Conjugate Gradient Iterative Solver.
+  //!
+  //! \param A       coefficient matrix
+  //! \param b       righ hand side
+  //! \param x       guess and solution
+  //! \param epsi    Admitted tolerance
+  //! \param maxIter maximum number of admitted iteration
+  //! \param mdegree degree of precondition polynomial
+  //! \param iter    total number of performed itaration
+  //! \param pStream pointer to stream object for messages
+  //! \return last computed residual
+  //!
+  //! Use preconditioned conjugate gradient to solve \f$ A x = b \f$.
+  //!
   template <typename valueType,
             typename indexType,
             typename matrix_type,
@@ -217,8 +219,10 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::cg;
 }
+#endif
 
 #endif

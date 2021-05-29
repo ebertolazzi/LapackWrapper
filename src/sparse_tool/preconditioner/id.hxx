@@ -32,7 +32,10 @@ namespace SparseTool {
     template <typename MAT>
     void build(Sparse<T,MAT> const &) {}
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
+    //!
     template <typename VECTOR>
     void assPreco( VECTOR & res, VECTOR const & v ) const { res = v; }
 
@@ -47,8 +50,10 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::IdPreconditioner;
 }
+#endif
 
 #endif

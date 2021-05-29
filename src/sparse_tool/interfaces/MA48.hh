@@ -295,8 +295,10 @@ namespace SparseTool {
   };
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::MA48;
 }
+#endif
 
 #endif

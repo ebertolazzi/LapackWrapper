@@ -1,4 +1,4 @@
-/**
+/*
  * \file ma57_wrapper.hh
  * Header definitions of the class MA57.
  *
@@ -99,7 +99,7 @@ namespace lapack_wrapper {
      * \brief ~MA57:
      *        Virtual destructor of the class MA57.
      */
-    virtual ~MA57() UTILS_OVERRIDE { }
+    virtual ~MA57() override { }
 
     /*\
     :|:   ___      _    _ _      __  __           _
@@ -122,7 +122,6 @@ namespace lapack_wrapper {
      * \return True if HSL could be initialized.
      *
      */
-    virtual
     bool
     init(
       int       Nnz,
@@ -131,7 +130,7 @@ namespace lapack_wrapper {
       int const i_Row[],
       int const j_Col[],
       bool      isFortranIndexing
-    ) UTILS_OVERRIDE;
+    ) override;
 
     /**
      * \brief factorize:
@@ -142,11 +141,9 @@ namespace lapack_wrapper {
      * \return True if the linear system \f$ Ax = b\f$ for \f$ A\f$ could be solved.
      *
      */
-    virtual
     bool
-    factorize( real const ArrayA[] ) UTILS_OVERRIDE;
+    factorize( real const ArrayA[] ) override;
 
-    virtual
     bool
     solve(
       int        nrhs,
@@ -154,9 +151,8 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     bool
     solve_transposed(
       int        nrhs,
@@ -164,7 +160,7 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const UTILS_OVERRIDE {
+    ) const override {
       // Symmetric matrix:
       return this->solve(nrhs, RHS, ldRHS, X, ldX);
     }

@@ -29,17 +29,16 @@ namespace SparseTool {
   //        |_|    |___/
   */
 
-  /*!
-   *  Plot a sihouette of the sparse pattern to a file
-   *  \param fname    file name
-   *  \param sp       sparse pattern to plot
-   *  \param xsize    dimension of the plot in \c cm
-   *  \param rowLines if not \c nullptr is a pointer to a \c vector object
-   *                  with the list of the horizontal lines to draw
-   *  \param colLines if not \c nullptr is a pointer to a \c vector object
-   *                  with the list of the vertical lines to draw
-   */
-
+  //!
+  //! Plot a sihouette of the sparse pattern to a file
+  //! \param fname    file name
+  //! \param sp       sparse pattern to plot
+  //! \param xsize    dimension of the plot in `cm`
+  //! \param rowLines if not `nullptr` is a pointer to a `vector` object
+  //!                 with the list of the horizontal lines to draw
+  //! \param colLines if not `nullptr` is a pointer to a `vector` object
+  //!                 with the list of the vertical lines to draw
+  //!
   template <typename MAT>
   void
   Spy(
@@ -54,16 +53,16 @@ namespace SparseTool {
      file . close();
   }
 
-  /*!
-   *  Plot a sihouette of the sparse pattern to a file
-   *  \param stream   stream object file where the figure is saved
-   *  \param sp       sparse pattern to plot
-   *  \param xsize    dimension of the plot in \c cm
-   *  \param rowLines if not \c nullptr is a pointer to a \c vector object
-   *                  with the list of the horizontal lines to draw
-   *  \param colLines if not \c nullptr is a pointer to a \c vector object
-   *                  with the list of the vertical lines to draw
-   */
+  //!
+  //! Plot a sihouette of the sparse pattern to a file
+  //! \param stream   stream object file where the figure is saved
+  //! \param sp       sparse pattern to plot
+  //! \param xsize    dimension of the plot in `cm`
+  //! \param rowLines if not `nullptr` is a pointer to a `vector` object
+  //!                 with the list of the horizontal lines to draw
+  //! \param colLines if not `nullptr` is a pointer to a `vector` object
+  //!                 with the list of the vertical lines to draw
+  //!
   template <typename MAT>
   void
   Spy(
@@ -172,9 +171,10 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
-  // utilities
   using ::SparseTool::Spy;
 }
+#endif
 
 #endif

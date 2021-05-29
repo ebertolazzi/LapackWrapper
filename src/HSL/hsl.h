@@ -1,9 +1,9 @@
-/**
- * @file hsl.h
+/*
+ * \file hsl.h
  * Header Definition for Fortran-Routines of MA57 and MA48.
  *
- * @author A. Huber and E.Bertolazzi
- * @since 13.11.2018
+ * \author A. Huber and E.Bertolazzi
+ * \since 13.11.2018
  */
 
 #ifndef HSL_H

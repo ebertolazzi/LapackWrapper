@@ -25,6 +25,7 @@
  * SUPERLU interface http://crd.lbl.gov/~xiaoye/SuperLU/
  */
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 // workaround for SUPERLU INCLUSION
 #define dgemm_  dgemm_BUGGED
 #define dtrsv_  dtrsv_BUGGED
@@ -53,6 +54,8 @@
 #undef strsm_
 #undef sgemv_
 #undef xerbla_
+
+#endif
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -326,13 +329,15 @@ namespace SparseTool {
     SuperLUpreconditioner( MAT const & M, realType const dropTolerance ) : Preco<SLUPRECO>()
     { ILU.load( M, dropTolerance ); }
 
-    //! build the preconditioner from matrix \c M
+    //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
     build( MAT const & M, realType const dropTolerance )
     { ILU.load( M, dropTolerance ); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
+    //!
+    //! Apply preconditioner to vector `v`  and store result to vector `res`
+    //!
     template <typename VECTOR>
     void
     assPreco( VECTOR & res, VECTOR const & v ) const
@@ -519,9 +524,11 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::SuperLU;
   using ::SparseTool::SuperLUpreconditioner;
 }
+#endif
 
 #endif

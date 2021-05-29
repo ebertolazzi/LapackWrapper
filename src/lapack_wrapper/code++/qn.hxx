@@ -154,7 +154,7 @@ namespace lapack_wrapper {
       valueType const y[],
       valueType const s[],
       valueType       epsi
-    ) UTILS_PURE_VIRTUAL;
+    ) = 0;
 
   };
 
@@ -191,13 +191,12 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
     void
     update(
       valueType const y[],
       valueType const s[],
       valueType       epsi
-    ) UTILS_OVERRIDE;
+    ) override;
 
   };
 
@@ -234,13 +233,12 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
     void
     update(
       valueType const y[],
       valueType const s[],
       valueType       epsi
-    ) UTILS_OVERRIDE;
+    ) override;
   };
 
   /*\
@@ -276,13 +274,12 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
     void
     update(
       valueType const y[],
       valueType const s[],
       valueType       epsi
-    ) UTILS_OVERRIDE;
+    ) override;
   };
 
 }

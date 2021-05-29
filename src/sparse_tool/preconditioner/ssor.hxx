@@ -42,7 +42,7 @@ namespace SparseTool {
 
     Vector<indexType> Lnnz, Unnz;
 
-    //! build incomplete LDU decomposition with specified pattern \c P
+    //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
     build_SOR( MAT const & A, valueType const & _omega, indexType _maxIter ) {
@@ -166,13 +166,16 @@ namespace SparseTool {
     SSORpreconditioner( MAT const & M, valueType _omega, indexType _maxIter ) : Preco<SSORPRECO>()
     { build_SOR( M, _omega, _maxIter ); }
 
-    //! build the preconditioner from matrix \c M with pattern \c P
+    //! build the preconditioner from matrix `M` with pattern `P` 
     template <typename MAT>
     void
     build( MAT const & M, valueType _omega, indexType _maxIter )
     { build_SOR( M, _omega, _maxIter ); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
+    //!
     template <typename VECTOR>
     void
     assPreco( VECTOR & x, VECTOR const & b ) const {
@@ -249,8 +252,10 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::SSORpreconditioner;
 }
+#endif
 
 #endif

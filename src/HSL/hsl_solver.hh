@@ -1,4 +1,4 @@
-/**
+/*
  * \file hslsolver.h
  * Header definitions of the class HSLsolver.
  *
@@ -74,7 +74,7 @@ namespace lapack_wrapper {
       int const i_Row[],
       int const j_Col[],
       bool      isFortranIndexing
-    ) UTILS_PURE_VIRTUAL;
+    ) = 0;
 
     /**
      * \brief factorize:
@@ -87,7 +87,7 @@ namespace lapack_wrapper {
      */
     virtual
     bool
-    factorize( real const ArrayA[] ) UTILS_PURE_VIRTUAL;
+    factorize( real const ArrayA[] ) = 0;
 
     /**
      * \brief solve:
@@ -110,7 +110,7 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const UTILS_PURE_VIRTUAL;
+    ) const = 0;
 
     /**
      * \brief solve:
@@ -148,7 +148,7 @@ namespace lapack_wrapper {
       int        ldRHS,
       real       X[],
       int        ldX
-    ) const UTILS_PURE_VIRTUAL;
+    ) const = 0;
 
     /**
      * \brief solve_transposed:

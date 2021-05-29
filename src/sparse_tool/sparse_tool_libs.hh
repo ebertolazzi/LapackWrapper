@@ -1,5 +1,4 @@
-
-/*!
+/*
 
   \file     sparse_tools_libs.hh
   \date     2011, July 21

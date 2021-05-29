@@ -100,6 +100,8 @@ test1() {
     "residual = {}\n||res||_2 = {}\ndone test1\n",
     lapack_wrapper::print_matrix( 1, M, b, 1 ), res
   );
+  msg.green( "\n\ndone test1\n" );
+
 }
 
 
@@ -162,6 +164,8 @@ test2() {
     "done test2\n",
     lapack_wrapper::print_matrix( 1, M, b, 1 ), res
   );
+  msg.green( "\n\ndone test2\n" );
+
 }
 
 static
@@ -227,6 +231,8 @@ test3() {
     "residual = {}\n||res||_2 = {}\ndone test3\n",
     lapack_wrapper::print_matrix( 1, M, b, 1 ), res
   );
+  msg.green( "\n\ndone test3\n" );
+
 }
 
 #define TEST4(NAME,F) \
@@ -291,7 +297,8 @@ test4() {
   TEST4("LSS",lss);
   TEST4("LSY",lsy);
 
-  cout << "done test4\n";
+  msg.green( "\n\ndone test4\n" );
+
 }
 
 #define TEST5(NAME,F) \
@@ -357,7 +364,8 @@ test5() {
   TEST5("LSS",lss);
   TEST5("LSY",lsy);
 
-  cout << "\ndone test5\n";
+  msg.green( "\n\ndone test5\n" );
+
 }
 
 
@@ -419,6 +427,8 @@ test6() {
       lapack_wrapper::print_matrix( 1, N, b, 1 ), res
     )
   );
+  msg.green( "\n\ndone test6\n" );
+
 }
 
 static
@@ -475,6 +485,8 @@ test7() {
       lapack_wrapper::print_matrix( 1, M, b, 1 ), res
     )
   );
+  msg.green( "\n\ndone test7\n" );
+
 }
 
 static
@@ -535,6 +547,7 @@ test8() {
       lapack_wrapper::print_matrix( 1, M, b, 1 ), res
     )
   );
+  msg.green( "\n\ndone test8\n" );
 }
 
 
@@ -615,6 +628,9 @@ test9() {
     lapack_wrapper::print_matrix( 1, M, b, 1 ),
     res
   );
+
+  msg.green( "\n\ndone test9\n" );
+
 }
 
 static
@@ -683,6 +699,8 @@ test10() {
       lapack_wrapper::print_matrix( 1, M, b, 1 ), res
     )
   );
+
+  msg.green( "\n\ndone test10\n" );
 }
 
 static
@@ -751,6 +769,9 @@ test11() {
       lapack_wrapper::print_matrix( 1, N, b, 1 ), res
     )
   );
+
+  msg.green( "\n\ndone test11\n" );
+
 }
 
 static
@@ -877,8 +898,6 @@ R1
     lapack_wrapper::print_matrix( N, N, MM, N )
   ) );
 
-  exit(0);
-
   lapack_wrapper::gemm(
     lapack_wrapper::NO_TRANSPOSE, lapack_wrapper::TRANSPOSE,
     M, M, N,
@@ -892,7 +911,7 @@ R1
     lapack_wrapper::print_matrix( M, M, MM, M )
   ) );
 
-  msg.green( "\n\ndone test10\n" );
+  msg.green( "\n\ndone test12\n" );
 
 }
 

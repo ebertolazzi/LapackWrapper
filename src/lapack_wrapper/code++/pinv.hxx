@@ -67,9 +67,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::t_solve;
 
     PINV_no_alloc();
-
-    virtual
-    ~PINV_no_alloc() UTILS_OVERRIDE {}
+    ~PINV_no_alloc() override {}
 
     void
     no_allocate(
@@ -136,48 +134,46 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    /*!
-     *   In case of QR factorization of a square matrix solve the
-     *   linear system \f$ QR x = b \f$
-     * param xb on input the rhs of linear system on output the solution
-     */
-    virtual
+    //! 
+    //! In case of QR factorization of a square matrix solve the
+    //! linear system \f$ QR x = b \f$.
+    //!
+    //! \param xb on input the rhs of linear system on output the solution
+    //!
     bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE {
+    solve( valueType xb[] ) const override {
       if ( m_nrows != m_ncols ) return false;
       return mult_inv( xb, 1, xb, 1 );
     }
 
-    /*!
-     *  In case of QR factorization of a square matrix solve the
-     *  linear system \f$ (QR)^T x = b \f$
-     *  \param xb on input the rhs of linear system on output the solution
-     */
-    virtual
+    //!
+    //! In case of QR factorization of a square matrix solve the
+    //! linear system \f$ (QR)^T x = b \f$.
+    //!
+    //! \param xb on input the rhs of linear system on output the solution
+    //!
     bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE {
+    t_solve( valueType xb[] ) const override {
       if ( m_nrows != m_ncols ) return false;
       return t_mult_inv( xb, 1, xb, 1 );
     }
 
-    virtual
     bool
     solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE {
+    ) const override {
       if ( m_nrows != m_ncols ) return false;
       return mult_inv( nrhs, B, ldB, B, ldB );
     }
 
-    virtual
     bool
     t_solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE {
+    ) const override {
       if ( m_nrows != m_ncols ) return false;
       return t_mult_inv( nrhs, B, ldB, B, ldB );
     }
@@ -217,19 +213,19 @@ namespace lapack_wrapper {
     , m_allocIntegers("PINV-allocIntegers")
     {}
 
-    virtual
-    ~PINV() UTILS_OVERRIDE
+    ~PINV() override
     { m_allocReals.free(); }
 
     void
     allocate( integer nr, integer nc );
 
-    /*!
-     *  \param NR  number of rows of the matrix
-     *  \param NC  number of columns of the matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! \param who string used in error message
+    //! \param NR  number of rows of the matrix
+    //! \param NC  number of columns of the matrix
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     void
     factorize(
       char      const who[],
@@ -237,34 +233,35 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       this->PINV_no_alloc<T>::factorize_nodim( who, A, LDA );
     }
 
-    /*!
-     *  \param NR  number of rows of the matrix
-     *  \param NC  number of columns of the matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! \param NR  number of rows of the matrix
+    //! \param NC  number of columns of the matrix
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     bool
     factorize(
       integer         NR,
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       return this->PINV_no_alloc<T>::factorize_nodim( A, LDA );
     }
 
-    /*!
-     *  \param NR  number of rows of the matrix
-     *  \param NC  number of columns of the matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! \param who string used in error message
+    //! \param NR  number of rows of the matrix
+    //! \param NC  number of columns of the matrix
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     void
     t_factorize(
       char      const who[],
@@ -272,24 +269,24 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NC, NR );
       this->PINV_no_alloc<T>::t_factorize_nodim( who, A, LDA );
     }
 
-    /*!
-     *  \param NR  number of rows of the matrix
-     *  \param NC  number of columns of the matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! \param NR  number of rows of the matrix
+    //! \param NC  number of columns of the matrix
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     bool
     t_factorize(
       integer         NR,
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NC, NR );
       return this->PINV_no_alloc<T>::t_factorize_nodim( A, LDA );
     }

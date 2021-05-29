@@ -174,13 +174,16 @@ namespace SparseTool {
     UMFpreconditioner( MAT const & M, realType const dropTolerance ) : Preco<UMFPRECO>() 
     { ILU.load( M, dropTolerance ); }
 
-    //! build the preconditioner from matrix \c M
+    //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
     build( MAT const & M, realType const dropTolerance )
     { ILU.load( M, dropTolerance ); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`
+    //!
     template <typename VECTOR>
     void
     assPreco( VECTOR & res, VECTOR const & v ) const
@@ -197,9 +200,11 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::UMF;
   using ::SparseTool::UMFpreconditioner;
 }
+#endif
 
 #endif

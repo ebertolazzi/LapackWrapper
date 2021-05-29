@@ -1,5 +1,4 @@
-/*!
-
+/*
   \file     sparse_tool_matrix_market.hh
   \date     2011, July 21
   \version  1.1
@@ -7,11 +6,10 @@
 
   \author Enrico Bertolazzi
  
-  \par Affiliations:
-       Dipartimento di Ingegneria Industriale<br>
-       Universita` degli Studi di Trento<br>
-       enrico.bertolazzi\@unitn.it
- 
+  Affiliations:
+  Dipartimento di Ingegneria Industriale
+  Universita` degli Studi di Trento
+  enrico.bertolazzi@unitn.it
 */
 
 #pragma once
@@ -73,58 +71,18 @@ namespace SparseTool {
                                   "%--------------------------------------------------------\n";
   #endif
 
-  /*!
-     A standard way to store and exchange large sparse matrix if to save
-     matrix accordingly to some <a> file exchange format </a>.
-     For sparse matrices there are two widely used format the Harwell-Boeing
-     (HB) Sparse Matrix Format and Matrix Market (MM) Sparse Matrix Format.
-     
-     The HB format is strongly depended on \c FORTRAN language and is 
-     difficult to manage in other languages unless using a sophisticated parser.
-     The alternative is to use dedicated \c FORTRAN routine to manage such a format.
-     The design of \c SparseTool is to use a unique header \c SparseTool.hh
-     which contains the whole library so that HB format is not supported.
-     The MM format is easier to manage so that a simple support is included in 
-     the toolkit by the class \c MatrixMarket.
-     In any case there are free software for convert from one format to another
-     (see e.g. \c http://bebop.cs.berkeley.edu/ ).
-
-     The following code shows how \c MatrixMarket should be used:
-
-\code
-MatrixMarket mm; // define the object mm to manage Matrix Market file
-CCoorMatrix<double> A;      // an empty sparse CCOOR matrix
-SparsePattern sp;           // an empty sparse pattern
-mm.read("hor__131.mtx");  // read matrix and store in mm object
-mm.load_pattern( sp );    // extract the pattern
-mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
-\endcode
-
-   The class \c MatrixMarket is not a \c template class 
-   because the value type of the nonzeros is specified by the format.
-   The available type in MM format are \c int, \c double
-   and <c> complex<double> </c>. 
-   The representation of sparse matrices in MM format is of type CCOOR
-   so that \c MatrixMarket store in this form the loaded matrix.
-   Full matrices are stored in column major order.
-   Sometimes it can be useful to access directly the structure of the 
-   loaded matrix with the following methods:
-
-   In the library it is not provided a \c write method to MM
-   format. This choice is due to the fact that write a MM file is very easy 
-   using the iterators and the only complication is to write 
-   the first few rows of the header file.
-  
-   */
-
+  //!
   //! Interface with Matrix Market exchange format
+  //!
   class MatrixMarket {
 
     char       line[128], str[5][128];
     unsigned   nRows, nCols, numNnz, numLine;
 
-    CoorType   cType; //! the type of matrix data: sparse or full
-    ValueType  vType; //! the type of the data: ral integer or pattern
+    //! the type of matrix data: sparse or full
+    CoorType   cType;
+    //! the type of the data: ral integer or pattern
+    ValueType  vType;
     MatrixType mType; //! the matrix type
 
     bool
@@ -136,10 +94,15 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
 
   public:
 
-    //! initialize an empty MatrixMarket object
+    //!
+    //! Initialize an empty MatrixMarket object.
+    //!
     MatrixMarket() { }
 
-    //! print to the stream object \c s some information about the last loaded matrix. 
+    //!
+    //! Print to the stream object `s` 
+    //! some information about the last loaded matrix. 
+    //!
     void
     info( ostream & stream ) const {
       stream << "\nRows:        " << nRows
@@ -151,10 +114,10 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
              << "\n\n";
     }
     
-    /*! \brief
-     *  read the file in MM format from the opened stream \c s.
-     *  The result is stored in the class instance
-     */
+    //!
+    //! read the file in MM format from the opened stream `s`.
+    //! The result is stored in the class instance
+    //!
     void
     readHeader( istream & stream ) {
 
@@ -470,7 +433,9 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
       }
     }
 
-    //! read the red matrix in the template \c M1 class.
+    //!
+    //! Read the red matrix in the template `M1` class.
+    //!
     template<typename MAT>
     void
     read( istream & stream, MAT & M ) {
@@ -479,7 +444,9 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
       M.resize( M1 );
     }
         
-    //! read the red matrix in the template \c M1 class.
+    //!
+    //! Read the red matrix in the template `M1` class.
+    //!
     template<typename MAT>
     void
     read( char const fname[], MAT & M ) {
@@ -498,42 +465,45 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
     unsigned numCols() const { return nCols;  } //!< number of columns of loaded matrix
     unsigned nnz()     const { return numNnz; } //!< total number of nonzeros
 
-    /*! \brief
-     *  type of storage:
-     *  - \c 0 by coordinate
-     *  - \c 1 full matrix in column major order
-     */
+    //!
+    //! Type of storage:
+    //! - `0` by coordinate
+    //! - `1` full matrix in column major order
+    //!
     CoorType coor_type() const { return cType; }
-    /*! \brief 
-     *  value type:
-     *  - \c 0 no values, only pattern,
-     *  - \c 1 type \c int
-     *  - \c 2 type \c double
-     *  - \c 3 type <c> complex<double> </c>
-     */
+    //! 
+    //! Value type:
+    //! - `0` no values, only pattern,
+    //! - `1` type `int`
+    //! - `2` type `double`
+    //! - `3` type `complex<double>`
+    //!
     ValueType value_type() const { return vType; }
-    /*! \brief 
-     *  matrix type:
-     *  - \c 0 general matrix
-     *  - \c 1 symmetric matrix
-     *  - \c 2 skew symmetrix matrix
-     *  - \c 3 Hermitian matrix
-     */
+    //! 
+    //! Matrix type:
+    //! - `0` general matrix
+    //! - `1` symmetric matrix
+    //! - `2` skew symmetrix matrix
+    //! - `3` Hermitian matrix
+    //!
     MatrixType matrix_type() const { return mType; }
 
-    //! print to the stream object \c stream some information about the last loaded matrix. 
+    //!
+    //! Print to the stream object `stream` some
+    //! information about the last loaded matrix.
+    //!
     friend ostream & operator << ( ostream & stream, MatrixMarket const & mm )
     { mm.info( stream ); return stream; }
   };
 
-  /*!
-   *  Save a matrix to a file in MatrixMarket format
-   *  \param fname the name of the file to save
-   *  \param A     sparse matrix to save
-   *  \param vType \copydoc SparseTool::CoorType
-   *  \param mType \copydoc SparseTool::MatrixType
-   */
-
+  //!
+  //! Save a matrix to a file in MatrixMarket format.
+  //!
+  //! \param fname the name of the file to save
+  //! \param A     sparse matrix to save
+  //! \param vType \copydoc SparseTool::CoorType
+  //! \param mType \copydoc SparseTool::MatrixType
+  //!
   template <typename T,typename M>
   static
   void
@@ -582,14 +552,14 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
     file.close();
   }
 
-  /*!
-   * Save a matrix to a file in MatrixMarket format
-   * \param fname the name of the file to save
-   * \param A     sparse matrix to save
-   * \param vType \copydoc SparseTool::CoorType
-   * \param mType \copydoc SparseTool::MatrixType
-   */
-
+  //! 
+  //! Save a matrix to a file in MatrixMarket format.
+  //!
+  //! \param fname the name of the file to save
+  //! \param A     sparse matrix to save
+  //! \param vType \copydoc SparseTool::CoorType
+  //! \param mType \copydoc SparseTool::MatrixType
+  //! 
   template <typename T,typename M>
   static
   void
@@ -638,12 +608,12 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
     file.close();
   }
     
-  /*!
-   * Save a vector to a file in MatrixMarket format
-   * \param fname the name of the file to save
-   * \param V     vector to save
-   */
-
+  //! 
+  //! Save a vector to a file in MatrixMarket format.
+  //!
+  //! \param fname the name of the file to save
+  //! \param V     vector to save
+  //! 
   template <typename T>
   static
   void
@@ -666,12 +636,12 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
     file.close();
   }
 
-  /*!
-   * Save a vector to a file in MatrixMarket format
-   * \param fname the name of the file to save
-   * \param V     vector to save
-   */
-
+  //! 
+  //! Save a vector to a file in MatrixMarket format.
+  //!
+  //! \param fname the name of the file to save
+  //! \param V     vector to save
+  //! 
   template <typename T>
   static
   void
@@ -693,13 +663,13 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
     file.close();
   }
 
-  /*!
-   * Save a pattern to a file in MatrixMarket format
-   * \param fname the name of the file to save
-   * \param A     sparse matrix to save
-   * \param mType \copydoc SparseTool::MatrixType
-   */
-
+  //! 
+  //! Save a pattern to a file in MatrixMarket format.
+  //!
+  //! \param fname the name of the file to save
+  //! \param A     sparse matrix to save
+  //! \param mType \copydoc SparseTool::MatrixType
+  //! 
   static
   inline
   void
@@ -725,6 +695,7 @@ mm.load_matrix( A );      // copy loaded matrix in sparse matrix A
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
 
   using ::SparseTool::MatrixMarket;
@@ -742,6 +713,7 @@ namespace SparseToolLoad {
   using ::SparseTool::MM_HERMITIAN;
 
 }
+#endif
 
 #endif
 

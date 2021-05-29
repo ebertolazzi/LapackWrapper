@@ -53,6 +53,8 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  #ifndef LAPACK_WRAPPER_NO_DEBUG
+
   template integer rankEstimate( integer   M,
                                  integer   N,
                                  real      A[],
@@ -154,6 +156,8 @@ namespace lapack_wrapper {
 
   template class TridiagonalQR<real>;
   template class TridiagonalQR<doublereal>;
+
+  #endif
 
 } // end namespace lapack_wrapper
 

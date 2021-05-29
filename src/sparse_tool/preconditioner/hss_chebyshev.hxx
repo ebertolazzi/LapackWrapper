@@ -37,7 +37,7 @@ namespace SparseTool {
 
     mutable Vector<valueType> s0, s1, y;
 
-    //! build incomplete LDU decomposition with specified pattern \c P
+    //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
     build_HSS_CHEBYSHEV( MAT const & A, indexType m, rvalueType delta ) {
@@ -116,7 +116,7 @@ namespace SparseTool {
       }
     }
 
-    //! apply preconditioner to vector \c v and store result in vector \c y
+    //! apply preconditioner to vector `v`  and store result in vector \c y
     void
     mulPoly( Vector<valueType> & _y, Vector<valueType> const & v ) const {
       rvalueType e = sqrt_epsilon*sqrt_epsilon;
@@ -171,13 +171,13 @@ namespace SparseTool {
     ) : Preco<HSS_CHEBYSHEV_PRECO>()
     { build_HSS_CHEBYSHEV( M, m, delta ); }
 
-    //! build the preconditioner from matrix \c M
+    //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
     build( MAT const & M, indexType m, rvalueType delta )
     { build_HSS_CHEBYSHEV(M,m,delta); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c y
+    //! apply preconditioner to vector `v`  and store result to vector \c y
     template <typename VECTOR>
     void
     assPreco( VECTOR & _y, VECTOR const & v ) const {
@@ -196,8 +196,10 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::HSS_CHEBYSHEV_Preconditioner;
 }
+#endif
 
 #endif

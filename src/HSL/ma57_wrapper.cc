@@ -1,4 +1,4 @@
-/**
+/*
  * \file ma57_wrapper.cc
  * Implementation of the class CPPMA57.
  *

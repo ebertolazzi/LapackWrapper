@@ -38,7 +38,7 @@ namespace SparseTool {
     Vector<Vector<valueType> > U_A;
     Vector<Vector<indexType> > U_I;
 
-    //! build incomplete LDU decomposition with specified pattern \c P
+    //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
     build_ILDU( MAT const & A ) {
@@ -183,13 +183,16 @@ namespace SparseTool {
     ILDUKpreconditioner( MAT const & M ) : Preco<ILDUKPRECO>() 
     { build_ILDU( M ); }
 
-    //! build the preconditioner from matrix \c M
+    //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
     build( MAT const & M )
     { build_ILDU(M); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
+    //!
     template <typename VECTOR>
     void
     assPreco( VECTOR & res, VECTOR const & v ) const {
@@ -230,8 +233,10 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::ILDUKpreconditioner;
 }
+#endif
 
 #endif

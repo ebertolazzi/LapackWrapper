@@ -22,10 +22,12 @@
 #include <numeric>
 #include <algorithm>
 #include <complex>
-#include <mkl_pardiso.h>
+#include <mkl_pardiso.h>=
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifndef F77NAME
   #define F77NAME(A) A##_
+#endif
 #endif
 
 namespace SparseTool {
@@ -313,25 +315,28 @@ namespace SparseTool {
   class mkl_PardisoRealU : public mkl_pardiso<real> {
   public:
 
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using mkl_pardiso<real>::load;
     using mkl_pardiso<real>::reorder;
     using mkl_pardiso<real>::factorize;
     using mkl_pardiso<real>::solve;
+    #endif
 
     mkl_PardisoRealU() : mkl_pardiso<real>(11,0)
     {}
-
   };
 
   // symmetric but not positive definite
   class mkl_PardisoRealS : public mkl_pardiso<real> {
   public:
 
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     //using Pardiso<real>::check_matrix;
     using mkl_pardiso<real>::load;
     using mkl_pardiso<real>::reorder;
     using mkl_pardiso<real>::factorize;
     using mkl_pardiso<real>::solve;
+    #endif
 
     mkl_PardisoRealS() : mkl_pardiso<real>(-2,0)
     {}
@@ -342,10 +347,12 @@ namespace SparseTool {
   class mkl_PardisoRealSPD : public mkl_pardiso<real> {
   public:
 
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using mkl_pardiso<real>::load;
     using mkl_pardiso<real>::reorder;
     using mkl_pardiso<real>::factorize;
     using mkl_pardiso<real>::solve;
+    #endif
 
     mkl_PardisoRealSPD() : mkl_pardiso<real>(2,0)
     {}
@@ -357,9 +364,11 @@ namespace SparseTool {
   
     typedef mkl_pardiso<std::complex<real> > PARDISO;
 
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using PARDISO::load;
     using PARDISO::reorder;
     using PARDISO::factorize;
+    #endif
 
     mkl_PardisoComplexU() : PARDISO(13,0)
     {}
@@ -387,9 +396,11 @@ namespace SparseTool {
   
     typedef mkl_pardiso<std::complex<real> > PARDISO;
 
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using PARDISO::load;
     using PARDISO::reorder;
     using PARDISO::factorize;
+    #endif
 
     mkl_PardisoComplexS() : mkl_pardiso(6,0)
     {}
@@ -417,9 +428,11 @@ namespace SparseTool {
   
     typedef mkl_pardiso<std::complex<real> > PARDISO;
 
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using PARDISO::load;
     using PARDISO::reorder;
     using PARDISO::factorize;
+    #endif
 
     mkl_PardisoComplexH() : mkl_pardiso(-4,0)
     {}
@@ -447,9 +460,11 @@ namespace SparseTool {
   
     typedef mkl_pardiso<std::complex<real> > PARDISO;
 
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using PARDISO::load;
     using PARDISO::reorder;
     using PARDISO::factorize;
+    #endif
 
     mkl_PardisoComplexSPD() : mkl_pardiso(4,0)
     {}
@@ -473,6 +488,7 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::mkl_PardisoRealU;
   using ::SparseTool::mkl_PardisoRealS;
@@ -482,5 +498,6 @@ namespace SparseToolLoad {
   using ::SparseTool::mkl_PardisoComplexH;
   using ::SparseTool::mkl_PardisoComplexSPD;
 }
+#endif
 
 #endif

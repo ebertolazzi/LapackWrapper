@@ -363,6 +363,8 @@ namespace lapack_wrapper {
 
   extern char const *EquilibrationType_name[];
 
+  #ifndef LAPACK_WRAPPER_NO_DEBUG
+
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
     typedef __CLPK_integer    integer;
     typedef __CLPK_real       real;
@@ -401,6 +403,8 @@ namespace lapack_wrapper {
     typedef double  return_precision;
   #else
     #error "You must select the linear algebra packages used!"
+  #endif
+
   #endif
 
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
@@ -523,6 +527,8 @@ namespace lapack_wrapper {
   // trick for function that differs only in return type
   template <typename T> T lamch( character const WHAT[] );
 
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
   template <>
   inline
   real
@@ -553,6 +559,8 @@ namespace lapack_wrapper {
   { return CLAPACKNAME(dlamch)( const_cast<character*>(WHAT) ); }
   #else
   { return LAPACKNAME(dlamch)( const_cast<character*>(WHAT) ); }
+  #endif
+
   #endif
 
   #endif

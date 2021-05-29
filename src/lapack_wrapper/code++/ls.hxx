@@ -74,8 +74,7 @@ namespace lapack_wrapper {
     , m_rcond(-1)
     {}
 
-    virtual
-    ~LSS_no_alloc() UTILS_OVERRIDE
+    ~LSS_no_alloc() override
     { m_allocWork.free(); }
 
     integer getL( integer NR, integer NC, integer nrhs ) const;
@@ -88,12 +87,13 @@ namespace lapack_wrapper {
       valueType * Work
     );
 
-    /*!
-     *  Do SVD factorization of a rectangular matrix
-     *  \param who  string with the name of the calling routine
-     *  \param A     pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! Do SVD factorization of a rectangular matrix.
+    //!
+    //! \param who  string with the name of the calling routine
+    //! \param A     pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     void
     factorize_nodim(
       char const      who[],
@@ -116,21 +116,10 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
-    bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    solve( integer nrhs, valueType B[], integer ldB ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    t_solve( integer nrhs, valueType B[], integer ldB ) const UTILS_OVERRIDE;
+    bool solve( valueType xb[] ) const override;
+    bool t_solve( valueType xb[] ) const override;
+    bool solve( integer nrhs, valueType B[], integer ldB ) const override;
+    bool t_solve( integer nrhs, valueType B[], integer ldB ) const override;
 
   };
 
@@ -173,21 +162,21 @@ namespace lapack_wrapper {
     , m_allocReals("LSS-allocReals")
     {}
 
-    virtual
-    ~LSS() UTILS_OVERRIDE
+    ~LSS() override
     { m_allocReals.free(); }
 
     void
     allocate( integer NR, integer NC );
 
-    /*!
-     *  Do SVD factorization of a rectangular matrix
-     *  \param who  string with the name of the calling routine
-     *  \param NR   number of rows of the matrix
-     *  \param NC   number of columns of the matrix
-     *  \param A     pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! Do SVD factorization of a rectangular matrix.
+    //!
+    //! \param who  string with the name of the calling routine
+    //! \param NR   number of rows of the matrix
+    //! \param NC   number of columns of the matrix
+    //! \param A     pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     void
     factorize(
       char const      who[],
@@ -195,7 +184,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       this->factorize_nodim( who, A, LDA );
     }
@@ -206,7 +195,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       return this->factorize_nodim( A, LDA );
     }
@@ -264,8 +253,7 @@ namespace lapack_wrapper {
     , m_rcond(-1)
     {}
 
-    virtual
-    ~LSY_no_alloc() UTILS_OVERRIDE
+    ~LSY_no_alloc() override
     {}
 
     integer getL( integer NR, integer NC, integer nrhs ) const;
@@ -280,11 +268,13 @@ namespace lapack_wrapper {
       integer   * iWork
     );
 
-    /*!
-     *  Do SVD factorization of a rectangular matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! Do SVD factorization of a rectangular matrix.
+    //!
+    //! \param who string used in error message
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     void
     factorize_nodim(
       char const      who[],
@@ -311,21 +301,10 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
-    bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    solve( integer nrhs, valueType B[], integer ldB ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    t_solve( integer nrhs, valueType B[], integer ldB ) const UTILS_OVERRIDE;
+    bool solve( valueType xb[] ) const override;
+    bool t_solve( valueType xb[] ) const override;
+    bool solve( integer nrhs, valueType B[], integer ldB ) const override;
+    bool t_solve( integer nrhs, valueType B[], integer ldB ) const override;
 
   };
 
@@ -368,20 +347,21 @@ namespace lapack_wrapper {
     , m_allocInts("LSY-allocInts")
     {}
 
-    virtual
-    ~LSY() UTILS_OVERRIDE
+    ~LSY() override
     { m_allocReals.free(); m_allocInts.free(); }
 
     void
     allocate( integer NR, integer NC );
 
-    /*!
-     *  Do SVD factorization of a rectangular matrix
-     *  \param NR  number of rows of the matrix
-     *  \param NC  number of columns of the matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! Do SVD factorization of a rectangular matrix.
+    //!
+    //! \param who string used in error message
+    //! \param NR  number of rows of the matrix
+    //! \param NC  number of columns of the matrix
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     void
     factorize(
       char const      who[],
@@ -389,7 +369,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE;
+    ) override;
 
     bool
     factorize(
@@ -397,7 +377,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE;
+    ) override;
 
   };
 

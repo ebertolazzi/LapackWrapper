@@ -53,10 +53,10 @@ namespace lapack_wrapper {
     "CONJUGATE_TRANSPOSE"
   };
 
-  char const *ULselect_name[] = { "UPPER", "LOWER" };
+  char const *ULselect_name[]     = { "UPPER", "LOWER" };
   char const *DiagonalType_name[] = { "UNIT", "NON_UNIT" };
   char const *SideMultiply_name[] = { "LEFT", "RIGHT" };
-  char const *BalanceType_name[] = {
+  char const *BalanceType_name[]  = {
     "NO_BALANCE",
     "PERMUTE_ONLY",
     "SCALE_ONLY"
@@ -126,7 +126,6 @@ namespace lapack_wrapper {
   };
 
   character const *equilibrate_blas[4]  = { "N", "R", "C", "B" };
-
 
   // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -243,14 +242,14 @@ namespace lapack_wrapper {
   template <typename REAL>
   integer
   getry(
-    integer M,      // NUMBER OF ROWS IN A, UNCHANGED
-    integer N,      // NUMBER OF COLUMNS IN A, UNCHANGED
-    REAL    A[],    // A - ARRAY OF DIMENSION (LDA, N), OVERWRITTEN BY FACTORIZATION
+    integer   M,      // NUMBER OF ROWS IN A, UNCHANGED
+    integer   N,      // NUMBER OF COLUMNS IN A, UNCHANGED
+    REAL    * A,    // A - ARRAY OF DIMENSION (LDA, N), OVERWRITTEN BY FACTORIZATION
                     // L - UNIT LOVER TRIANGULAR
                     // U - UPPER TRIANGULAR
-    integer LDA,    // FIRST DIMENSION OF A AS DECLARED IN THE CALLING (SUB)PROGRAM, UNCHANGED
-    integer IPIV[], // ARRAY OF DIMENSION (M) ON EXIT CONTAINS PIVOT INDICES
-    integer NB
+    integer   LDA,    // FIRST DIMENSION OF A AS DECLARED IN THE CALLING (SUB)PROGRAM, UNCHANGED
+    integer * IPIV, // ARRAY OF DIMENSION (M) ON EXIT CONTAINS PIVOT INDICES
+    integer   NB
   ) {
     // COMPUTES LU FACTORIZATION OF M-BY-N MATRIX;
     // PARTIAL PIVOTING ROW INTERCHANGES
@@ -293,7 +292,8 @@ namespace lapack_wrapper {
     }
     return 0;
   }
-  
+
+  #ifndef LAPACK_WRAPPER_NO_DEBUG
   template integer gtx( integer M, integer N, float A[],  integer LDA, integer IPIV[] );
   template integer gtx( integer M, integer N, double A[], integer LDA, integer IPIV[] );
   template integer gty( integer M, integer N, float A[],  integer LDA, integer IPIV[] );
@@ -303,6 +303,7 @@ namespace lapack_wrapper {
   template integer getrx( integer M, integer N, double A[], integer LDA, integer IPIV[], integer MB  );
   template integer getry( integer M, integer N, float A[],  integer LDA, integer IPIV[], integer MB  );
   template integer getry( integer M, integer N, double A[], integer LDA, integer IPIV[], integer MB  );
+  #endif
 
   /*\
    *
@@ -363,6 +364,8 @@ namespace lapack_wrapper {
       N, nrhs, 1.0, &Tmat.front(), N, RHS, ldRHS
     );
   }
+
+  #ifndef LAPACK_WRAPPER_NO_DEBUG
 
   #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
       defined(LAPACK_WRAPPER_USE_ATLAS)    || \
@@ -509,6 +512,8 @@ namespace lapack_wrapper {
     integer          ldRHS,
     doublereal       lambda
   );
+
+  #endif
 
 } // end namespace lapack_wrapper
 

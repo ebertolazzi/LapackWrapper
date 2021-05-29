@@ -37,7 +37,7 @@ namespace SparseTool {
     SSORpreconditioner<rvalueType> preco;
     //ILDUpreconditioner<rvalueType> preco;
 
-    //! build incomplete LDU decomposition with specified pattern \c P
+    //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
     build_HSS_CGSSOR(
@@ -83,8 +83,7 @@ namespace SparseTool {
       preco . build( Amat, omega, m );
     }
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
-    void
+    //! apply preconditioner to vector `v`  and store result to vector `res`    void
     assPrecoR( Vector<rvalueType> & x, Vector<rvalueType> const & b ) const {
       rvalueType rho, rho_1, normr0;
       x.setZero();
@@ -122,13 +121,13 @@ namespace SparseTool {
     ) : Preco<HSS_CGSSOR_PRECO>()
     { build_HSS_CGSSOR( M, mIter, rtol, omega, m ); }
 
-    //! build the preconditioner from matrix \c M
+    //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
     build( MAT const & M, indexType mIter, rvalueType const & rtol, rvalueType const & omega, indexType m )
     { build_HSS_CGSSOR( M, mIter, rtol, omega, m ); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c y
+    //! apply preconditioner to vector `v`  and store result to vector \c y
     template <typename VECTOR>
     void
     assPreco( VECTOR & _y, VECTOR const & v ) const {
@@ -155,8 +154,10 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::HSS_CGSSOR_Preconditioner;
 }
+#endif
 
 #endif

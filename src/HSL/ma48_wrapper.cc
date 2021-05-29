@@ -1,4 +1,4 @@
-/**
+/*
  * \file ma48_wrapper.cc
  * Implementation of the class MA48.
  *

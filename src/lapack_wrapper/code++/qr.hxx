@@ -65,8 +65,7 @@ namespace lapack_wrapper {
     , m_Tau(nullptr)
     {}
 
-    virtual
-    ~QR_no_alloc() UTILS_OVERRIDE {}
+    ~QR_no_alloc() override {}
 
     integer
     get_Lwork_QR( integer NR, integer NC ) const;
@@ -79,11 +78,13 @@ namespace lapack_wrapper {
       valueType * Work
     );
 
-    /*!
-     * Do QR factorization of a rectangular matrix
-     * \param A   pointer to the matrix
-     * \param LDA Leading dimension of the matrix
-     */
+    //! 
+    //! Do QR factorization of a rectangular matrix.
+    //!
+    //! \param who string used in error message
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //! 
     void
     factorize_nodim(
       char const      who[],
@@ -112,13 +113,13 @@ namespace lapack_wrapper {
       integer       ldC
     ) const;
 
-    //! x <- Q*x
+    //! `x <- Q*x`
     void Q_mul( valueType x[] ) const;
 
-    //! x <- Q'*x
+    //! `x <- Q'*x`
     void Qt_mul( valueType x[] ) const;
 
-    //! C <- Q*C
+    //! `C <- Q*C`
     void Q_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
@@ -126,7 +127,7 @@ namespace lapack_wrapper {
       this->Q_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
-    //! C <- Q'*C
+    //! `C <- Q'*C`
     void Qt_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
@@ -134,7 +135,7 @@ namespace lapack_wrapper {
       this->Qt_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
-    //! C <- C*Q
+    //! `C <- C*Q`
     void mul_Q( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
@@ -142,7 +143,7 @@ namespace lapack_wrapper {
       this->mul_Q( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
-    //! C <- C*Q'
+    //! `C <- C*Q'`
     void mul_Qt( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
@@ -152,10 +153,10 @@ namespace lapack_wrapper {
 
     // -------------------------------------------------------------------------
 
-    //! x <- R^(-1) * x
+    //! `x <- R^(-1) * x`
     void invR_mul( valueType x[], integer incx = 1 ) const;
 
-    //! C <- R^(-1) * C
+    //! `C <- R^(-1) * C`
     void invR_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
@@ -165,10 +166,10 @@ namespace lapack_wrapper {
 
     // -------------------------------------------------------------------------
 
-    //! x <- R^(-T) * x
+    //! `x <- R^(-T) * x`
     void invRt_mul( valueType x[], integer incx = 1 ) const;
 
-    //! C <- R^(-T) * C
+    //! `C <- R^(-T) * C`
     void invRt_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
@@ -178,7 +179,7 @@ namespace lapack_wrapper {
 
     // -------------------------------------------------------------------------
 
-    //! C <- C * R^(-1)
+    //! `C <- C * R^(-1)`
     void mul_invR( integer nr, integer nc, valueType C[], integer ldC ) const;
 
     void
@@ -230,39 +231,37 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    /*!
-     *   In case of QR factorization of a square matrix solve the
-     *   linear system \f$ QR x = b \f$
-     * param xb on input the rhs of linear system on output the solution
-     */
-    virtual
+    //! 
+    //! In case of QR factorization of a square matrix solve the
+    //! linear system \f$ QR x = b \f$.
+    //!
+    //! \param xb on input the rhs of linear system on output the solution
+    //! 
     bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
+    solve( valueType xb[] ) const override;
 
-    /*!
-     *  In case of QR factorization of a square matrix solve the
-     *  linear system \f$ (QR)^T x = b \f$
-     *  \param xb on input the rhs of linear system on output the solution
-     */
-    virtual
+    //!
+    //! In case of QR factorization of a square matrix solve the
+    //! linear system \f$ (QR)^T x = b \f$.
+    //!
+    //! \param xb on input the rhs of linear system on output the solution
+    //!
     bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
+    t_solve( valueType xb[] ) const override;
 
-    virtual
     bool
     solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     bool
     t_solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
   };
 
@@ -311,20 +310,21 @@ namespace lapack_wrapper {
     , m_allocReals("QR-allocReals")
     {}
 
-    virtual
-    ~QR() UTILS_OVERRIDE
+    ~QR() override
     { m_allocReals.free(); }
 
     void
     allocate( integer nr, integer nc );
 
-    /*!
-     * Do QR factorization of a rectangular matrix
-     * \param NR  number of rows of the matrix
-     * \param NC  number of columns of the matrix
-     * \param A   pointer to the matrix
-     * \param LDA Leading dimension of the matrix
-     */
+    //! 
+    //! Do QR factorization of a rectangular matrix.
+    //!
+    //! \param who string used in error message
+    //! \param NR  number of rows of the matrix
+    //! \param NC  number of columns of the matrix
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //! 
     void
     factorize(
       char const      who[],
@@ -332,7 +332,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       this->factorize_nodim( who, A, LDA );
     }
@@ -343,7 +343,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       return this->factorize_nodim( A, LDA );
     }
@@ -399,8 +399,7 @@ namespace lapack_wrapper {
     , m_JPVT(nullptr)
     {}
 
-    virtual
-    ~QRP_no_alloc() UTILS_OVERRIDE
+    ~QRP_no_alloc() override
     {}
 
     integer
@@ -416,11 +415,13 @@ namespace lapack_wrapper {
       integer   * iWork
     );
 
-    /*!
-     *  Do QR factorization with column pivoting of a rectangular matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! Do QR factorization with column pivoting of a rectangular matrix.
+    //!
+    //! \param who string used in error message
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     void
     factorize_nodim(
       char const      who[],
@@ -507,39 +508,37 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    /*!
-     *  In case of QR factorization of a square matrix solve the
-     *  linear system \f$ QR x = b \f$
-     *  \param xb on input the rhs of linear system on output the solution
-     */
-    virtual
+    //!
+    //! In case of QR factorization of a square matrix solve the
+    //! linear system \f$ QR x = b \f$.
+    //!
+    //! \param xb on input the rhs of linear system on output the solution
+    //!
     bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
+    solve( valueType xb[] ) const override;
 
-    /*!
-     *  In case of QR factorization of a square matrix solve the
-     *  linear system \f$ (QR)^T x = b \f$
-     *  \param xb on input the rhs of linear system on output the solution
-     */
-    virtual
+    //!
+    //! In case of QR factorization of a square matrix solve the
+    //! linear system \f$ (QR)^T x = b \f$.
+    //!
+    //! \param xb on input the rhs of linear system on output the solution
+    //!
     bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
+    t_solve( valueType xb[] ) const override;
 
-    virtual
     bool
     solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     bool
     t_solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
   };
 
   //============================================================================
@@ -587,20 +586,21 @@ namespace lapack_wrapper {
     , m_allocIntegers("QRP-allocIntegers")
     {}
 
-    virtual
-    ~QRP() UTILS_OVERRIDE
+    ~QRP() override
     { m_allocIntegers.free(); }
 
     void
     allocate( integer nr, integer nc );
 
-    /*!
-     *  Do QR factorization with column pivoting of a rectangular matrix
-     *  \param NR  number of rows of the matrix
-     *  \param NC  number of columns of the matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! Do QR factorization with column pivoting of a rectangular matrix.
+    //!
+    //! \param who string used in error message
+    //! \param NR  number of rows of the matrix
+    //! \param NC  number of columns of the matrix
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     void
     factorize(
       char const      who[],
@@ -608,25 +608,26 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       this->QRP_no_alloc<T>::factorize_nodim( who, A, LDA );
     }
 
-    /*!
-     *  Do QR factorization with column pivoting of a rectangular matrix
-     *  \param NR  number of rows of the matrix
-     *  \param NC  number of columns of the matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! Do QR factorization with column pivoting of a rectangular matrix.
+    //!
+    //! \param NR  number of rows of the matrix
+    //! \param NC  number of columns of the matrix
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     bool
     factorize(
       integer         NR,
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       return this->QRP_no_alloc<T>::factorize_nodim( A, LDA );
     }

@@ -308,11 +308,11 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const UTILS_PURE_VIRTUAL;
+    solve( valueType xb[] ) const = 0;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const UTILS_PURE_VIRTUAL;
+    t_solve( valueType xb[] ) const = 0;
 
     virtual
     bool

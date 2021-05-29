@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D91D384C266269FF009E8527 /* libsuperlu_osx_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D91D384A266269FF009E8527 /* libsuperlu_osx_static.a */; };
+		D91D384D266269FF009E8527 /* libUtils_osx_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D91D384B266269FF009E8527 /* libUtils_osx_static.a */; };
 		D95739C125C8ACCB004D4F10 /* lapack_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = D957396C25C8ACCB004D4F10 /* lapack_wrapper.cc */; };
 		D95739CD25C8ACCB004D4F10 /* lapack_wrapper++.cc in Sources */ = {isa = PBXBuildFile; fileRef = D957398625C8ACCB004D4F10 /* lapack_wrapper++.cc */; };
 		D95739CE25C8ACCB004D4F10 /* ma48_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = D957398925C8ACCB004D4F10 /* ma48_wrapper.cc */; };
@@ -14,8 +16,6 @@
 		D95739D025C8ACCB004D4F10 /* hsl_fake.cc in Sources */ = {isa = PBXBuildFile; fileRef = D957398E25C8ACCB004D4F10 /* hsl_fake.cc */; };
 		D95739D125C8ACCB004D4F10 /* ma57_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = D957398F25C8ACCB004D4F10 /* ma57_wrapper.cc */; };
 		D95739D225C8ACCB004D4F10 /* NoFLA_HQRRP_WY_blk_var4.cc in Sources */ = {isa = PBXBuildFile; fileRef = D95739B925C8ACCB004D4F10 /* NoFLA_HQRRP_WY_blk_var4.cc */; };
-		D95739E225C8AD02004D4F10 /* libUtils_osx_static_debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D95739E025C8AD02004D4F10 /* libUtils_osx_static_debug.a */; };
-		D95739E325C8AD02004D4F10 /* libsuperlu_osx_static_debug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D95739E125C8AD02004D4F10 /* libsuperlu_osx_static_debug.a */; };
 		D9573A5725C8B057004D4F10 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9573A5625C8B057004D4F10 /* Accelerate.framework */; };
 		D9DD39EE25D3FD0E0060E1B6 /* test1-small-factorization.cc in Sources */ = {isa = PBXBuildFile; fileRef = D95739D925C8ACD1004D4F10 /* test1-small-factorization.cc */; };
 /* End PBXBuildFile section */
@@ -33,6 +33,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D91D384A266269FF009E8527 /* libsuperlu_osx_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsuperlu_osx_static.a; path = ../lib3rd/lib/libsuperlu_osx_static.a; sourceTree = "<group>"; };
+		D91D384B266269FF009E8527 /* libUtils_osx_static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtils_osx_static.a; path = ../lib3rd/lib/libUtils_osx_static.a; sourceTree = "<group>"; };
 		D957394F25C8ACAA004D4F10 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		D957395E25C8ACCA004D4F10 /* lapack_wrapper.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lapack_wrapper.hh; sourceTree = "<group>"; };
 		D957396025C8ACCA004D4F10 /* sparse.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sparse.cxx; sourceTree = "<group>"; };
@@ -131,8 +133,6 @@
 		D95739DB25C8ACD1004D4F10 /* test8-SparseToolComplex.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "test8-SparseToolComplex.cc"; sourceTree = "<group>"; };
 		D95739DC25C8ACD1004D4F10 /* test2-Timing.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "test2-Timing.cc"; sourceTree = "<group>"; };
 		D95739DD25C8ACD1004D4F10 /* test3-BandedMatrix.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "test3-BandedMatrix.cc"; sourceTree = "<group>"; };
-		D95739E025C8AD02004D4F10 /* libUtils_osx_static_debug.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtils_osx_static_debug.a; path = ../lib3rd/lib/libUtils_osx_static_debug.a; sourceTree = "<group>"; };
-		D95739E125C8AD02004D4F10 /* libsuperlu_osx_static_debug.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsuperlu_osx_static_debug.a; path = ../lib3rd/lib/libsuperlu_osx_static_debug.a; sourceTree = "<group>"; };
 		D9573A2125C8ADB1004D4F10 /* Utils.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Utils.hh; sourceTree = "<group>"; };
 		D9573A2325C8ADB1004D4F10 /* slu_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = slu_util.h; sourceTree = "<group>"; };
 		D9573A2425C8ADB1004D4F10 /* slu_scomplex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = slu_scomplex.h; sourceTree = "<group>"; };
@@ -157,7 +157,6 @@
 		D9573A3925C8ADB1004D4F10 /* compile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compile.h; sourceTree = "<group>"; };
 		D9573A3A25C8ADB1004D4F10 /* posix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posix.h; sourceTree = "<group>"; };
 		D9573A3B25C8ADB1004D4F10 /* format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = format.h; sourceTree = "<group>"; };
-		D9573A3C25C8ADB1004D4F10 /* rang.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rang.hpp; sourceTree = "<group>"; };
 		D9573A3D25C8ADB1004D4F10 /* Malloc.hxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Malloc.hxx; sourceTree = "<group>"; };
 		D9573A3E25C8ADB1004D4F10 /* Trace.hxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trace.hxx; sourceTree = "<group>"; };
 		D9573A3F25C8ADB1004D4F10 /* Console.hxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Console.hxx; sourceTree = "<group>"; };
@@ -178,8 +177,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9573A5725C8B057004D4F10 /* Accelerate.framework in Frameworks */,
-				D95739E225C8AD02004D4F10 /* libUtils_osx_static_debug.a in Frameworks */,
-				D95739E325C8AD02004D4F10 /* libsuperlu_osx_static_debug.a in Frameworks */,
+				D91D384C266269FF009E8527 /* libsuperlu_osx_static.a in Frameworks */,
+				D91D384D266269FF009E8527 /* libUtils_osx_static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,8 +188,8 @@
 		D957394625C8ACAA004D4F10 = {
 			isa = PBXGroup;
 			children = (
-				D95739E125C8AD02004D4F10 /* libsuperlu_osx_static_debug.a */,
-				D95739E025C8AD02004D4F10 /* libUtils_osx_static_debug.a */,
+				D91D384A266269FF009E8527 /* libsuperlu_osx_static.a */,
+				D91D384B266269FF009E8527 /* libUtils_osx_static.a */,
 				D9573A2025C8ADB1004D4F10 /* include */,
 				D95739D425C8ACD1004D4F10 /* src_tests */,
 				D957395C25C8ACCA004D4F10 /* src */,
@@ -425,7 +424,6 @@
 			children = (
 				D9573A2E25C8ADB1004D4F10 /* Utils.hxx */,
 				D9573A2F25C8ADB1004D4F10 /* fmt */,
-				D9573A3C25C8ADB1004D4F10 /* rang.hpp */,
 				D9573A3D25C8ADB1004D4F10 /* Malloc.hxx */,
 				D9573A3E25C8ADB1004D4F10 /* Trace.hxx */,
 				D9573A3F25C8ADB1004D4F10 /* Console.hxx */,
@@ -502,7 +500,7 @@
 		D957394725C8ACAA004D4F10 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					D957394E25C8ACAA004D4F10 = {
 						CreatedOnToolsVersion = 12.3;
@@ -660,6 +658,7 @@
 		D957395725C8ACAA004D4F10 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/../src";
 				LIBRARY_SEARCH_PATHS = "$(SOURCE_ROOT)/../lib3rd/lib";
@@ -670,6 +669,7 @@
 		D957395825C8ACAA004D4F10 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/../src";
 				LIBRARY_SEARCH_PATHS = "$(SOURCE_ROOT)/../lib3rd/lib";

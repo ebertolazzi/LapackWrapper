@@ -23,12 +23,15 @@
 #include <algorithm>
 #include <complex>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifndef F77NAME
   #define F77NAME(A) A##_
+#endif
 #endif
 
 namespace SparseTool {
 
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
   // External Fortran routines defined in the PARDISO library.
   extern "C" {
 
@@ -95,8 +98,9 @@ namespace SparseTool {
       real    const *,
       integer       *
     );
-
   };
+
+  #endif
 
   // -----------------------------------------------------------------
   // static integer const real_structsym       =  1;
@@ -595,6 +599,7 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::PardisoRealU;
   using ::SparseTool::PardisoRealS;
@@ -604,5 +609,6 @@ namespace SparseToolLoad {
   using ::SparseTool::PardisoComplexH;
   using ::SparseTool::PardisoComplexSPD;
 }
+#endif
 
 #endif

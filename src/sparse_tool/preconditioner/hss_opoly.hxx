@@ -36,7 +36,7 @@ namespace SparseTool {
 
     mutable Vector<valueType> s0, s1, y;
 
-    //! build incomplete LDU decomposition with specified pattern \c P
+    //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
     build_HSS_OPOLY( MAT const & A, indexType m ) {
@@ -108,7 +108,7 @@ namespace SparseTool {
       }
     }
 
-    //! apply preconditioner to vector \c v and store result in vector \c y
+    //! apply preconditioner to vector `v`  and store result in vector \c y
     void
     mulPoly( Vector<valueType> & _y, Vector<valueType> const & v ) const {
       // s0 = 1.5*v; s1 = 4*v - 10/3 * A*v
@@ -150,13 +150,13 @@ namespace SparseTool {
     HSS_OPOLY_Preconditioner( MAT const & M, indexType m ) : Preco<HSS_OPOLY_PRECO>()
     { build_HSS_OPOLY( M, m ); }
 
-    //! build the preconditioner from matrix \c M
+    //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
     build( MAT const & M, indexType m )
     { build_HSS_OPOLY(M,m); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c y
+    //! apply preconditioner to vector `v`  and store result to vector \c y
     template <typename VECTOR>
     void
     assPreco( VECTOR & _y, VECTOR const & v ) const {
@@ -174,8 +174,10 @@ namespace SparseTool {
   #endif
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::HSS_OPOLY_Preconditioner;
 }
+#endif
 
 #endif

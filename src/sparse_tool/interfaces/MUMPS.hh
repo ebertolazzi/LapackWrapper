@@ -27,8 +27,6 @@
 
 namespace SparseTool {
 
-  using namespace std;
-  
   extern int myid;
 
   void initMUMPS( int argc, char *argv[] );
@@ -206,10 +204,12 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::MUMPS;
   using ::SparseTool::initMUMPS;
   using ::SparseTool::endMUMPS;
 }
+#endif
 
 #endif

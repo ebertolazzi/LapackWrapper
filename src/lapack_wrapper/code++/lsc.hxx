@@ -77,7 +77,7 @@ namespace lapack_wrapper {
   public:
 
     LSC();
-    ~LSC() UTILS_OVERRIDE {}
+    ~LSC() override {}
 
     void
     factorize(
@@ -86,7 +86,7 @@ namespace lapack_wrapper {
       integer            /* NC  */,
       valueType const [] /* M[] */,
       integer            /* ldM */
-    ) UTILS_OVERRIDE {
+    ) override {
       UTILS_ERROR0("LSC::factorize, virtual one not defined!");
     }
 
@@ -96,7 +96,7 @@ namespace lapack_wrapper {
       integer            /* NC  */,
       valueType const [] /* M[] */,
       integer            /* ldM */
-    ) UTILS_OVERRIDE {
+    ) override {
       UTILS_ERROR0("LSC::factorize, virtual one not defined!");
     }
 
@@ -110,17 +110,17 @@ namespace lapack_wrapper {
     );
 
     bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
+    solve( valueType xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
     bool
-    t_solve( valueType [] ) const UTILS_OVERRIDE {
+    t_solve( valueType [] ) const override {
       UTILS_ERROR0("LSC::t_solve not defined!");
     }
 

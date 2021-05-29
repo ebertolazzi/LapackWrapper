@@ -40,7 +40,7 @@ namespace SparseTool {
 
     Vector<indexType> Lnnz, Unnz;
 
-    //! build incomplete LDU decomposition with specified pattern \c P
+    //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT, typename PAT>
     void
     build_RILDU( MAT const & A, PAT const & P ) {
@@ -247,19 +247,21 @@ namespace SparseTool {
     RILDUpreconditioner( MAT const & M, PRE const & P ) : Preco<RILDUPRECO>() 
     { build_RILDU(M,P); }
 
-    //! build the preconditioner from matrix \c M
+    //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
     build( MAT const & M )
     { build_RILDU(M,M); }
 
-    //! build the preconditioner from matrix \c M with pattern \c P
+    //! build the preconditioner from matrix `M` with pattern `P` 
     template <typename MAT, typename PRE>
     void
     build( MAT const & M, PRE const & P )
     { build_RILDU(M,P); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
     template <typename VECTOR>
     void
     assPreco( VECTOR & res, VECTOR const & v ) const {
@@ -307,8 +309,10 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::RILDUpreconditioner;
 }
+#endif
 
 #endif

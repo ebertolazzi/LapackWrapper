@@ -37,7 +37,6 @@
   #pragma comment(lib, "IPHLPAPI.lib")
   #pragma comment(lib, "Shlwapi.lib")
   #pragma comment(lib, "iphlpapi.lib")
-#endif
 
   // select LAPACK dll/lib for windows
   #if _MSC_VER >= 1900
@@ -101,8 +100,6 @@
       #error "Only standard Lapack, Openblas, and MKL are supported for WINDOWS!"
     #endif
   #endif
-#else
-  #include <cstdint>
 #endif
 
 #endif

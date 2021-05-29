@@ -1,4 +1,4 @@
-/*!
+/*
 
   \file     sparse_tool.hh
   \mainpage SparseTool: a Sparse Matrix Manager
@@ -8,53 +8,10 @@
 
   \author Enrico Bertolazzi
 
-  \par Affiliations:
-       Dipartimento di Ingegneria Industriale<BR>
-       Universita` degli Studi di Trento<BR>
-       email: enrico.bertolazzi@unitn.it<BR>
-
-  \section Preface
-  \a SparseTool is a collection of simple, fast, and efficient classes for
-  manipulating large vectors and large sparse matrices.
-
-  \section The Basic Vector and Matrix Classes
-
-  The library consist of the following templated classes:
-  - \c Vector\<T\> which define a \b dense large column vector.
-  - \c SparsePattern which define a \b pattern of the nonzero
-    elements which can be used to construct a sparse matrix.
-  - \c TridMatrix\<T\> which implements a
-    \b tridiagonal matrix.
-  - \c CCoorMatrix\<T\> which implements a sparse
-    <b> Compressed Coordinate Storage </b> matrix.
-  - \c CRowMatrix\<T\> which implements a sparse
-    <b> Compressed Rows Storage </b> matrix.
-  - \c CColMatrix\<T\> which implements a sparse
-    <b> Compressed Columns Storage </b> matrix.
-
-  Those classes allow vectors and matrices to be formally treated in
-  software implementations as mathematical objects in arithmetic
-  expressions.  For example if \c A is a sparse matrix and \c b
-  is a \c Vector\<T\> than \c A*b means the matrix-vector product.
-
-  \section Loading the library
-  To use the library you must include it by the following piece of code:
-
-\code
-#include "SparseTool.hh"
-using namespace SparseToolLoad;
-\endcode
-
-  line \a 2 is recommended to avoid \c SparseTool:: prefix
-  for the library call.
-
-  \par Some Macros for customization
-  To acivate some control when \c SparseTool is used in developing
-
-\code
-  #define SPARSETOOL_DEBUG
-\endcode
-
+  Affiliations:
+  Dipartimento di Ingegneria Industriale
+  Universita` degli Studi di Trento
+  email: enrico.bertolazzi@unitn.it
 */
 
 /*!
@@ -100,12 +57,16 @@ using namespace SparseToolLoad;
 // #    #  #    #   ####   #    #   ####    ####
 */
 
-//! default number of pre-allocated nonzeros
+//!
+//! Default number of pre-allocated nonzeros.
+//!
 #ifndef SPARSETOOL_DEFAULT_NNZ
   #define SPARSETOOL_DEFAULT_NNZ 100
 #endif
 
-//! issue an error message
+//!
+//! Issue an error message.
+//!
 #define SPARSETOOL_ERR(W)                             \
   { using namespace ::std;                            \
     cerr << "\n" << W  << "\nin file `" << __FILE__   \
@@ -133,7 +94,6 @@ using namespace SparseToolLoad;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolFun {
-
   static inline float       conj(float       const & a) { return a; }
   static inline double      conj(double      const & a) { return a; }
   static inline long double conj(long double const & a) { return a; }
@@ -164,13 +124,12 @@ namespace SparseToolFun {
 
   template <typename T> inline T absval2(T const & a) { return a*a; }
   template <typename T> inline T absval2(std::complex<T> const & a) { T bf(absval(a)); return bf*bf; }
-
-  using namespace ::std;
-
 }
 #endif
 
-//! The namespace with the SparseTool toolkit
+//!
+//! The namespace with the SparseTool toolkit.
+//!
 namespace SparseTool {
 
   using ::std::vector;
@@ -187,12 +146,12 @@ namespace SparseTool {
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  /*! \brief
-   * This class is copied from \c BLITZ++.
-   * The C++ compiler supports partial specialization, so type promotion
-   * can be done the elegant way.
-   * This implementation is after ideas by Jean-Louis Leroy.
-   */
+  //!
+  //! This class is copied from `BLITZ++`.
+  //! The C++ compiler supports partial specialization, so type promotion
+  //! can be done the elegant way.
+  //! This implementation is after ideas by Jean-Louis Leroy.
+  //! 
 
   template<typename T>
   struct precision_trait {
@@ -227,28 +186,33 @@ namespace SparseTool {
     typedef T valueType; //!< type of the trait
   };
 
-  // Partial specialization for \c complex type.
+  // Partial specialization for `complex` type.
   template<typename T> struct return_trait<std::complex<T> > { typedef T valueType; };
 
   //! \internal Class for type promotion
   template<typename T>
   struct autopromote_trait { typedef T T_numtype; };
 
+  //! promote `bool` to `int`
   template<> struct autopromote_trait<bool>
-  { typedef int T_numtype; }; // promote \c bool to \c int
+  { typedef int T_numtype; }; 
   
+  //! promote `char` to `int`
   template<> struct autopromote_trait<char>
-  { typedef int T_numtype; }; // promote \c char to \c int
-
-  template<> struct autopromote_trait<unsigned char>
-  { typedef int T_numtype; }; // promote \c bool to \c int
-
-  template<> struct autopromote_trait<short>
-  { typedef int T_numtype; }; // promote \c short to \c int
+  { typedef int T_numtype; };
   
+  //! promote `bool` to `int`
+  template<> struct autopromote_trait<unsigned char>
+  { typedef int T_numtype; };
+  
+  //! promote `short` to `int`
+  template<> struct autopromote_trait<short>
+  { typedef int T_numtype; };
+  
+  // promote `unsigned` `short` to `unsigned`
   template<> struct autopromote_trait<unsigned short>
-  { typedef unsigned T_numtype; }; // promote \c unsigned \c short to \c unsigned
-
+  { typedef unsigned T_numtype; };
+  
   template<typename T1, typename T2, bool promoteToT1>
   struct promote2 { typedef T1 T_promote; };
 
@@ -360,53 +324,74 @@ namespace SparseTool {
 
   #endif
 
-  //! define `uint32_t` as the type for indexing vector and matrices
+  //!
+  //! Define `uint32_t` as the type for indexing vector and matrices.
+  //!
   typedef uint32_t indexType;
 
-  //! return minimum value between \c a and \c b
+  //!
+  //! Return minimum value between `A` and `b`.
+  //!
   inline indexType
   minIndex(indexType a, indexType b)
   { return a < b ? a : b; }
 
-  //! return maximum value between \c a and \c b
+  //!
+  //! Return maximum value between `A` and `b`.
+  //!
   inline indexType
   maxIndex(indexType a, indexType b)
   { return a > b ? a : b; }
   
-  //! \defgroup Comparator Comparator for Sparse Matrix costructor and conversion 
+  //!
+  //! \defgroup Comparator Comparator for Sparse Matrix 
+  //! costructor and conversion 
+  //!
   //@{
 
-  //! comparator class for selecting \a all elements
+  //!
+  //! Comparator class for selecting **all** elements
+  //!
   struct all_ok {
     //! return always true
     bool operator () ( indexType /* i */, indexType /* j */ ) const { return true; }
   };
 
-  //! comparator class for selecting;lements \a under the diagonal
+  //!
+  //! Comparator class for selecting;lements **under** the diagonal
+  //!
   struct lower_ok {
     //! select lower diagonal indexes
     bool operator () ( indexType i, indexType j ) const { return i > j; }
   };
 
-  //! comparator class for selecting elements \a under the diagonal
+  //!
+  //! Comparator class for selecting elements **under** the diagonal.
+  //!
   struct lowereq_ok {
     //! select lower diagonal indexes
     bool operator () ( indexType i, indexType j ) const { return i >= j; }
   };
 
-  //! comparator class for selec;ng elements \a over the diagonal
+  //!
+  //! Comparator class for selec;ng elements **over** the diagonal.
+  //!
   struct upper_ok {
     //! select upper diagonal indexes
     bool operator () ( indexType i, indexType j ) const { return i < j; }
   };
 
-  //! comparator class for selecting elements \a over the diagonal
+  //!
+  //! Comparator class for selecting elements **over** the diagonal.
+  //!
   struct uppereq_ok {
     //! select upper diagonal indexes
     bool operator () ( indexType i, indexType j ) const { return i <= j; }
   };
 
-  //! comparator class for selecting elements \a on the diagonal
+  //!
+  //! Comparator class for selecting elements **on** the diagonal.
+  //!
   struct diag_ok {
     //! select diagonal indexes
     bool operator () ( indexType i, indexType j ) const { return i==j; }
@@ -430,10 +415,17 @@ namespace SparseTool {
   //    #    #    #  ######  ######
   */
 
-  //! \defgroup MVStructures Structures Storing Matrix/Vector operations
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+  //!
+  //! \defgroup MVStructures Structures Storing Matrix/Vector operations.
+  //!
   //@{
 
-  //! structure storing the operation \c a/M  (vector-matrix division i.e. solve \c A*x=a)
+  //!
+  //! Structure storing the operation `a/M`
+  //! (vector-matrix division i.e. solve `A*x=a`)
+  //!
   template <typename VA, typename MATRIX>
   struct Vector_V_div_M {
     VA     const & a;
@@ -444,7 +436,9 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c M*a (matrix-vector multiply)
+  //!
+  //! Structure storing the operation `M*a` (matrix-vector multiply)
+  //!
   template <typename MATRIX, typename VA>
   struct Vector_M_mul_V {
     MATRIX const & M;
@@ -455,7 +449,9 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c s*M  (scalar-matrix multiply)
+  //!
+  //! Structure storing the operation `s*M` (scalar-matrix multiply)
+  //!
   template <typename S, typename MATRIX>
   struct Vector_S_mul_M {
     S      const & s;
@@ -466,7 +462,10 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c M^a  (transpose matrix-vector multiply)
+  //!
+  //! Structure storing the operation `M^a`
+  //! (transpose matrix-vector multiply).
+  //!
   template <typename MATRIX, typename VA>
   struct Vector_Mt_mul_V {
     MATRIX const & M;
@@ -477,7 +476,10 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c s*(M*a)  (scalar-matrix-vector multiply)
+  //!
+  //! Structure storing the operation `s*(M*a)`
+  //! (scalar-matrix-vector multiply).
+  //!
   template <typename SCALAR, typename MATRIX, typename VA>
   struct Vector_S_mul_M_mul_V {
     SCALAR const & s;
@@ -494,7 +496,10 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c s*(M^a)  (transpose scalar-matrix-vector multiply)
+  //!
+  //! Structure storing the operation `s*(M^a)`
+  //! (transpose scalar-matrix-vector multiply).
+  //!
   template <typename SCALAR, typename MATRIX, typename VA>
   struct Vector_S_mul_Mt_mul_V {
     SCALAR const & s;
@@ -511,7 +516,9 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c a+M*b
+  //!
+  //! Structure storing the operation `a+M*b`
+  //!
   template <typename VA, typename MATRIX, typename VB>
   struct Vector_V_sum_M_mul_V {
     VA     const & a;
@@ -528,7 +535,7 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c a+M^b
+  //! structure storing the operation `a+M^b` 
   template <typename VA, typename MATRIX, typename VB>
   struct Vector_V_sum_Mt_mul_V {
     VA     const & a;
@@ -545,7 +552,9 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation `a-M*b`
+  //!
+  //! Structure storing the operation `a-M*b`.
+  //!
   template <typename VA, typename MATRIX, typename VB>
   struct Vector_V_sub_M_mul_V {
     VA     const & a;
@@ -562,7 +571,9 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c a+M^b
+  //!
+  //! Structure storing the operation `a+M^b`.
+  //!
   template <typename VA, typename MATRIX, typename VB>
   struct Vector_V_sub_Mt_mul_V {
     VA     const & a;
@@ -579,7 +590,9 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c a+s*M*b
+  //!
+  //! Structure storing the operation `a+s*M*b`.
+  //!
   template <typename VA, typename SCALAR, typename MATRIX, typename VB>
   struct Vector_V_sum_S_mul_M_mul_V {
     VA     const & a;
@@ -599,7 +612,9 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c a+s*M^b
+  //!
+  //! Structure storing the operation `a+s*M^b`.
+  //!
   template <typename VA, typename SCALAR, typename MATRIX, typename VB>
   struct Vector_V_sum_S_mul_Mt_mul_V {
     VA     const & a;
@@ -619,7 +634,10 @@ namespace SparseTool {
     {}
   };
 
-  //! structure storing the operation \c a/P, i.e. the application of Preconditioner
+  //!
+  //! Structure storing the operation `a/P`, 
+  //! i.e. the application of Preconditioner.
+  //!
   template <typename VECTOR, typename PRECO>
   struct Vector_V_div_P {
     VECTOR const & a;
@@ -630,7 +648,9 @@ namespace SparseTool {
     {}
   };
 
-  /*! \brief Template class storing (recursively) vector expression */
+  //!
+  //! Template class storing (recursively) vector expression
+  //!
   template <typename T, typename A>
   class VectorE {
   public:
@@ -647,124 +667,128 @@ namespace SparseTool {
   
   //@}
 
-//! macro to define the standar matrix/vector operators
-#define SPARSELIB_VECTOR_OPERATIONS(VECTOR) \
-    /*! \brief Assign the vector \c v derived from \c VectorBase to \c *this */ \
+  #endif
+
+  //!
+  //! Macro to define the standar matrix/vector operators.
+  //!
+  #define SPARSELIB_VECTOR_OPERATIONS(VECTOR) \
+    /*! Assign the vector `v`  derived from `VectorBase` to `*this`  */ \
     template <typename VEC> inline \
     VECTOR const & \
     operator = (VectorBase<T,VEC> const & v) { \
       SPARSELIB_V2LOOP(v, (*this)(i) = v(i)); \
       return *this; \
     } \
-    /*! \brief  Assign the vector expression \c e to \c *this */ \
+    /*! Assign the vector expression `e` to `*this`  */ \
     template <typename R> inline \
     VECTOR const & \
     operator = (VectorE<T,R> const & e) { \
       SPARSELIB_V2LOOP(e, (*this)(i) = e(i)); \
       return *this; \
     } \
-    /*! \brief  Fill the Vector with the constant \a s. */ \
+    /*! Fill the Vector with the constant `s`. */ \
     VECTOR const & \
     operator = (valueType const & s) { \
       SPARSELIB_V1LOOP( (*this)(i) = valueType(s) ); \
       return *this; \
     } \
-    /*! \brief  Add the element of the \c v derived from \c VectorBase to \c *this.
-        If the vector are not of the same size then \c min(size(),v.size()) elements are copied. */ \
+    /*! Add the element of the `v`  derived from `VectorBase` to `*this`.
+        If the vector are not of the same size then `min(size(),v.size())` elements are copied. */ \
     template <typename VEC> inline \
     VECTOR const & \
     operator += (VectorBase<T,VEC> const & v) { \
       SPARSELIB_V2LOOP(v, (*this)(i) += v(i)); \
       return *this; \
     } \
-    /*! \brief  Add the expression \c e to \c *this.
-        If the vector are not of the same size then \c min(size(),e.size()) elements are evaluated. */ \
+    /*! Add the expression `e` to `*this`.
+        If the vector are not of the same size then `min(size(),e.size())` elements are evaluated. */ \
     template <typename R> inline \
     VECTOR const & \
     operator += (VectorE<T,R> const & e) { \
       SPARSELIB_V2LOOP(e, (*this)(i) += e(i)); \
       return *this; \
     } \
-    /*! \brief  Add to each element of the vector \c *this the constant \c s. */ \
+    /*! Add to each element of the vector `*this`  the constant `s`. */ \
     VECTOR const & \
     operator += (valueType const & s) { \
       SPARSELIB_V1LOOP( (*this)(i) += valueType(s)); \
       return *this; \
     } \
-    /*! \brief  Subtract the element of the Vector \c v to \c *this.
-        If the vector are not of the same size then \c min(size(),v.size()) elements are copied. */ \
+    /*! Subtract the element of the Vector `v`  to `*this`.
+        If the vector are not of the same size then `min(size(),v.size())` elements are copied. */ \
     template <typename VEC> inline \
     VECTOR const & \
     operator -= (VectorBase<T,VEC> const & v) { \
       SPARSELIB_V2LOOP(v, (*this)(i) -= v(i)); \
       return *this; \
     } \
-    /*! \brief  Subtract the expression \c e to \c *this.
-        If the vector are not of the same size then \c min(size(),e.size()) elements are evaluated. */ \
+    /*! Subtract the expression `e` to `*this`.
+        If the vector are not of the same size then `min(size(),e.size())` elements are evaluated. */ \
     template <typename R> inline \
     VECTOR const & \
     operator -= (VectorE<T,R> const & e) { \
       SPARSELIB_V2LOOP(e, (*this)(i) -= e(i)); \
       return *this; \
     } \
-    /*! \brief  Subtract to each element of the vector \c *this the constant \c s. */ \
+    /*! Subtract to each element of the vector `*this`  the constant `s`. */ \
     VECTOR const & \
     operator -= (valueType const & s) { \
       SPARSELIB_V1LOOP( (*this)(i) -= valueType(s)); \
       return *this; \
     } \
-    /*! \brief  Multiply the element of the Vector \c v to \c *this.
-        If the vector are not of the same size then \c min(size(),v.size()) elements are copied. */ \
+    /*! Multiply the element of the Vector `v`  to `*this`.
+        If the vector are not of the same size then `min(size(),v.size())` elements are copied. */ \
     template <typename VEC> inline \
     VECTOR const & \
     operator *= (VectorBase<T,VEC> const & v) { \
       SPARSELIB_V2LOOP(v, (*this)(i) *= v(i)); \
       return *this; \
     } \
-    /*! \brief  Multiply the Vector expression \c e to \c *this.
-        If the vector and expression are not of the same size then \c min(size(),e.size()) elements are copied. */ \
+    /*! Multiply the Vector expression `e` to `*this`.
+        If the vector and expression are not of the same size then `min(size(),e.size())` elements are copied. */ \
     template <typename R> inline \
     VECTOR const & \
     operator *= (VectorE<T,R> const & e) { \
       SPARSELIB_V2LOOP(e, (*this)(i) *= e(i)); \
       return *this; \
     } \
-    /*! \brief  Multiply each element of the Vector \c *this by constant \a s. */ \
+    /*! Multiply each element of the Vector `*this`  by constant `s`. */ \
     VECTOR const & \
     operator *= (valueType const & s) { \
       SPARSELIB_V1LOOP( (*this)(i) *= valueType(s)); \
       return *this; \
     } \
-    /*! \brief  Divide the element of the Vector \c *this to the components of vector \c v.
-        If the vector are not of the same size then \c min(size(),v.size()) elements are divided. */ \
+    /*! Divide the element of the Vector `*this`  to the components of vector `v`.
+        If the vector are not of the same size then `min(size(),v.size())` elements are divided. */ \
     template <typename VEC> inline \
     VECTOR const & \
     operator /= (VectorBase<T,VEC> const & v) { \
       SPARSELIB_V2LOOP(v, (*this)(i) /= v(i)); \
       return *this; \
     } \
-    /*! \brief  Divide the element of the Vector \c *this to the components of expression \c e.
-        If the vector and the expression are not of the same size then \c min(size(),e.size()) elements are divided. */ \
+    /*! Divide the element of the Vector `*this`  to the components of expression `e`.
+        If the vector and the expression are not of the same size then `min(size(),e.size())` elements are divided. */ \
     template <typename R> inline \
     VECTOR const & \
     operator /= (VectorE<T,R> const & e) { \
       SPARSELIB_V2LOOP(e, (*this)(i) /= e(i)); \
       return *this; \
     } \
-    /*! \brief  Divide each element of the Vector by the constant \c s. */ \
+    /*! Divide each element of the Vector by the constant `s`. */ \
     VECTOR const & \
     operator /= (valueType const & s) { \
       SPARSELIB_V1LOOP( (*this)(i) /= valueType(s)); \
       return *this; \
     } \
     /*------------ MM_COMPLEX MATRIX OPERATIONS ---------------------*/ \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c a/M contained in \c op of type \c Vector_V_div_M */ \
+    /*! Assign to `*this`  the evaluation of the expression `a/M` contained in `op` of type `Vector_V_div_M` */ \
     template <typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator = ( Vector_V_div_M<VA,MATRIX> const & op ) \
     { op.M.ass_V_div_M(*this, op.a); return *this; } \
     \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c M*a contained in \c op of type \c Vector_M_mul_V */ \
+    /*! Assign to `*this`  the evaluation of the expression `M*a` contained in `op` of type `Vector_M_mul_V` */ \
     template <typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator = ( Vector_M_mul_V<MATRIX,VA> const & op ) { \
@@ -772,21 +796,21 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.a); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this  the evaluation of the expression \c a/M contained in \c op of type \c Vector_V_div_M */ \
+    /*! Add to `*this` the evaluation of the expression `a/M` contained in `op` of type `Vector_V_div_M` */ \
     template <typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator += ( Vector_M_mul_V<MATRIX,VA> const & op ) { \
       op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.a); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c M*a contained in \c op of type \c Vector_M_mul_V */ \
+    /*! Subtract to `*this` the evaluation of the expression `M*a` contained in `op` of type `Vector_M_mul_V` */ \
     template <typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator -= ( Vector_M_mul_V<MATRIX,VA> const & op ) { \
       op.M.add_S_mul_M_mul_V(*this, valueType(-1), op.a); \
       return *this; \
     } \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c M^a contained in \c op of type \c Vector_Mt_mul_V */ \
+    /*! Assign to `*this` the evaluation of the expression `M^T*a` contained in `op` of type `Vector_Mt_mul_V` */ \
     template <typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator = (Vector_Mt_mul_V<MATRIX,VA> const & op) { \
@@ -794,21 +818,21 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.a); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this  the evaluation of the expression \c M^a contained in \c op of type \c Vector_Mt_mul_V */ \
+    /*! Add to `*this` the evaluation of the expression `M^T*a` contained in `op` of type `Vector_Mt_mul_V` */ \
     template <typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator += (Vector_Mt_mul_V<MATRIX,VA> const & op) { \
       op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.a); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c M^a contained in \c op of type \c Vector_Mt_mul_V */ \
+    /*! Subtract to `*this` the evaluation of the expression `M^T*a` contained in `op` of type `Vector_Mt_mul_V` */ \
     template <typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator -= (Vector_Mt_mul_V<MATRIX,VA> const & op) { \
       op.M.add_S_mul_Mt_mul_V(*this, valueType(-1), op.a); \
       return *this; \
     } \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c s*(M*a) contained in \c op of type \c Vector_S_mul_M_mul_V */ \
+    /*! Assign to `*this` the evaluation of the expression `s*(M*a)`  contained in `op` of type `Vector_S_mul_M_mul_V` */ \
     template <typename SCALAR, typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator = (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) { \
@@ -816,21 +840,21 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, op.s, op.a); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this the evaluation of the expression \c s*(M*a) contained in \c op of type \c Vector_S_mul_M_mul_V */ \
+    /*! Add to `*this` the evaluation of the expression `s*(M*a)`  contained in `op` of type `Vector_S_mul_M_mul_V` */ \
     template <typename SCALAR, typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator += (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) { \
       op.M.add_S_mul_M_mul_V(*this, op.s, op.a); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c s*(M*a) contained in \c op of type \c Vector_S_mul_M_mul_V */ \
+    /*! Subtract to `*this` the evaluation of the expression `s*(M*a)`  contained in `op` of type `Vector_S_mul_M_mul_V` */ \
     template <typename SCALAR, typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator -= (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) { \
       op.M.add_S_mul_M_mul_V(*this, -op.s, op.a); \
       return *this; \
     } \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c s*(M^a) contained in \c op of type \c Vector_S_mul_Mt_mul_V */ \
+    /*! Assign to `*this` the evaluation of the expression `s*(M^T*a)`  contained in `op` of type `Vector_S_mul_Mt_mul_V` */ \
     template <typename SCALAR, typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator = (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) { \
@@ -838,21 +862,21 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, op.s, op.a); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this the evaluation of the expression \c s*(M^a) contained in \c op of type \c Vector_S_mul_Mt_mul_V */ \
+    /*! Add to `*this` the evaluation of the expression `s*(M^T*a)`  contained in `op` of type `Vector_S_mul_Mt_mul_V` */ \
     template <typename SCALAR, typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator += (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) { \
       op.M.add_S_mul_Mt_mul_V(*this, op.s, op.a); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c s*(M^a) contained in \c op of type \c Vector_S_mul_Mt_mul_V */ \
+    /*! Subtract to `*this` the evaluation of the expression `s*(M^T*a)`  contained in `op` of type `Vector_S_mul_Mt_mul_V` */ \
     template <typename SCALAR, typename MATRIX, typename VA> inline \
     VECTOR const & \
     operator -= (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) { \
       op.M.add_S_mul_Mt_mul_V(*this, -op.s, op.a); \
       return *this; \
     } \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c a+M*b  contained in \c op of type \c Vector_V_sum_M_mul_V */ \
+    /*! Assign to `*this` the evaluation of the expression `a+M*b`  contained in `op` of type `Vector_V_sum_M_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator = (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) { \
@@ -860,7 +884,7 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.b); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this the evaluation of the expression \c a+M*b  contained in \c op of type \c Vector_V_sum_M_mul_V */ \
+    /*! Add to `*this` the evaluation of the expression `a+M*b`  contained in `op` of type `Vector_V_sum_M_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator += (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) { \
@@ -868,7 +892,7 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.b); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c a+M*b  contained in \c op of type \c Vector_V_sum_M_mul_V */ \
+    /*! Subtract to `*this` the evaluation of the expression `a+M*b`  contained in `op` of type `Vector_V_sum_M_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator -= (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) { \
@@ -876,7 +900,7 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, valueType(-1), op.b); \
       return *this; \
     } \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c a+M^b  contained in \c op of type \c Vector_V_sum_Mt_mul_V */ \
+    /*! Assign to `*this` the evaluation of the expression `a+M^T*b` contained in `op` of type `Vector_V_sum_Mt_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator = (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) { \
@@ -884,7 +908,7 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.b); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this the evaluation of the expression \c a+M^b  contained in \c op of type \c Vector_V_sum_Mt_mul_V */ \
+    /*! Add to `*this` the evaluation of the expression `a+M^T*b` contained in `op` of type `Vector_V_sum_Mt_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator += (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) { \
@@ -892,7 +916,7 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.b); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c a+M^b  contained in \c op of type \c Vector_V_sum_Mt_mul_V */ \
+    /*! Subtract to `*this` the evaluation of the expression `a+M^T*b` contained in `op` of type `Vector_V_sum_Mt_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator -= (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) { \
@@ -901,7 +925,7 @@ namespace SparseTool {
       return *this; \
     } \
     /*-----------------------*/ \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c a-M*b  contained in \c op of type \c Vector_V_sub_M_mul_V */ \
+    /*! Assign to `*this` the evaluation of the expression `a-M*b` contained in `op` of type `Vector_V_sub_M_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator = (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) { \
@@ -909,7 +933,7 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, valueType(-1), op.b); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this the evaluation of the expression \c a-M*b  contained in \c op of type \c Vector_V_sub_M_mul_V */ \
+    /*! Add to `*this` the evaluation of the expression `a-M*b` contained in `op` of type `Vector_V_sub_M_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator += (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) { \
@@ -917,7 +941,7 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, valueType(-1), op.b); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c a-M*b  contained in \c op of type \c Vector_V_sub_M_mul_V */ \
+    /*! Subtract to `*this` the evaluation of the expression `a-M*b` contained in `op` of type `Vector_V_sub_M_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator -= (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) { \
@@ -925,7 +949,7 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.b); \
       return *this; \
     } \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c a-M^b  contained in \c op of type \c Vector_V_sub_Mt_mul_V */ \
+    /*! Assign to `*this` the evaluation of the expression `a-M^T*b`  contained in `op` of type `Vector_V_sub_Mt_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator = (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) { \
@@ -933,7 +957,7 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, valueType(-1), op.b); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this the evaluation of the expression \c a-M^b  contained in \c op of type \c Vector_V_sub_Mt_mul_V */ \
+    /*! Add to `*this` the evaluation of the expression `a-M^T*b`  contained in `op` of type `Vector_V_sub_Mt_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator += (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) { \
@@ -941,7 +965,7 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, valueType(-1), op.b); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c a-M^b  contained in \c op of type \c Vector_V_sub_Mt_mul_V */ \
+    /*! Subtract to `*this`  the evaluation of the expression `a-M^T*b`  contained in `op` of type `Vector_V_sub_Mt_mul_V` */ \
     template <typename VA, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator -= (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) { \
@@ -949,7 +973,7 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.b); \
       return *this; \
     } \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c  a+s*(M*b)  contained in \c op of type \c Vector_V_sum_S_mul_M_mul_V */ \
+    /*! Assign to `*this`  the evaluation of the expression `a+s*(M*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator = (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
@@ -957,7 +981,7 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, op.s, op.b); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this the evaluation of the expression \c  a+s*(M*b)  contained in \c op of type \c Vector_V_sum_S_mul_M_mul_V */ \
+    /*! Add to `*this`  the evaluation of the expression `a+s*(M*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator += (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
@@ -965,7 +989,7 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, op.s, op.b); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c  a+s*(M*b)  contained in \c op of type \c Vector_V_sum_S_mul_M_mul_V */ \
+    /*! Subtract to `*this` the evaluation of the expression `a+s*(M*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator -= (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
@@ -973,7 +997,7 @@ namespace SparseTool {
       op.M.add_S_mul_M_mul_V(*this, -op.s, op.b); \
       return *this; \
     } \
-    /*! \brief  Assign to \c *this the evaluation of the expression \c  a+s*(M^b)  contained in \c op of type \c Vector_V_sum_S_mul_M_mul_V */ \
+    /*! Assign to `*this`  the evaluation of the expression `a+s*(M^T*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator = (Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
@@ -981,7 +1005,7 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, op.s, op.b); \
       return *this; \
     } \
-    /*! \brief  Add to \c *this the evaluation of the expression \c  a+s*(M^b)  contained in \c op of type \c Vector_V_sum_S_mul_M_mul_V */ \
+    /*! Add to `*this`  the evaluation of the expression `a+s*(M^T*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator += (Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
@@ -989,7 +1013,7 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, op.s, op.b); \
       return *this; \
     } \
-    /*! \brief  Subtract to \c *this the evaluation of the expression \c  a+s*(M^b)  contained in \c op of type \c Vector_V_sum_S_mul_M_mul_V */ \
+    /*! Subtract to `*this`  the evaluation of the expression `a+s*(M^T*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
     VECTOR const & \
     operator -= (Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
@@ -997,7 +1021,7 @@ namespace SparseTool {
       op.M.add_S_mul_Mt_mul_V(*this, -op.s, op.b); \
       return *this; \
     } \
-    /*! \brief  Assign to \c *this the evaluation of the preconditioner \c  a/P contained in \c op of type \c Vector_V_div_P */ \
+    /*! Assign to `*this`  the evaluation of the preconditioner `a/P` contained in `op` of type `Vector_V_div_P` */ \
     template <typename VEC, typename PRECO> inline \
     VECTOR const & \
     operator = (Vector_V_div_P<VEC,PRECO> const & op) { \
@@ -1015,12 +1039,14 @@ namespace SparseTool {
   //     #    ######  ####    #    ####  #    # ######  #    #  ####  ######
   */
 
-  //! Base vector class
-  /*!
-   * This class in the base class for all the
-   * vector classes of \c SparseTool.
-   * This class is incomplete and is used as a pivot for internal operations.
-   */
+  //!
+  //! Base vector class.
+  //! 
+  //! This class in the base class for all the
+  //! vector classes of `SparseTool`.
+  //! This class is incomplete and is used as a 
+  //! pivot for internal operations.
+  //! 
   template <typename T, typename VECTOR>
   class VectorBase {
   public:
@@ -1029,29 +1055,41 @@ namespace SparseTool {
 
   public:
 
-    //! build and empty vector
+    //!
+    //! Build and empty vector.
+    //!
     VectorBase() {}
 
-    //! forward the \c size() operator to the derived class
+    //!
+    //! Forward the `size()` operator to the derived class.
+    //!
     indexType size() const
     { return static_cast<VECTOR const *>(this) -> size(); }
 
-    //! forward the access to the \a i-th element of the vector
+    //!
+    //! Forward the access to the `i-th` element of the vector.
+    //!
     valueType const &
     operator [] ( indexType i ) const
     { return static_cast<VECTOR const *>(this) -> operator [] (i); }
 
-    //! forward the access to the \a i-th element of the vector
+    //!
+    //! Forward the access to the `i-th` element of the vector.
+    //!
     valueType &
     operator [] ( indexType i )
     { return static_cast<VECTOR *>(this) -> operator [] (i); }
 
-    //! forward the access to the \a i-th element of the vector
+    //!
+    //! Forward the access to the `i-th` element of the vector.
+    //!
     valueType const &
     operator () ( indexType i ) const
     { return static_cast<VECTOR const *>(this) -> operator () (i); }
 
-    //! forward the access to the \a i-th element of the vector
+    //!
+    //! Forward the access to the `i-th` element of the vector.
+    //!
     valueType &
     operator () ( indexType i )
     { return static_cast<VECTOR *>(this) -> operator () (i); }
@@ -1070,300 +1108,79 @@ namespace SparseTool {
   //     #    ######  ####    #    ####  #    #
   */
 
-  //! Variable size full vector class
-  /*!
-    This class extend the STL vector class by adding some math operation
-    and interaction with sparse matrix classes.
-
-    \par Usage
-
-    A \c Vector\<T\> is defined by specifying the type \c T  and
-    optionally its size.  For example,
-
-\code
-  Vector<double> b, c(100);
-\endcode
-
-    defines \c b as a vector of \b double of size \b 0 while \c c is a
-    vector of \b double of size \b 100. You can change the size of the
-    vector by the methods \c resize as follows:
-
-\code
-  Vector<double> d;
-  d.resize(200);
-\endcode
-
-    so that \c d is a \c Vector<double> of size \b 200.
-    There are many methods associate to a \c Vector\<T\> in the following
-    paragraph they are listed.
-
-    \par Constructors
-\code
-1  Vector<T> v;
-2  Vector<T> v(dim);
-3  Vector<T> w(v);
-\endcode
-
-    On line \b 1 construct the \c Vector\<T\> \c v of size
-    \b 0.  On line \b 2 construct the \c Vector\<T\> \c v of of size \c dim.
-    On line \b 3 construct the \c Vector\<T\> \c w as a copy of
-    \c Vector\<T\> \c v.
-
-    \par Indexing
-    Vector instances are indexed as one-dimensional C arrays, and the
-    index numbering follows the standard C convention, starting from zero.
-
-    Let us define \c v as \c Vector\<T\>
-
-\code
-  Vector<T> v;
-\endcode
-
-    Then, \c v[i] returns a reference to the \c T&-type
-    \c i-th element of \c v;
-
-    \par Changing Dimension
-    It is possible to change the size of a \c Vector\<T\> object.
-    For example
-
-\code
-  Vector<double> d;
-  d.resize(200);
-\endcode
-
-   the \c Vector\<T\> \c d has size \b 200.
-   The method \c size() return the actual size of the \c Vector\<T\>.
-   For example defining
-
-\code
-  Vector<double> d(123);
-\endcode
-
-   the method \c d.size() return \b 123.
-
-   \par Initialization
-
-    It is possible to initialize all the components of a \c Vector\<T\>
-    to a value, for example
-
-\code
-  Vector<float> v(100);
-  v = 3.14;
-\endcode
-
-    is equivalent to
-
-\code
-  Vector<float> v(100);
-  for ( int i = 0; i < v.size(); ++i ) v[i] = 3.14;
-\endcode
-
-    although is done more efficiently by the library.
-
-    \par Assignment
-
-    It is possible to copy the contents of a \c Vector\<T\> to another
-    one as the following example show
-
-\code
-1:  Vector<double> a, b, c;
-
-2:  a.resize(100);
-3:  b.resize(200);
-4:  c.resize(150);
-
-5:  c = 3;
-6:  b = c;
-7:  a = c;
-\endcode
-
-    the meaning of line \b 5 should be clear.  Lines \b 6 and
-    \b 7 are equivalent to
-
-\code
-  int i;
-  for ( i = 0; i < min(b.size(), c.size()); ++i ) b[i] = c[i];
-  for ( i = 0; i < min(a.size(), c.size()); ++i ) a[i] = c[i];
-\endcode
-
-    where you can notice that only the values that can be stored are
-    assigned.
-
-    It is possible to initialize many vectors same value as in the
-    following expressions
-
-\code
-1:  Vector<double> a, b, c;
-2:  a.resize(100);
-3:  b.resize(200);
-4:  c.resize(150);
-5:  a = b = c = 3;
-\endcode
-
-    but take attention because line \b 5 is not equivalent to
-
-\code
-  a = 3;
-  b = 3;
-  c = 3;
-\endcode
-
-in fact line \b 5 is equivalent to
-
-\code
-  c = 3;
-  b = c;
-  a = b;
-\endcode
-
-    so that we have
-
-    - the \c Vector\<T\> \c c is initialized with \a all its
-      \b 150 elements set to \b 5.
-    - the \c Vector\<T\> \c b is initialized with \a only its
-      first \b 150 elements set to \b 1 while the remaining
-       are undefined
-    - the \c Vector\<T\> \c a is initialized with \a all its
-      first \b 100 elements set to \b 1.
-
-    \par Arithmetic Operators on \c Vector\<T\>
-
-    A set of usual arithmetic operators are explicitly defined on
-    vector-type data.  If not otherwise specified, the operators extend
-    the corresponding scalar operation in a \a component-wise fashion.
-    Hence, for vectors with size \c dim, the component index \c i
-    in all the following expressions is supposed to run through \b 0
-    to \c dim-1.
-
-    Let us define the three double precision vectors \c a, \c b,
-    and \c c, that we shall use in all the following examples
-
-\code
-  int const dim = 100;
-  Vector<double> a(dim), b(dim), c(dim);
-\endcode
-
-    The arithmetic operators defined on vectors are given in the following
-    sections.
-
-    \par \c Scalar-Vector internal operations
-
-\verbatim
-Command    Equivalence
-a += 2     for ( i=0; i < a.size(); ++i ) a[i] += 2;
-a -= 2     for ( i=0; i < a.size(); ++i ) a[i] -= 2;
-a *= 2     for ( i=0; i < a.size(); ++i ) a[i] *= 2;
-a /= 2     for ( i=0; i < a.size(); ++i ) a[i] /= 2;
-\endverbatim
-
-    \par \c Scalar-Vector operations
-
-\verbatim
-Command      Equivalence
-             sz = min( a.size(), b.size() );
-a = b + 2    for ( i=0; i < sz; ++i ) a[i] = b[i] + 2;
-a = 3 + b    for ( i=0; i < sz; ++i ) a[i] = 3 + b[i];
-a = b - 2    for ( i=0; i < sz; ++i ) a[i] = b[i] - 2;
-a = 3 - b    for ( i=0; i < sz; ++i ) a[i] = 3 - b[i];
-a = b * 2    for ( i=0; i < sz; ++i ) a[i] = b[i] * 2;
-a = 3 * b    for ( i=0; i < sz; ++i ) a[i] = 3 * b[i];
-a = b / 2    for ( i=0; i < sz; ++i ) a[i] = b[i] / 2;
-a = 3 / b    for ( i=0; i < sz; ++i ) a[i] = 3 / b[i];
-\endverbatim
-
-  \par \c Vector-Vector internal operations
-
-\verbatim
-Command      Equivalence
-             sz = min( a.size(), b.size() );
-a += b       for ( i=0; i < sz; ++i ) a[i] += b[i];
-a -= b       for ( i=0; i < sz; ++i ) a[i] -= b[i];
-a *= b       for ( i=0; i < sz; ++i ) a[i] *= b[i];
-a /= b       for ( i=0; i < sz; ++i ) a[i] /= b[i];
-\endverbatim
-
-    \par \c Vector-Vector
-
-\verbatim
-Command      Equivalence
-             sz = min( a.size(), b.size() );
-b = +a       for ( i=0; i < sz; ++i ) b[i] = +a[i];
-b = -a       for ( i=0; i < sz; ++i ) b[i] = -a[i];
-
-             sz = min( sz, c.size() );
-c = a + b    for ( i=0; i < sz; ++i ) c[i] = a[i] + b[i];
-c = a - b    for ( i=0; i < sz; ++i ) c[i] = a[i] - b[i];
-c = a * b    for ( i=0; i < sz; ++i ) c[i] = a[i] * b[i];
-c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
-\endverbatim
-
-    \par Function of \c Vector\<T\>
-
-    Let be <c> n = min( a.size(), b.size() ) </c>,
-
-    - \c dot(a,b)   \f$ = \displaystyle\sum_{i=0}^{n-1} \overline{a_i} b_i \f$
-    - \c rdot(a,b)  \f$ = \displaystyle\sum_{i=0}^{n-1} a_i b_i \f$
-    - \c dist(a,b)  \f$ = \sqrt{\sum_{i=0}^{n-1} \left|a_i - b_i\right|^2}\f$
-    - \c normi(a)   \f$ = ||a||_{\infty} = \max\left\{|a_0|,|a_1|,\ldots,|a_{n-1}|\right\}\f$
-    - \c norm1(a)   \f$ = ||a||_{1} = \sum_{i=0}^{n-1} |a_i|\f$
-    - \c norm2(a)   \f$ = ||a||_{2} = \sqrt{ \sum_{i=0}^{n-1} a_i^2}\f$
-    - \c normp(a,p) \f$ = ||a||_{p} = \left( \sum_{i=0}^{n-1} |a_i|^p \right)^{1/p} \f$
-    - \c sum(a)     \f$ = \displaystyle\sum_{i=0}^{n-1} a_i \f$
-    - \c prod(a)    \f$ = \displaystyle\prod_{i=0}^{n-1} a_i \f$
-    - \c max(a)     \f$ = \max\left\{|a_0|,|a_1|,\ldots,|a_{n-1}|\right\} \f$
-    - \c min(a)     \f$ = \min\left\{|a_0|,|a_1|,\ldots,|a_{n-1}|\right\} \f$
-  */
+  //!
+  //! Variable size full vector class.
+  //!
+  //! This class extend the STL vector class by adding some math operation
+  //! and interaction with sparse matrix classes.
+  //!
   template <typename T>
   class Vector : public VectorBase<T,Vector<T> >,
                  public vector<T> {
   public:
 
-    typedef T valueType;  //!< assign to \c valueType the type of the vector
-
-    //! Build an empty Vector with 0 elements
+    //!
+    //! Assign to `valueType` the type of the vector.
+    //!
+    typedef T valueType;
+    
+    //!
+    //! Build an empty Vector with 0 elements.
+    //!
     Vector() : vector<T>(0) {}
 
-    //! Build a Vector with \a numElement elements
+    //!
+    //! Build a Vector with **numElement** elements.
+    //!
     Vector( indexType numElement ) : vector<T>(numElement) {}
 
-    //! Return the total number of elements of the vector
+    //!
+    //! Return the total number of elements of the vector.
+    //!
     indexType size() const { return indexType(vector<T>::size()); }
 
-    /*! \brief  Access to the \a i-th element of the Vector.
-        If \c SPARSETOOL_DEBUG is defined an index bound check is performed.
-     */
+    //!
+    //! Access to the `i-th` element of the Vector.
+    //! If `SPARSETOOL_DEBUG` is defined an index bound check is performed.
+    //!
     valueType const &
     operator [] ( indexType i ) const {
-      SPARSETOOL_TEST( i < vector<T>::size(),"Vector[" << i << "] Vector size = " << vector<T>::size() << " bad index")
+      SPARSETOOL_TEST(
+        i < vector<T>::size(),
+        "Vector[" << i << "] Vector size = " << vector<T>::size() << " bad index"
+      )
       return vector<T>::operator [] (i);
     }
 
-    /*! \brief  Access to the \a i-th element of the Vector.
-        If \c SPARSETOOL_DEBUG is defined an index bound check is performed.
-     */
+    //!
+    //! Access to the `i-th` element of the Vector.
+    //! If `SPARSETOOL_DEBUG` is defined an index bound check is performed.
+    //!
     valueType & 
     operator [] ( indexType i ) {
       SPARSETOOL_TEST( i < indexType(vector<T>::size()), "Vector[" << i << "] Vector size = " << vector<T>::size() << " bad index")
       return vector<T>::operator [] (i);
     }
 
-    /*!
-     * \brief  Access to the \a i-th element of the Vector.
-     * No index bound check is performed.
-     */
+    //! 
+    //! Access to the `i-th` element of the Vector.
+    //! No index bound check is performed.
+    //! 
     valueType const &
     operator () ( indexType i ) const
     { return vector<T>::operator [] (i); }
 
-    /*!
-     * \brief  Access to the \a i-th element of the Vector.
-     * No index bound check is performed.
-     */
+    //! 
+    //! Access to the `i-th` element of the Vector.
+    //! No index bound check is performed.
+    //! 
     valueType &
     operator () ( indexType i )
     { return vector<T>::operator [] (i); }
 
-    //! Get a copy of the Vector \a v.
+    //!
+    //! Get a copy of the Vector `v`.
+    //!
     template <typename VECTOR> inline
     void
     load( VectorBase<T,VECTOR> const & v ) {
@@ -1371,19 +1188,25 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       SPARSELIB_LOOP( indexType(vector<T>::size()), (*this)(i) = v(i) );
     }
 
-    //! Set all elements to 0
+    //!
+    //! Set all elements to 0.
+    //!
     void
     setZero() {
       SPARSELIB_LOOP( indexType(vector<T>::size()), (*this)(i) = valueType(0) );
     }
 
-    //! Set all elements to a
+    //!
+    //! Set all elements to `a`
+    //!
     void
     setTo( valueType const & a ) {
       SPARSELIB_LOOP( indexType(vector<T>::size()), (*this)(i) = a );
     }
 
-    //! Fill the Vector with the value \a v from index \a b to \a e.
+    //!
+    //! Fill the Vector with the value `v` from index `b` to `e`.
+    //!
     void
     fill( indexType b, indexType e, valueType const & v ) {
       SPARSETOOL_TEST(
@@ -1411,43 +1234,12 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   //    # #   #      #    #   #   #    # #   #     #     # #      # #    # #      
   //     #    ######  ####    #    ####  #    #     #####  ###### #  ####  ######
   */
+  //!
   //! Remapping a piece of memory to a vector
-  /*!
-    This class extend the \c VectorBase class by adding the capacity
-    of remapping a piece o \c Vector or a C-pointer
-
-    \par Usage
-
-    A \c VectorSlice\<T\> is defined by specifying the type \c T.  For example,
-
-\code
-  VectorSlice<double> b, c;
-\endcode
-
-    There are many methods associate to a \c Vector\<T\> in the following
-    paragraph they are listed.
-
-    \par Slicing
-\code
-1  Vector<double> v(100); double w[100];
-2  b.slice( v, 10, 20 );
-3  c.slice( w + 5, w + 45 );
-\endcode
-
-    On line \b 1 construct the \c Vector<double> \c v of size \b 100
-    and the C array \c w of \b 100 elements.
-    On line \b 2 remap the components of the vecotor \c v from \c 10 to \c 19 to the "vector" b.
-    On line \b 3 remap the components of the Array \c w from \c 5 to \c 44 to the "vector" c.
-    \c Vector\<T\> \c v.
-
-    \par Indexing
-    Vector instances are indexed as one-dimensional C arrays, and the
-    index numbering follows the standard C convention, starting from zero.
-
-    Then, \c b[i] returns a reference to the \c T&-type
-    \c i-th element of \c v and due to slicing the \c b[i]==v[i+10]. 
-    Analogously \c c[i]==w[i+5]. 
-  */
+  //!
+  //! This class extend the `VectorBase` class by adding the capacity
+  //! of remapping a piece o `Vector` or a C-pointer
+  //!
   template <typename T>
   class VectorSlice : public VectorBase<T,VectorSlice<T> > {
   public:
@@ -1457,13 +1249,15 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
 
   public:
 
+    //!
     //! Build an empty Vector with 0 elements
+    //!
     VectorSlice() : len(0), values(nullptr) {}
 
-    /*!
-     *  \brief  Map the vector \c v from \c v(begin) to \c v(end-1) in
-     *  (*this)(0) to (*this)(end-begin)
-     */
+    //!
+    //! Map the vector `v` from `v(begin)` to `v(end-1)` in
+    //! `(*this)(0)` to `(*this)(end-begin)`
+    //!
     VectorSlice<T> &
     slice( Vector<T> & v, indexType begin, indexType end ) {
       values = &v(begin);
@@ -1478,21 +1272,23 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       return *this;
     }
 
-    /*!
-     *  \brief  Map the piece of memory from \c pBegin to \c pEnd-1 in
-     *  (*this)(0) to (*this)(pEnd-pBegin)
-     */
+    //!
+    //! Map the piece of memory from `pBegin` to `pEnd-1` in
+    //! `(*this)(0)` to `(*this)(pEnd-pBegin)`
+    //!
     VectorSlice<T> &
     slice( T * pBegin, T * pEnd )
     { values = pBegin; len = pEnd - pBegin; return *this; }
 
-    //! return the total number of element of the vector slice
+    //!
+    //! Return the total number of element of the vector slice.
+    //!
     indexType size() const { return len; }
 
-    /*!
-     *  \brief  Access to the \a i-th element of the Vector.
-     *  If \c SPARSETOOL_DEBUG is defined an index bound check is performed.
-     */
+    //!
+    //! Access to the `i-th` element of the Vector.
+    //! If `SPARSETOOL_DEBUG` is defined an index bound check is performed.
+    //!
     valueType const &
     operator [] ( indexType i ) const {
       SPARSETOOL_TEST(
@@ -1502,10 +1298,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       return values[i];
     }
 
-    /*!
-     *  \brief  Access to the \a i-th element of the Vector.
-     *  If \c SPARSETOOL_DEBUG is defined an index bound check is performed.
-     */
+    //!
+    //! Access to the `i-th` element of the Vector.
+    //! If `SPARSETOOL_DEBUG` is defined an index bound check is performed.
+    //!
     valueType & 
     operator [] ( indexType i ) {
       SPARSETOOL_TEST(
@@ -1515,18 +1311,18 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       return values[i];
     }
 
-    /*!
-     *  \brief  Access to the \a i-th element of the Vector.
-     *  No index bound check is performed.
-     */
+    //!
+    //! Access to the `i-th` element of the Vector.
+    //! No index bound check is performed.
+    //!
     valueType const &
     operator () ( indexType i ) const
     { return values[i]; }
 
-    /*!
-     *  \brief  Access to the \a i-th element of the Vector.
-     *  No index bound check is performed.
-     */
+    //!
+    //! Access to the `i-th` element of the Vector.
+    //! No index bound check is performed.
+    //!
     valueType & 
     operator () ( indexType i )
     { return values[i]; }
@@ -1971,222 +1767,259 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   #undef SPARSELIB_F_VV
   #undef SPARSELIB_F_VV_TREE
 
+  //!
   //! \name Vector norm
+  //!
   //@{
 
   // N O R M 1
-  //! Evaluate the 1-norm of the vector \c v
+  //! Evaluate the 1-norm of the vector `v`
   template <typename T, typename V> inline
   typename return_trait<T>::valueType norm1(VectorBase<T,V> const & v)
   { return F1<VectorBase<T,V> >::norm1(v); }
 
-  //! Evaluate the 1-norm of the vector expression \c e
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate the 1-norm of the vector expression `e`
   template <typename T, typename A> inline
   typename return_trait<T>::valueType norm1(VectorE<T,A> const & e)
   { return F1<VectorE<T,A> >::norm1(e); }
+  #endif
 
   // N O R M 2
-  //! Evaluate the 2-norm of the vector \c v 
+  //! Evaluate the 2-norm of the vector `v`  
   template <typename T, typename V> inline
   typename return_trait<T>::valueType norm2(VectorBase<T,V> const & v)
   { return F1<VectorBase<T,V> >::norm2(v); }
 
-  //! Evaluate the 2-norm of the vector expression \c e
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate the 2-norm of the vector expression `e`
   template <typename T, typename A> inline
   typename return_trait<T>::valueType norm2(VectorE<T,A> const & e)
   { return F1<VectorE<T,A> >::norm2(e); }
+  #endif
 
   // N O R M I
-  //! Evaluate the infinity-norm of the vector \c v
+  //! Evaluate the infinity-norm of the vector `v`
   template <typename T, typename V> inline
   typename return_trait<T>::valueType normi(VectorBase<T,V> const & v)
   { return F1<VectorBase<T,V> >::normi(v); }
 
-  //! Evaluate the infinity-norm of the vector expression \c e
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate the infinity-norm of the vector expression `e`
   template <typename T, typename A> inline
   typename return_trait<T>::valueType normi(VectorE<T,A> const & e)
   { return F1<VectorE<T,A> >::normi(e); }
+  #endif
 
   // N O R M P
-  //! Evaluate the p-norm of the vector \c v
+  //! Evaluate the p-norm of the vector `v`
   template <typename T, typename S, typename V> inline
   typename return_trait<T>::valueType normp(VectorBase<T,V> const & v, S const & p)
   { return F1<VectorBase<T,V> >::normp(v,T(p)); }
 
-  //! Evaluate the p-norm of the vector \c e
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate the p-norm of the vector `e`
   template <typename T, typename A, typename S> inline
   typename return_trait<T>::valueType normp(VectorE<T,A> const & e, S const & p)
   { return F1<VectorE<T,A> >::normp(e,T(p)); }
+  #endif
   //@}
 
-  //! \name sum and prod
+  //!
+  //! \name sum and product
+  //!
   //@{
 
   // S U M
-  //! Evaluate sum of the entries the vector \c v
+  //! Evaluate sum of the entries the vector `v`
   template <typename T, typename V> inline
   T sum(VectorBase<T,V> const & v)
   { return F1<VectorBase<T,V> >::sum(v); }
 
-  //! Evaluate sum of the entries the vector expression \c v
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate sum of the entries the vector expression `v`
   template <typename T, typename A> inline
   T sum(VectorE<T,A> const & e)
   { return F1<VectorE<T,A> >::sum(e); }
-  // S U M
+  #endif
 
-  //! Evaluate product of the entries the vector \c v
+  //! Evaluate product of the entries the vector `v`
   template <typename T, typename V> inline
   T prod(VectorBase<T,V> const & v)
   { return F1<VectorBase<T,V> >::prod(v); }
 
-  //! Evaluate product of the entries the vector expression \c v
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate product of the entries the vector expression `v`
   template <typename T, typename A> inline
   T prod(VectorE<T,A> const & e)
   { return F1<VectorE<T,A> >::prod(e); }
+  #endif
 
   //@}
 
-  //! \name Vector minimum maximum values
+  //!
+  //! \name Vector minimum maximum values.
+  //!
   //@{
 
   // M A X
-  //! Evaluate the maximum value of the vector \c v
+  //! Evaluate the maximum value of the vector `v`
   template <typename T, typename V> inline
   T maxval(VectorBase<T,V> const & v)
   { return F1<VectorBase<T,V> >::maxval(v); }
 
-  //! Evaluate the maximum value of the vector expression \c e
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate the maximum value of the vector expression `e`
   template <typename T, typename A> inline
   T maxval(VectorE<T,A> const & e)
   { return F1<VectorE<T,A> >::maxval(e); }
+  #endif
 
   // M I N
-  //! Evaluate the minimum value of the vector \c v
+  //! Evaluate the minimum value of the vector `v`
   template <typename T, typename V> inline
   T minval(VectorBase<T,V> const & v)
   { return F1<VectorBase<T,V> >::minval(v); }
 
-  //! Evaluate the maximum value of the vector \c e
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate the maximum value of the vector `e`
   template <typename T, typename A> inline
   T minval(VectorE<T,A> const & e)
   { return F1<VectorE<T,A> >::minval(e); }
+  #endif
 
   // M A X
-  //! Evaluate the maximum absolute value of the vector \c v
+  //! Evaluate the maximum absolute value of the vector `v`
   template <typename T, typename V> inline
   T maxabsval(VectorBase<T,V> const & v)
   { return F1<VectorBase<T,V> >::maxabsval(v); }
 
-  //! Evaluate the maximum value of the vector expression \c e
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate the maximum value of the vector expression `e`
   template <typename T, typename A> inline
   T maxabsval(VectorE<T,A> const & e)
   { return F1<VectorE<T,A> >::maxabsval(e); }
+  #endif
 
   // M I N
-  //! Evaluate the minimum value of the vector \c v
+  //! Evaluate the minimum value of the vector `v`
   template <typename T, typename V> inline
   T minabsval(VectorBase<T,V> const & v)
   { return F1<VectorBase<T,V> >::minabsval(v); }
 
-  //! Evaluate the maximum value of the vector \c e
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate the maximum value of the vector `e`
   template <typename T, typename A> inline
   T minabsval(VectorE<T,A> const & e)
   { return F1<VectorE<T,A> >::minabsval(e); }
+  #endif
 
   //@}
 
-  //! \name Vector Dot Product
+  //!
+  //! \name Vector Dot Product.
+  //!
   //@{
 
   // D O T
-  //! Evaluate dot product between vector \c a and vector \c b
+  //! Evaluate dot product between vector `A`  and vector `b`
   template <typename T, typename V1, typename V2> inline
   T dot(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
   { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::dot(a,b); }
 
-  //! Evaluate dot product between vector expression \c a and vector \c b
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate dot product between vector expression `A`  and vector `b`
   template <typename T, typename A, typename V> inline
   T dot(VectorE<T,A> const & a, VectorBase<T,V> const & b)
   { return F2<VectorE<T,A>,VectorBase<T,V> >::dot(a,b); }
 
-  //! Evaluate dot product between vector \c a and vector expression \c b
+  //! Evaluate dot product between vector `A`  and vector expression `b`
   template <typename T, typename A, typename V> inline
   T dot(VectorBase<T,V> const & a, VectorE<T,A> const & b)
   { return F2<VectorBase<T,V>,VectorE<T,A> >::dot(a,b); }
 
-  //! Evaluate dot product between vector expression  \c a and vector expression \c b
+  //! Evaluate dot product between vector expression  `A`  and vector expression `b`
   template <typename T, typename A, typename B> inline
   T dot(VectorE<T,A> const & a, VectorE<T,B> const & b)
   { return F2<VectorE<T,A>,VectorE<T,B> >::dot(a,b); }
+  #endif
 
   // R D O T
-  //! Evaluate dot product between vector \c a and vector \c b
+  //! Evaluate dot product between vector `A`  and vector `b`
   template <typename T, typename V1, typename V2> inline
   T rdot(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
   { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::rdot(a,b); }
 
-  //! Evaluate dot product between vector expression \c a and vector \c b
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate dot product between vector expression `A`  and vector `b`
   template <typename T, typename A, typename V> inline
   T rdot(VectorE<T,A> const & a, VectorBase<T,V> const & b)
   { return F2<VectorE<T,A>,VectorBase<T,V> >::rdot(a,b); }
 
-  //! Evaluate dot product between vector \c a and vector expression \c b
+  //! Evaluate dot product between vector `A`  and vector expression `b`
   template <typename T, typename A, typename V> inline
   T rdot(VectorBase<T,V> const & a, VectorE<T,A> const & b)
   { return F2<VectorBase<T,V>,VectorE<T,A> >::rdot(a,b); }
 
-  //! Evaluate dot product between vector expression  \c a and vector expression \c b
+  //! Evaluate dot product between vector expression  `A`  and vector expression `b`
   template <typename T, typename A, typename B> inline
   T rdot(VectorE<T,A> const & a, VectorE<T,B> const & b)
   { return F2<VectorE<T,A>,VectorE<T,B> >::rdot(a,b); }
+  #endif
 
   //@}
 
-  //! \name Vector Distance
+  //!
+  //! \name Vector Distance.
+  //!
   //@{
 
   // D I S T
-  //! Evaluate euclidean distance between vector \c a and vector \c b
+  //! Evaluate euclidean distance between vector `A`  and vector `b`
   template <typename T, typename V1, typename V2> inline
   typename return_trait<T>::valueType dist(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
   { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::dist(a,b); }
 
-  //! Evaluate euclidean distance between vector expression \c a and vector \c b
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate euclidean distance between vector expression `A`  and vector `b`
   template <typename T, typename A, typename V> inline
   typename return_trait<T>::valueType dist(VectorE<T,A> const & a, VectorBase<T,V> const & b)
   { return F2<VectorE<T,A>,VectorBase<T,V> >::dist(a,b); }
 
-  //! Evaluate euclidean distance between vector \c a and vector expression \c b
+  //! Evaluate euclidean distance between vector `A`  and vector expression `b`
   template <typename T, typename A, typename V> inline
   typename return_trait<T>::valueType dist(VectorBase<T,V> const & a, VectorE<T,A> const & b)
   { return F2<VectorBase<T,V>,VectorE<T,A> >::dist(a,b); }
 
-  //! Evaluate euclidean distance between vector expression \c a and vector expression \c b
+  //! Evaluate euclidean distance between vector expression `A`  and vector expression `b`
   template <typename T, typename A, typename B> inline
   typename return_trait<T>::valueType dist(VectorE<T,A> const & a, VectorE<T,B> const & b)
   { return F2<VectorE<T,A>,VectorE<T,B> >::dist(a,b); }
+  #endif
 
   // D I S T 2
 
-  //! Evaluate square of euclidean distance between vector \c a and vector \c b
+  //! Evaluate square of euclidean distance between vector `A`  and vector `b`
   template <typename T, typename V1, typename V2> inline
   typename return_trait<T>::valueType dist2(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
   { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::dist2(a,b); }
 
-  //! Evaluate square of euclidean distance between vector expression \c a and vector \c b
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //! Evaluate square of euclidean distance between vector expression `A`  and vector `b`
   template <typename T, typename A, typename V> inline
   typename return_trait<T>::valueType dist2(VectorE<T,A> const & a, VectorBase<T,V> const & b)
   { return F2<VectorE<T,A>,Vector<T> >::dist2(a,b); }
 
-  //! Evaluate square of euclidean distance between vector \c a and vector expression \c b
+  //! Evaluate square of euclidean distance between vector `A`  and vector expression `b`
   template <typename T, typename A, typename V> inline
   typename return_trait<T>::valueType dist2(VectorBase<T,V> const & a, VectorE<T,A> const & b)
   { return F2<VectorBase<T,V>,VectorE<T,A> >::dist2(a,b); }
 
-  //! Evaluate square of euclidean distance between vector expression \c a and vector expression \c b   
+  //! Evaluate square of euclidean distance between vector expression `A`  and vector expression `b`   
   template <typename T, typename A, typename B> inline
   typename return_trait<T>::valueType dist2(VectorE<T,A> const & a, VectorE<T,B> const & b)
   { return F2<VectorE<T,A>,VectorE<T,B> >::dist2(a,b); }
+  #endif
 
   //@}
 
@@ -2200,7 +2033,9 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   //  #### #  #####   ###   #####  #    #        #####  ####### #     #    #
   */
 
-  //! \name Sorting Structures
+  //!
+  //! \name Sorting Structures.
+  //!
   //@{
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -2218,14 +2053,15 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
 
   #endif
 
-  /*! 
-   * Function to sort two vector of indexes and values
-   * ascending respect to index vector \c I.
-   * \param I           C-array of row index vector
-   * \param A           C-array of values
-   * \param total_elems total number of element to sort
-   * \param MAX_THRESH  threshold value to swich to insert sort
-   */
+  //!  
+  //! Function to sort two vector of indexes and values
+  //! ascending respect to index vector `I`.
+  //!
+  //! \param I           C-array of row index vector
+  //! \param A           C-array of values
+  //! \param total_elems total number of element to sort
+  //! \param MAX_THRESH  threshold value to swich to insert sort
+  //! 
   template <typename I_type, typename T_type>
   static
   void
@@ -2346,14 +2182,15 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     }
   }
 
-  /*! 
-   * Function to sort two vector of indexes
-   * ascending respect to index vector \c I and \c J.
-   * \param I           C-array of row index vector
-   * \param J           C-array of column index vector
-   * \param total_elems total number of element to sort
-   * \param MAX_THRESH  threshold value to swich to insert sort
-   */
+  //!  
+  //! Function to sort two vector of indexes
+  //! ascending respect to index vector `I` and `J`.
+  //!
+  //! \param I           C-array of row index vector
+  //! \param J           C-array of column index vector
+  //! \param total_elems total number of element to sort
+  //! \param MAX_THRESH  threshold value to swich to insert sort
+  //! 
   template <typename I_type>
   static
   void
@@ -2476,19 +2313,20 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     }
   }
 
-  /*! 
-   * Function to sort three vector of indexes and values
-   * ascending respect to index vector \c I and \c J.
-   * \param I           C-array of row index vector
-   * \param J           C-array of column index vector
-   * \param A           C-array of values
-   * \param total_elems total number of element to sort
-   * \param MAX_THRESH  threshold value to swich to insert sort
-   */
+  //!  
+  //! Function to sort three vector of indexes and values
+  //! ascending respect to index vector `I` and `J`.
+  //!
+  //! \param I           C-array of row index vector
+  //! \param J           C-array of column index vector
+  //! \param A           C-array of values
+  //! \param total_elems total number of element to sort
+  //! \param MAX_THRESH  threshold value to swich to insert sort
+  //! 
   template <typename I_type, typename T_type>
   static
   void
-  QuickSortIJ(
+  QuickSortIJ2(
     I_type    I[],
     I_type    J[],
     T_type    A[],
@@ -2627,7 +2465,12 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   //  ####   #       #    #  #    #   ####   ######
   */
 
-  //! macro to define the operator overloading of standard matrix-vector expressions
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+  //!
+  //! Macro to define the operator overloading of 
+  //! standard matrix-vector expressions.
+  //!
   #define SPARSELIB_MUL_STRUCTURES(MATRIX)                                    \
   template <typename TM, typename T, typename VEC> inline                     \
   Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VEC> >                              \
@@ -2729,22 +2572,21 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
                                        (a,sMv.s,sMv.M,sMv.a);                 \
   }
 
-  /*!
-   * \class SparseBase
-   * \brief
-   * This class in the base class for all the
-   * sparse matrix classes of \c SparseTool.
-   * This class is incomplete and is used as a pivot for internal operations.
-   */
+  #endif
 
+  //! 
+  //! This class in the base class for all the
+  //! sparse matrix classes of `SparseTool`.
+  //! This class is incomplete and is used as a pivot for internal operations.
+  //! 
   template <typename Matrix>
   class SparseBase {
   protected:
 
     indexType sp_nrows;     //!< Number of rows of the derived class
     indexType sp_ncols;     //!< Number of columns of the derived class
-    indexType sp_min_size;  //!< Minimum between \c sp_nrows and \c sp_ncols
-    indexType sp_max_size;  //!< Minimum between \c sp_nrows and \c sp_ncols
+    indexType sp_min_size;  //!< Minimum between `sp`_nrows and `sp`_ncols
+    indexType sp_max_size;  //!< Minimum between `sp`_nrows and `sp`_ncols
     indexType sp_nnz;       //!< Total number of nonzeros of the derived sparse matrix
     indexType sp_lower_nnz; //!< Total number of nonzeros under the main diagonal
     indexType sp_upper_nnz; //!< Total number of nonzeros over the main diagonal
@@ -2753,9 +2595,12 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     /*!< \brief Some sparse matrix can be internally in a state not ordered.
          When in this state the random access to element is unpredictable
          and can result in runtime error.
-         This method return \c true if the matrix is ordered. */
+         This method return `true` if the matrix is ordered. */
 
-    //! check the index \c idx. If out of the range \c 0..nnz-1 and error is issued.
+    //!
+    //! Check the index `idx`. If out of the range `0..nnz-1`
+    //! and error is issued.
+    //!
     void
     test_nnz(indexType idx) const {
       SPARSETOOL_TEST(
@@ -2764,7 +2609,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       )
     }
 
-    //! check the indices \c i and \c j. If out of the range of the matrix and error is issued.
+    //!
+    //! Check the indices `i` and `j`.
+    //! If out of the range of the matrix and error is issued.
+    //!
     void
     test_index(indexType i, indexType j) const {
       SPARSETOOL_TEST(
@@ -2773,7 +2621,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       )
     }
 
-    //! check the indices \c i. If out of the row range of the matrix and error is issued.
+    //!
+    //! Check the indices `i`.
+    //! If out of the row range of the matrix and error is issued.
+    //!
     void
     test_row(indexType i) const {
       SPARSETOOL_TEST(
@@ -2782,7 +2633,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       )
     }
 
-    //! check the indices \c j. If out of the column range of the matrix and error is issued.
+    //!
+    //! Check the indices `j`.
+    //! If out of the column range of the matrix and error is issued.
+    //!
     void
     test_col(indexType j) const {
       SPARSETOOL_TEST(
@@ -2791,7 +2645,9 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       )
     }
 
-    //! Initialize the class \c Sparse with \c nr rows and \c nc columns
+    //!
+    //! Initialize the class `Sparse` with `nr` rows and `nc` columns.
+    //!
     void
     setup( indexType nr, indexType nc ) {
       sp_nrows     = nr;
@@ -2805,7 +2661,9 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       sp_isOrdered = true;
     }
 
-    //! update the counter for the lower, upper and diagonal elements
+    //!
+    //! Update the counter for the lower, upper and diagonal elements.
+    //!
     void
     ldu_count(indexType i, indexType j) {
       if      ( j < i ) ++sp_lower_nnz;
@@ -2819,72 +2677,84 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     ~SparseBase(void) {}
 
     // common data
-    indexType numRows (void) const { return sp_nrows; }    //!< return the number of rows of the \c Sparse object
-    indexType numCols (void) const { return sp_ncols; }    //!< return the number of columns of the \c Sparse object
+    indexType numRows (void) const { return sp_nrows; }    //!< return the number of rows of the `Sparse` object
+    indexType numCols (void) const { return sp_ncols; }    //!< return the number of columns of the `Sparse` object
     indexType minSize (void) const { return sp_min_size; } //!< return the minimum between rows and columns
     indexType maxSize (void) const { return sp_max_size; } //!< return the maximum between rows and columns
     indexType nnz     (void) const { return sp_nnz; }      //!< return the total number of nonzeros
 
-    /*!
-     *  \brief
-     *  Return the number of nonzeros of the derived sparse
-     *  matrix under the main diagonal (\c lower)
-     *  over the main diagonal (\c upper) and on the diagonal (\c diag)
-     */
+    //!
+    //! Return the number of nonzeros of the derived sparse
+    //! matrix under the main diagonal (**lower**)
+    //! over the main diagonal (**upper**) and on the diagonal (**diag**)
+    //!
     void
     nnz ( indexType & lower, indexType & diag, indexType & upper) const {
       lower = sp_lower_nnz;
       diag  = sp_diag_nnz;
       upper = sp_upper_nnz;
     }
-    //! return \c true if the internal data is ordered
+    //!
+    //! Return `true` if the internal data is ordered.
+    //!
     bool isOrdered (void) const { return sp_isOrdered; }
 
-    /*! \brief
-        \name Iterator
-        These methods are useful for accessing all the nonzero elements
-        of the derived sparse matrix.  The methods
-
-        - \c void \c Begin()
-        - \c void \c Next()
-        - \c bool \c End()
-
-        permits to loops on all the elements, while the methods
-
-        - \c indexType \c row()
-        - \c indexType \c column()
-        - \c valueType \c value()
-
-        permits to access values of the actual elements
-        pointed by the iterator. For example to print all the stored
-        values of the \c Sparse object \c S we can do:
-
-\code
-  for ( S.Begin(); S.End(); S.Next() ) {
-    cout << " row   = " << S.row()
-         << " col   = " << S.column()
-         << " value = " << S.value()
-         << '\n';
-  }
-\endcode
-    */
-
-    //! \name Iterator for accessing matrix elements
+    //!
+    //! \name Iterators
+    //!
+    //! These methods are useful for accessing all the nonzero elements
+    //! of the derived sparse matrix.  The methods
+    //! 
+    //! - `void Begin()`
+    //! - `void Next()`
+    //! - `bool End()`
+    //! 
+    //! permits to loops on all the elements, while the methods
+    //! 
+    //! - `indexType row()`
+    //! - `indexType column()`
+    //! - `valueType value()`
+    //! 
+    //! permits to access values of the actual elements
+    //! pointed by the iterator. For example to print all the stored
+    //! values of the `Sparse` object \c S we can do:
+    //! 
+    //! \code
+    //!   for ( S.Begin(); S.End(); S.Next() ) {
+    //!     cout << " row   = " << S.row()
+    //!          << " col   = " << S.column()
+    //!          << " value = " << S.value()
+    //!          << '\n';
+    //!   }
+    //! \endcode
+    //!
     //@{
-    //! set the iterator at the begin of the loop
+    //!
+    //! Set the iterator at the begin of the loop.
+    //!
     void Begin (void) const { static_cast<Matrix const *>(this) -> Begin(); }
-    //! go the next item
-    void Next  (void) const { static_cast<Matrix const *>(this) -> Next(); }
-    //! return \c true unless we are at the end of the loop
-    bool End   (void) const { return static_cast<Matrix const *>(this) -> End(); }
+    //!
+    //! Go the next item.
+    //!
+    void Next(void) const { static_cast<Matrix const *>(this) -> Next(); }
+    //!
+    //! Return `true` unless we are at the end of the loop.
+    //!
+    bool End(void) const { return static_cast<Matrix const *>(this) -> End(); }
 
-    //! The \a row of the pointed element
-    indexType row   (void) const { return static_cast<Matrix const *>(this) -> row(); }
+    //!
+    //! The **row** of the pointed element.
+    //!
+    indexType row(void) const { return static_cast<Matrix const *>(this) -> row(); }
 
-    //! The \a column of the pointed element
+    //!
+    //! The **column** of the pointed element.
+    //!
     indexType column(void) const { return static_cast<Matrix const *>(this) -> column(); }
 
-    //! Assign the pointed element to \c rhs
+    //!
+    //! Assign the pointed element to `rhs`.
+    //!
     template <typename T>
     void assign( T & rhs ) const {
       Matrix const * This = static_cast<Matrix const *>(this);
@@ -2893,28 +2763,31 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
 
     //@}
 
-    //! return \c true if the element \c (i,j) is a nonzeros of the derived matrix
+    //!
+    //! Return `true` if the element `(i,j)` is 
+    //! a nonzeros of the derived matrix.
+    //!
     bool
     exists( indexType i, indexType j )
     { return static_cast<Matrix const *>(this) -> exists( i, j ); }
 
-    /*! \brief
-        Return the position of the \c (i,j) elements
-        in the internal structure. If the element \c (i,j) do not
-        exist it return \c nnz() */
+    //!
+    //! Return the position of the `(i,j)` elements
+    //! in the internal structure. If the element `(i,j)` do not
+    //! exist it return `nnz()`
+    //!
     indexType
     position( indexType i, indexType j ) const
     { return static_cast<Matrix const *>(this) -> position( i, j ); }
 
   };
 
-  /*!
-   * \class Sparse
-   * \brief
-   * This class in the base class for all the
-   * sparse matrix classes of \c SparseTool.
-   * This class is incomplete and is used as a pivot for internal operations.
-   */
+  //! 
+  //! This class in the base class for all the
+  //! sparse matrix classes of `SparseTool`.
+  //! This class is incomplete and is used 
+  //! as a pivot for internal operations.
+  //! 
 
   template <typename T, typename Matrix>
   class Sparse : public SparseBase<Matrix> {
@@ -2925,129 +2798,146 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     Sparse(void) { SBASE::setup(0, 0); }
     ~Sparse(void) {}
 
-    //! The \a value of the pointed element
+    //!
+    //! The **value** of the pointed element.
+    //!
     valueType value (void) const { return static_cast<Matrix const *>(this) -> value(); }
 
-    //! Assign the pointed element to \c rhs
+    //!
+    //! Assign the pointed element to `rhs`.
+    //!
     template <typename TS>
     void assign( TS & rhs ) const { rhs = this -> value(); }
 
-    //@}
-
-    /*!
-     * \brief
-     * \name Random access to elements
-     * The following methods permits random access to
-     * nonzeros elements of the derived class.
-     */
+    //! 
+    //! \name Random access to elements.
+    //!
+    //! The following methods permits random access to
+    //! nonzeros elements of the derived class.
+    //! 
     //@{
-    /*!
-     * \brief
-     * Access to the elements of the sparse matrix in
-     * a random way.  For example given a sparse matrix \c A the code
-     * \c A(i,j) return the \a value of the elements of the
-     * matrix at the \c i-th row and \c j-th column.
-     * If at the \c (i,j) coordinate there are no elements an error is issued.
-     */
+    //! 
+    //! Access to the elements of the sparse matrix in
+    //! a random way.  For example given a sparse matrix `A`  the code
+    //! `A(i,j)` return the **value** of the elements of the
+    //! matrix at the `i-th` row and `j`-th column.
+    //! If at the `(i,j)` coordinate there are no elements
+    //! an error is issued.
+    //! 
     valueType const &
     operator () ( indexType i, indexType j ) const
     { return static_cast<Matrix const *>(this) -> operator () (i,j); }
 
-    /*!
-     * \brief
-     * Access to the elements of the sparse matrix in
-     * a random way.  For example given a sparse matrix \c A the code
-     * \c A(i,j) return the \a value of the elements of the
-     * matrix at the \c i-th row and \c j-th column.
-     * If at the \c (i,j) coordinate there are no elements an error is issued.
-     */
+    //! 
+    //! Access to the elements of the sparse matrix in
+    //! a random way.  For example given a sparse matrix `A`  the code
+    //! `A(i,j)` return the **value** of the elements of the
+    //! matrix at the `i-th` row and `j`-th column.
+    //! If at the `(i,j)` coordinate there are no elements an error is issued.
+    //! 
     valueType &
     operator () ( indexType i, indexType j )
     { return static_cast<Matrix *>(this) -> operator () (i,j); }
 
-    /*!
-     * \brief
-     * This method permits to access the elements of the sparse matrix in
-     * a random way.  For example given a sparse matrix \c A the code
-     * \c A(i,j) return the \a reference of the elements of the
-     * matrix at the \c i-th row and \c j-th column.  If at the \c (i,j)
-     * coordinate there are no elements a reference to a value \b 0 is returned
-     */
+    //! 
+    //! This method permits to access the elements of the sparse matrix in
+    //! a random way.  For example given a sparse matrix `A`  the code
+    //! `A(i,j)` return the **reference** of the elements of the
+    //! matrix at the `i-th` row and `j-th` column.  If at the `(i,j)`
+    //! coordinate there are no elements a reference to a value **0** is returned
+    //! 
     valueType const &
     value( indexType i, indexType j ) const
     { return static_cast<Matrix const *>(this) -> value(i,j); }
 
-    //! return \c true if the element \c (i,j) is a nonzeros of the derived matrix
+    //!
+    //! Return `true` if the element `(i,j)`
+    //! is a nonzeros of the derived matrix.
+    //!
     bool
     exists( indexType i, indexType j )
     { return static_cast<Matrix const *>(this) -> exists( i, j ); }
 
-    /*!
-     * \brief
-     * Return the position of the \c (i,j) elements
-     * in the internal structure. If the element \c (i,j) do not
-     * exist it return \c nnz()
-     */
+    //! 
+    //! Return the position of the `(i,j)` elements
+    //! in the internal structure. If the element `(i,j)` do not
+    //! exist it return `nnz()`.
+    //! 
     indexType
     position( indexType i, indexType j ) const
     { return static_cast<Matrix const *>(this) -> position( i, j ); }
 
-    //! Return the reference of the \c idx-th element of the vector of stored values
+    //!
+    //! Return the reference of the `idx-th` element
+    //! of the vector of stored values.
+    //!
     valueType const &
     operator [] (indexType idx) const
     { return static_cast<Matrix const *>(this) -> operator[] (idx); }
 
-    //! Return the reference of the \c idx-th element of the vector of stored values
+    //!
+    //! Return the reference of the `idx-th`
+    //! element of the vector of stored values.
+    //!
     valueType &
     operator [] (indexType idx)
     { return static_cast<Matrix *>(this) -> operator[] (idx); }
 
     //@}
 
-    //! set all the nonzeros of the sparse matrix to the value \c 0
+    //!
+    //! Set all the nonzeros of the sparse matrix to the value `0`.
+    //!
     void
     setZero()
     { return static_cast<Matrix const *>(this) -> setZero(); }
 
-    //! multiply all the nonzeros of the sparse matrix by \c s
+    //!
+    //! Multiply all the nonzeros of the sparse matrix by `s`.
+    //!
     void
     scaleValues( valueType const & s )
     { return static_cast<Matrix const *>(this) -> scaleValues( s ); }
 
-    //! multiply all the nonzeros of the row \c nr matrix by \c val
+    //!
+    //! Multiply all the nonzeros of the row `nr` matrix by `val`.
+    //!
     void
     scaleRow( indexType nr, valueType const & val )
     { return static_cast<Matrix const *>(this) -> scaleRow( nr, val ); }
 
-    //! multiply all the nonzeros of the column \c nc matrix by \c val
+    //!
+    //! Multiply all the nonzeros of the column `nc` matrix by `val`.
+    //!
     void
     scaleColumn( indexType nc, valueType const & val )
     { return static_cast<Matrix const *>(this) -> scaleColumn( nc, val ); }
 
-    /*! \name Diagonal internal operation */
+    //!
+    //! \name Diagonal internal operation
+    //!
     //@{
-    /*! \brief
-        Set \c s to all the components of the diagonal,
-        and \c 0 the others elements.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            2 & -1 &    & 1  &    \\
-            1 & 2  &    &    & 5  \\
-              &    & 2  & -3 &    \\
-              &    & 3  & 2  & -4 \\
-              &    &    & 4  & 2
-        \end{BMAT}\right],\qquad
-        (\bm{A}=2.1) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           2.1 & 0   &     & 0   &    \\
-           0   & 2.1 &     &     & 0  \\
-               &     & 2.1 & 0   &    \\
-               &     & 0   & 2.1 & 0  \\
-               &     &     & 0   & 2.1
-        \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+    //!
+    //! Set `s` to all the components of the diagonal,
+    //! and `0` the others elements.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    & 1  &    \\
+    //!     1 & 2  &    &    & 5  \\
+    //!       &    & 2  & -3 &    \\
+    //!       &    & 3  & 2  & -4 \\
+    //!       &    &    & 4  & 2
+    //! \end{pmatrix},\qquad
+    //! (\mathbf{A}=2.1) = \begin{pmatrix}
+    //!    2.1 & 0   &     & 0   &    \\
+    //!    0   & 2.1 &     &     & 0  \\
+    //!        &     & 2.1 & 0   &    \\
+    //!        &     & 0   & 2.1 & 0  \\
+    //!        &     &     & 0   & 2.1
+    //! \end{pmatrix}
+    //! \f]
+    //!
     Matrix &
     operator = ( valueType const & s ) {
       setZero();
@@ -3056,138 +2946,142 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
           (*this)(k,k) = s;
       return *this;
     }
-    /*! \brief Add \c s to all the components of the diagonal.
-        For example
-      \htmlonly <TABLE><TR><TD> \endhtmlonly
-      \f[
-      \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      2 & -1 &    & 1  &    \\
-      1 & 2  &    &    & 5  \\
-        &    & 2  & -3 &    \\
-        &    & 3  & 2  & -4 \\
-        &    &    & 4  & 2
-      \end{BMAT}\right],\qquad
-      (\bm{A}\verb|+=| 2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      4 & -1 &    & 1  &    \\
-      1 & 4  &    &    & 5  \\
-        &    & 4  & -3 &    \\
-        &    & 3  & 4  & -4 \\
-        &    &    & 4  & 4
-      \end{BMAT}\right]
-      \f]
-      \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+
+    //!
+    //! Add `s` to all the components of the diagonal.
+    //! For example:
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //! 2 & -1 &    & 1  &    \\
+    //! 1 & 2  &    &    & 5  \\
+    //!   &    & 2  & -3 &    \\
+    //!   &    & 3  & 2  & -4 \\
+    //!   &    &    & 4  & 2
+    //! \end{pmatrix},\qquad
+    //! (\mathbf{A}\verb|+=| 2) = \begin{pmatrix}
+    //! 4 & -1 &    & 1  &    \\
+    //! 1 & 4  &    &    & 5  \\
+    //!   &    & 4  & -3 &    \\
+    //!   &    & 3  & 4  & -4 \\
+    //!   &    &    & 4  & 4
+    //! \end{pmatrix}
+    //! \f]
+    //! 
     Matrix &
     operator += ( valueType const & s ) {
       for ( indexType k = 0; k < SBASE::sp_min_size; ++k )
         (*this)(k,k) += s;
       return *this;
     }
-    /*! \brief Subtract \c s to all the components of the diagonal.
-        For example
-      \htmlonly <TABLE><TR><TD> \endhtmlonly
-      \f[
-      \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      2 & -1 &    & 1  &    \\
-      1 & 2  &    &    & 5  \\
-        &    & 2  & -3 &    \\
-        &    & 3  & 2  & -4 \\
-        &    &    & 4  & 2
-      \end{BMAT}\right],\qquad
-      (\bm{A} \verb|-=| 2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      0 & -1 &    & 1  &    \\
-      1 & 0  &    &    & 5  \\
-        &    & 0  & -3 &    \\
-        &    & 3  & 0  & -4 \\
-        &    &    & 4  & 0
-      \end{BMAT}\right]
-      \f]
-      \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+
+    //!
+    //! Subtract `s` to all the components of the diagonal.
+    //! For example:
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //! 2 & -1 &    & 1  &    \\
+    //! 1 & 2  &    &    & 5  \\
+    //!   &    & 2  & -3 &    \\
+    //!   &    & 3  & 2  & -4 \\
+    //!   &    &    & 4  & 2
+    //! \end{pmatrix},\qquad
+    //! (\mathbf{A} \verb|-=| 2) = \begin{pmatrix}
+    //! 0 & -1 &    & 1  &    \\
+    //! 1 & 0  &    &    & 5  \\
+    //!   &    & 0  & -3 &    \\
+    //!   &    & 3  & 0  & -4 \\
+    //!   &    &    & 4  & 0
+    //! \end{pmatrix}
+    //! \f]
+    //! 
     Matrix &
     operator -= ( valueType const & s ) {
       for ( indexType k = 0; k < SBASE::sp_min_size; ++k )
         (*this)(k,k) -= s;
       return *this;
     }
-    /*! \brief Multiply by \c s to all the components of the diagonal.
-        For example
-      \htmlonly <TABLE><TR><TD> \endhtmlonly
-      \f[
-      \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      2 & -1 &    & 1  &    \\
-      1 & 2  &    &    & 5  \\
-        &    & 2  & -3 &    \\
-        &    & 3  & 2  & -4 \\
-        &    &    & 4  & 2
-      \end{BMAT}\right],\qquad
-      (\bm{A} \verb|*=| 2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      4 & -2 &    & 2  &    \\
-      2 &  4 &    &    & 10 \\
-        &    & 4  & -6 &    \\
-        &    & 6  & 4  & -8 \\
-        &    &    & 8  & 4
-      \end{BMAT}\right]
-      \f]
-      \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+
+    //!
+    //! Multiply by `s` to all the components of the diagonal.
+    //! For example:
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //! 2 & -1 &    & 1  &    \\
+    //! 1 & 2  &    &    & 5  \\
+    //!   &    & 2  & -3 &    \\
+    //!   &    & 3  & 2  & -4 \\
+    //!   &    &    & 4  & 2
+    //! \end{pmatrix},\qquad
+    //! (\mathbf{A} \verb|*=| 2) = \begin{pmatrix}
+    //! 4 & -2 &    & 2  &    \\
+    //! 2 &  4 &    &    & 10 \\
+    //!   &    & 4  & -6 &    \\
+    //!   &    & 6  & 4  & -8 \\
+    //!   &    &    & 8  & 4
+    //! \end{pmatrix}
+    //! \f]
+    //! 
     Matrix &
     operator *= ( valueType const & s )
     { scaleValues(s); return * this; }
-    /*! \brief Divide all the nonzeros of the derived matrix by \c s.
-        For example
-      \htmlonly <TABLE><TR><TD> \endhtmlonly
-      \f[
-      \bm{A}= \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      2 & -1 &    & 1  &    \\
-      1 & 2  &    &    & 5  \\
-        &    & 2  & -3 &    \\
-        &    & 3  & 2  & -4 \\
-        &    &    & 4  & 2
-      \end{BMAT}\right],\qquad
-      (\bm{A} \verb|/=| 10) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-      0.2 & -0.1 &      & 0.1  &      \\
-      0.1 & 0.2  &      &      & 0.5  \\
-          &      & 0.2  & -0.3 &      \\
-          &      & 0.3  & 0.2  & -0.4 \\
-          &      &      & 0.4  & 0.2
-      \end{BMAT}\right]
-      \f]
-      \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+
+    //!
+    //! Divide all the nonzeros of the derived matrix by `s`.
+    //! For example:
+    //!
+    //! \f[
+    //! \mathbf{A}= \begin{pmatrix}
+    //! 2 & -1 &    & 1  &    \\
+    //! 1 & 2  &    &    & 5  \\
+    //!   &    & 2  & -3 &    \\
+    //!   &    & 3  & 2  & -4 \\
+    //!   &    &    & 4  & 2
+    //! \end{pmatrix},\qquad
+    //! (\mathbf{A} \verb|/=| 10) = \begin{pmatrix}
+    //! 0.2 & -0.1 &      & 0.1  &      \\
+    //! 0.1 & 0.2  &      &      & 0.5  \\
+    //!     &      & 0.2  & -0.3 &      \\
+    //!     &      & 0.3  & 0.2  & -0.4 \\
+    //!     &      &      & 0.4  & 0.2
+    //! \end{pmatrix}
+    //! \f]
+    //! 
     Matrix &
     operator /= ( valueType const & s)
     { valueType ss = 1/s; scaleValues(ss); return * this; }
 
     // ------------------------
-    /*! \brief
-        Set the diagonal values of the sparse
-        matrix to \c v.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-           \bm{A}= \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           2 & -1 &    & 1  &    \\
-           1 & 2  &    &    & 5  \\
-             &    & 2  & -3 &    \\
-             &    & 3  & 2  & -4 \\
-             &    &    & 4  & 2
-           \end{BMAT}\right],\qquad
-           \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-           1 \\ 2\\ 3
-           \end{BMAT}\right],
-           \qquad
-           (\bm{A}=\bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           1 & 0 &   & 0 &   \\
-           0 & 2 &   &   & 0 \\
-             &   & 3 & 0 &   \\
-             &   & 0 & 0 & 0 \\
-             &   &   & 0 & 0
-          \end{BMAT}\right]
-        \f]
-       \htmlonly </TD></TR></TABLE> \endhtmlonly
-       notice that only the first \c v.size() diagonal elements are
-       set while the rest of the matrix is set to \c 0.
-    */
+    //!
+    //! Set the diagonal values of the sparse
+    //! matrix to `v`. For example
+    //!
+    //! \f[
+    //!     \mathbf{A}= \begin{pmatrix}
+    //!     2 & -1 &    & 1  &    \\
+    //!     1 & 2  &    &    & 5  \\
+    //!       &    & 2  & -3 &    \\
+    //!       &    & 3  & 2  & -4 \\
+    //!       &    &    & 4  & 2
+    //!     \end{pmatrix},\qquad
+    //!     \mathbf{v} = \begin{pmatrix}
+    //!     1 \\ 2\\ 3
+    //!     \end{pmatrix},
+    //!     \qquad
+    //!     (\mathbf{A}=\mathbf{v}) = \begin{pmatrix}
+    //!     1 & 0 &   & 0 &   \\
+    //!     0 & 2 &   &   & 0 \\
+    //!       &   & 3 & 0 &   \\
+    //!       &   & 0 & 0 & 0 \\
+    //!       &   &   & 0 & 0
+    //!    \end{pmatrix}
+    //! \f]
+    //!
+    //! Notice that only the first `v.size()` diagonal elements are
+    //! set while the rest of the matrix is set to `0`.
+    //!
     template <typename V> inline
     Matrix &
     operator = ( VectorBase<T,V> const & v ) {
@@ -3197,32 +3091,32 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         (*this)(k,k) = v(k);
       return *this;
     }
-    /*! \brief 
-        Add the components of \c v to the diagonal.
-        For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-          2 & -1 &    & 1  &    \\
-          1 & 2  &    &    & 5  \\
-            &    & 2  & -3 &    \\
-            &    & 3  & 2  & -4 \\
-            &    &    & 4  & 2
-        \end{BMAT}\right],\qquad
-        \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-          1 \\ 2\\ 3
-        \end{BMAT}\right],
-        \qquad
-        (\bm{A}\verb|-=| \bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-          3 & -1 &    & 1  &    \\
-          1 & 4  &    &    & 5  \\
-            &    & 5  & -3 &    \\
-            &    & 3  & 2  & -4 \\
-            &    &    & 4  & 2
-        \end{BMAT}\right]
-      \f]
-      \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+
+    //! 
+    //! Add the components of `v`  to the diagonal.
+    //! For example:
+    //!
+    //! \f[
+    //!   \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    & 1  &    \\
+    //!     1 & 2  &    &    & 5  \\
+    //!       &    & 2  & -3 &    \\
+    //!       &    & 3  & 2  & -4 \\
+    //!       &    &    & 4  & 2
+    //!   \end{pmatrix},\qquad
+    //!   \mathbf{v} = \begin{pmatrix}
+    //!     1 \\ 2\\ 3
+    //!   \end{pmatrix},
+    //!   \qquad
+    //!   (\mathbf{A}\verb|-=| \mathbf{v}) = \begin{pmatrix}
+    //!     3 & -1 &    & 1  &    \\
+    //!     1 & 4  &    &    & 5  \\
+    //!       &    & 5  & -3 &    \\
+    //!       &    & 3  & 2  & -4 \\
+    //!       &    &    & 4  & 2
+    //!   \end{pmatrix}
+    //! \f]
+    //! 
     template <typename V> inline
     Matrix &
     operator += ( VectorBase<T,V> const & v ) {
@@ -3231,32 +3125,32 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         (*this)(k,k) += v(k);
       return *this;
     }
-    /*! \brief
-        Subtract the components of \c v to the diagonal.
-        For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-          2 & -1 &    & 1  &    \\
-          1 & 2  &    &    & 5  \\
-            &    & 2  & -3 &    \\
-            &    & 3  & 2  & -4 \\
-            &    &    & 4  & 2
-        \end{BMAT}\right],\qquad
-        \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-          1 \\ 2\\ 3
-        \end{BMAT}\right],
-        \qquad
-        (\bm{A}\verb|-=| \bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-          1 & -1 &    & 1  &    \\
-          1 & 0  &    &    & 5  \\
-            &    & -1  & -3 &   \\
-            &    & 3  & 2  & -4 \\
-            &    &    & 4  & 2
-        \end{BMAT}\right]
-      \f]
-      \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+
+    //!
+    //! Subtract the components of `v`  to the diagonal.
+    //! For example:
+    //!
+    //! \f[
+    //!  \mathbf{A} = \begin{pmatrix}
+    //!    2 & -1 &    & 1  &    \\
+    //!    1 & 2  &    &    & 5  \\
+    //!      &    & 2  & -3 &    \\
+    //!      &    & 3  & 2  & -4 \\
+    //!      &    &    & 4  & 2
+    //!  \end{pmatrix},\qquad
+    //!  \mathbf{v} = \begin{pmatrix}
+    //!    1 \\ 2\\ 3
+    //!  \end{pmatrix},
+    //!  \qquad
+    //!  (\mathbf{A}\verb|-=| \mathbf{v}) = \begin{pmatrix}
+    //!    1 & -1 &    & 1  &    \\
+    //!    1 & 0  &    &    & 5  \\
+    //!      &    & -1  & -3 &   \\
+    //!      &    & 3  & 2  & -4 \\
+    //!      &    &    & 4  & 2
+    //!  \end{pmatrix}
+    //! \f]
+    //!
     template <typename V> inline
     Matrix &
     operator -= ( VectorBase<T,V> const & v ) {
@@ -3265,37 +3159,37 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         (*this)(k,k) -= v(k);
       return *this;
     }
-    /*! \brief
-        Assign the vector expression \c e to the components of the diagonal,
-        and \c 0 the others elements.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            2 & -1 &    & 1  &    \\
-            1 & 2  &    &    & 5  \\
-              &    & 2  & -3 &    \\
-              &    & 3  & 2  & -4 \\
-              &    &    & 4  & 2
-        \end{BMAT}\right],\qquad
-        \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c.c.c}
-            1 \\ 2 \\ 3 \\ 4 \\ 5
-        \end{BMAT}\right],\qquad
-        \bm{b} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-            1 \\ -1 \\ 2
-        \end{BMAT}\right],
-        \f]
-        \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
-        \f[
-        (\bm{A}=\bm{a}+2\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           3 & 0 &   & 0  &    \\
-           0 & 0 &   &    & 0  \\
-             &   & 7 & 0  &    \\
-             &   & 0 & 0  & 0  \\
-             &   &   & 0  & 0
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+
+    //!
+    //! Assign the vector expression `e` to the components of the diagonal,
+    //! and `0` the others elements.  For example:
+    //!
+    //! \f[
+    //!  \mathbf{A} = \begin{pmatrix}
+    //!      2 & -1 &    & 1  &    \\
+    //!      1 & 2  &    &    & 5  \\
+    //!        &    & 2  & -3 &    \\
+    //!        &    & 3  & 2  & -4 \\
+    //!        &    &    & 4  & 2
+    //!  \end{pmatrix},\qquad
+    //!  \mathbf{a} = \begin{pmatrix}
+    //!      1 \\ 2 \\ 3 \\ 4 \\ 5
+    //!  \end{pmatrix},\qquad
+    //!  \mathbf{b} = \begin{pmatrix}
+    //!      1 \\ -1 \\ 2
+    //!  \end{pmatrix},
+    //! \f]
+    //!
+    //! \f[
+    //!  (\mathbf{A}=\mathbf{a}+2\mathbf{b}) = \begin{pmatrix}
+    //!     3 & 0 &   & 0  &    \\
+    //!     0 & 0 &   &    & 0  \\
+    //!       &   & 7 & 0  &    \\
+    //!       &   & 0 & 0  & 0  \\
+    //!       &   &   & 0  & 0
+    //!   \end{pmatrix}
+    //! \f]
+    //!
     template <typename R> inline
     Matrix &
     operator = ( VectorE<T,R> const & e ) {
@@ -3305,37 +3199,37 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         (*this)(k,k) = e(k);
       return *this;
     }
-    /*! \brief
-        Add the vector expression \c e to the components of the diagonal,
-        and \c 0 the others elements.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            2 & -1 &    & 1  &    \\
-            1 & 2  &    &    & 5  \\
-              &    & 2  & -3 &    \\
-              &    & 3  & 2  & -4 \\
-              &    &    & 4  & 2
-        \end{BMAT}\right],\qquad
-        \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c.c.c}
-            1 \\ 2 \\ 3 \\ 4 \\ 5
-        \end{BMAT}\right],\qquad
-        \bm{b} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-            1 \\ -1 \\ 2
-        \end{BMAT}\right],
-        \f]
-        \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
-        \f[
-        (\bm{A}\verb|+=| \bm{a}+2\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            5 & -1 &    & 1  &    \\
-            1 & 2  &    &    & 5  \\
-              &    & 9  & -3 &    \\
-              &    & 3  & 2  & -4 \\
-              &    &    & 4  & 2
-        \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+
+    //!
+    //! Add the vector expression `e` to the components of the diagonal,
+    //! and `0` the others elements.  For example:
+    //!
+    //! \f[
+    //!  \mathbf{A} = \begin{pmatrix}
+    //!      2 & -1 &    & 1  &    \\
+    //!      1 & 2  &    &    & 5  \\
+    //!        &    & 2  & -3 &    \\
+    //!        &    & 3  & 2  & -4 \\
+    //!        &    &    & 4  & 2
+    //!  \end{pmatrix},\qquad
+    //!  \mathbf{a} = \begin{pmatrix}
+    //!      1 \\ 2 \\ 3 \\ 4 \\ 5
+    //!  \end{pmatrix},\qquad
+    //!  \mathbf{b} = \begin{pmatrix}
+    //!      1 \\ -1 \\ 2
+    //!  \end{pmatrix},
+    //! \f]
+    //!
+    //! \f[
+    //!  (\mathbf{A}\verb|+=| \mathbf{a}+2\mathbf{b}) = \begin{pmatrix}
+    //!      5 & -1 &    & 1  &    \\
+    //!      1 & 2  &    &    & 5  \\
+    //!        &    & 9  & -3 &    \\
+    //!        &    & 3  & 2  & -4 \\
+    //!        &    &    & 4  & 2
+    //!  \end{pmatrix}
+    //! \f]
+    //!
     template <typename R> inline
     Matrix &
     operator += ( VectorE<T,R> const & e ) {
@@ -3344,38 +3238,39 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         (*this)(k,k) += e(k);
       return *this;
     }
-    /*! \brief
-        Add the vector expression \c e to the components of the diagonal,
-        and \c 0 the others elements.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-            2 & -1 &    & 1  &    \\
-            1 & 2  &    &    & 5  \\
-              &    & 2  & -3 &    \\
-              &    & 3  & 2  & -4 \\
-              &    &    & 4  & 2
-        \end{BMAT}\right],\qquad
-        \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c.c.c}
-            1 \\ 2 \\ 3 \\ 4 \\ 5
-        \end{BMAT}\right],\qquad
-        \bm{b} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-            1 \\ -1 \\ 2
-        \end{BMAT}\right],
-        \f]
-        \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
-        \f[
-        (\bm{A} \verb|-=| \bm{a}+2\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c}{c.c.c.c.c}
-           -1 & -1 &    & 1  &    \\
-            1 & 2  &    &    & 5  \\
-              &    & -5 & -3 &    \\
-              &    & 3  & 2  & -4 \\
-              &    &    & 4  & 2
-        \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
-    template <typename R> inline
+
+    //!
+    //! Add the vector expression `e` to the components of the diagonal,
+    //! and `0` the others elements.  For example:
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    & 1  &    \\
+    //!     1 & 2  &    &    & 5  \\
+    //!       &    & 2  & -3 &    \\
+    //!       &    & 3  & 2  & -4 \\
+    //!       &    &    & 4  & 2
+    //! \end{pmatrix},\qquad
+    //! \mathbf{a} = \begin{pmatrix}
+    //!     1 \\ 2 \\ 3 \\ 4 \\ 5
+    //! \end{pmatrix},\qquad
+    //! \mathbf{b} = \begin{pmatrix}
+    //!     1 \\ -1 \\ 2
+    //! \end{pmatrix},
+    //! \f]
+    //!
+    //! \f[
+    //! (\mathbf{A} \verb|-=| \mathbf{a}+2\mathbf{b}) = \begin{pmatrix}
+    //!    -1 & -1 &    & 1  &    \\
+    //!     1 & 2  &    &    & 5  \\
+    //!       &    & -5 & -3 &    \\
+    //!       &    & 3  & 2  & -4 \\
+    //!       &    &    & 4  & 2
+    //! \end{pmatrix}
+    //! \f]
+    //!
+    template <typename R>
+    inline
     Matrix &
     operator -= ( VectorE<T,R> const & e ) {
       indexType n = minIndex(e.size(),  SBASE::sp_min_size );
@@ -3385,13 +3280,14 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
     }
     //@}
 
-    /*! \brief
-        \name Matrix-Vector multiplication
-    */
-
+    //!
+    //! \name Matrix-Vector multiplication
+    //!
     //@{
 
-    //! perform the operation res += s * (A * x)
+    //!
+    //! Perform the operation `res += s * (A * x)`
+    //!
     template <typename VA, typename VB>
     void
     add_S_mul_M_mul_V(
@@ -3410,7 +3306,10 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
       for ( SBASE::Begin(); SBASE::End(); SBASE::Next() )
         res(SBASE::row()) += s * value() * x(SBASE::column());
     }
-    //! perform the operation res += s * (A ^ x)
+
+    //!
+    //! perform the operation `res += s * (A ^ x)`
+    //!
     template <typename VA, typename VB>
     void
     add_S_mul_Mt_mul_V(
@@ -3430,26 +3329,28 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
         res(SBASE::column()) += s * value() * x(SBASE::row());
     }
     //@}
-
   };
 
-  /*!
-   * \class Preco
-   *
-   * This class in the base class for all the preconditioner
-   * of sparse matrix classes of \c SparseTool.
-   * This class is incomplete and is used as a pivot for internal operations.
-   */
-  //! Base preconditioner class
+  //! 
+  //! This class in the base class for all the preconditioner
+  //! of sparse matrix classes of `SparseTool`.
+  //! This class is incomplete and is used as a
+  //! pivot for internal operations.
+  //! 
   template <typename PRECO>
   class Preco {
   protected:
-    indexType pr_size; //!< the number of row/column of the preconditioner matrix
+    //! The number of row/column of the preconditioner matrix.
+    indexType pr_size;
   public:
-    //! Create an empty preconditioner
+    //!
+    //! Create an empty preconditioner.
+    //!
     Preco(void) : pr_size(0) {}
     ~Preco(void) {}
-    //! return the number of row/column of the preconditioner matrix
+    //!
+    //! Return the number of row/column of the preconditioner matrix.
+    //!
     indexType size(void) const { return pr_size; }
   };
 
@@ -3471,87 +3372,88 @@ c = a / b    for ( i=0; i < sz; ++i ) c[i] = a[i] / b[i];
   // #        #    #    #      #    ######  #    #  #    #
   */
 
-  //! Sparse Pattern in compressed coordinate.
-  /*!
-    The sparse pattern internal structure is essentially a sparse
-    compressed coordinate ones.  It consists of two big vector of unsigned
-    integer which contain the coordinate of nonzero elements.  We call
-    \c I the vector that store the first coordinate, while we call
-    \c J the vector that store the second coordinate.  For example the
-    following \b 6 x \b 7 sparse matrix pattern
-
-    \htmlonly <TABLE><TR><TD> \endhtmlonly
-    \f[
-      \bm{S} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c.c.c}{c.c.c.c.c.c}
-     * & * &   &   &   &   & * \\
-       & * & * &   &   &   &   \\
-       &   &   & * & * &   &   \\
-       & * &   &   & * &   &   \\
-     * &   & * &   &   & * &   \\
-       & * &   &   &   &   & *
-       \end{BMAT}\right]
-    \f]
-    \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
-    \f[
-       \begin{tabular}{c|cccccccccccccc}
-         I & 0 & 0 & 0 & 1 & 1 & 2 & 2 & 3 & 3 & 4 & 4 & 4 & 5 & 5 \\
-         \hline
-         J & 0 & 1 & 6 & 1 & 2 & 3 & 4 & 1 & 4 & 0 & 2 & 5 & 1 & 6
-       \end{tabular}
-    \f]
-    \htmlonly </TD></TR></TABLE> \endhtmlonly
-    Notice that the index follows the C convention, starting from \b 0.
-    The class \c SparsePattern try to manage such a structure in a
-    simple way for the user.  To define a \c SparsePattern class you
-    can use uno of the following scripture
-
-\code
-SparsePatter sp; // define an empty SparsePattern class
-SparsePatter sp(nr, nc, nnz); // define a SparsePattern class on a pattern of nr rows and nc columns.
-                              // The number nnz is an unsigned integer which determine the preallocated
-                              // number of pattern elements stored in the class, in practice is the
-                              // initial dimension of vectors I and J.
-SparsePatter sp(sp1);         // define a SparsePattern object which is the copy of SparsePattern object sp1.
-SparsePatter sp(sobj);        // define a SparsePattern object which is the pattern of nonzero of the
-                              // Sparse object sobj. In this way it is possible to obtain the sparse
-                              // pattern of any object derived from Sparse.
-\endcode
-
-    It is possible in any moment to change the sizes and the maximum 
-    number of nonzero by the \c resize methods:
-
-\code
-sp.resize(nr, nc, nnz);
-sp.resize(sp1);
-sp.resize(sobj);
-\endcode
-
-    to complete the basic description of the \c SparsePattern a sintetic
-    description of the remaining methods of the class are presented
-
-    - \c insert(i,j) this method permit to insert an item of nonzero.  For example
-      the first pattern can be constructed as
-\code
-  SparsePattern sp(6,7);
-  sp.insert(0, 0); sp.insert(0, 1); sp.insert(0, 6); sp.insert(1, 1);
-  sp.insert(1, 2); sp.insert(2, 3); sp.insert(2, 4); sp.insert(3, 1);
-  sp.insert(3, 4); sp.insert(4, 0); sp.insert(4, 2); sp.insert(4, 5);
-  sp.insert(5, 1); sp.insert(5, 6); sp.internalOrder();
-\endcode
-
-    - \c internalOrder()
-      This methods reorder internally the nonzero elements of the sparse pattern
-      and remove all duplicated entries.
-      If <c> k1 <= k2 </c> we have one of the two following cases
-
-      -# <c> J(k1) < J(k2) </c>
-      -# <c> J(k1) == J(k2) </c> and <c> I(k1) <= I(k2) </c>
-
-    - \c bool \c isOrdered()
-      this methods return \c true if the elements inside the sparse
-      pattern are ordered, \c false otherwise.
-
-  */
+  //!
+  //! Sparse Pattern in compressed coordinate
+  //! ---------------------------------------
+  //!
+  //! The sparse pattern internal structure is essentially a sparse
+  //! compressed coordinate ones.  It consists of two big vector of unsigned
+  //! integer which contain the coordinate of nonzero elements.  We call
+  //! `I` the vector that store the first coordinate, while we call
+  //! `J` the vector that store the second coordinate.  For example the
+  //! following `6 x 7` sparse matrix pattern
+  //!
+  //! \f[
+  //!   \mathbf{S} = \begin{pmatrix}
+  //!  * & * &   &   &   &   & * \\
+  //!    & * & * &   &   &   &   \\
+  //!    &   &   & * & * &   &   \\
+  //!    & * &   &   & * &   &   \\
+  //!  * &   & * &   &   & * &   \\
+  //!    & * &   &   &   &   & *
+  //!    \end{pmatrix}
+  //! \f]
+  //!
+  //! \f[
+  //!    \begin{array}{c|cccccccccccccc}
+  //!      I & 0 & 0 & 0 & 1 & 1 & 2 & 2 & 3 & 3 & 4 & 4 & 4 & 5 & 5 \\
+  //!      \hline
+  //!      J & 0 & 1 & 6 & 1 & 2 & 3 & 4 & 1 & 4 & 0 & 2 & 5 & 1 & 6
+  //!    \end{array}
+  //! \f]
+  //!
+  //! Notice that the index follows the C convention, starting from **0**.
+  //! The class `SparsePattern` try to manage such a structure in a
+  //! simple way for the user.  To define a `SparsePattern` class you
+  //! can use uno of the following scripture
+  //! 
+  //! \code
+  //! SparsePatter sp;              // define an empty SparsePattern class
+  //! SparsePatter sp(nr, nc, nnz); // define a SparsePattern class on a pattern of nr rows and nc columns.
+  //!                               // The number nnz is an unsigned integer which determine the preallocated
+  //!                               // number of pattern elements stored in the class, in practice is the
+  //!                               // initial dimension of vectors I and J.
+  //! SparsePatter sp(sp1);         // define a SparsePattern object which is the copy of SparsePattern object sp1.
+  //! SparsePatter sp(sobj);        // define a SparsePattern object which is the pattern of nonzero of the
+  //!                               // Sparse object sobj. In this way it is possible to obtain the sparse
+  //!                               // pattern of any object derived from Sparse.
+  //! \endcode
+  //! 
+  //! It is possible in any moment to change the sizes and the maximum 
+  //! number of nonzero by the `resize` methods:
+  //! 
+  //! \code
+  //! sp.resize(nr, nc, nnz);
+  //! sp.resize(sp1);
+  //! sp.resize(sobj);
+  //! \endcode
+  //! 
+  //! to complete the basic description of the `SparsePattern` a sintetic
+  //! description of the remaining methods of the class are presented
+  //! 
+  //! - `insert(i,j)` this method permit to insert an item of nonzero.
+  //!   For example the first pattern can be constructed as
+  //!
+  //! \code
+  //!   SparsePattern sp(6,7);
+  //!   sp.insert(0, 0); sp.insert(0, 1); sp.insert(0, 6); sp.insert(1, 1);
+  //!   sp.insert(1, 2); sp.insert(2, 3); sp.insert(2, 4); sp.insert(3, 1);
+  //!   sp.insert(3, 4); sp.insert(4, 0); sp.insert(4, 2); sp.insert(4, 5);
+  //!   sp.insert(5, 1); sp.insert(5, 6); sp.internalOrder();
+  //! \endcode
+  //!
+  //! - `internalOrder`()
+  //!   This methods reorder internally the nonzero elements of the sparse pattern
+  //!   and remove all duplicated entries.
+  //!   If `k1 <= k2` we have one of the two following cases
+  //!
+  //! - `J(k1) < J(k2)`
+  //! - `J(k1) == J(k2)` and `I(k1) <= I(k2)`
+  //!
+  //! - `bool isOrdered()`
+  //!   this methods return `true` if the elements inside the sparse
+  //!   pattern are ordered, `false` otherwise.
+  //!
   class SparsePattern : public SparseBase<SparsePattern> {
     typedef SparsePattern             MATRIX;
     typedef SparseBase<SparsePattern> SPARSE;
@@ -3582,18 +3484,16 @@ sp.resize(sobj);
 
   public:
 
-    /*!
-     *  \brief
-     *  Initialize and empty sparse pattern of \c 0 rows and \c 0 columns.
-     */
+    //!
+    //! Initialize and empty sparse pattern of `0` rows and `0` columns.
+    //!
     SparsePattern(void)
     { }
 
-    /*!
-     * \brief
-     * Initialize and empty sparse pattern of \c nr rows and \c nc columns
-     * with reserved room for \c mnnz nonzeros.
-     */
+    //! 
+    //! Initialize and empty sparse pattern of `nr` rows and `nc` columns
+    //! with reserved room for `mnnz` nonzeros.
+    //! 
     SparsePattern(
       indexType nr,
       indexType nc,
@@ -3601,55 +3501,57 @@ sp.resize(sobj);
     )
     { resize(nr, nc, mnnz); }
 
-    //! Assign the pointed element to \c rhs
+    //!
+    //! Assign the pointed element to `rhs`.
+    //!
     template <typename T>
     void assign( T & rhs ) const { /* do nothing! */ }
 
-    /*!
-     *  \brief
-     *  Insert the element of the sparse pattern \c sp
-     *  which satify \c cmp to \c *this.
-     *  \param sp  sparse pattern to be copied
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Insert the element of the sparse pattern `sp`
+    //! which satify `cmp` to `*this`.
+    //!
+    //! \param sp  sparse pattern to be copied
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename Compare>
     SparsePattern( SparsePattern const & sp, Compare cmp )
     { convert(sp,cmp); }
 
-    /*!
-     * \brief
-     * Copy the sparse pattern \c sp to \c *this.
-     * \param sp sparse pattern to be copied
-     */
+    //! 
+    //! Copy the sparse pattern `sp`to `*this`.
+    //!
+    //! \param sp sparse pattern to be copied
+    //! 
     SparsePattern(SparsePattern const & sp) : SPARSE()
     { convert(sp,all_ok()); }
 
     // convert => SparsePattern
-    /*!
-     * \brief
-     * Insert the element of the pattern of \c M
-     * which satify \c cmp to \c *this.
-     * \param M   object derived from \c Sparse
-     * \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //! 
+    //! Insert the element of the pattern of `M`.
+    //! which satify `cmp` to `*this`.
+    //!
+    //! \param M   object derived from `Sparse`.
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //! 
     template <typename MAT, typename Compare>
     SparsePattern(SparseBase<MAT> const & M, Compare cmp)
     { convert(M,cmp); }
 
-    /*!
-     * \brief
-     * Copy the sparse pattern of \c M to \c *this.
-     * \param M object derived from \c Sparse
-     */
+    //! 
+    //! Copy the sparse pattern of `M` to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //! 
     template <typename MAT>
     SparsePattern(SparseBase<MAT> const & M)
     { convert(M,all_ok()); }
 
-    /*!
-     * \brief
-     * Copy the sparse pattern of \c SP to \c *this.
-     * \param SP sparse pattern object
-     */
+    //! 
+    //! Copy the sparse pattern of `sp`to `*this`.
+    //!
+    //! \param SP sparse pattern object
+    //! 
     SparsePattern &
     operator = ( SparsePattern const & SP ) {
       if ( &SP != this ) { // avoid copy to itself
@@ -3664,21 +3566,20 @@ sp.resize(sobj);
     }
 
     // convert => SparsePattern
-    /*!
-     * \brief
-     * Copy the sparse pattern of \c M to \c *this.
-     * \param M object derived from \c Sparse
-     */
+    //! 
+    //! Copy the sparse pattern of `M` to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //! 
     template <typename MAT>
     SparsePattern &
     operator = (SparseBase<MAT> const & M)
     { convert(M,all_ok()); return *this; }
 
-    /*!
-     * \brief
-     * Initialize and empty sparse pattern of \c nr rows and \c nc columns
-     * with reserved room for \c mnnz nonzeros.
-     */
+    //! 
+    //! Initialize and empty sparse pattern of `nr` rows and `nc` columns
+    //! with reserved room for `mnnz` nonzeros.
+    //! 
     void
     resize( indexType nr, indexType nc, indexType mnnz = SPARSETOOL_DEFAULT_NNZ ) {
       SPARSE::setup( nr, nc );
@@ -3686,31 +3587,33 @@ sp.resize(sobj);
       J.reserve( mnnz ); J.resize( 0 );
     }
 
-    /*! \brief
-     *  Initialize the pattern and insert the element of the pattern of \c M
-     *  to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Initialize the pattern and insert the element of the pattern of `M`.
+    //! to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     void
     resize(SparseBase<MAT> const & M)
     { convert(M,all_ok()); }
 
-    /*! \brief
-     *  Initialize the pattern and insert the elements M(i,j)
-     *  which satify \c cmp(i,j) to \c *this.
-     *  \param M   object derived from \c Sparse
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Initialize the pattern and insert the elements M(i,j)
+    //! which satify `cmp(i,j)` to `*this`.
+    //!
+    //! \param M   object derived from `Sparse`.
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename MAT, typename Compare>
     void
     resize(SparseBase<MAT> const & M, Compare cmp)
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Order the internal structure to permit random
-     *  access to nonzeros.
-     */
+    //!
+    //! Order the internal structure to permit random
+    //! access to nonzeros.
+    //!
     void
     internalOrder() {
       QuickSortIJ<indexType>( &I.front(), &J.front(), SPARSE::sp_nnz );
@@ -3734,10 +3637,14 @@ sp.resize(sobj);
       J.resize( SPARSE::sp_nnz );
     }
 
-    //! check if pattern is empty
+    //!
+    //! Check if pattern is empty.
+    //!
     void empty(void) { SPARSE::sp_nnz = 0; }
 
-    //! Insert \c (i,j) in the sparse pattern
+    //!
+    //! Insert `(i,j)` in the sparse pattern.
+    //!
     SparsePattern &
     insert( indexType i, indexType j ) {
       SPARSE::test_index(i,j);
@@ -3749,18 +3656,27 @@ sp.resize(sobj);
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Vector<indexType> const & getI(void) const { return I; } //!< return the row index vector
-    Vector<indexType> const & getJ(void) const { return J; } //!< return the column index vector
-
+    //! Return the row index vector.
+    Vector<indexType> const & getI(void) const { return I; }
+    //! Return the column index vector.
+    Vector<indexType> const & getJ(void) const { return J; }
+    
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // ITERATORS
-    void Begin (void) const { ipos = 0; } //!< initialize iterator
-    void Next  (void) const { ++ipos; }   //!< go to the next element
-    bool End   (void) const { return ipos < SPARSE::sp_nnz; } //! check if iterator terminate the loop
+    //! Initialize iterator.
+    void Begin(void) const { ipos = 0; }
 
-    indexType row    (void) const { return I(ipos); } //! the row of the element pointed by iterator
-    indexType column (void) const { return J(ipos); } //! the column of the element pointed by iterator
+    //! Go to the next element.
+    void Next(void) const { ++ipos; }
 
+    //! Check if iterator terminate the loop.
+    bool End(void) const { return ipos < SPARSE::sp_nnz; }
+    
+    //! The row of the element pointed by iterator.
+    indexType row(void) const { return I(ipos); }
+
+    //! The column of the element pointed by iterator.
+    indexType column(void) const { return J(ipos); }
   };
 
   /*
@@ -3782,103 +3698,100 @@ sp.resize(sobj);
   //
   */
 
-  /*!
-
-    \class CCoorMatrix
-
-    The class \c CCoorMatrix\<T\> implement a
-    <B> Compressed Coordinate </B> storage sparse scheme.
-    It consists of two big vector of unsigned integer which contain
-    the coordinate of nonzero elements and a big one of real number
-    which contain the values.  We call \c I the vector that store the
-    rows coordinate, \c J the vector that store the columns coordinate
-    and \c A the vector that store the nonzero values.
-    For example the following \b 6 x \b 7 sparse matrix
-
-    \htmlonly <TABLE><TR><TD> \endhtmlonly
-    \f[
-    \bm{A} = \left[\begin{BMAT}(e){c.c.c.c.c.c.c}{c.c.c.c.c.c}
-     1 & 2    &    &   &   &   & 9 \\
-       & -1   & 0  &   &   &   &   \\
-       &      &    & 3 & 4 &   &   \\
-       & 2    &    &   & 5 &   &   \\
-     2 &      & -2 &   &   & 1 &   \\
-       & -1.5 &    &   &   &   & -1
-    \end{BMAT}\right]
-    \f]
-    \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
-    \f[
-    \begin{tabular}{c|cccccccccccccc}
-       I & 0 & 0 & 0 & 1 & 1 & 2 & 2 & 3 & 3 & 4 & 4 & 4 &  5  & 5 \\
-       \hline
-       J & 0 & 1 & 6 & 1 & 2 & 3 & 4 & 1 & 4 & 0 & 2 & 5 &  1  & 6 \\
-       \hline
-       A & 1 & 2 & 9 &-1 & 0 & 3 & 4 & 2 & 5 & 2 &-2 & 1 &-1.5 &-1
-    \end{tabular}
-    \f]
-    \htmlonly </TD></TR></TABLE> \endhtmlonly
-
-    Notice that the index follows the C convention, starting from
-    \b 0.  The class \c CCoorMatrix\<T\> try to manage such a
-    structure in a simple way for the user.  To define a
-    \c CCoorMatrix\<T\> class you can use one of the following scripture
-
-\code
-CCoorMatrix<double> ccoor; // define an empty CCoorMatrix<double> class
-
-// instance a CCoorMatrix<double> class of nr rows and nc columns.
-// The number nnz is an unsigned integer which determine the pre-allocated number of elements
-// stored in the class, in practice it is the initial dimension of vectors I, J and \c A.
-//  If needed the vectors are enlarged.
-CCoorMatrix<double> ccoor(nr, nc, nnz);
-
-// instance a CCoorMatrix<double> class with the sparsity pattern defined of the SparsePattern class sp.
-// nr will be sp.numRows(), ncol will be sp.numCols().
-CCoorMatrix<double> ccoor(sp);
-
-// instance a CCoorMatrix<double> class with which is the copy of the CCoorMatrix<double> object ccoor1.
-CCoorMatrix<double> ccoor(ccoor1);
-
-// instance a CCoorMatrix<double> class with which is the copy of the Sparse object sobj.
-CCoorMatrix<double> ccoor(sobj);
-\endcode
-
-    It is possible in any moment to change the sizes and the maximum
-    number of nonzero by the \c resize methods:
-
-\code
-  ccoor.resize(nrow, ncol, nnz);
-  ccoor.resize(sp);
-  ccoor.resize(ccoor1);
-  ccoor.resize(sobj);
-\endcode
-
-    - <c>valueType & insert(i,j)</c>
-    this method permit to insert an item in the matrix.  For example
-    matrix \c A previously defined can be constructed with
-\code
-  CCoorMatrix<double> A(6,7);
-  A.insert(0, 0) = 1;    A.insert(0, 1) = 2; A.insert(0, 6) = 9;  A.insert(1, 1) = -1;
-  A.insert(1, 2) = 0;    A.insert(2, 3) = 3; A.insert(2, 4) = 4;  A.insert(3, 1) = 2;
-  A.insert(3, 4) = 5;    A.insert(4, 0) = 2; A.insert(4, 2) = -2; A.insert(4, 5) = 1;
-  A.insert(5, 1) = -1.5; A.insert(5, 6) = 1; A.internalOrder();
-\endcode
-
-    - \c internalOrder()
-      This methods reorder internally the nonzero elements of
-      \c CCoorMatrix\<double\> in such a way if
-      <c> k1 < k2 </c>we have one of the two following cases
-      -# <c> I(k1) <  I(k2) </c>
-      -# <c> I(k1) == I(k2) </c> and <c> J(k1) <= J(k2)</c>
-      \n
-      Moreover all duplicated entries are added togheter.
-
-    - <c> bool isOrdered() </c>
-      this methods return \c true if the elements inside the class
-      <c> CCoorMatrix<double> </c>are ordered, \c false otherwise.
-
-  */
+  //!
   //! Compressed Coordinate Matrix Storage
+  //! ------------------------------------
+  //!
+  //! The class `CCoorMatrix<T>` implement a
+  //! `Compressed Coordinate` storage sparse scheme.
+  //! It consists of two big vector of unsigned integer which contain
+  //! the coordinate of nonzero elements and a big one of real number
+  //! which contain the values.  We call `I` the vector that store the
+  //! rows coordinate, `J` the vector that store the columns coordinate
+  //! and `A`  the vector that store the nonzero values.
+  //! For example the following **6** x **7** sparse matrix
+  //!
+  //! \f[
+  //! \mathbf{A} = \begin{pmatrix}
+  //!  1 & 2    &    &   &   &   & 9 \\
+  //!    & -1   & 0  &   &   &   &   \\
+  //!    &      &    & 3 & 4 &   &   \\
+  //!    & 2    &    &   & 5 &   &   \\
+  //!  2 &      & -2 &   &   & 1 &   \\
+  //!    & -1.5 &    &   &   &   & -1
+  //! \end{pmatrix}
+  //! \f]
+  //! \f[
+  //! \begin{array}{c|cccccccccccccc}
+  //!    I & 0 & 0 & 0 & 1 & 1 & 2 & 2 & 3 & 3 & 4 & 4 & 4 &  5  & 5 \\
+  //!    \hline
+  //!    J & 0 & 1 & 6 & 1 & 2 & 3 & 4 & 1 & 4 & 0 & 2 & 5 &  1  & 6 \\
+  //!    \hline
+  //!    A & 1 & 2 & 9 &-1 & 0 & 3 & 4 & 2 & 5 & 2 &-2 & 1 &-1.5 &-1
+  //! \end{array}
+  //! \f]
+  //!
+  //! Notice that the index follows the C convention, starting from
+  //! `0`.  The class `CCoorMatrix<T>` try to manage such a
+  //! structure in a simple way for the user.  To define a
+  //! `CCoorMatrix<T>` class you can use one of the following scripture
+  //!
+  //! \code
+  //! CCoorMatrix<double> ccoor; // define an empty CCoorMatrix<double> class
+  //!
+  //! // instance a CCoorMatrix<double> class of nr rows and nc columns.
+  //! // The number nnz is an unsigned integer which determine the pre-allocated number of elements
+  //! // stored in the class, in practice it is the initial dimension of vectors I, J and \c A.
+  //! //  If needed the vectors are enlarged.
+  //! CCoorMatrix<double> ccoor(nr, nc, nnz);
+  //! 
+  //! // instance a CCoorMatrix<double> class with the sparsity pattern defined of the SparsePattern class sp.
+  //! // nr will be sp.numRows(), ncol will be sp.numCols().
+  //! CCoorMatrix<double> ccoor(sp);
+  //! 
+  //! // instance a CCoorMatrix<double> class with which is the copy of the CCoorMatrix<double> object ccoor1.
+  //! CCoorMatrix<double> ccoor(ccoor1);
+  //! 
+  //! // instance a CCoorMatrix<double> class with which is the copy of the Sparse object sobj.
+  //! CCoorMatrix<double> ccoor(sobj);
+  //! \endcode
+  //!
+  //! It is possible in any moment to change the sizes and the maximum
+  //! number of nonzero by the `resize` methods:
+  //!
+  //! \code
+  //! ccoor.resize(nrow, ncol, nnz);
+  //! ccoor.resize(sp);
+  //! ccoor.resize(ccoor1);
+  //! ccoor.resize(sobj);
+  //! \endcode
+  //!
+  //! - `valueType & insert(i,j)`
+  //!    this method permit to insert an item in the matrix.  For example
+  //!    matrix `A`  previously defined can be constructed with
+  //!
+  //! \code
+  //! CCoorMatrix<double> A(6,7);
+  //! A.insert(0, 0) = 1;    A.insert(0, 1) = 2; A.insert(0, 6) = 9;  A.insert(1, 1) = -1;
+  //! A.insert(1, 2) = 0;    A.insert(2, 3) = 3; A.insert(2, 4) = 4;  A.insert(3, 1) = 2;
+  //! A.insert(3, 4) = 5;    A.insert(4, 0) = 2; A.insert(4, 2) = -2; A.insert(4, 5) = 1;
+  //! A.insert(5, 1) = -1.5; A.insert(5, 6) = 1; A.internalOrder();
+  //! \endcode
+  //!
+  //! - `internalOrder()`
+  //!   This methods reorder internally the nonzero elements of
+  //!   `CCoorMatrix<double>` in such a way if
+  //!   `k1 < k2` we have one of the two following cases
+  //!
+  //!   -# `I(k1) <  I(k2)`
+  //!   -# `I(k1) == I(k2)` and `J(k1) <= J(k2)`
+  //!
+  //!   Moreover all duplicated entries are added togheter.
+  //!
+  //! - `bool isOrdered()`
+  //!   this methods return `true` if the elements inside the class
+  //!   `CCoorMatrix<double>` are ordered, `false` otherwise.
+  //!
   template <typename T>
   class CCoorMatrix : public Sparse<T,CCoorMatrix<T> > {
     typedef CCoorMatrix<T>   MATRIX;
@@ -3913,58 +3826,63 @@ CCoorMatrix<double> ccoor(sobj);
 
   public:
 
-    /*! \brief
-     *  Initialize and empty sparse compressed coordinate matrix
-     *  of \c 0 rows and \c 0 columns.
-     */
+    //!
+    //! Initialize and empty sparse compressed coordinate matrix
+    //! of `0` rows and `0` columns.
+    //!
     CCoorMatrix(void) {}
 
-    /*! \brief
-     *  Initialize and empty empty sparse compressed coordinate matrix
-     *  of \c nr rows and \c nc columns with reserved room for \c mnnz nonzeros.
-     */
+    //!
+    //! Initialize and empty empty sparse compressed coordinate matrix
+    //! of `nr` rows and `nc` columns with reserved room for `mnnz` nonzeros.
+    //!
     CCoorMatrix( indexType nr, indexType nc, indexType mnnz = SPARSETOOL_DEFAULT_NNZ )
     { resize(nr, nc, mnnz); }
 
-    /*! \brief
-     *  Insert the element of the sparse compressed coordinate matrix \c M
-     *  which satify \c cmp to \c *this.
-     *  \param M   sparse compressed coordinate matrix to be copied
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Insert the element of the sparse compressed coordinate matrix `M`.
+    //! which satify `cmp` to `*this`.
+    //!
+    //! \param M   sparse compressed coordinate matrix to be copied
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename Compare>
     CCoorMatrix( CCoorMatrix<T> const & M, Compare cmp )
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Copy the sparse compressed coordinate matrix \c M to \c *this.
-     *  \param M sparse compressed coordinate matrix to be copied
-     */
+    //!
+    //! Copy the sparse compressed coordinate matrix `M` to `*this`.
+    //!
+    //! \param M sparse compressed coordinate matrix to be copied
+    //!
     CCoorMatrix(CCoorMatrix<T> const & M)
     { convert(M,all_ok()); }
 
-    /*! \brief
-     *  Insert the element of the sparse compressed coordinate matrix \c M
-     *  which satify \c cmp to \c *this.
-     *  \param M   object derived from \c Sparse
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Insert the element of the sparse compressed coordinate matrix `M`.
+    //! which satify `cmp` to `*this`.
+    //!
+    //! \param M   object derived from `Sparse`.
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename MAT, typename Compare>
     CCoorMatrix(SparseBase<MAT> const & M, Compare cmp)
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Copy the sparse compressed coordinate matrix \c M to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Copy the sparse compressed coordinate matrix `M` to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     CCoorMatrix(SparseBase<MAT> const & M)
     { convert(M,all_ok()); }
 
-    /*! \brief
-     *  Copy the sparse compressed coordinate matrix \c M to \c *this.
-     *  \param M sparse compressed coordinate matrix
-     */
+    //!
+    //! Copy the sparse compressed coordinate matrix `M` to `*this`.
+    //!
+    //! \param M sparse compressed coordinate matrix
+    //!
     CCoorMatrix<T> &
     operator = (CCoorMatrix<T> const & M) {
       if ( &M == this ) return *this; // avoid copy to itself
@@ -3980,18 +3898,20 @@ CCoorMatrix<double> ccoor(sobj);
     }
 
     // convert => CCoorMatrix
-    /*! \brief
-     *  Copy the sparse matrix \c M to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Copy the sparse matrix `M` to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     CCoorMatrix<T> & operator = (SparseBase<MAT> const & M)
     { convert(M,all_ok()); return *this; }
 
-    /*! \brief
-     *  Initialize and empty sparse compressed coordinate matrix of \c nr rows and \c nc columns
-     *  with reserved room for \c mnnz nonzeros.
-     */
+    //!
+    //! Initialize and empty sparse compressed coordinate
+    //! matrix of `nr` rows and `nc` columns
+    //! with reserved room for `mnnz` nonzeros.
+    //!
     void
     resize( indexType nr, indexType nc, indexType mnnz = SPARSETOOL_DEFAULT_NNZ ) {
       SPARSE::setup(nr, nc);
@@ -4002,36 +3922,40 @@ CCoorMatrix<double> ccoor(sobj);
       C.resize( SPARSE::sp_ncols + 1 );
     }
 
-    /*! \brief
-     *  Initialize the sparse compressed coordinate matrix and insert
-     *  the elements M(i,j) which satify \c cmp(i,j) to \c *this.
-     *  \param M   object derived from \c Sparse
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Initialize the sparse compressed coordinate matrix and insert
+    //! the elements M(i,j) which satify `cmp(i,j)` to `*this`.
+    //!
+    //! \param M   object derived from `Sparse`.
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename MAT, typename Compare>
     void
     resize( SparseBase<MAT> const & M, Compare cmp )
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Initialize the sparse compressed coordinate matrix and insert the element of the matrix \c M
-     *  to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Initialize the sparse compressed coordinate matrix and insert the element of the matrix `M`.
+    //! to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     void
     resize( SparseBase<MAT> const & M )
     { convert(M,all_ok()); }
 
-    //! check if pattern is empty
+    //!
+    //! Check if pattern is empty.
+    //!
     void empty(void) { SPARSE::sp_nnz = 0; }
 
-    /*! \brief
-     *  Order the internal structure to permit random access to nonzeros.
-     */
+    //!
+    //! Order the internal structure to permit random access to nonzeros.
+    //!
     void
     internalOrder() {
-      QuickSortIJ<indexType,T>( &I.front(), &J.front(), &A.front(), SPARSE::sp_nnz);
+      QuickSortIJ2<indexType,T>( &I.front(), &J.front(), &A.front(), SPARSE::sp_nnz);
       // eliminate duplicate elements
       indexType i1 = 0, i = 0;
       SPARSE::sp_lower_nnz = 0;
@@ -4074,7 +3998,10 @@ CCoorMatrix<double> ccoor(sobj);
       while ( ++nc <= SPARSE::sp_ncols ) C(nc) = SPARSE::sp_nnz;
     }
 
-    //! Return the position of the element \c (i,j) in the vector storing elements
+    //!
+    //! Return the position of the element `(i,j)`
+    //! in the vector storing elements.
+    //!
     indexType
     position( indexType i, indexType j ) const {
       SPARSE::test_index(i,j);
@@ -4094,7 +4021,9 @@ CCoorMatrix<double> ccoor(sobj);
       return lo;
     }
 
-    //! Insert \c (i,j) in the sparse pattern
+    //!
+    //! Insert `(i,j)` in the sparse pattern.
+    //!
     valueType &
     insert( indexType i, indexType j ) {
       SPARSE::test_index(i,j);
@@ -4148,7 +4077,6 @@ CCoorMatrix<double> ccoor(sobj);
       return A(pos);
     }
 
-
     bool
     exists( indexType i, indexType j ) {
       return position(i,j) != SPARSE::sp_nnz;
@@ -4172,11 +4100,15 @@ CCoorMatrix<double> ccoor(sobj);
     valueType const & value  (void) const { return A(ipos); }
     valueType       & value  (void)       { return A(ipos); }
 
-    //! Assign the pointed element to \c rhs
+    //!
+    //! Assign the pointed element to `rhs`.
+    //!
     template <typename TS>
     void assign( TS & rhs ) const { rhs = A(ipos); }
 
-    //! perform the operation res += s * (A * x)
+    //!
+    //! perform the operation `res += s * (A * x)`
+    //!
     template <typename VRES, typename VB> inline
     void
     add_S_mul_M_mul_V(
@@ -4198,7 +4130,9 @@ CCoorMatrix<double> ccoor(sobj);
       SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pI++) += s * *pA++ * x(*pJ++) );
     }
 
-    //! perform the operation res += s * (A ^ x)
+    //!
+    //! perform the operation `res += s * (A ^ x)`
+    //!
     template <typename VRES, typename VB> inline
     void
     add_S_mul_Mt_mul_V(
@@ -4234,18 +4168,19 @@ CCoorMatrix<double> ccoor(sobj);
   //  #     # #     # #          #     #  #       #          #
   //  #     #  #####  #######    #    ### #       #######    #
   */
-  /*!
-   * Perform matrix multiplication of a matrix in Compressed Coordinate
-   * with a full vector \c x
-   * \code res += s * (A * x) \endcode
-   * \param numRows numer of rows
-   * \param RR      vector of row pointers
-   * \param JJ      vector of column indexes
-   * \param AA      vector of values
-   * \param s       scalar
-   * \param res     vector or the result
-   * \param x       vector used in multiplication
-   */
+  //! 
+  //! Perform matrix multiplication of a matrix in Compressed Coordinate
+  //! with a full vector `x`.
+  //!
+  //! \code res += s * (A * x) \endcode
+  //! \param numRows numer of rows
+  //! \param RR      vector of row pointers
+  //! \param JJ      vector of column indexes
+  //! \param AA      vector of values
+  //! \param s       scalar
+  //! \param res     vector or the result
+  //! \param x       vector used in multiplication
+  //! 
   template <typename T, typename VR, typename VX> inline
   void
   S_mul_M_mul_V(
@@ -4275,18 +4210,19 @@ CCoorMatrix<double> ccoor(sobj);
     }
   }
 
-  /*!
-   * Perform matrix multiplication of a transopose of a matrix in Compressed Coordinate
-   * with a full vector \c x
-   * \code res += s * (A ^ x) \endcode
-   * \param numRows numer of rows
-   * \param RR      vector of row pointers
-   * \param JJ      vector of column indexes
-   * \param AA      vector of values
-   * \param s       scalar
-   * \param res     vector or the result
-   * \param x       vector used in multiplication
-   */
+  //! 
+  //! Perform matrix multiplication of a transopose of a matrix in Compressed Coordinate
+  //! with a full vector `x`.
+  //!
+  //! \code res += s * (A ^ x) \endcode
+  //! \param numRows numer of rows
+  //! \param RR      vector of row pointers
+  //! \param JJ      vector of column indexes
+  //! \param AA      vector of values
+  //! \param s       scalar
+  //! \param res     vector or the result
+  //! \param x       vector used in multiplication
+  //! 
   template <typename T, typename VR, typename VX> inline
   void
   S_mul_Mt_mul_V(
@@ -4334,64 +4270,58 @@ CCoorMatrix<double> ccoor(sobj);
   // #     #  #    #    #    #    #  #  #    #
   */
 
-  /*!
-
-    The class \c CRowMatrix\<T\> implement a <B> Compressed Rows </B>
-    storage sparse scheme.  It consists of two big vector of unsigned
-    integer which contain the coordinate of nonzero elements and a big one
-    of real number which contain the values.  We call \c R the vector
-    that store the start position of each row, \c J the vector that
-    store the column coordinate and \c A the vector that store the
-    nonzero values.  For example the sparse matrix
-
-    \htmlonly <TABLE><TR><TD> \endhtmlonly
-    \f[
-    \bm{A} = \left[\begin{BMAT}(e){c.c.c.c.c.c.c}{c.c.c.c.c.c}
-     1 & 2    &    &   &   &   & 9 \\
-       & -1   & 0  &   &   &   &   \\
-       &      &    & 3 & 4 &   &   \\
-       & 2    &    &   & 5 &   &   \\
-     2 &      & -2 &   &   & 1 &   \\
-       & -1.5 &    &   &   &   & -1
-   \end{BMAT}\right]
-   \f]
-   \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
-   \f[
-   \begin{tabular}{c|cccccccccccccc}
-      R & 0 & 3 & 5 & 7 & 9 & 12 \\
-      \hline
-      J & 0 & 1 & 6 & 1 & 2 & 3 & 4 & 1 & 4 & 0 & 2 & 5 & 1 & 6 \\
-      \hline
-      A & 1 & 2 & 9 &-1 & 0 & 3 & 4 & 2 & 5 & 2 &-2 & 1 &-1.5 & -1
-    \end{tabular}
-    \f]
-    \htmlonly </TD></TR></TABLE> \endhtmlonly
-
-    To define a \c CCoorMatrix\<T\> class you can use one of the following
-    scripture
-
-\code
-CRowMatrix<double> crow;         // instancean empty CRowMatrix<double> class.
-CRowMatrix<double> crow(sp);     // instance a CRowMatrix<double> class with the sparsity pattern
-                                 // defined in the sp SparsePattern class.
-CRowMatrix<double> crow(crow1);  // instance a CRowMatrix<double> class which is the copy
-                                 // of the CRowMatrix<double> object crow1.
-CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is the copy
-                                 // of the Sparse object crow1.
-\endcode
-
-    It is possible in any moment to change the sizes and the maximum
-    number of nonzero by the \c resize method:
-
-\code
-  crow.resize(sp);
-  crow.resize(crow1);
-  crow.resize(sobj);
-\endcode
-
-  */
-  //! Compressed Row Matrix Storage
-
+  //!
+  //!
+  //! The class `CRowMatrix<T>` implement a `Compressed Rows`
+  //! storage sparse scheme.  It consists of two big vector of unsigned
+  //! integer which contain the coordinate of nonzero elements and a big one
+  //! of real number which contain the values.  We call `R` the vector
+  //! that store the start position of each row, `J` the vector that
+  //! store the column coordinate and `A`  the vector that store the
+  //! nonzero values.  For example the sparse matrix
+  //!
+  //! \f[
+  //!  \mathbf{A} = \begin{pmatrix}
+  //!   1 & 2    &    &   &   &   & 9 \\
+  //!     & -1   & 0  &   &   &   &   \\
+  //!     &      &    & 3 & 4 &   &   \\
+  //!     & 2    &    &   & 5 &   &   \\
+  //!   2 &      & -2 &   &   & 1 &   \\
+  //!     & -1.5 &    &   &   &   & -1
+  //!  \end{pmatrix}
+  //! \f]
+  //! \f[
+  //!   \begin{array}{c|cccccccccccccc}
+  //!      R & 0 & 3 & 5 & 7 & 9 & 12 \\
+  //!      \hline
+  //!      J & 0 & 1 & 6 & 1 & 2 & 3 & 4 & 1 & 4 & 0 & 2 & 5 & 1 & 6 \\
+  //!      \hline
+  //!      A & 1 & 2 & 9 &-1 & 0 & 3 & 4 & 2 & 5 & 2 &-2 & 1 &-1.5 & -1
+  //!    \end{array}
+  //! \f]
+  //!
+  //! To define a `CCoorMatrix<T>` class you can use one of the following
+  //! scripture
+  //!
+  //! \code
+  //! CRowMatrix<double> crow;         // instancean empty CRowMatrix<double> class.
+  //! CRowMatrix<double> crow(sp);     // instance a CRowMatrix<double> class with the sparsity pattern
+  //!                                  // defined in the sp SparsePattern class.
+  //! CRowMatrix<double> crow(crow1);  // instance a CRowMatrix<double> class which is the copy
+  //!                                  // of the CRowMatrix<double> object crow1.
+  //! CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is the copy
+  //!                                  // of the Sparse object crow1.
+  //! \endcode
+  //!
+  //! It is possible in any moment to change the sizes and the maximum
+  //! number of nonzero by the `resize` method:
+  //!
+  //! \code
+  //! crow.resize(sp);
+  //! crow.resize(crow1);
+  //! crow.resize(sobj);
+  //! \endcode
+  //!
   template <typename T>
   class CRowMatrix : public Sparse<T,CRowMatrix<T> > {
     typedef CRowMatrix<T>    MATRIX;
@@ -4482,51 +4412,56 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
 
   public:
 
-    /*! \brief
-     *  Initialize and empty sparse compressed row matrix
-     *  of \c 0 rows and \c 0 columns.
-     */
+    //!
+    //! Initialize and empty sparse compressed row matrix
+    //! of `0` rows and `0` columns.
+    //!
     CRowMatrix(void) {}
 
-    /*! \brief
-     *  Insert the element of the sparse compressed row matrix \c M
-     *  which satify \c cmp to \c *this.
-     *  \param M   sparse compressed row matrix to be copied
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Insert the element of the sparse compressed row matrix `M`.
+    //! which satify `cmp` to `*this`.
+    //!
+    //! \param M   sparse compressed row matrix to be copied
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename Compare>
     CRowMatrix(CRowMatrix<T> const & M, Compare cmp)
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Copy the sparse compressed row matrix \c M to \c *this.
-     *  \param M sparse compressed row matrix to be copied
-     */
+    //!
+    //! Copy the sparse compressed row matrix `M` to `*this`.
+    //!
+    //! \param M sparse compressed row matrix to be copied
+    //!
     CRowMatrix(CRowMatrix<T> const & M)
     { convert(M,all_ok()); }
 
-    /*! \brief
-     *  Insert the element of the sparse compressed row matrix \c M
-     *  which satify \c cmp to \c *this.
-     *  \param M   object derived from \c Sparse
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Insert the element of the sparse compressed row matrix `M`.
+    //! which satify `cmp` to `*this`.
+    //!
+    //! \param M   object derived from `Sparse`.
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename MAT, typename Compare>
     CRowMatrix(SparseBase<MAT> const & M, Compare cmp)
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Copy the sparse compressed row matrix \c M to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Copy the sparse compressed row matrix `M` to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     CRowMatrix(SparseBase<MAT> const & M)
     { convert(M,all_ok()); }
 
-    /*! \brief
-     *  Copy the sparse compressed row matrix \c M to \c *this.
-     *  \param M sparse compressed row matrix
-     */
+    //!
+    //! Copy the sparse compressed row matrix `M` to `*this`.
+    //!
+    //! \param M sparse compressed row matrix
+    //!
     CRowMatrix<T> &
     operator = (CRowMatrix<T> const & M) {
       if ( &M == this ) return *this; // avoid copy to itself
@@ -4541,30 +4476,33 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
     }
 
     // convert => CRowMatrix
-    /*! \brief
-     *  Copy the sparse matrix \c M to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Copy the sparse matrix `M` to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     CRowMatrix<T> & operator = (SparseBase<MAT> const & M)
     { convert(M,all_ok()); return *this; }
 
-    /*! \brief
-     *  Initialize the sparse compressed row matrix and insert
-     *  the elements M(i,j) which satify \c cmp(i,j) to \c *this.
-     *  \param M   object derived from \c Sparse
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Initialize the sparse compressed row matrix and insert
+    //! the elements M(i,j) which satify `cmp(i,j)` to `*this`.
+    //!
+    //! \param M   object derived from `Sparse`.
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename MAT, typename Compare>
     void
     resize(SparseBase<MAT> const & M, Compare cmp)
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Initialize the sparse compressed row matrix and insert the element of the matrix \c M
-     *  to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Initialize the sparse compressed row matrix and insert the element of the matrix `M`.
+    //! to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     void
     resize(SparseBase<MAT> const & M)
@@ -4672,11 +4610,15 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
     valueType const & value  (void) const { return A(iter_ptr); }
     valueType       & value  (void)       { return A(iter_ptr); }
 
-    //! Assign the pointed element to \c rhs
+    //!
+    //! Assign the pointed element to `rhs`.
+    //!
     template <typename TS>
     void assign( TS & rhs ) const { rhs = A(iter_ptr); }
 
-    //! perform the operation res += s * (A * x)
+    //!
+    //! Perform the operation `res += s * (A * x)`
+    //!
     template <typename VRES, typename VB> inline
     void
     add_S_mul_M_mul_V(
@@ -4687,7 +4629,9 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
       S_mul_M_mul_V( SPARSE::sp_nrows, R, J, A, s, res, x );
     }
 
-    //! perform the operation res += s * (A ^ x)
+    //!
+    //! Perform the operation `res += s * (A ^ x)`
+    //!
     template <typename VRES, typename VB> inline
     void
     add_S_mul_Mt_mul_V(
@@ -4722,65 +4666,62 @@ CRowMatrix<double> crow(sobj);   // instance a CRowMatrix<double> class which is
   // #     #  #    #    #    #    #  #  #    #
   */
 
-  /*!
-
-    The class \c CColMatrix\<T\> implement a <B> Compressed Columns </B>
-    storage sparse scheme.  It consists of two big vector of unsigned
-    integer which contain the coordinate of nonzero elements and a big one
-    of real number which contain the values.  We call \c I the vector
-    that store the row index of each elements, \c C the vector that
-    store the starting position of the columns and \c A the vector
-    that store the nonzero values.  For example the sparse matrix
-
-    \htmlonly <TABLE><TR><TD> \endhtmlonly
-    \f[
-    \bm{A} = \left[\begin{BMAT}(e){c.c.c.c.c.c.c}{c.c.c.c.c.c}
-      1 & 2    &    &   &   &   & 9 \\
-        & -1   & 0  &   &   &   &   \\
-        &      &    & 3 & 4 &   &   \\
-        & 2    &    &   & 5 &   &   \\
-      2 &      & -2 &   &   & 1 &   \\
-        & -1.5 &    &   &   &   & -1
-    \end{BMAT}\right]
-    \f]
-    \htmlonly </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> \endhtmlonly
-    \f[
-    \begin{tabular}{c|cccccccccccccc}
-      I & 0 & 4 & 0 & 1 & 3 & 5 & 1 & 4 & 2 & 2 & 3 & 4 & 0 & 5 \\
-      \hline
-      C & 0 & 2 & 6 & 8 & 9 & 11 & 12 \\
-      \hline
-      A & 1 & 2 & 2 & -1 & 2 & -1.5 & 0 & -2 & 3 & 4 & 5 & 1 & 9 & -1
-    \end{tabular}
-    \f]
-    \htmlonly </TD></TR></TABLE> \endhtmlonly
-
-    Notice that the index follows the C convention, starting from \b 0.
-    The class \c CColMatrix\<T\> try to manage such a structure in a
-    simple way for the user.  To define a \c CColMatrix\<T\> class you
-    can use one of the following scripture
-
-\code
-CColMatrix<double> ccol;        // instance an empty CColMatrix<double> class.
-CColMatrix<double> ccol(sp);    // instance a CColMatrix<double> class with the sparsity
-                                 // pattern defined in the SparsePattern class sp.
-CColMatrix<double> ccol(ccol1); // instance a CColMatrix<double> class which is the copy
-                                 // of the CColMatrix<double> object ccol1.
-CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is the copy
-                                 // of the Sparse object sobj.
-\endncode
-
-    It is possible in any moment to change the sizes and the maximum
-    number of nonzero by the \c resize method:
-
-\code
-  ccol.resize(sp);
-  ccol.resize(ccol1);
-  ccol.resize(sobj);
-\endcode
-
-  */
+  //!
   //! Compressed Column Matrix Storage
+  //! --------------------------------
+  //! 
+  //! The class `CColMatrix<T>` implement a `Compressed Columns`
+  //! storage sparse scheme.  It consists of two big vector of unsigned
+  //! integer which contain the coordinate of nonzero elements and a big one
+  //! of real number which contain the values.  We call `I` the vector
+  //! that store the row index of each elements, `C` the vector that
+  //! store the starting position of the columns and `A`  the vector
+  //! that store the nonzero values.  For example the sparse matrix
+  //! 
+  //! \f[
+  //! \mathbf{A} = \begin{pmatrix}
+  //!   1 & 2    &    &   &   &   & 9 \\
+  //!     & -1   & 0  &   &   &   &   \\
+  //!     &      &    & 3 & 4 &   &   \\
+  //!     & 2    &    &   & 5 &   &   \\
+  //!   2 &      & -2 &   &   & 1 &   \\
+  //!     & -1.5 &    &   &   &   & -1
+  //! \end{pmatrix}
+  //! \f]
+  //! \f[
+  //! \begin{array}{c|cccccccccccccc}
+  //!   I & 0 & 4 & 0 & 1 & 3 & 5 & 1 & 4 & 2 & 2 & 3 & 4 & 0 & 5 \\
+  //!   \hline
+  //!   C & 0 & 2 & 6 & 8 & 9 & 11 & 12 \\
+  //!   \hline
+  //!   A & 1 & 2 & 2 & -1 & 2 & -1.5 & 0 & -2 & 3 & 4 & 5 & 1 & 9 & -1
+  //! \end{array}
+  //! \f]
+  //! Notice that the index follows the C convention, starting from **0**.
+  //! The class `CColMatrix<T>` try to manage such a structure in a
+  //! simple way for the user.  To define a `CColMatrix<T>` class you
+  //! can use one of the following scripture
+  //! 
+  //! \code
+  //! CColMatrix<double> ccol;        // instance an empty CColMatrix<double> class.
+  //! CColMatrix<double> ccol(sp);    // instance a CColMatrix<double> class with the sparsity
+  //!                                 // pattern defined in the SparsePattern class sp.
+  //! CColMatrix<double> ccol(ccol1); // instance a CColMatrix<double> class which is the copy
+  //!                                 // of the CColMatrix<double> object ccol1.
+  //! CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is the copy
+  //!                                 // of the Sparse object sobj.
+  //! \endcode
+  //! 
+  //! It is possible in any moment to change the sizes and the maximum
+  //! number of nonzero by the `resize` method:
+  //! 
+  //! \code
+  //!   ccol.resize(sp);
+  //!   ccol.resize(ccol1);
+  //!   ccol.resize(sobj);
+  //! \endcode
+  //! 
+  //!
   template <typename T>
   class CColMatrix : public Sparse<T,CColMatrix<T> > {
     typedef CColMatrix<T>    MATRIX;
@@ -4863,51 +4804,56 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
 
   public:
 
-    /*! \brief
-     *  Initialize and empty sparse compressed column matrix
-     *  of \c 0 rows and \c 0 columns.
-     */
+    //!
+    //! Initialize and empty sparse compressed column matrix
+    //! of `0` rows and `0` columns.
+    //!
     CColMatrix(void) {}
 
-    /*! \brief
-     *  Insert the element of the sparse compressed column matrix \c M
-     *  which satify \c cmp to \c *this.
-     *  \param M   sparse compressed row matrix to be copied
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Insert the element of the sparse compressed column matrix `M`.
+    //! which satify `cmp` to `*this`.
+    //!
+    //! \param M   sparse compressed row matrix to be copied
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename Compare>
     CColMatrix(CColMatrix<T> const & M, Compare cmp)
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Copy the sparse compressed row matrix \c M to \c *this.
-     *  \param M sparse compressed row matrix to be copied
-     */
+    //!
+    //! Copy the sparse compressed row matrix `M` to `*this`.
+    //!
+    //! \param M sparse compressed row matrix to be copied
+    //!
     CColMatrix(CColMatrix<T> const & M)
     { convert(M,all_ok()); }
 
-    /*! \brief
-     *  Insert the element of the sparse compressed column matrix \c M
-     *  which satify \c cmp to \c *this.
-     *  \param M   object derived from \c Sparse
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Insert the element of the sparse compressed column matrix `M`.
+    //! which satify `cmp` to `*this`.
+    //!
+    //! \param M   object derived from `Sparse`.
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename MAT, typename Compare>
     CColMatrix(SparseBase<MAT> const & M, Compare cmp)
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Copy the sparse compressed column matrix \c M to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Copy the sparse compressed column matrix `M` to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     CColMatrix(SparseBase<MAT> const & M)
     { convert(M,all_ok()); }
 
-    /*! \brief
-     *  Copy the sparse compressed column matrix \c M to \c *this.
-     *  \param M sparse compressed column matrix
-     */
+    //!
+    //! Copy the sparse compressed column matrix `M` to `*this`.
+    //!
+    //! \param M sparse compressed column matrix
+    //!
     CColMatrix<T> &
     operator = (CColMatrix<T> const & M) {
       if ( &M == this ) return *this; // avoid copy to itself
@@ -4922,31 +4868,34 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
     }
 
     // convert => CColMatrix
-    /*! \brief
-     *  Copy the sparse matrix \c M to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Copy the sparse matrix `M` to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     CColMatrix<T> &
     operator = (SparseBase<MAT> const & M)
     { convert(M,all_ok()); return * this; }
 
-    /*! \brief
-     *  Initialize the sparse compressed column matrix and insert
-     *  the elements M(i,j) which satify \c cmp(i,j) to \c *this.
-     *  \param M   object derived from \c Sparse
-     *  \param cmp comparator struct for the selection of the element in pattern \c sp
-     */
+    //!
+    //! Initialize the sparse compressed column matrix and insert
+    //! the elements M(i,j) which satify `cmp(i,j)` to `*this`.
+    //!
+    //! \param M   object derived from `Sparse`.
+    //! \param cmp comparator struct for the selection of the element in pattern `sp`
+    //!
     template <typename MAT, typename Compare>
     void
     resize(SparseBase<MAT> const & M, Compare cmp)
     { convert(M,cmp); }
 
-    /*! \brief
-     *  Initialize the sparse compressed column matrix and insert the element of the matrix \c M
-     *  to \c *this.
-     *  \param M object derived from \c Sparse
-     */
+    //!
+    //! Initialize the sparse compressed column matrix and insert the element of the matrix `M`.
+    //! to `*this`.
+    //!
+    //! \param M object derived from `Sparse`.
+    //!
     template <typename MAT>
     void
     resize( SparseBase<MAT> const & M )
@@ -5053,11 +5002,15 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
     valueType const & value  (void) const { return A(iter_ptr); }
     valueType       & value  (void)       { return A(iter_ptr); }
 
-    //! Assign the pointed element to \c rhs
+    //!
+    //! Assign the pointed element to `rhs`.
+    //!
     template <typename TS>
     void assign( TS & rhs ) const { rhs = A(iter_ptr); }
 
-    //! perform the operation res += s * (A * x)
+    //!
+    //! Perform the operation `res += s * (A * x)`.
+    //!
     template <typename VRES, typename VB> inline
     void
     add_S_mul_M_mul_V(
@@ -5068,7 +5021,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
       S_mul_Mt_mul_V( SPARSE::sp_ncols, C, I, A, s, res, x );
     }
 
-    //! perform the operation res += s * (A ^ x)
+    //!
+    //! Perform the operation `res += s * (A ^ x)`.
+    //!
     template <typename VRES, typename VB> inline
     void
     add_S_mul_Mt_mul_V(
@@ -5103,63 +5058,61 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
   // #     #  #    #    #    #    #  #  #    #
   */
 
-  /*!
-
-     The class <c> TridMatrix<T> </c> implement a sparse band matrix.
-     It consists of a big matrix of \c valueType which contain the values
-     of nonzero elements.  We call \c M this big matrix which
-     represents an \f$ n\times m \f$ matrix which stores the rows of nonzero.
-     For example the following band matrix
-
-     \htmlonly <TABLE><TR><TD> \endhtmlonly
-     \f[
-       \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c.c.c.c}{c.c.c.c.c.c.c}
-         2 & -1 &    &    &    &    &    \\
-         1 & 2  & -2 &    &    &    &    \\
-           & 2  & 2  & -3 &    &    &    \\
-           &    & 3  & 2  & -4 &    &    \\
-           &    &    & 4  & 2  & -5 &    \\
-           &    &    &    & 5  & 2  & -6 \\
-           &    &    &    &    & 6  & 2
-        \end{BMAT}\right]
-        \qquad
-        \begin{tabular}{c|c|c}
-           L & D & U \\
-          \hline
-          * & 2 & -1 \\
-          1 & 2 & -2 \\
-          2 & 2 & -3 \\
-          3 & 2 & -4 \\
-          4 & 2 & -5 \\
-          5 & 2 & -6 \\
-          6 & 2 & *  \\
-          \hline
-        \end{tabular}
-     \f]
-     \htmlonly </TD></TR></TABLE> \endhtmlonly
-
-     where * means unused elements.  Notice that the index follows
-     the C convention, starting from \c 0.
-     The class <c> TridMatrix<T> </c> manage such a structure in a simple
-     way for the user.  To define a <c> TridMatrix<T> </c> class you can
-     use one of the following scripture
-
-\code
-  TridMatrix<double> tm;      // instance an empty TridMatrix<double> class
-  TridMatrix<double> tm(100); // instance a 100 x 100 TridMatrix<double> class
-  TridMatrix<double> tm(tm1); // instance a TridMatrix<double> class which is the copy
-                              // of the TridMatrix<double> class tm1.
-\endcode
-
-    It is possible in any moment to change the sizes and the maximum
-    number of nonzero by the \c resize method:
-\code
-  tm.resize(n);
-\endcode
-
-  */
+  //!
   //! Tridiagonal Matrix
-
+  //! ------------------
+  //! 
+  //! The class `TridMatrix<T>` implement a sparse band matrix.
+  //! It consists of a big matrix of `valueType` which contain the values
+  //! of nonzero elements.  We call `M` this big matrix which
+  //! represents an \f$ n\times m \f$ matrix which stores the rows of nonzero.
+  //! For example the following band matrix
+  //!
+  //! \f[
+  //!   \mathbf{A} = \begin{pmatrix}
+  //!     2 & -1 &    &    &    &    &    \\
+  //!     1 & 2  & -2 &    &    &    &    \\
+  //!       & 2  & 2  & -3 &    &    &    \\
+  //!       &    & 3  & 2  & -4 &    &    \\
+  //!       &    &    & 4  & 2  & -5 &    \\
+  //!       &    &    &    & 5  & 2  & -6 \\
+  //!       &    &    &    &    & 6  & 2
+  //!    \end{pmatrix}
+  //!    \qquad
+  //!    \begin{array}{c|c|c}
+  //!       L & D & U \\
+  //!      \hline
+  //!      * & 2 & -1 \\
+  //!      1 & 2 & -2 \\
+  //!      2 & 2 & -3 \\
+  //!      3 & 2 & -4 \\
+  //!      4 & 2 & -5 \\
+  //!      5 & 2 & -6 \\
+  //!      6 & 2 & *  \\
+  //!      \hline
+  //!    \end{array}
+  //! \f]
+  //! 
+  //! where `*` means unused elements.  Notice that the index follows
+  //! the C convention, starting from `0`.
+  //! The class `TridMatrix<T>` manage such a structure in a simple
+  //! way for the user.  To define a `TridMatrix<T>` class you can
+  //! use one of the following scripture
+  //! 
+  //! \code
+  //! TridMatrix<double> tm;      // instance an empty TridMatrix<double> class
+  //! TridMatrix<double> tm(100); // instance a 100 x 100 TridMatrix<double> class
+  //! TridMatrix<double> tm(tm1); // instance a TridMatrix<double> class which is the copy
+  //!                             // of the TridMatrix<double> class tm1.
+  //! \endcode
+  //! 
+  //! It is possible in any moment to change the sizes and the maximum
+  //! number of nonzero by the `resize` method:
+  //! \code
+  //! tm.resize(n);
+  //! \endcode
+  //! 
+  //!
   template <typename T>
   class TridMatrix : public Sparse<T,TridMatrix<T> > {
     typedef TridMatrix<T>    MATRIX;
@@ -5203,16 +5156,24 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
 
   public:
 
-    //! contruct and exmpty \c 0x0 tridiagonal matrix
+    //!
+    //! Contruct and exmpty `0x0` tridiagonal matrix.
+    //!
     TridMatrix( void ) {}
 
-    //! contruct a <c> n x n </c> tridiagonal matrix
+    //!
+    //! Contruct a `n x n` tridiagonal matrix.
+    //!
     TridMatrix( indexType ns ) { resize(ns); }
 
-    //! contruct a copy of the tridiagonal matrix \c TM
+    //!
+    //! Contruct a copy of the tridiagonal matrix `TM`.
+    //!
     TridMatrix( TridMatrix<T> const & TM ) { resize(TM); }
 
-    //! contruct a copy of the tridiagonal matrix \c TM
+    //!
+    //! Contruct a copy of the tridiagonal matrix `TM`.
+    //!
     TridMatrix<T> const &
     operator = ( TridMatrix<T> const & TM ) {
       if ( &TM == this ) return *this; // avoid copy to itself
@@ -5221,7 +5182,9 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
       return *this;
     }
 
-    //! resize to a <c> n x n </c> tridiagonal matrix
+    //!
+    //! Resize to a `n x n` tridiagonal matrix.
+    //!
     void
     resize( indexType ns ) {
       A.resize(3*ns-2);
@@ -5261,307 +5224,303 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
       if ( nc < SPARSE::sp_nrow ) L(nc)   *= val;
     }
 
-    /*! \name Diagonal internal operation
-     */
+    //!
+    //! \name Diagonal internal operation.
+    //!
     //@{
-    /*! \brief
-        Set \c s to all the components of the diagonal,
-        and \c 0 the others elements.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        (\bm{A}=2.1) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2.1 & 0    &      &     \\
-            0   & 2.1  & 0    &     \\
-                & 0    & 2.1  & 0   \\
-                &      & 0    & 2.1 \\
-         \end{BMAT}\right]
-      \f]
-      \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
-
+    //!
+    //! Set `s` to all the components of the diagonal,
+    //! and `0` the others elements.  For example
+    //!
+    //! \f[
+    //!   \mathbf{A} = \begin{pmatrix}
+    //!       2 & -1 &    &    \\
+    //!       1 & 2  & -1 &    \\
+    //!         & 1  & 2  & -1 \\
+    //!         &    & 1  & 2  \\
+    //!   \end{pmatrix},\qquad
+    //!   (\mathbf{A}=2.1) = \begin{pmatrix}
+    //!       2.1 & 0    &      &     \\
+    //!       0   & 2.1  & 0    &     \\
+    //!           & 0    & 2.1  & 0   \\
+    //!           &      & 0    & 2.1 \\
+    //!    \end{pmatrix}\right]
+    //! \f]
+    //! 
     TridMatrix<T> &
     operator = ( valueType const & s )
     { L = 0; U = 0; D = s; return *this; }
 
-    /*! \brief
-        Add \c s to all the components of the diagonal,
-        and \c 0 the others elements.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        (\bm{A}+=2.1) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            4.1 & -1   &      &     \\
-            1   & 4.1  & -1   &     \\
-                & 1    & 4.1  & -1  \\
-                &      & 1    & 4.1 \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+    //!
+    //! Add `s` to all the components of the diagonal,
+    //! and `0` the others elements.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! (\mathbf{A}+=2.1) = \begin{pmatrix}
+    //!     4.1 & -1   &      &     \\
+    //!     1   & 4.1  & -1   &     \\
+    //!         & 1    & 4.1  & -1  \\
+    //!         &      & 1    & 4.1 \\
+    //!  \end{pmatrix}
+    //! \f]
+    //!
     TridMatrix<T> &
     operator += ( valueType const & s )
     { D += s; return *this; }
 
-    /*! \brief
-        Subtract \c s to all the components of the diagonal,
-        and \c 0 the others elements.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        (\bm{A}-=2.1) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            -0.1 & -1   &      &     \\
-            1   & -0.1  & -1   &     \\
-                & 1    & -0.1  & -1  \\
-                &      & 1    & -0.1 \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+    //!
+    //! Subtract `s` to all the components of the diagonal,
+    //! and `0` the others elements.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! (\mathbf{A}-=2.1) = \begin{pmatrix}
+    //!     -0.1 & -1   &      &     \\
+    //!     1   & -0.1  & -1   &     \\
+    //!         & 1    & -0.1  & -1  \\
+    //!         &      & 1    & -0.1 \\
+    //! \end{pmatrix}
+    //! \f]
+    //!
     TridMatrix<T> &
     operator -= ( valueType const & s )
     { D -= s; return *this; }
 
-    /*! \brief
-        Multiply by \c s to all the nonzeros.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        (\bm{A}*=2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            4 & -2 &    &    \\
-            2 & 4  & -2 &    \\
-              & 2  & 4  & -2 \\
-              &    & 2  & 4  \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+    //!
+    //! Multiply by `s` to all the nonzeros.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! (\mathbf{A}*=2) = \begin{pmatrix}
+    //!     4 & -2 &    &    \\
+    //!     2 & 4  & -2 &    \\
+    //!       & 2  & 4  & -2 \\
+    //!       &    & 2  & 4  \\
+    //! \end{pmatrix}
+    //! \f]
+    //!
     TridMatrix<T> &
     operator *= ( valueType const & s )
     { A *= s; return *this; }
 
-    /*! \brief
-        Divide by \c s to all the nonzeros.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        (\bm{A}/=2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            1   & -0.5 &      &      \\
-            0.5 & 1    & -0.5 &      \\
-                & 0.5  & 1    & -0.5 \\
-                &      & 0.5  & 1    \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
+    //!
+    //! Divide by `s` to all the nonzeros.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! (\mathbf{A}/=2) = \begin{pmatrix}
+    //!     1   & -0.5 &      &      \\
+    //!     0.5 & 1    & -0.5 &      \\
+    //!         & 0.5  & 1    & -0.5 \\
+    //!         &      & 0.5  & 1    \\
+    //! \end{pmatrix}
+    //! \f]
+    //!
     TridMatrix<T> &
     operator /= ( valueType const & s )
     { A /= s; return *this; }
 
-    /*! \brief
-        Set the diagonal values of the sparse
-        matrix to \c v.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-        1 \\ 2\\ 3
-        \end{BMAT}\right],
-        \qquad
-        (\bm{A}/=2) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            1 & 0  &   &   \\
-            0 & 2  & 0 &   \\
-              & 0  & 3 & 0 \\
-              &    & 0 & 0 \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
-    template <typename VECTOR> inline
+    //!
+    //! Set the diagonal values of the sparse
+    //! matrix to `v`.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! \mathbf{v} = \begin{pmatrix}
+    //! 1 \\ 2\\ 3
+    //! \end{pmatrix},
+    //! \qquad
+    //! (\mathbf{A}/=2) = \begin{pmatrix}
+    //!     1 & 0  &   &   \\
+    //!     0 & 2  & 0 &   \\
+    //!       & 0  & 3 & 0 \\
+    //!       &    & 0 & 0 \\
+    //! \end{pmatrix}
+    //! \f]
+    //!
+    template <typename VECTOR>
+    inline
     TridMatrix<T> &
     operator = ( VectorBase<T,VECTOR> const & v )
     { L = 0; U = 0; D = v; return *this; }
 
-    /*! \brief
-        Add  \c v to the diagonal values of the sparse
-        matrix.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-        1 \\ 2\\ 3
-        \end{BMAT}\right],
-        \qquad
-        (\bm{A}\verb|+=|\bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            3 & -1 &    &    \\
-            1 & 4  & -1 &    \\
-              & 1  & 5  & -1 \\
-              &    & 1  & 2  \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
-    template <typename VECTOR> inline
+    //!
+    //! Add  `v` to the diagonal values of the sparse
+    //! matrix.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! \mathbf{v} = \begin{pmatrix}
+    //! 1 \\ 2\\ 3
+    //! \end{pmatrix},
+    //! \qquad
+    //! (\mathbf{A}\verb|+=|\mathbf{v}) = \begin{pmatrix}
+    //!     3 & -1 &    &    \\
+    //!     1 & 4  & -1 &    \\
+    //!       & 1  & 5  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix}
+    //! \f]
+    //! \htmlonly </TD></TR></TABLE> \endhtmlonly
+    //!
+    template <typename VECTOR>
+    inline
     TridMatrix<T> &
     operator += ( VectorBase<T,VECTOR> const & v )
     { D += v; return *this; }
 
-    /*! \brief
-        Subtract  \c v to the diagonal values of the sparse
-        matrix.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        \bm{v} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-        1 \\ 2\\ 3
-        \end{BMAT}\right],
-        \qquad
-        (\bm{A}\verb|-=|\bm{v}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            3 & -1 &    &    \\
-            1 & 4  & -1 &    \\
-              & 1  & 5  & -1 \\
-              &    & 1  & 2  \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
-    template <typename VECTOR> inline
+    //!
+    //! Subtract  `v`  to the diagonal values of the sparse
+    //! matrix.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! \mathbf{v} = \begin{pmatrix}
+    //! 1 \\ 2\\ 3
+    //! \end{pmatrix},
+    //! \qquad
+    //! (\mathbf{A}\verb|-=|\mathbf{v}) = \begin{pmatrix}
+    //!     3 & -1 &    &    \\
+    //!     1 & 4  & -1 &    \\
+    //!       & 1  & 5  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix}
+    //! \f]
+    //!
+    template <typename VECTOR>
+    inline
     TridMatrix<T> &
     operator -= ( VectorBase<T,VECTOR> const & v )
     { D -= v; return *this; }
 
-    /*! \brief
-        Set the diagonal values of the sparse
-        matrix to the vector expression \c e.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-        1 \\ 2\\ 3
-        \end{BMAT}\right],\qquad
-        \bm{b} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c.c}
-        1 \\ -1 \\ 2 \\ 1
-        \end{BMAT}\right],
-        \qquad
-        (\bm{A}=\bm{a}+2*\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            3 & 0  &   &   \\
-            0 & 0  & 0 &   \\
-              & 0  & 7 & 0 \\
-              &    & 0 & 0 \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
-    template <typename R> inline
+    //!
+    //! Set the diagonal values of the sparse
+    //! matrix to the vector expression `e`.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! \mathbf{a} = \begin{pmatrix}
+    //! 1 \\ 2\\ 3
+    //! \end{pmatrix},\qquad
+    //! \mathbf{b} = \begin{pmatrix}
+    //! 1 \\ -1 \\ 2 \\ 1
+    //! \end{pmatrix},
+    //! \qquad
+    //! (\mathbf{A}=\mathbf{a}+2*\mathbf{b}) = \begin{pmatrix}
+    //!     3 & 0  &   &   \\
+    //!     0 & 0  & 0 &   \\
+    //!       & 0  & 7 & 0 \\
+    //!       &    & 0 & 0 \\
+    //! \end{pmatrix}
+    //! \f]
+    //!
+    template <typename R>
+    inline
     TridMatrix<T> &
     operator = ( VectorE<T,R> const & e )
     { L = 0; U = 0; D = e;; return *this; }
 
-    /*! \brief
-        Add to the diagonal values of the sparse
-        matrix the vector expression \c e.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-        1 \\ 2\\ 3
-        \end{BMAT}\right],\qquad
-        \bm{b} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c.c}
-        1 \\ -1 \\ 2 \\ 1
-        \end{BMAT}\right],
-        \qquad
-        (\bm{A}\verb|+=|\bm{a}+2*\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            5 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 9  & -1 \\
-              &    & 1  & 2  \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
-    template <typename R> inline
+    //!
+    //! Add to the diagonal values of the sparse
+    //! matrix the vector expression `e`.  For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! \mathbf{a} = \begin{pmatrix}
+    //! 1 \\ 2\\ 3
+    //! \end{pmatrix},\qquad
+    //! \mathbf{b} = \begin{pmatrix}
+    //! 1 \\ -1 \\ 2 \\ 1
+    //! \end{pmatrix},
+    //! \qquad
+    //! (\mathbf{A}\verb|+=|\mathbf{a}+2*\mathbf{b}) = \begin{pmatrix}
+    //!     5 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 9  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix}
+    //! \f]
+    //!
+    template <typename R>
+    inline
     TridMatrix<T> &
     operator += ( VectorE<T,R> const & e )
     { D += e;; return *this; }
 
-    /*! \brief
-        Add to the diagonal values of the sparse
-        matrix the vector expression \c e.  For example
-        \htmlonly <TABLE><TR><TD> \endhtmlonly
-        \f[
-        \bm{A} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            2 & -1 &    &    \\
-            1 & 2  & -1 &    \\
-              & 1  & 2  & -1 \\
-              &    & 1  & 2  \\
-        \end{BMAT}\right],\qquad
-        \bm{a} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c}
-        1 \\ 2\\ 3
-        \end{BMAT}\right],\qquad
-        \bm{b} = \left[\begin{BMAT}(b,0.5cm,0.5cm){c}{c.c.c.c}
-        1 \\ -1 \\ 2 \\ 1
-        \end{BMAT}\right],
-        \qquad
-        (\bm{A}\verb|-=|\bm{a}+2*\bm{b}) = \left[\begin{BMAT}(b,0.5cm,0.5cm){c.c.c.c}{c.c.c.c}
-            -1 & -1 &    &    \\
-             1 & 2  & -1 &    \\
-               & 1  & -5 & -1 \\
-               &    & 1  & 2  \\
-         \end{BMAT}\right]
-        \f]
-        \htmlonly </TD></TR></TABLE> \endhtmlonly
-    */
-    template <typename R> inline
+    //!
+    //! Add to the diagonal values of the sparse
+    //! matrix the vector expression `e`. For example
+    //!
+    //! \f[
+    //! \mathbf{A} = \begin{pmatrix}
+    //!     2 & -1 &    &    \\
+    //!     1 & 2  & -1 &    \\
+    //!       & 1  & 2  & -1 \\
+    //!       &    & 1  & 2  \\
+    //! \end{pmatrix},\qquad
+    //! \mathbf{a} = \begin{pmatrix}
+    //! 1 \\ 2\\ 3
+    //! \end{pmatrix},\qquad
+    //! \mathbf{b} = \begin{pmatrix}
+    //! 1 \\ -1 \\ 2 \\ 1
+    //! \end{pmatrix},
+    //! \qquad
+    //! (\mathbf{A}\verb|-=|\mathbf{a}+2*\mathbf{b}) = \begin{pmatrix}
+    //!     -1 & -1 &    &    \\
+    //!      1 & 2  & -1 &    \\
+    //!        & 1  & -5 & -1 \\
+    //!        &    & 1  & 2  \\
+    //! \end{pmatrix}
+    //! \f]
+    //!
+    template <typename R>
+    inline
     TridMatrix<T> &
     operator -= ( VectorE<T,R> const & e )
     { D -= e;; return *this; }
@@ -5619,7 +5578,7 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
     }
 
     void
-    Next (void) const {
+    Next(void) const {
       ++iter_counter;
       iter_row = (iter_counter+1) % SPARSE::sp_nrows;
       iter_col = ( (iter_counter+1) / SPARSE::sp_nrows) +iter_row-1;
@@ -5634,12 +5593,19 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
     valueType const & value  (void) const { return A(iter_counter); }
     valueType       & value  (void)       { return A(iter_counter); }
 
-    //! Assign the pointed element to \c rhs
+    //!
+    //! Assign the pointed element to `rhs`.
+    //!
     template <typename TS>
-    void assign( TS & rhs ) const { rhs = A(iter_counter); }
+    inline
+    void
+    assign( TS & rhs ) const { rhs = A(iter_counter); }
 
-    //! perform the operation res += s * (A * x)
-    template <typename VRES, typename VB> inline
+    //!
+    //! Perform the operation `res += s * (A * x)`
+    //!
+    template <typename VRES, typename VB>
+    inline
     void
     add_S_mul_M_mul_V(
       VectorBase<T,VRES>     & res,
@@ -5659,8 +5625,11 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
       SPARSELIB_LOOP( SPARSE::sp_nrows - 1, res(i+1) += s * L(i) * x(i+1) );
     }
 
-    //! perform the operation res += s * (A ^ x)
-    template <typename VRES, typename VB> inline
+    //!
+    //! Perform the operation `res += s * (A ^ x)`.
+    //!
+    template <typename VRES, typename VB>
+    inline
     void
     add_S_mul_Mt_mul_V(
       VectorBase<T,VRES>     & res,
@@ -5680,8 +5649,11 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
       SPARSELIB_LOOP( SPARSE::sp_nrows - 1, res(i+1) += s * U(i) * x(i+1) );
     }
 
-    //! solve the tridiagonal system \c A*x=b
-    template <typename VECTOR> inline
+    //!
+    //! solve the tridiagonal system `A*x=b`.
+    //!
+    template <typename VECTOR>
+    inline
     void
     ass_V_div_M(VECTOR & res, VECTOR const & b) const {
       solve(b, res);
@@ -5709,10 +5681,14 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
    *  ### #       #######
    */
 
+  //!
   //! \name I/O
+  //!
   //@{
 
-  //! Print the contents of vector \c v to the stream \c s
+  //!
+  //! Print the contents of vector `v` to the stream `s`.
+  //!
   template <typename T, typename VEC>
   inline
   void
@@ -5723,15 +5699,20 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
     s << v(sz1) << "]";
   }
 
-  //! Print the contents of vector \c v to the stream \c s
+  //!
+  //! Print the contents of vector `v` to the stream `s`.
+  //!
   template <typename T, typename VEC> inline
   ostream &
-  operator << (ostream & s, VectorBase<T,VEC> const & v) {
+  operator << ( ostream & s, VectorBase<T,VEC> const & v ) {
     print(s,v);
     return s;
   }
 
-  //! Print the contents of vector expression \c e to the stream \c s
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //!
+  //! Print the contents of vector expression `e` to the stream `s`.
+  //!
   template <typename T, typename A>
   inline
   ostream &
@@ -5739,8 +5720,11 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
     print(s,e);
     return s;
   }
+  #endif
 
-  //! Read from the stream \c s to the vector \c v
+  //!
+  //! Read from the stream `s` to the vector `v`.
+  //!
   template <typename T> inline
   istream &
   operator >> (istream & s, Vector<T> & v) {
@@ -5749,19 +5733,27 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
     return s;
   }
 
-  //! Print the contents of the SparsePattern \c S to the stream \c s
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //!
+  //! Print the contents of the SparsePattern `S` to the stream `s`.
+  //!
   inline
   ostream &
-  operator << (ostream & s, SparsePattern const & S) {
+  operator << ( ostream & s, SparsePattern const & S ) {
     for ( S.Begin(); S.End(); S.Next() )
       s << S.row() << " " << S.column() << "\n";
     return s;
   }
+  #endif
 
-  //! Print the contents of the Sparse\<T,MAT\> object \c N to the stream \c s
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //!
+  //! Print the contents of the `Sparse<T,MAT>` 
+  //! object `N` to the stream `s`.
+  //!
   template <typename T, typename MAT> inline
   ostream &
-  operator << (ostream & s, Sparse<T,MAT> const & M) {
+  operator << ( ostream & s, Sparse<T,MAT> const & M ) {
     s << "\nsize    = " << M.numRows() << " x " << M.numCols()
       << "\nnnz     = " << M.nnz();
     if ( M.isOrdered() ) {
@@ -5782,11 +5774,11 @@ CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is 
     }
     return s;
   }
+  #endif
   //@}
-
-
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
 
   using ::SparseTool::Vector;
@@ -5835,8 +5827,8 @@ namespace SparseToolLoad {
   // I/O
   using ::SparseTool::operator >>;
   using ::SparseTool::operator <<;
-
 }
+#endif
 
 #endif
 

@@ -56,7 +56,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::t_solve;
 
     LU_no_alloc();
-    virtual ~LU_no_alloc() UTILS_OVERRIDE {}
+    virtual ~LU_no_alloc() override {}
 
     void
     no_allocate(
@@ -93,55 +93,40 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
-    bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
+    bool solve( valueType xb[] ) const override;
+    void solve( char const who[], valueType xb[] ) const override;
+    bool t_solve( valueType xb[] ) const override;
+    void t_solve( char const who[], valueType xb[] ) const override;
 
-    virtual
-    void
-    solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    void
-    t_solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
     bool
     solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     void
     solve(
       char const who[],
       integer    nrhs,
       valueType  B[],
       integer    ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     bool
     t_solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     void
     t_solve(
       char const who[],
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
   };
 
@@ -173,7 +158,7 @@ namespace lapack_wrapper {
     using LU_no_alloc<T>::condInf;
 
     LU();
-    virtual ~LU() UTILS_OVERRIDE;
+    ~LU() override;
 
     void allocate( integer NR, integer NC );
 
@@ -184,7 +169,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       this->factorize_nodim( who, A, LDA );
     }
@@ -195,7 +180,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       return this->factorize_nodim( A, LDA );
     }
@@ -231,7 +216,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::t_solve;
 
     LUPQ_no_alloc();
-    virtual ~LUPQ_no_alloc() UTILS_OVERRIDE {}
+    ~LUPQ_no_alloc() override {}
 
     void
     no_allocate(
@@ -260,29 +245,22 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
-    bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
+    bool solve( valueType xb[] ) const override;
+    bool t_solve( valueType xb[] ) const override;
 
-    virtual
-    bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
     bool
     solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     bool
     t_solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
   };
 
@@ -310,7 +288,7 @@ namespace lapack_wrapper {
     using LUPQ_no_alloc<T>::factorize;
 
     LUPQ();
-    virtual ~LUPQ() UTILS_OVERRIDE;
+    ~LUPQ() override;
 
     void allocate( integer NRC );
 
@@ -332,7 +310,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       UTILS_ASSERT(
         NR == NC, "LUPQ::factorize, non square matrix: {} x {}\n", NR, NC
       );
@@ -355,7 +333,7 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       if ( NR != NC ) return false;
       return factorize( NR, A, LDA );
     }

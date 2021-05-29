@@ -47,9 +47,9 @@ namespace lapack_wrapper {
   public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-    :|: build an empy wrapper
-    \*/
+    //!
+    //! Build an empty wrapper.
+    //!
     explicit
     DiagMatrixWrapper( )
     : m_dim(0)
@@ -57,11 +57,12 @@ namespace lapack_wrapper {
     {}
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Map a piece of memory into a matrix object
-     * \param data  pointer of the memory to be mapped as a matrix
-     * \param dim   number of elements on the diagonal of the mapped matrix
-     */
+    //! 
+    //! Map a piece of memory into a matrix object.
+    //!
+    //! \param data pointer of the memory to be mapped as a matrix
+    //! \param dim  number of elements on the diagonal of the mapped matrix
+    //! 
     explicit
     DiagMatrixWrapper( valueType * data, integer dim ) {
       m_data = data;
@@ -75,12 +76,12 @@ namespace lapack_wrapper {
     valueType       * data()       { return m_data; }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Map a piece of memory into a matrix object
-     *
-     * \param data pointer of the memory to be mapped as a matrix
-     * \param dim  dimension the mapped diagonal matrix
-     */
+    //! 
+    //! Map a piece of memory into a matrix object.
+    //! 
+    //! \param data pointer of the memory to be mapped as a matrix
+    //! \param dim  dimension the mapped diagonal matrix
+    //! 
     void
     setup( valueType * data, integer dim ) {
       m_data = data;
@@ -143,7 +144,9 @@ namespace lapack_wrapper {
   //                                                   |_|   |_|
   */
 
-  //! base class to view a piece of memory as a matrix
+  //!
+  //! Base class to view a piece of memory as a matrix.
+  //!
   template <typename T>
   class MatrixWrapper {
 
@@ -184,9 +187,9 @@ namespace lapack_wrapper {
   public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * build an empy wrapper
-     */
+    //! 
+    //! Build an empty wrapper.
+    //!
     explicit
     MatrixWrapper( )
     : m_nrows(0)
@@ -197,14 +200,14 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     *  Map a piece of memory into a matrix object
-     *
-     *  \param data  pointer of the memory to be mapped as a matrix
-     *  \param nr    number of rows of the mapped matrix
-     *  \param nc    number of columns of the mapped matrix
-     *  \param ld    leading dimension of the matrix (Fortran addressing 0 based)
-     */
+    //!
+    //! Map a piece of memory into a matrix object.
+    //!
+    //! \param data  pointer of the memory to be mapped as a matrix
+    //! \param nr    number of rows of the mapped matrix
+    //! \param nc    number of columns of the mapped matrix
+    //! \param ld    leading dimension of the matrix (Fortran addressing 0 based)
+    //!
     explicit
     MatrixWrapper(
       valueType * data,
@@ -240,14 +243,14 @@ namespace lapack_wrapper {
     valueType       * data()       { return m_data; }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Map a piece of memory into a matrix object
-     *
-     * \param data  pointer of the memory to be mapped as a matrix
-     * \param nr    number of rows of the mapped matrix
-     * \param nc    number of columns of the mapped matrix
-     * \param ld    leading dimension of the matrix (Fortran addressing 0 based)
-     */
+    //! 
+    //! Map a piece of memory into a matrix object.
+    //! 
+    //! \param data  pointer of the memory to be mapped as a matrix
+    //! \param nr    number of rows of the mapped matrix
+    //! \param nc    number of columns of the mapped matrix
+    //! \param ld    leading dimension of the matrix (Fortran addressing 0 based)
+    //! 
     void
     setup(
       valueType * data,
@@ -257,66 +260,68 @@ namespace lapack_wrapper {
     );
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Access element (i,j) of the matrix
-     *
-     * \param[in] i row of the element
-     * \param[in] j column of the element
-     */
+    //! 
+    //! Access element (i,j) of the matrix.
+    //! 
+    //! \param[in] i row of the element
+    //! \param[in] j column of the element
+    //! 
     valueType const &
-    operator () ( integer i,  integer j ) const
+    operator () ( integer i, integer j ) const
     { return m_data[this->iaddr(i,j)]; }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Access element (i,j) of the matrix
-     *
-     * \param[in] i row of the element
-     * \param[in] j column of the element
-     */
+    //! 
+    //! Access element (i,j) of the matrix.
+    //! 
+    //! \param[in] i row of the element
+    //! \param[in] j column of the element
+    //! 
     valueType &
-    operator () ( integer i,  integer j )
+    operator () ( integer i, integer j )
     { return m_data[this->iaddr(i,j)]; }
 
-    /*!
-     * Fill the matrix with zeros
-     */
+    //! 
+    //! Fill the matrix with zeros.
+    //! 
     void
     zero_fill() {
       gezero( m_nrows, m_ncols, m_data, m_ldData );
     }
 
-    /*!
-     * Fill the matrix with zeros
-     */
+    //! 
+    //! Fill the matrix with zeros.
+    //! 
     void
     setZero() { zero_fill(); }
 
-    /*!
-     * Fill the matrix with value `val`
-     * \param[in] val value used to fill matrix
-     */
+    //! 
+    //! Fill the matrix with value `val`.
+    //!
+    //! \param[in] val value used to fill matrix
+    //! 
     void
     fill( valueType val ) {
       gefill( m_nrows, m_ncols, m_data, m_ldData, val );
     }
 
-    /*!
-     * Scale the matrix with value `sc` (multiply all elements by `sc`)
-     * \param[in] sc value used to scale matrix
-     */
+    //! 
+    //! Scale the matrix with value `sc` (multiply all elements by `sc`).
+    //!
+    //! \param[in] sc value used to scale matrix
+    //! 
     void
     scale_by( valueType sc );
 
-    /*!
-     * Zeroes a rectangular block of the stored matrix
-     * staring at `(irow,icol)` position
-     *
-     * \param[in] nr    number of rows of the block to be zeroed
-     * \param[in] nc    number of columns of the block to be zeroed
-     * \param[in] irow  starting row
-     * \param[in] icol  stating column
-     */
+    //! 
+    //! Zeroes a rectangular block of the stored matrix
+    //! staring at `(irow,icol)` position.
+    //! 
+    //! \param[in] nr    number of rows of the block to be zeroed
+    //! \param[in] nc    number of columns of the block to be zeroed
+    //! \param[in] irow  starting row
+    //! \param[in] icol  stating column
+    //! 
     void
     zero_block(
       integer nr,
@@ -327,9 +332,9 @@ namespace lapack_wrapper {
       gezero( nr, nc, m_data + this->iaddr(irow,icol), m_ldData );
     }
 
-    /*!
-     * Initialize the matrix as an identity matrix
-     */
+    //! 
+    //! Initialize the matrix as an identity matrix.
+    //! 
     void
     id( valueType dg ) {
       geid( m_nrows, m_ncols, m_data, m_ldData, dg );
@@ -346,49 +351,47 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Initialize matrix
-     *
-     * \param[in] data   pointer of memory with data to be copied
-     * \param[in] ldData leading dimension of the memory to be copied
-     *
-     */
+    //! 
+    //! Initialize matrix.
+    //! 
+    //! \param[in] data   pointer of memory with data to be copied
+    //! \param[in] ldData leading dimension of the memory to be copied
+    //! 
+    //! 
     void load( valueType const data[], integer ldData );
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Initialize matrix
-     *
-     * \param[in] data   pointer of memory with data to be copied
-     * \param[in] ldData leading dimension of the memory to be copied
-     *
-     */
+    //! 
+    //! Initialize matrix.
+    //! 
+    //! \param[in] data   pointer of memory with data to be copied
+    //! \param[in] ldData leading dimension of the memory to be copied
+    //! 
+    //! 
     void load_transposed( valueType const data[], integer ldData );
 
-    /*!
-     * Initialize matrix
-     *
-     * \param[in] A initialize matrix with the matrix of the object A
-     *
-     */
+    //! 
+    //! Initialize matrix using another matrix.
+    //! 
+    //! \param[in] A initialize matrix with the matrix of the object A
+    //! 
     void load( MatW const & A );
 
-    /*!
-     * Initialize matrix
-     *
-     * \param[in] A initialize matrix with the matrix of the object A
-     *
-     */
+    //! 
+    //! Initialize matrix using another matrix (transposed).
+    //! 
+    //! \param[in] A initialize matrix with the matrix of the object A
+    //!
     void load_transposed( MatW const & A );
 
-    /*!
-     *  Copy a matrix to a rectangular block of the stored matrix
-     *  staring at `(irow,icol)` position
-     *
-     *  \param[in] B     reference to the matrix of the object B
-     *  \param[in] irow  starting row
-     *  \param[in] icol  stating column
-     */
+    //!
+    //! Copy a matrix to a rectangular block of the stored matrix
+    //! staring at `(irow,icol)` position.
+    //!
+    //! \param[in] B     reference to the matrix of the object B
+    //! \param[in] irow  starting row
+    //! \param[in] icol  stating column
+    //!
     void
     load_block(
       MatW const & B,
@@ -400,14 +403,14 @@ namespace lapack_wrapper {
       );
     }
 
-    /*!
-     *  Copy a matrix to a rectangular block of the stored matrix
-     *  staring at `(irow,icol)` position
-     *
-     *  \param[in] B     reference to the matrix of the object B
-     *  \param[in] irow  starting row
-     *  \param[in] icol  stating column
-     */
+    //!
+    //! Copy a matrix to a rectangular block of the stored matrix
+    //! staring at `(irow,icol)` position.
+    //!
+    //! \param[in] B     reference to the matrix of the object B
+    //! \param[in] irow  starting row
+    //! \param[in] icol  stating column
+    //!
     void
     load_block_transposed(
       MatW const & B,
@@ -419,17 +422,17 @@ namespace lapack_wrapper {
       );
     }
 
-    /*!
-     *  Copy a matrix to a rectangular block of the stored matrix
-     *  staring at `(irow,icol)` position
-     *
-     *  \param[in] nr    number of rows of the block to be zeroed
-     *  \param[in] nc    number of columns of the block to be zeroed
-     *  \param[in] B     pointer to memory storing the input matrix `B`
-     *  \param[in] ldB   leading dimension of the matrix `B`
-     *  \param[in] irow  starting row
-     *  \param[in] icol  stating column
-     */
+    //!
+    //! Copy a matrix to a rectangular block of the stored matrix
+    //! staring at `(irow,icol)` position.
+    //!
+    //! \param[in] nr    number of rows of the block to be zeroed
+    //! \param[in] nc    number of columns of the block to be zeroed
+    //! \param[in] B     pointer to memory storing the input matrix `B`
+    //! \param[in] ldB   leading dimension of the matrix `B`
+    //! \param[in] irow  starting row
+    //! \param[in] icol  stating column
+    //!
     void
     load_block(
       integer         nr,
@@ -457,17 +460,17 @@ namespace lapack_wrapper {
       );
     }
 
-    /*!
-     *  Copy a matrix to a rectangular block of the stored matrix
-     *  staring at `(irow,icol)` position
-     *
-     *  \param[in] nr    number of rows of the block to be zeroed
-     *  \param[in] nc    number of columns of the block to be zeroed
-     *  \param[in] B     pointer to memory storing the input matrix `B`
-     *  \param[in] ldB   leading dimension of the matrix `B`
-     *  \param[in] irow  starting row
-     *  \param[in] icol  stating column
-     */
+    //!
+    //! Copy a matrix to a rectangular block of the stored matrix
+    //! staring at `(irow,icol)` position.
+    //!
+    //! \param[in] nr    number of rows of the block to be zeroed
+    //! \param[in] nc    number of columns of the block to be zeroed
+    //! \param[in] B     pointer to memory storing the input matrix `B`
+    //! \param[in] ldB   leading dimension of the matrix `B`
+    //! \param[in] irow  starting row
+    //! \param[in] icol  stating column
+    //!
     void
     load_block_transposed(
       integer         nr,
@@ -491,15 +494,15 @@ namespace lapack_wrapper {
         lapack_wrapper::copy( nr, pd, 1, pp, m_ldData );
     }
 
-    /*!
-     *  Copy a matrix to a rectangular block of the stored matrix
-     *  staring at `(irow,icol)` position
-     *
-     *  \param[in] n     number of element of the diagonal
-     *  \param[in] D     pointer to memory storing the diagonal
-     *  \param[in] irow  starting row
-     *  \param[in] icol  stating column
-     */
+    //!
+    //! Copy a matrix to a rectangular block of the stored matrix
+    //! staring at `(irow,icol)` position
+    //!
+    //! \param[in] n     number of element of the diagonal
+    //! \param[in] D     pointer to memory storing the diagonal
+    //! \param[in] irow  starting row
+    //! \param[in] icol  stating column
+    //!
     void
     load_diagonal_block(
       integer         n,
@@ -519,14 +522,14 @@ namespace lapack_wrapper {
         m_data[this->iaddr(irow+i,icol+i)] = D[i];
     }
 
-    /*!
-     *  Copy a matrix to a rectangular block of the stored matrix
-     *  staring at `(irow,icol)` position
-     *
-     *  \param[in] D     reference to the matrix of the object D
-     *  \param[in] irow  starting row
-     *  \param[in] icol  stating column
-     */
+    //!
+    //! Copy a matrix to a rectangular block of the stored matrix
+    //! staring at `(irow,icol)` position.
+    //!
+    //! \param[in] D     reference to the matrix of the object D
+    //! \param[in] irow  starting row
+    //! \param[in] icol  stating column
+    //!
     void
     load_block(
       DiagW const & D,
@@ -536,20 +539,24 @@ namespace lapack_wrapper {
       this->load_diagonal_block( D.getDim(), D.data(), irow, icol );
     }
 
-    /*!
-     *  Copy vector `column` to the `icol`th column of the internal stored matrix
-     *  \param[in] column the column vector
-     *  \param[in] icol   the column to be changed
-     */
+    //!
+    //! Copy vector `column` to the `icol-th` column of
+    //! the internal stored matrix.
+    //!
+    //! \param[in] column the column vector
+    //! \param[in] icol   the column to be changed
+    //!
     void
     load_column( valueType const column[], integer icol )
     { copy( m_nrows, column, 1, m_data + icol * m_ldData, 1 ); }
 
-    /*!
-     *  Copy vector `row` to the `irow`th row of the internal stored matrix
-     *  \param[in] row  the row vector
-     *  \param[in] irow the row to be changed
-     */
+    //!
+    //! Copy vector `row` to the `irow-th`
+    //! row of the internal stored matrix.
+    //!
+    //! \param[in] row  the row vector
+    //! \param[in] irow the row to be changed
+    //!
     void
     load_row( valueType const row[], integer irow )
     { copy( m_ncols, row, 1, m_data + irow, m_ldData ); }
@@ -570,30 +577,28 @@ namespace lapack_wrapper {
       integer   const j_col[]
     );
 
-    /*!
-     * Copy sparse matrix into the object
-     *
-     * \param[in] sp sparse matrix to be copied
-     *
-     */
+    //! 
+    //! Copy sparse matrix into the object.
+    //! 
+    //! \param[in] sp sparse matrix to be copied
+    //!
     void load( Sparse const & sp );
-    /*!
-     * Copy sparse matrix into the object transposing it
-     *
-     * \param[in] sp sparse matrix to be copied
-     *
-     */
+
+    //! 
+    //! Copy sparse matrix into the object transposing it.
+    //! 
+    //! \param[in] sp sparse matrix to be copied
+    //! 
     void load_transposed( Sparse const & sp );
 
-    /*!
-     * Copy sparse matrix into the object
-     *
-     * \param[in] rows row indices of the sparse matrix
-     * \param[in] cols column indices of the sparse matrix
-     * \param[in] vals values of the sparse matrix
-     * \param[in] nnz  number of nonzeros elements
-     *
-     */
+    //!
+    //! Copy sparse matrix into the object
+    //!
+    //! \param[in] rows row indices of the sparse matrix
+    //! \param[in] cols column indices of the sparse matrix
+    //! \param[in] vals values of the sparse matrix
+    //! \param[in] nnz  number of nonzeros elements
+    //!
     void
     load(
       integer   const rows[],
@@ -613,15 +618,14 @@ namespace lapack_wrapper {
       this->load( rows, cols, vals, nnz );
     }
 
-    /*!
-     * Copy sparse matrix into the object
-     *
-     * \param[in] rows row indices of the sparse matrix
-     * \param[in] cols column indices of the sparse matrix
-     * \param[in] vals values of the sparse matrix
-     * \param[in] nnz  number of nonzeros elements
-     *
-     */
+    //!
+    //! Copy sparse matrix into the object.
+    //! 
+    //! \param[in] rows row indices of the sparse matrix
+    //! \param[in] cols column indices of the sparse matrix
+    //! \param[in] vals values of the sparse matrix
+    //! \param[in] nnz  number of nonzeros elements
+    //!
     void
     load_symmetric(
       integer   const rows[],
@@ -641,14 +645,13 @@ namespace lapack_wrapper {
       this->load_symmetric( rows, cols, vals, nnz );
     }
 
-    /*!
-     * Copy sparse matrix into the object
-     *
-     * \param sp     sparse matrix to be copied
-     * \param i_offs offset added to to the row indices
-     * \param j_offs offset added to to the column indices
-     *
-     */
+    //! 
+    //! Copy sparse matrix into the object.
+    //! 
+    //! \param sp     sparse matrix to be copied
+    //! \param i_offs offset added to to the row indices
+    //! \param j_offs offset added to to the column indices
+    //!
     void
     load( Sparse const & sp, integer i_offs, integer j_offs );
 
@@ -658,14 +661,13 @@ namespace lapack_wrapper {
       this->load( sp, i_offs, j_offs );
     }
 
-    /*!
-     * Copy sparse matrix into the object transposing it
-     *
-     * \param sp     sparse matrix to be copied
-     * \param i_offs offset added to to the row indices
-     * \param j_offs offset added to to the column indices
-     *
-     */
+    //!
+    //! Copy sparse matrix into the object transposing it
+    //!
+    //! \param sp     sparse matrix to be copied
+    //! \param i_offs offset added to to the row indices
+    //! \param j_offs offset added to to the column indices
+    //!
     void
     load_transposed( Sparse const & sp, integer i_offs, integer j_offs );
 
@@ -675,17 +677,16 @@ namespace lapack_wrapper {
       this->load_transposed( sp, i_offs, j_offs );
     }
 
-    /*!
-     * Copy sparse matrix into the object
-     *
-     * \param[in] i_offs row index offset
-     * \param[in] j_offs column index offset
-     * \param[in] rows   row indices of the sparse matrix
-     * \param[in] cols   column indices of the sparse matrix
-     * \param[in] vals   values of the sparse matrix
-     * \param[in] nnz    number of nonzeros elements
-     *
-     */
+    //!
+    //! Copy sparse matrix into the object
+    //!
+    //! \param[in] i_offs row index offset
+    //! \param[in] j_offs column index offset
+    //! \param[in] rows   row indices of the sparse matrix
+    //! \param[in] cols   column indices of the sparse matrix
+    //! \param[in] vals   values of the sparse matrix
+    //! \param[in] nnz    number of nonzeros elements
+    //!
     void
     load(
       integer         i_offs,
@@ -709,17 +710,16 @@ namespace lapack_wrapper {
       this->load( i_offs, j_offs, rows, cols, vals, nnz );
     }
 
-    /*!
-     * Copy sparse matrix into the object
-     *
-     * \param[in] i_offs row index offset
-     * \param[in] j_offs column index offset
-     * \param[in] rows   row indices of the sparse matrix
-     * \param[in] cols   column indices of the sparse matrix
-     * \param[in] vals   values of the sparse matrix
-     * \param[in] nnz    number of nonzeros elements
-     *
-     */
+    //!
+    //! Copy sparse matrix into the object
+    //!
+    //! \param[in] i_offs row index offset
+    //! \param[in] j_offs column index offset
+    //! \param[in] rows   row indices of the sparse matrix
+    //! \param[in] cols   column indices of the sparse matrix
+    //! \param[in] vals   values of the sparse matrix
+    //! \param[in] nnz    number of nonzeros elements
+    //!
     void
     load_symmetric(
       integer         i_offs,
@@ -744,31 +744,29 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Add a block of memory to the matrix scaled by alpha
-     *
-     * \param alpha  scaling factor
-     * \param data   pointer of memory with data to be copied
-     * \param ldData leading dimension of the memory to be copied
-     *
-     */
+    //!
+    //! Add a block of memory to the matrix scaled by alpha.
+    //!
+    //! \param alpha  scaling factor
+    //! \param data   pointer of memory with data to be copied
+    //! \param ldData leading dimension of the memory to be copied
+    //!
     void add( valueType alpha, valueType const data[], integer ldData );
 
-    /*!
-     * Add a block of memory to the matrix
-     *
-     * \param data   pointer of memory with data to be copied
-     * \param ldData leading dimension of the memory to be copied
-     *
-     */
+    //! 
+    //! Add a block of memory to the matrix.
+    //! 
+    //! \param data   pointer of memory with data to be copied
+    //! \param ldData leading dimension of the memory to be copied
+    //!
     void add( valueType const data[], integer ldData );
 
-    // R <- R + alpha * A
-    /*!
-     *
-     * \param A first mapped matrix
-     *
-     */
+    //
+    //! Compute `R <- R + alpha * A`
+    //! 
+    //! \param alpha scale used in multiplication
+    //! \param A     first mapped matrix
+    //!
     void
     add( valueType alpha, MatW const & A ) {
       #if defined(DEBUG) || defined(_DEBUG)
@@ -791,42 +789,38 @@ namespace lapack_wrapper {
       this->add( A.m_data, A.m_ldData );
     }
 
-    /*!
-     * Add sparse matrix to the object
-     *
-     * \param sp sparse matrix to be copied
-     *
-     */
+    //! 
+    //! Add sparse matrix to the object
+    //! 
+    //! \param sp sparse matrix to be copied
+    //!
     void add( Sparse const & sp );
 
-    /*!
-     * Add sparse matrix to the object
-     *
-     * \param sp     sparse matrix to be copied
-     * \param i_offs offset added to to the row indices
-     * \param j_offs offset added to to the column indices
-     *
-     */
+    //! 
+    //! Add sparse matrix to the object
+    //! 
+    //! \param sp     sparse matrix to be copied
+    //! \param i_offs offset added to to the row indices
+    //! \param j_offs offset added to to the column indices
+    //!
     void add( Sparse const & sp, integer i_offs, integer j_offs );
 
-    /*!
-     * Add sparse multiplied by `alpha` matrix to the object
-     *
-     * \param alpha  scalar used to multiply the sparse matrix
-     * \param sp     sparse matrix to be copied
-     *
-     */
+    //! 
+    //! Add sparse multiplied by `alpha` matrix to the object
+    //! 
+    //! \param alpha  scalar used to multiply the sparse matrix
+    //! \param sp     sparse matrix to be copied
+    //!
     void add( valueType alpha, Sparse const & sp );
 
-    /*!
-     * Add sparse multiplied by `alpha` matrix to the object
-     *
-     * \param alpha  scalar used to multiply the sparse matrix
-     * \param sp     sparse matrix to be copied
-     * \param i_offs offset added to to the row indices
-     * \param j_offs offset added to to the column indices
-     *
-     */
+    //! 
+    //! Add sparse multiplied by `alpha` matrix to the object
+    //! 
+    //! \param alpha  scalar used to multiply the sparse matrix
+    //! \param sp     sparse matrix to be copied
+    //! \param i_offs offset added to to the row indices
+    //! \param j_offs offset added to to the column indices
+    //!
     void
     add(
       valueType      alpha,
@@ -836,16 +830,15 @@ namespace lapack_wrapper {
     );
 
     // alpha*A + beta*B -> C
-    /*!
-     * Add a linear combination of two matrix and assign to a third one
-     *
-     * \param alpha scalar used to multiply the matrix `A`
-     * \param A     first mapped matrix
-     * \param beta  scalar used to multiply the matrix `B`
-     * \param B     second mapped matrix
-     * \param C     mapped matrix which store the result
-     *
-     */
+    //! 
+    //! Add a linear combination of two matrix and assign to a third one.
+    //! 
+    //! \param alpha scalar used to multiply the matrix `A`
+    //! \param A     first mapped matrix
+    //! \param beta  scalar used to multiply the matrix `B`
+    //! \param B     second mapped matrix
+    //! \param C     mapped matrix which store the result
+    //!
     friend
     void
     add(
@@ -864,16 +857,15 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * make a view of a block
-     *
-     * \param i_offs initial row of the block to be extracted
-     * \param j_offs initial column of the block to be extracted
-     * \param nrow   number of rows of the block to be extracted
-     * \param ncol   number of columns of the block to be extracted
-     * \param to     mapped matrix which store the result
-     *
-     */
+    //! 
+    //! Make a view of a block.
+    //! 
+    //! \param i_offs initial row of the block to be extracted
+    //! \param j_offs initial column of the block to be extracted
+    //! \param nrow   number of rows of the block to be extracted
+    //! \param ncol   number of columns of the block to be extracted
+    //! \param to     mapped matrix which store the result
+    //!
     void
     view_block(
       integer i_offs,
@@ -899,12 +891,11 @@ namespace lapack_wrapper {
       }
     }
 
-    /*!
-     * Extract a matrix in transposed form
-     *
-     * \param out mapped matrix which store the result
-     *
-     */
+    //! 
+    //! Extract a matrix in transposed form
+    //! 
+    //! \param out mapped matrix which store the result
+    //!
     void
     get_transposed( MatW & out ) {
       #if defined(DEBUG) || defined(_DEBUG)
@@ -919,14 +910,13 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Extract a block
-     *
-     * \param i_offs initial row of the block to be extracted
-     * \param j_offs initial column of the block to be extracted
-     * \param to     mapped matrix which store the result
-     *
-     */
+    //! 
+    //! Extract a block
+    //! 
+    //! \param i_offs initial row of the block to be extracted
+    //! \param j_offs initial column of the block to be extracted
+    //! \param to     mapped matrix which store the result
+    //!
     void
     get_block(
       MatW &  to,
@@ -950,14 +940,13 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /*!
-     * Extract a block
-     *
-     * \param i_offs initial row of the block to be extracted
-     * \param j_offs initial column of the block to be extracted
-     * \param to     mapped matrix which store the result
-     *
-     */
+    //! 
+    //! Extract a block.
+    //! 
+    //! \param i_offs initial row of the block to be extracted
+    //! \param j_offs initial column of the block to be extracted
+    //! \param to     mapped matrix which store the result
+    //! 
     void
     get_block_transposed(
       MatW &  to,
@@ -1013,19 +1002,18 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // c = beta*c + alpha*A*v
-  /*!
-   * Perform matrix vector multiplication `c = beta*c + alpha*A*v`
-   *
-   * \param alpha  matrix `A` is multiplied by `alpha`
-   * \param TRANSA choose if multiply with the transpose of `A`
-   * \param A      matrix used in the multiplication
-   * \param v      vector to be multiplied
-   * \param incv   stride of the vector `v`
-   * \param beta   scalar used to multiply `c`
-   * \param c      result vector
-   * \param incc   stride of the vector `c`
-   *
-   */
+  //! 
+  //! Perform matrix vector multiplication `c = beta*c + alpha*A*v`.
+  //! 
+  //! \param alpha  matrix `A` is multiplied by `alpha`
+  //! \param TRANSA choose if multiply with the transpose of `A`
+  //! \param A      matrix used in the multiplication
+  //! \param v      vector to be multiplied
+  //! \param incv   stride of the vector `v`
+  //! \param beta   scalar used to multiply `c`
+  //! \param c      result vector
+  //! \param incc   stride of the vector `c`
+  //!
   template <typename T>
   inline
   void
@@ -1052,18 +1040,17 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // c = beta*c + alpha*A*v
-  /*!
-   * Perform matrix vector multiplication `c = beta*c + alpha*A*v`
-   *
-   * \param alpha  matrix `A` is multiplied by `alpha`
-   * \param A      matrix used in the multiplication
-   * \param v      vector to be multiplied
-   * \param incv   stride of the vector `v`
-   * \param beta   scalar used to multiply `c`
-   * \param c      result vector
-   * \param incc   stride of the vector `c`
-   *
-   */
+  //! 
+  //! Perform matrix vector multiplication `c = beta*c + alpha*A*v`.
+  //! 
+  //! \param alpha  matrix `A` is multiplied by `alpha`
+  //! \param A      matrix used in the multiplication
+  //! \param v      vector to be multiplied
+  //! \param incv   stride of the vector `v`
+  //! \param beta   scalar used to multiply `c`
+  //! \param c      result vector
+  //! \param incc   stride of the vector `c`
+  //!
   template <typename T>
   inline
   void
@@ -1088,17 +1075,16 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /*!
-   * Perform matrix matrix multiplication `C = beta*C + alpha*A*B`
-   *
-   * \param where  message added in case of error
-   * \param alpha  matrix `A` is multiplied by `alpha`
-   * \param A      matrix used in the multiplication
-   * \param B      matrix used in the multiplication
-   * \param beta   scalar used to multiply `C`
-   * \param C      result matrix
-   *
-   */
+  //! 
+  //! Perform matrix matrix multiplication `C = beta*C + alpha*A*B`.
+  //! 
+  //! \param where  message added in case of error
+  //! \param alpha  matrix `A` is multiplied by `alpha`
+  //! \param A      matrix used in the multiplication
+  //! \param B      matrix used in the multiplication
+  //! \param beta   scalar used to multiply `C`
+  //! \param C      result matrix
+  //!
   // C = beta*C + alpha*A*B
   template <typename T>
   inline
@@ -1135,16 +1121,15 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /*!
-   * Perform matrix matrix multiplication `C = beta*C + alpha*A*B`
-   *
-   * \param alpha  matrix `A` is multiplied by `alpha`
-   * \param A      matrix used in the multiplication
-   * \param B      matrix used in the multiplication
-   * \param beta   scalar used to multiply `C`
-   * \param C      result matrix
-   *
-   */
+  //! 
+  //! Perform matrix matrix multiplication `C = beta*C + alpha*A*B`.
+  //! 
+  //! \param alpha  matrix `A` is multiplied by `alpha`
+  //! \param A      matrix used in the multiplication
+  //! \param B      matrix used in the multiplication
+  //! \param beta   scalar used to multiply `C`
+  //! \param C      result matrix
+  //!
   // C = beta*C + alpha*A*B (NO DEBUG)
   template <typename T>
   inline
@@ -1177,19 +1162,18 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /*!
-   * Perform matrix matrix multiplication `C = beta*C + alpha*A*B`
-   *
-   * \param where  message added in case of error
-   * \param alpha  matrix `A` is multiplied by `alpha`
-   * \param TRANSA choose `A` transposed or not
-   * \param A      matrix used in the multiplication
-   * \param TRANSB choose `B` transposed or not
-   * \param B      matrix used in the multiplication
-   * \param beta   scalar used to multiply `C`
-   * \param C      result matrix
-   *
-   */
+  //! 
+  //! Perform matrix matrix multiplication `C = beta*C + alpha*A*B`.
+  //! 
+  //! \param where  message added in case of error
+  //! \param alpha  matrix `A` is multiplied by `alpha`
+  //! \param TRANSA choose `A` transposed or not
+  //! \param A      matrix used in the multiplication
+  //! \param TRANSB choose `B` transposed or not
+  //! \param B      matrix used in the multiplication
+  //! \param beta   scalar used to multiply `C`
+  //! \param C      result matrix
+  //!
   // C = beta*C + alpha*A*B
   template <typename T>
   inline
@@ -1234,18 +1218,17 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // C = beta*C + alpha*A*B (NO DEBUG)
-  /*!
-   * Perform matrix matrix multiplication `C = beta*C + alpha*A*B`
-   *
-   * \param alpha  matrix `A` is multiplied by `alpha`
-   * \param TRANSA choose `A` transposed or not
-   * \param A      matrix used in the multiplication
-   * \param TRANSB choose `B` transposed or not
-   * \param B      matrix used in the multiplication
-   * \param beta   scalar used to multiply `C`
-   * \param C      result matrix
-   *
-   */
+  //! 
+  //! Perform matrix matrix multiplication `C = beta*C + alpha*A*B`.
+  //! 
+  //! \param alpha  matrix `A` is multiplied by `alpha`
+  //! \param TRANSA choose `A` transposed or not
+  //! \param A      matrix used in the multiplication
+  //! \param TRANSB choose `B` transposed or not
+  //! \param B      matrix used in the multiplication
+  //! \param beta   scalar used to multiply `C`
+  //! \param C      result matrix
+  //!
   template <typename T>
   inline
   void
@@ -1287,16 +1270,16 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // x = A * x or x = A^T * x
-  /*!
-   * Perform matrix vector multiplication `x = A * x` or `x = A^T * x`
-   *
-   * \param UPLO   choose upper or lower part
-   * \param TRANS  choose `A` transposed or not
-   * \param DIAG   use or not diagonal elements to 1
-   * \param x      vector used in the multiplcation and result
-   * \param incx   stride of vector `x`
-   *
-   */
+  //! 
+  //! Perform matrix vector multiplication `x = A * x` or `x = A^T * x`.
+  //! 
+  //! \param[in]     UPLO   choose upper or lower part
+  //! \param[in]     TRANS  choose `A` transposed or not
+  //! \param[in]     DIAG   use or not diagonal elements to 1
+  //! \param[in]     A      input matrix
+  //! \param[in,out] x      vector used in the multiplcation and result
+  //! \param[in]     incx   stride of vector `x`
+  //!
   template <typename T>
   inline
   void
@@ -1320,18 +1303,17 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // x = A * x or x = A^T * x
-  /*!
-   * Perform matrix vector multiplication `x = A * x` or `x = A^T * x`
-   *
-   * \param where  message added in case of error
-   * \param UPLO   choose upper or lower part
-   * \param TRANS  choose `A` transposed or not
-   * \param DIAG   use or not diagonal elements to 1
-   * \param A      matrix to multiplied
-   * \param x      vector used in the multiplcation and result
-   * \param incx   stride of vector `x`
-   *
-   */
+  //! 
+  //! Perform matrix vector multiplication `x = A * x` or `x = A^T * x`.
+  //! 
+  //! \param where  message added in case of error
+  //! \param UPLO   choose upper or lower part
+  //! \param TRANS  choose `A` transposed or not
+  //! \param DIAG   use or not diagonal elements to 1
+  //! \param A      matrix to multiplied
+  //! \param x      vector used in the multiplcation and result
+  //! \param incx   stride of vector `x`
+  //!
   template <typename T>
   inline
   void
@@ -1356,17 +1338,16 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // x = A^(-1) * x or x = A^(-T) * x
-  /*!
-   * Perform matrix vector multiplication `x = A * x` or `x = A^T * x`
-   *
-   * \param UPLO   choose upper or lower part
-   * \param TRANS  choose `A` transposed or not
-   * \param DIAG   use or not diagonal elements to 1
-   * \param A      matrix to multiplied
-   * \param x      vector used in the multiplcation and result
-   * \param incx   stride of vector `x`
-   *
-   */
+  //! 
+  //! Perform matrix vector multiplication `x = A * x` or `x = A^T * x`.
+  //! 
+  //! \param UPLO   choose upper or lower part
+  //! \param TRANS  choose `A` transposed or not
+  //! \param DIAG   use or not diagonal elements to 1
+  //! \param A      matrix to multiplied
+  //! \param x      vector used in the multiplcation and result
+  //! \param incx   stride of vector `x`
+  //!
   template <typename T>
   inline
   void
@@ -1390,18 +1371,18 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // x = A^(-1) * x or x = A^(-T) * x
-  /*!
-   * Perform matrix vector multiplication `x = A^(-1) * x` or `x = A^(-T) * x`
-   *
-   * \param where  message added in case of error
-   * \param UPLO   choose upper or lower part
-   * \param TRANS  choose `A` transposed or not
-   * \param DIAG   use or not diagonal elements to 1
-   * \param A      matrix to multiplied
-   * \param x      vector used in the multiplcation and result
-   * \param incx   stride of vector `x`
-   *
-   */
+  //! 
+  //! Perform matrix vector multiplication 
+  //! `x = A^(-1) * x` or `x = A^(-T) * x`.
+  //! 
+  //! \param where  message added in case of error
+  //! \param UPLO   choose upper or lower part
+  //! \param TRANS  choose `A` transposed or not
+  //! \param DIAG   use or not diagonal elements to 1
+  //! \param A      matrix to multiplied
+  //! \param x      vector used in the multiplcation and result
+  //! \param incx   stride of vector `x`
+  //!
   template <typename T>
   inline
   void
@@ -1425,21 +1406,22 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /*!
-   * Perform matrix matrix multiplication
-   *
-   *    B := alpha*op( A )*B,   or   B := alpha*B*op( A ),
-   *    op( A ) = A   or   op( A ) = A**T.
-   *
-   * \param SIDE   multiply on left or right
-   * \param UPLO   choose upper or lower part
-   * \param TRANS  choose `A` transposed or not
-   * \param DIAG   use or not diagonal elements to 1
-   * \param alpha  scalar used in the multiplication
-   * \param A      matrix to be multiplied
-   * \param B      matrix to be multiplied
-   *
-   */
+  //! 
+  //! Perform matrix matrix multiplication
+  //!
+  //! \code{.unparsed} 
+  //!    B := alpha*op( A )*B,   or   B := alpha*B*op( A ),
+  //!    op( A ) = A   or   op( A ) = A**T.
+  //! \endcode
+  //! 
+  //! \param SIDE   multiply on left or right
+  //! \param UPLO   choose upper or lower part
+  //! \param TRANS  choose `A` transposed or not
+  //! \param DIAG   use or not diagonal elements to 1
+  //! \param alpha  scalar used in the multiplication
+  //! \param A      matrix to be multiplied
+  //! \param B      matrix to be multiplied
+  //!
   template <typename T>
   inline
   void
@@ -1466,22 +1448,23 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /*!
-   * Perform matrix matrix multiplication
-   *
-   *    B := alpha*op( A )*B,   or   B := alpha*B*op( A ),
-   *    op( A ) = A   or   op( A ) = A**T.
-   *
-   * \param where  message added in case of error
-   * \param SIDE   multiply on left or right
-   * \param UPLO   choose upper or lower part
-   * \param TRANS  choose `A` transposed or not
-   * \param DIAG   use or not diagonal elements to 1
-   * \param alpha  scalar used in the multiplication
-   * \param A      matrix to be multiplied
-   * \param B      matrix to be multiplied
-   *
-   */
+  //! 
+  //! Perform matrix matrix multiplication
+  //!
+  //! \code{.unparsed} 
+  //!    B := alpha*op( A )*B,   or   B := alpha*B*op( A ),
+  //!    op( A ) = A   or   op( A ) = A**T.
+  //! \endcode
+  //! 
+  //! \param where  message added in case of error
+  //! \param SIDE   multiply on left or right
+  //! \param UPLO   choose upper or lower part
+  //! \param TRANS  choose `A` transposed or not
+  //! \param DIAG   use or not diagonal elements to 1
+  //! \param alpha  scalar used in the multiplication
+  //! \param A      matrix to be multiplied
+  //! \param B      matrix to be multiplied
+  //!
   template <typename T>
   inline
   void
@@ -1509,21 +1492,22 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /*!
-   * Perform matrix matrix multiplication
-   *
-   *    B := alpha*op( A^(-1) )*B,   or   B := alpha*B*op( A^(-1) ),
-   *    op( A ) = A   or   op( A ) = A**T.
-   *
-   * \param SIDE   multiply on left or right
-   * \param UPLO   choose upper or lower part
-   * \param TRANS  choose `A` transposed or not
-   * \param DIAG   use or not diagonal elements to 1
-   * \param alpha  scalar used in the multiplication
-   * \param A      matrix to be multiplied
-   * \param B      matrix to be multiplied
-   *
-   */
+  //! 
+  //! Perform matrix matrix multiplication
+  //! 
+  //! \code{.unparsed}
+  //!    B := alpha*op( A^(-1) )*B,   or   B := alpha*B*op( A^(-1) ),
+  //!    op( A ) = A   or   op( A ) = A**T.
+  //! \endcode
+  //! 
+  //! \param SIDE   multiply on left or right
+  //! \param UPLO   choose upper or lower part
+  //! \param TRANS  choose `A` transposed or not
+  //! \param DIAG   use or not diagonal elements to 1
+  //! \param alpha  scalar used in the multiplication
+  //! \param A      matrix to be multiplied
+  //! \param B      matrix to be multiplied
+  //!
   template <typename T>
   inline
   void
@@ -1550,22 +1534,24 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  /*!
-   * Perform matrix matrix multiplication
-   *
-   *    B := alpha*op( A^(-1) )*B,   or   B := alpha*B*op( A^(-1) ),
-   *    op( A ) = A   or   op( A ) = A**T.
-   *
-   * \param where  message added in case of error
-   * \param SIDE   multiply on left or right
-   * \param UPLO   choose upper or lower part
-   * \param TRANS  choose `A` transposed or not
-   * \param DIAG   use or not diagonal elements to 1
-   * \param alpha  scalar used in the multiplication
-   * \param A      matrix to be multiplied
-   * \param B      matrix to be multiplied
-   *
-   */
+  //! 
+  //! Perform matrix matrix multiplication.
+  //!
+  //! \code{.unparsed}
+  //!    B := alpha*op( A^(-1) )*B,   or   B := alpha*B*op( A^(-1) ),
+  //!    op( A ) = A   or   op( A ) = A**T.
+  //! \endcode
+  //! 
+  //! \param where  message added in case of error
+  //! \param SIDE   multiply on left or right
+  //! \param UPLO   choose upper or lower part
+  //! \param TRANS  choose `A` transposed or not
+  //! \param DIAG   use or not diagonal elements to 1
+  //! \param alpha  scalar used in the multiplication
+  //! \param A      matrix to be multiplied
+  //! \param B      matrix to be multiplied
+  //! 
+  //! 
   template <typename T>
   inline
   void

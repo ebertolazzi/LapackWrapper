@@ -39,10 +39,9 @@ namespace lapack_wrapper {
     integer m_ncols; //!< Number of columns
     integer m_nnz;   //!< Total number of nonzeros
 
-    /*!
-     * \brief SparseMatrixBase:
-     *        Protected Constructor of the class SparseMatrixBase.
-    \*/
+    //!
+    //! Protected Constructor of the class SparseMatrixBase.
+    //!
     SparseMatrixBase()
     : m_nrows(0)
     , m_ncols(0)
@@ -71,21 +70,20 @@ namespace lapack_wrapper {
 
   public:
 
-    /*!
-     * \brief ~SparseMatrixBase:
-     *        Virtual Destructor of the class SparseMatrixBase.
-    \*/
+    //!
+    //! Virtual Destructor of the class SparseMatrixBase.
+    //!
     virtual
     ~SparseMatrixBase() {}
 
-    /*!
-     *  \brief Initialize sparse matrix
-     *
-     *  \param[in] N           number of rows
-     *  \param[in] M           number of columns
-     *  \param[in] reserve_nnz estimated number of nonzeros
-     *  \param[in] fi          if true use FORTRAN 1-based indices
-    \*/
+    //!
+    //! Initialize sparse matrix.
+    //!
+    //! \param[in] N           number of rows
+    //! \param[in] M           number of columns
+    //! \param[in] reserve_nnz estimated number of nonzeros
+    //! \param[in] fi          if true use FORTRAN 1-based indices
+    //!
     virtual
     void
     init(
@@ -93,43 +91,40 @@ namespace lapack_wrapper {
       integer M,
       integer reserve_nnz,
       bool    fi = false
-    ) UTILS_PURE_VIRTUAL;
+    ) = 0;
 
-    /*!
-     *  \brief Destroy the sparse matrix
-     *
-    \*/
+    //!
+    //! Destroy the sparse matrix.
+    //!
     virtual
     void
-    clear() UTILS_PURE_VIRTUAL;
+    clear() = 0;
 
-    /*!
-     *  \brief Clean to zero the sparse matrix
-     *
-    \*/
+    //!
+    //! Clean to zero the sparse matrix.
+    //!
     virtual
     void
-    setZero() UTILS_PURE_VIRTUAL;
+    setZero() = 0;
 
-    /*!
-     *  \brief Return true if index are 1-based
-    \*/
+    //!
+    //! Return true if index are 1-based.
+    //!
     virtual
     bool
-    FORTRAN_indexing() const UTILS_PURE_VIRTUAL;
+    FORTRAN_indexing() const = 0;
 
     integer get_number_of_rows() const { return m_nrows; }
     integer get_number_of_cols() const { return m_ncols; }
     integer get_nnz()            const { return m_nnz; }
 
-    /*!
-     * \brief get_info:
-     *        Returns the number of nonzeroes and dimension of the sparse matrix.
-     * \param[out] numRows Row dimension of the matrix
-     * \param[out] numCols Column dimension of the matrix
-     * \param[out] nnz     the number of nonzeroes
-     *
-    \*/
+    //! 
+    //! Returns the number of nonzeroes and dimension of the sparse matrix.
+    //!
+    //! \param[out] numRows Row dimension of the matrix
+    //! \param[out] numCols Column dimension of the matrix
+    //! \param[out] nnz     the number of nonzeroes
+    //!
     virtual
     void
     get_info(
@@ -142,101 +137,95 @@ namespace lapack_wrapper {
       nnz     = m_nnz;
     }
 
-    /*!
-     * \brief get_data:
-     *        Returns the sparse matrix.
-     *
-     * Example of usage
-     *
-     * \code
-     * int_type nnz;
-     * int_type const * rows;
-     * int_type const * cols;
-     * real     const * values;
-     * ptr->get_data( nnz, &rows, &cols, &values );
-     * \endcode
-     *
-     * \param[out] pRows   vector of pointers of row indices where to data will be copied.
-     * \param[out] pCols   vector of pointers where to store column indices.
-     * \param[out] pValues vector of pointers where to store values.
-     *
-    \*/
-
+    //! 
+    //! Returns the sparse matrix.
+    //! 
+    //! **Example of usage**
+    //! 
+    //! \code
+    //! int_type nnz;
+    //! int_type const * rows;
+    //! int_type const * cols;
+    //! real     const * values;
+    //! ptr->get_data( nnz, &rows, &cols, &values );
+    //! \endcode
+    //! 
+    //! \param[out] pRows   vector of pointers of row indices where to data will be copied.
+    //! \param[out] pCols   vector of pointers where to store column indices.
+    //! \param[out] pValues vector of pointers where to store values.
+    //!
     virtual
     void
     get_data(
       integer   const * & pRows,
       integer   const * & pCols,
       valueType const * & pValues
-    ) const UTILS_PURE_VIRTUAL;
+    ) const = 0;
 
-    /*!
-     *  \brief transpose the matrix
-    \*/
+    //!
+    //! Transpose the matrix.
+    //!
     virtual
     void
-    transpose() UTILS_PURE_VIRTUAL;
+    transpose() = 0;
 
-    /*!
-     *  \brief convert the matrix to 1-based index
-    \*/
+    //!
+    //! Convert the matrix to 1-based index.
+    //!
     virtual
     void
-    to_FORTRAN_indexing() UTILS_PURE_VIRTUAL;
+    to_FORTRAN_indexing() = 0;
 
-    /*!
-     *  \brief convert the matrix to 0-based index
-    \*/
+    //!
+    //! Convert the matrix to 0-based index.
+    //!
     virtual
     void
-    to_C_indexing() UTILS_PURE_VIRTUAL;
+    to_C_indexing() = 0;
 
-    /*!
-     *  \brief insert a value into matrix using 0-based index
-     *
-     *  \param[in] row the row index
-     *  \param[in] col the column index
-     *  \param[in] val the inserted value
-     *
-    \*/
+    //!
+    //! Insert a value into matrix using 0-based index.
+    //!    
+    //! \param[in] row the row index
+    //! \param[in] col the column index
+    //! \param[in] val the inserted value
+    //!
     virtual
     void
     push_value_C(
       integer   row,
       integer   col,
       valueType val
-    ) UTILS_PURE_VIRTUAL;
+    ) = 0;
 
-    /*!
-     *  \brief insert a value into matrix using 1-based index
-     *
-     *  \param[in] row the row index
-     *  \param[in] col the column index
-     *  \param[in] val the inserted value
-     *
-    \*/
+    //!
+    //! Insert a value into matrix using 1-based index.
+    //!
+    //! \param[in] row the row index
+    //! \param[in] col the column index
+    //! \param[in] val the inserted value
+    //!
     virtual
     void
     push_value_F(
       integer   row,
       integer   col,
       valueType val
-    ) UTILS_PURE_VIRTUAL;
+    ) = 0;
 
-    /*!
-     *  \brief insert a matrix into the sparse matrix
-     *
-     *  \param[in] row_offs    offset to the row indices
-     *  \param[in] col_offs    offset to the column indices
-     *  \param[in] Matrix      the (full) matrix to be inserted
-     *  \param[in] transpose   if true matrix is inserted transposed
-     *  \param[in] lower_upper 0 = full matrix
-     *                         1 = upper part with diagonal
-     *                         2 = upper part without diagonal
-     *                         -1 = lower part with diagonal
-     *                         -2 = lower part without diagonal
-     *
-    \*/
+    //!
+    //! Insert a matrix into the sparse matrix.
+    //!
+    //! \param[in] row_offs    offset to the row indices
+    //! \param[in] col_offs    offset to the column indices
+    //! \param[in] Matrix      the (full) matrix to be inserted
+    //! \param[in] transpose   if true matrix is inserted transposed
+    //! \param[in] lower_upper 0 = full matrix
+    //!                        1 = upper part with diagonal
+    //!                        2 = upper part without diagonal
+    //!                        -1 = lower part with diagonal
+    //!                        -2 = lower part without diagonal
+    //!
     virtual
     void
     push_matrix(
@@ -247,22 +236,21 @@ namespace lapack_wrapper {
       integer      lower_upper = 0
     );
 
-    /*!
-     *  \brief insert a matrix into the sparse matrix
-     *
-     *  \param[in] row_offs  offset to the row indices
-     *  \param[in] col_offs  offset to the column indices
-     *  \param[in] Matrix    the (sparsse) matrix to be inserted
-     *  \param[in] transpose if true matrix is inserted transposed
-     *  \param[in] lower_upper 0 = full matrix
-     *                         1 = upper part with diagonal
-     *                         2 = upper part without diagonal
-     *                         3 = push symmetric, for each A(i,j) element an A(j,i) is inserted
-     *                        -3 = push anty symmetric, for each A(i,j) element an -A(j,i) is inserted
-     *                        -1 = lower part with diagonal
-     *                        -2 = lower part without diagonal
-     *
-    \*/
+    //!
+    //! Insert a matrix into the sparse matrix.
+    //!
+    //! \param[in] row_offs  offset to the row indices
+    //! \param[in] col_offs  offset to the column indices
+    //! \param[in] Matrix    the (sparsse) matrix to be inserted
+    //! \param[in] transpose if true matrix is inserted transposed
+    //! \param[in] lower_upper 0 = full matrix
+    //!                        1 = upper part with diagonal
+    //!                        2 = upper part without diagonal
+    //!                        3 = push symmetric, for each A(i,j) element an A(j,i) is inserted
+    //!                       -3 = push anty symmetric, for each A(i,j) element an -A(j,i) is inserted
+    //!                       -1 = lower part with diagonal
+    //!                       -2 = lower part without diagonal
+    //!
     virtual
     void
     push_matrix(
@@ -273,59 +261,55 @@ namespace lapack_wrapper {
       integer        lower_upper = 0
     );
 
-    /*!
-     *  \brief extract the sparse matrix to a full matrix
-     *
-     *  \param[out] M the output matrix
-     *
-    \*/
+    //!
+    //! Extract the sparse matrix to a full matrix.
+    //!
+    //! \param[out] M the output matrix
+    //!
     virtual
     void
-    get_matrix( MatW & M ) const UTILS_PURE_VIRTUAL;
+    get_matrix( MatW & M ) const = 0;
 
-    /*!
-     *  \brief extract the sparse matrix to a full matrix
-     *         filling symmetrically
-     *
-     *  \param[out] M the output matrix
-     *
-    \*/
+    //!
+    //! Extract the sparse matrix to a full matrix
+    //! filling symmetrically.
+    //!
+    //! \param[out] M the output matrix
+    //!
     virtual
     void
-    get_matrix_symmetric( MatW & M ) const UTILS_PURE_VIRTUAL;
+    get_matrix_symmetric( MatW & M ) const = 0;
 
-    /*!
-     *  \brief extract the sparse matrix to a full matrix
-     *         trasposing the result
-     *
-     *  \param[out] M the output matrix
-     *
-    \*/
+    //!
+    //! Extract the sparse matrix to a full matrix
+    //! trasposing the result.
+    //!
+    //! \param[out] M the output matrix
+    //!
     virtual
     void
-    get_matrix_transposed( MatW & M ) const UTILS_PURE_VIRTUAL;
+    get_matrix_transposed( MatW & M ) const = 0;
 
-    /*!
-     *  \return true if Inf or NaN are found in the sparse data
-    \*/
+    //!
+    //! \return `true` if Inf or NaN are found in the sparse data
+    //!
     virtual
     bool
-    foundNaN() const UTILS_PURE_VIRTUAL;
+    foundNaN() const = 0;
 
-    /*!
-     * \brief gemv:
-     *        Calls the blas-Routine (\f$y = \beta y + \alpha A x + y\f$).
-     *
-     * \param[in]     alpha         Scalar \f$\alpha \f$.
-     * \param[in]     DimX          Dimension of the vector x.
-     * \param[in]     x             Vector x.
-     * \param[in]     incX          Stride of vector x.
-     * \param[in]     DimY          Dimension of the vector y.
-     * \param[in]     beta          Scalar \f$\beta \f$.
-     * \param[in,out] y             In-/Output vector y.
-     * \param[in]     incY          Stride of vector y.
-     *
-    \*/
+    //! 
+    //! Calls the blas-Routine (\f$y = \beta y + \alpha A x + y\f$).
+    //! 
+    //! \param[in]     alpha Scalar \f$\alpha \f$.
+    //! \param[in]     DimX  Dimension of the vector x.
+    //! \param[in]     x     Vector x.
+    //! \param[in]     incX  Stride of vector x.
+    //! \param[in]     DimY  Dimension of the vector y.
+    //! \param[in]     beta  Scalar \f$\beta \f$.
+    //! \param[in,out] y     In-/Output vector y.
+    //! \param[in]     incY  Stride of vector y.
+    //! 
+    //! 
     virtual
     void
     gemv(
@@ -337,23 +321,20 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const UTILS_PURE_VIRTUAL;
+    ) const = 0;
 
-    /*!
-     * \brief gemv:
-     *        Calls the blas-Routine (\f$y = \beta y + \alpha A^T x + y\f$).
-     *
-     * \param[in]     alpha Scalar \f$\alpha \f$.
-     * \param[in]     DimX  Dimension of the vector x.
-     * \param[in]     x     Vector x.
-     * \param[in]     incX  Stride of vector x.
-     * \param[in]     DimY  Dimension of the vector y.
-     * \param[in]     beta  Scalar \f$\beta \f$.
-     * \param[in,out] y     In-/Output vector y.
-     * \param[in]     incY  Stride of vector y.
-     *
-    \*/
-
+    //! 
+    //! Calls the blas-Routine (\f$y = \beta y + \alpha A^T x + y\f$).
+    //! 
+    //! \param[in]     alpha Scalar \f$\alpha \f$.
+    //! \param[in]     DimX  Dimension of the vector x.
+    //! \param[in]     x     Vector x.
+    //! \param[in]     incX  Stride of vector x.
+    //! \param[in]     DimY  Dimension of the vector y.
+    //! \param[in]     beta  Scalar \f$\beta \f$.
+    //! \param[in,out] y     In-/Output vector y.
+    //! \param[in]     incY  Stride of vector y.
+    //!
     virtual
     void
     gemv_Transposed(
@@ -365,22 +346,20 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const UTILS_PURE_VIRTUAL;
+    ) const = 0;
 
-    /*!
-     * \brief gemv:
-     *        Calls the blas-Routine (\f$y = \beta y + \alpha (A+A^T-\textrm{diag}(A)) x + y\f$).
-     *
-     * \param[in]     alpha Scalar \f$\alpha \f$.
-     * \param[in]     DimX  Dimension of the vector x.
-     * \param[in]     x     Vector x.
-     * \param[in]     incX  Stride of vector x.
-     * \param[in]     DimY  Dimension of the vector y.
-     * \param[in]     beta  Scalar \f$\beta \f$.
-     * \param[in,out] y     In-/Output vector y.
-     * \param[in]     incY  Stride of vector y.
-     *
-    \*/
+    //! 
+    //! Calls the blas-Routine (\f$y = \beta y + \alpha (A+A^T-\textrm{diag}(A)) x + y\f$).
+    //! 
+    //! \param[in]     alpha Scalar \f$\alpha \f$.
+    //! \param[in]     DimX  Dimension of the vector x.
+    //! \param[in]     x     Vector x.
+    //! \param[in]     incX  Stride of vector x.
+    //! \param[in]     DimY  Dimension of the vector y.
+    //! \param[in]     beta  Scalar \f$\beta \f$.
+    //! \param[in,out] y     In-/Output vector y.
+    //! \param[in]     incY  Stride of vector y.
+    //!
     virtual
     void
     gemv_Symmetric(
@@ -392,7 +371,7 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const UTILS_PURE_VIRTUAL;
+    ) const = 0;
 
     virtual
     void
@@ -400,16 +379,13 @@ namespace lapack_wrapper {
       UTILS_ERROR0( "get_full_view not defined\n");
     }
 
-    /*!
-     * \brief print:
-     *        Print the sparse matrix to a stream element by element
-     *
-     *        row, col, value
-     *
-     *
-     * \param[in] stream  Stream where to write elements.
-     *
-     */
+    //! 
+    //! Print the sparse matrix to a stream element by element:
+    //!
+    //! row, col, value
+    //! 
+    //! \param[in] stream  Stream where to write elements.
+    //! 
     void print( ostream_type & stream ) const;
 
   };
@@ -460,92 +436,63 @@ namespace lapack_wrapper {
       bool    fi
     );
 
-    virtual
-    ~SparseCCOOR() UTILS_OVERRIDE
+    ~SparseCCOOR() override
     {}
 
-    virtual
-    void
-    clear() UTILS_OVERRIDE;
+    void clear() override;
+    void setZero() override;
 
-    virtual
-    void
-    setZero() UTILS_OVERRIDE;
-
-    virtual
     void
     init(
       integer N,
       integer M,
       integer reserve_nnz,
       bool    fi = false
-    ) UTILS_OVERRIDE;
+    ) override;
 
-    virtual
     bool
-    FORTRAN_indexing() const UTILS_OVERRIDE
+    FORTRAN_indexing() const override
     { return m_fortran_indexing; }
 
-    virtual
     void
-    transpose() UTILS_OVERRIDE {
+    transpose() override {
       m_rows.swap(m_cols);
       std::swap( m_nrows, m_ncols );
     }
 
-    virtual
-    void
-    to_FORTRAN_indexing() UTILS_OVERRIDE;
+    void to_FORTRAN_indexing() override;
+    void to_C_indexing() override;
 
-    virtual
-    void
-    to_C_indexing() UTILS_OVERRIDE;
-
-    virtual
     void
     push_value_C(
       integer   row,
       integer   col,
       valueType val
-    ) UTILS_OVERRIDE;
+    ) override;
 
-    virtual
     void
     push_value_F(
       integer   row,
       integer   col,
       valueType val
-    ) UTILS_OVERRIDE;
+    ) override;
 
-    virtual
-    void
-    get_matrix( MatW & M ) const UTILS_OVERRIDE;
+    void get_matrix( MatW & M ) const override;
+    void get_matrix_symmetric( MatW & M ) const override;
+    void get_matrix_transposed( MatW & M ) const override;
+    bool foundNaN() const override;
 
-    virtual
-    void
-    get_matrix_symmetric( MatW & M ) const UTILS_OVERRIDE;
-
-    virtual
-    void
-    get_matrix_transposed( MatW & M ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    foundNaN() const UTILS_OVERRIDE;
-
-    virtual
     void
     get_data(
       integer   const * & pRows,
       integer   const * & pCols,
       valueType const * & pValues
-    ) const UTILS_OVERRIDE {
+    ) const override {
       pRows   = &m_rows.front();
       pCols   = &m_cols.front();
       pValues = &m_vals.front();
     }
 
-    virtual
     void
     gemv(
       valueType       alpha,
@@ -556,9 +503,8 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     void
     gemv_Transposed(
       valueType       alpha,
@@ -569,9 +515,8 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     void
     gemv_Symmetric(
       valueType       alpha,
@@ -582,7 +527,7 @@ namespace lapack_wrapper {
       integer         DimY,
       valueType       y[],
       integer         incY
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
     /*\
     :|:           _    _ _ _   _               _             _   _            _
@@ -663,7 +608,7 @@ namespace lapack_wrapper {
     reserve( integer reserve_nnz );
 
     void
-    get_full_view( MatrixWrapper<valueType> & MW ) UTILS_OVERRIDE {
+    get_full_view( MatrixWrapper<valueType> & MW ) override {
       UTILS_ASSERT0(
         m_matrix_is_full,
         "get_full_view, matrix is sparse\n"

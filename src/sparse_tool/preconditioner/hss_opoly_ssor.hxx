@@ -34,7 +34,7 @@ namespace SparseTool {
     CCoorMatrix<rvalueType>        Amat;
     mutable Vector<rvalueType>     s0, s1, As1, y, tmp1, tmp2;
 
-    //! build incomplete LDU decomposition with specified pattern \c P
+    //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
     build_HSS_OPOLY_SSOR( MAT const & A, indexType m, rvalueType const & omega, indexType iterssor ) {
@@ -75,7 +75,7 @@ namespace SparseTool {
       //preco . build( Amat );
     }
 
-    //! apply preconditioner to vector \c v and store result in vector \c y
+    //! apply preconditioner to vector `v`  and store result in vector \c y
     void
     mulPoly( Vector<rvalueType> & _y, Vector<rvalueType> const & v ) const {
       s0  = rvalueType(1.5)*v;
@@ -108,13 +108,13 @@ namespace SparseTool {
     ) : Preco<HSS_OPOLY_SSOR_PRECO>()
     { build_HSS_OPOLY_SSOR( M, m, omega, iterssor ); }
 
-    //! build the preconditioner from matrix \c M
+    //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
     build( MAT const & M, indexType m, rvalueType const & omega, indexType iterssor )
     { build_HSS_OPOLY_SSOR( M, m, omega, iterssor ); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c y
+    //! apply preconditioner to vector `v`  and store result to vector \c y
     template <typename VECTOR>
     void
     assPreco( VECTOR & _y, VECTOR const & v ) const {
@@ -137,8 +137,10 @@ namespace SparseTool {
   #endif
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::HSS_OPOLY_SSOR_Preconditioner;
 }
+#endif
 
 #endif

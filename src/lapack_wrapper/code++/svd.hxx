@@ -78,8 +78,7 @@ namespace lapack_wrapper {
     , m_svd_used(_svd_used)
     {}
 
-    virtual
-    ~SVD_no_alloc() UTILS_OVERRIDE
+    ~SVD_no_alloc() override
     {}
 
     integer
@@ -95,11 +94,13 @@ namespace lapack_wrapper {
       integer   * iWork
     );
 
-    /*!
-     *  Do SVD factorization of a rectangular matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
+    //!
+    //! Do SVD factorization of a rectangular matrix.
+    //!
+    //! \param who string used in error message
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     virtual
     void
     factorize_nodim(
@@ -120,7 +121,7 @@ namespace lapack_wrapper {
     valueType V    ( integer i, integer j ) const { return m_VTmat[j+i*m_ncols]; }
     valueType sigma( integer i )            const { return m_Svec[i]; }
 
-    //! y <- alpha * U * x + beta * y
+    //! `y <- alpha * U * x + beta * y`
     void
     U_mul(
       valueType       alpha,
@@ -139,7 +140,7 @@ namespace lapack_wrapper {
       );
     }
 
-    //! y <- alpha * U' * x + beta * y
+    //! `y <- alpha * U' * x + beta * y`
     void
     Ut_mul(
       valueType       alpha,
@@ -158,7 +159,7 @@ namespace lapack_wrapper {
       );
     }
 
-    //! y <- alpha * V * x + beta * y
+    //! `y <- alpha * V * x + beta * y`
     void
     V_mul(
       valueType       alpha,
@@ -177,7 +178,7 @@ namespace lapack_wrapper {
       );
     }
 
-    //! y <- alpha * V' * x + beta * y
+    //! `y <- alpha * V' * x + beta * y`
     void
     Vt_mul(
       valueType       alpha,
@@ -204,13 +205,8 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
-    bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
+    bool solve( valueType xb[] ) const override;
+    bool t_solve( valueType xb[] ) const override;
 
   };
 
@@ -256,21 +252,20 @@ namespace lapack_wrapper {
     using SVD_no_alloc<T>::no_allocate;
 
     SVD( SVD_USED _svd_used = SVD_no_alloc<T>::USE_GESVD );
-
-    virtual
-    ~SVD() UTILS_OVERRIDE;
+    ~SVD() override;
 
     void
     allocate( integer NR, integer NC );
 
-    /*!
-     *  Do SVD factorization of a rectangular matrix
-     *  \param NR  number of rows of the matrix
-     *  \param NC  number of columns of the matrix
-     *  \param A   pointer to the matrix
-     *  \param LDA Leading dimension of the matrix
-     */
-    virtual
+    //!
+    //! Do SVD factorization of a rectangular matrix.
+    //!
+    //! \param who string used in error message
+    //! \param NR  number of rows of the matrix
+    //! \param NC  number of columns of the matrix
+    //! \param A   pointer to the matrix
+    //! \param LDA Leading dimension of the matrix
+    //!
     void
     factorize(
       char const      who[],
@@ -278,19 +273,18 @@ namespace lapack_wrapper {
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       this->factorize_nodim( who, A, LDA );
     }
 
-    virtual
     bool
     factorize(
       integer         NR,
       integer         NC,
       valueType const A[],
       integer         LDA
-    ) UTILS_OVERRIDE {
+    ) override {
       this->allocate( NR, NC );
       return this->factorize_nodim( A, LDA );
     }

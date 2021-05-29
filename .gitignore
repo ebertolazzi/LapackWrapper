@@ -11,3 +11,7 @@ lapack_wrapper_config.hh
 Testing
 DerivedData
 vs_2017*
+docs_build/sphinx/_doxygen
+docs_build/sphinx/api-cpp
+docs_build/sphinx/_build
+docs_build/sphinx/api-sparse

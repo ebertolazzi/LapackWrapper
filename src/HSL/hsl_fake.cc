@@ -1,4 +1,4 @@
-/**
+/*
  * \file hslsolver.cc
  * Header definitions of the class HSLsolver.
  *

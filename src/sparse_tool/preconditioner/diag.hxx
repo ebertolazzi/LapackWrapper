@@ -51,7 +51,10 @@ namespace SparseTool {
     //! return the diagonal of the diagonal preconditioner
     Vector<valueType> const & GetD(void) const { return D; }
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
+    //!
     template <typename VECTOR>
     void
     assPreco( VECTOR & res, VECTOR const & v ) const {
@@ -68,8 +71,10 @@ namespace SparseTool {
   #endif
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::Dpreconditioner;
 }
+#endif
 
 #endif

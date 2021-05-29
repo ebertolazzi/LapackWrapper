@@ -51,7 +51,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::factorize;
 
     BandedLU();
-    virtual ~BandedLU() UTILS_OVERRIDE;
+    ~BandedLU() override;
 
     void
     setup(
@@ -106,55 +106,40 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
-    bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
+    bool solve( valueType xb[] ) const override;
+    void solve( char const who[], valueType xb[] ) const override;
+    bool t_solve( valueType xb[] ) const override;
+    void t_solve( char const who[], valueType xb[] ) const override;
 
-    virtual
-    void
-    solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    void
-    t_solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
     bool
     solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     void
     solve(
       char const who[],
       integer    nrhs,
       valueType  B[],
       integer    ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     bool
     t_solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     void
     t_solve(
       char const who[],
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
     /*\
     :|:     _
@@ -204,9 +189,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::factorize;
 
     BandedSPD();
-
-    virtual
-    ~BandedSPD() UTILS_OVERRIDE;
+    ~BandedSPD() override;
 
     void
     setup(
@@ -241,55 +224,40 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    virtual
-    bool
-    solve( valueType xb[] ) const UTILS_OVERRIDE;
+    bool solve( valueType xb[] ) const override;
+    void solve( char const who[], valueType xb[] ) const override;
+    bool t_solve( valueType xb[] ) const override;
+    void t_solve( char const who[], valueType xb[] ) const override;
 
-    virtual
-    void
-    solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    bool
-    t_solve( valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
-    void
-    t_solve( char const who[], valueType xb[] ) const UTILS_OVERRIDE;
-
-    virtual
     bool
     solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     void
     solve(
       char const who[],
       integer    nrhs,
       valueType  B[],
       integer    ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     bool
     t_solve(
       integer   nrhs,
       valueType B[],
       integer   ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
-    virtual
     void
     t_solve(
       char const who[],
       integer    nrhs,
       valueType  B[],
       integer    ldB
-    ) const UTILS_OVERRIDE;
+    ) const override;
 
     /*\
     :|:     _

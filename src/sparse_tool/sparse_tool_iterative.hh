@@ -1,70 +1,3 @@
-/*!
-
-  \file     sparse_tool_iterative.hh
-  \mainpage SparseTool: a Sparse Matrix Manager 
-  \date     2011, July 21
-  \version  1.0
-  \note     based on SparseLib 11.0 (C 1999 -- 2008)
-
-  \author Enrico Bertolazzi
- 
-  \par Affiliations:
-       Dipartimento di Ingegneria Industriale<BR>
-       Universita` degli Studi di Trento<BR>
-       email: enrico.bertolazzi@unitn.it<BR>
-  
-  \section The Preconditioner Classes and Iterative algorithms
-  
-  The library consists of the following templated classes:
-  - \c IdPreconditioner\<T\> which implements the identity preconditioner.
-  - \c Dpreconditioner\<T\> which implements the diagonal preconditioner.
-  - \c ILDUpreconditioner\<T\> which implement an incomplete \a LDU preconditioner.
-
-  A set of template iterative solvers are available:
-  
-  - \c cg implementing the cojugate gradient solver
-  - \c bicgstab implementing the Bi-conjugate stabilized 
-        solver of Van Der Vorst.
-  - \c gmres implementing generalized minimal residual 
-       of Saad-Shultz
-*/
-
-/*!
-
-  \page P2 Iterative solvers
-  Here is an example of the use of the iterative solver:
-
-\code
-  CRowMatrix<double> A;
-  Vector<double>     b, x;
-  ILDUpreconditioner P;
-  double             tolerance;
-  int                maxIter, iter;
-  .
-  .
-  .
-  .
-  double residual = cg(A, b, x, P, tolerance, maxIter, iter);
-  
-  double residual = bicgstab(A, b, x, P, tolerance, maxIter, iter);
-
-  double residual = gmres(A, b, x, P, tolerance, maxSubIter, maxIter, iter);
-\endcode
-
-  In the example
-
-  - \c A : is the coefficients matrix;
-  - \c b : is the known vector;
-  - \c x : is the vector which will contains the solution;
-  - \c P : is the preconditioner object class;
-  - \c tolerance : is the admitted tolerance;
-  - \c maxSubIter : for \c gmres is the maximum number of
-    iteration before restarting;
-  - \c maxIter : is the maximum number of allowable iterations;
-  - \c iter : is the number of iterations done;
-  - \c residual : the residual of the approximated solution;
-*/
-
 #pragma once
 #ifndef SPARSETOOL_ITERATIVE_HH
 #define SPARSETOOL_ITERATIVE_HH
@@ -106,7 +39,7 @@ namespace SparseTool {
   //   #  #       #     # #     # #   #   #      #   #  
   //  ### ####### ######   #####  #   #   ###### #    # 
   */
-  //! Incomplete \c LDU preconditioner
+  //! Incomplete `LDU` preconditioner
   template <typename T>
   class ILDUiterPreconditioner : public Preco<ILDUiterPreconditioner<T> > {
   public:
@@ -124,7 +57,9 @@ namespace SparseTool {
     RILDUpreconditioner<valueType> P;
     CRowMatrix<valueType>          Mat;
 
-    //! build incomplete LDU decomposition with specified pattern \c P
+    //!
+    //! Build incomplete `LDU` decomposition with specified pattern `P`.
+    //!
     template <typename MAT, typename PAT>
     void
     build_ILDUiter( MAT const & A, PAT const & PT, indexType iter ) {
@@ -147,19 +82,26 @@ namespace SparseTool {
     ILDUiterPreconditioner( MAT const & _M, PRE const & _P, indexType _iter ) : Preco<ILDUITERPRECO>() 
     { build_ILDUiter(_M,_P,_iter); }
 
-    //! build the preconditioner from matrix \c M
+    //!
+    //! Build the preconditioner from matrix `M`.
+    //!
     template <typename MAT>
     void
     build( MAT const & _M, indexType _iter )
     { build_ILDUiter(_M,_M,_iter); }
 
-    //! build the preconditioner from matrix \c M with pattern \c P
+    //!
+    //! Build the preconditioner from matrix `M` with pattern `P`.
+    //!
     template <typename MAT, typename PRE>
     void
     build( MAT const & _M, PRE const & _P, indexType _iter )
     { build_ILDUiter(_M,_P,_iter); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
+    //!
     template <typename VECTOR>
     void
     assPreco( VECTOR & x, VECTOR const & b ) const {
@@ -184,9 +126,11 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::ILDUiterPreconditioner;
 }
+#endif
 
 #endif
 

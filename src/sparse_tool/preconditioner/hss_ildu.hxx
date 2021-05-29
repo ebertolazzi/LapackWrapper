@@ -31,7 +31,7 @@ namespace SparseTool {
     indexType neq;
     ILDUpreconditioner<rvalueType> preco;
 
-    //! build incomplete LDU decomposition with specified pattern \c P
+    //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
     build_HSS_ILDU( MAT const & A ) {
@@ -71,13 +71,16 @@ namespace SparseTool {
     HSS_ILDU_Preconditioner( MAT const & M ) : Preco<HSS_ILDU_PRECO>()
     { build_HSS_ILDU( M ); }
 
-    //! build the preconditioner from matrix \c M
+    //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
     build( MAT const & M )
     { build_HSS_ILDU( M ); }
 
-    //! apply preconditioner to vector \c v and store result to vector \c res
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
+    //!
     template <typename VECTOR>
     void
     assPreco( VECTOR & _y, VECTOR const & v ) const {
@@ -96,8 +99,10 @@ namespace SparseTool {
 
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace SparseToolLoad {
   using ::SparseTool::HSS_ILDU_Preconditioner;
 }
+#endif
 
 #endif
