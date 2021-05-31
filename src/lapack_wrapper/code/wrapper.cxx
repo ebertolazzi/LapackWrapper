@@ -86,6 +86,21 @@ namespace lapack_wrapper {
         scal( m_nrows, sc, p, 1 );
     }
   }
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  template <typename T>
+  void
+  MatrixWrapper<T>::scale_block(
+    valueType sc,
+    integer   nr,
+    integer   nc,
+    integer   irow,
+    integer   icol
+  ) {
+    T * p = m_data+this->iaddr(irow,icol);
+    for ( integer i = 0; i < nc; ++i, p += m_ldData )
+      scal( nr, sc, p, 1 );
+  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

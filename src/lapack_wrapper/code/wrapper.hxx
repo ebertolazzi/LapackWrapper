@@ -314,6 +314,25 @@ namespace lapack_wrapper {
     scale_by( valueType sc );
 
     //! 
+    //! Scale the matrix with value `sc`
+    //! (multiply all elements of the block by `sc`).
+    //!
+    //! \param[in] sc    value used to scale matrix
+    //! \param[in] nr    number of rows of the block to be zeroed
+    //! \param[in] nc    number of columns of the block to be zeroed
+    //! \param[in] irow  starting row
+    //! \param[in] icol  stating column
+    //! 
+    void
+    scale_block(
+      valueType sc,
+      integer   nr,
+      integer   nc,
+      integer   irow,
+      integer   icol
+    );
+
+    //! 
     //! Zeroes a rectangular block of the stored matrix
     //! staring at `(irow,icol)` position.
     //! 
@@ -442,12 +461,16 @@ namespace lapack_wrapper {
       integer         irow = 0,
       integer         icol = 0
     ) {
+      integer inr = irow + nr;
+      integer inc = icol + nc;
       UTILS_ASSERT(
-        irow + nr <= m_nrows &&
-        icol + nc <= m_ncols &&
+        inr <= m_nrows &&
+        inc <= m_ncols &&
         irow >= 0 && icol >= 0,
-        "load_block( nr = {} nc = {},..., irow = {}, icol = {}) bad parameters\n",
-        nr, nc, irow, icol
+        "load_block( nr = {} nc = {}, B, irow = {}, icol = {}) bad parameters\n"
+        "must be irow + nr ({}) <= nrows ({})\n"
+        "must be icol + nc ({}) <= ncols ({})\n",
+        nr, nc, irow, icol, inr, m_nrows, inc, m_ncols
       );
       integer info = gecopy(
         nr, nc,
