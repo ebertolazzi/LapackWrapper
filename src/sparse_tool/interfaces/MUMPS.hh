@@ -69,7 +69,7 @@ namespace SparseTool {
   template <typename T>
   class MUMPS {
   public:  
-    typedef T valueType;
+    typedef T real_type;
     typedef typename MUMPSType<T>::stuctType  stuctType;
     typedef typename MUMPSType<T>::scalarType scalarType;
 
@@ -77,7 +77,7 @@ namespace SparseTool {
   
     stuctType mumpsStruct;
 
-    indexType  numRows, nnz;
+    integer  numRows, nnz;
     Vector<scalarType> Avec;
     Vector<int>        Ivec;
     Vector<int>        Jvec;
@@ -124,7 +124,7 @@ namespace SparseTool {
       Ivec.resize( nnz );
       Jvec.resize( nnz );
       Avec.resize( nnz );
-      indexType ii = 0;
+      integer ii = 0;
       for ( Mat.Begin(); Mat.End(); Mat.Next(), ++ii ) {
         Ivec(ii) = Mat.row()    + 1;
         Jvec(ii) = Mat.column() + 1;

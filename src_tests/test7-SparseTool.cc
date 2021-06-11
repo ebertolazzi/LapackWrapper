@@ -23,11 +23,11 @@
 #include <sparse_tool/sparse_tool_iterative.hh>
 #include <sparse_tool/sparse_tool_matrix_market.hh>
 
-#include <sparse_tool/interfaces/MA41.hh>
-#include <sparse_tool/interfaces/MA48.hh>
+//#include <sparse_tool/interfaces/MA41.hh>
+//#include <sparse_tool/interfaces/MA48.hh>
 #include <sparse_tool/interfaces/SuperLU.hh>
-#include <sparse_tool/interfaces/mkl_pardiso.hh>
-#include <sparse_tool/interfaces/UMF.hh>
+//#include <sparse_tool/interfaces/mkl_pardiso.hh>
+//#include <sparse_tool/interfaces/UMF.hh>
 
 #include <fstream>
 #include <iostream>
@@ -37,7 +37,7 @@
 #pragma clang diagnostic ignored "-Wshorten-64-to-32"
 #endif
 
-#include "zstream/izstream.hh"
+#include "Utils.hh"
 
 #ifdef __clang__
 #pragma clang diagnostic pop
@@ -71,12 +71,12 @@ testSparseTool( istream & mm_file ) {
   rhs   . resize( A.numRows() );
   resid . resize( A.numRows() );
 
-  exact = 1;
-  rhs   = A * exact;
+  exact.fill(1);
+  rhs = A * exact;
 
 #if 1
 
-  x = 0;
+  x.setZero();
   fmt::print("factorize (ildu) ...");
   tm.tic();
   ildu.build(A);
@@ -97,11 +97,11 @@ testSparseTool( istream & mm_file ) {
   
   resid = rhs - A*x;
 
-  fmt::print("error    (bicgstab) = {}\n", dist2( x, exact ) );
-  fmt::print("residual (bicgstab) = {}\n", normi( resid ) );
+  fmt::print("error    (bicgstab) = {}\n", (x-exact).norm() );
+  fmt::print("residual (bicgstab) = {}\n", resid.lpNorm<Eigen::Infinity>() );
 #endif
 
-#if 1
+#if 0
   x = 0;
   MA41<double> ma41;
   ma41.load( A );
@@ -112,8 +112,8 @@ testSparseTool( istream & mm_file ) {
   fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   resid = rhs - A*x;
-  fmt::print("error    (MA41) = {}\n", dist2( x, exact ) );
-  fmt::print("residual (MA41) = {}\n", normi( resid ) );
+  fmt::print("error    (MA41) = {}\n", (x-exact).norm() );
+  fmt::print("residual (MA41) = {}\n", resid.lpNorm<Eigen::Infinity>() );
 #endif
 
 #if 0
@@ -127,12 +127,12 @@ testSparseTool( istream & mm_file ) {
   fmt::print(" {} [ms] done\n", tm.elapsed_ms() );
 
   resid = rhs - A*x;
-  fmt::print("error    (MA48) = {}\n", dist2( x, exact ) );
-  fmt::print("residual (MA48) = {}\n", normi( resid ) );
+  fmt::print("error    (MA48) = {}\n", (x-exact).norm() );
+  fmt::print("residual (MA48) = {}\n", resid.lpNorm<Eigen::Infinity>() );
 #endif
 
-#if 1
-  x = 0;
+#if 0
+  x.setZero();
   mkl_PardisoRealU pardiso;
   pardiso.load( A );
   //pardiso.check_matrix();
@@ -144,12 +144,12 @@ testSparseTool( istream & mm_file ) {
   fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   resid = rhs - A*x;
-  fmt::print("error    (pardiso) = {}\n", dist2( x, exact ) );
-  fmt::print("residual (pardiso) = {}\n", normi( resid ) );
+  fmt::print("error    (pardiso) = {}\n", (x-exact).norm() );
+  fmt::print("residual (pardiso) = {}\n", resid.lpNorm<Eigen::Infinity>() );
 #endif
 
 #if 1
-  x = 0;
+  x.setZero();
   SuperLU<double> superlu;
   superlu.load( A );
   fmt::print("\nsolve    (superlu) ... ");
@@ -159,12 +159,12 @@ testSparseTool( istream & mm_file ) {
   fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   resid = rhs - A*x;
-  fmt::print("error    (superlu) = {}\n", dist2( x, exact ) );
-  fmt::print("residual (superlu) = {}\n", normi( resid ) );
+  fmt::print("error    (superlu) = {}\n", (x-exact).norm() );
+  fmt::print("residual (superlu) = {}\n", resid.lpNorm<Eigen::Infinity>() );
 #endif
 
-#if 1
-  x = 0;
+#if 0
+  x.setZero();
   UMF<double> umf;
   umf.load( A );
   fmt::print("\nsolve    (UMF) ... ");
@@ -174,12 +174,12 @@ testSparseTool( istream & mm_file ) {
   fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   resid = rhs - A*x;
-  fmt::print("error    (UMF) = {}\n", dist2( x, exact ) );
-  fmt::print("residual (UMF) = {}\n", normi( resid ) );
+  fmt::print("error    (UMF) = {}\n", (x-exact).norm() );
+  fmt::print("residual (UMF) = {}\n", resid.lpNorm<Eigen::Infinity> );
 #endif
 
   resid = rhs - A*exact;
-  fmt::print( "\n\nresidual (exact) = {}\n\n", normi( resid ) );
+  fmt::print( "\n\nresidual (exact) = {}\n\n", resid.lpNorm<Eigen::Infinity>() );
 }
 
 int

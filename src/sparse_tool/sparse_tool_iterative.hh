@@ -49,20 +49,20 @@ namespace SparseTool {
     typedef Preco<ILDUITERPRECO>      PRECO;
     #endif
 
-    typedef T valueType; //!< type of the elements of the preconditioner
+    typedef T real_type; //!< type of the elements of the preconditioner
 
   private:
 
-    indexType                      maxIter;
-    RILDUpreconditioner<valueType> P;
-    CRowMatrix<valueType>          Mat;
+    integer                      maxIter;
+    RILDUpreconditioner<real_type> P;
+    CRowMatrix<real_type>          Mat;
 
     //!
     //! Build incomplete `LDU` decomposition with specified pattern `P`.
     //!
     template <typename MAT, typename PAT>
     void
-    build_ILDUiter( MAT const & A, PAT const & PT, indexType iter ) {
+    build_ILDUiter( MAT const & A, PAT const & PT, integer iter ) {
       maxIter = iter;
       P.build(A,PT);
       Mat = A;
@@ -75,11 +75,11 @@ namespace SparseTool {
     ILDUiterPreconditioner(void) : Preco<ILDUITERPRECO>() {}
     
     template <typename MAT>
-    ILDUiterPreconditioner( MAT const & _M, indexType _iter ) : Preco<ILDUITERPRECO>() 
+    ILDUiterPreconditioner( MAT const & _M, integer _iter ) : Preco<ILDUITERPRECO>() 
     { build_ILDUiter( _M, _M, _iter ); }
 
     template <typename MAT, typename PRE>
-    ILDUiterPreconditioner( MAT const & _M, PRE const & _P, indexType _iter ) : Preco<ILDUITERPRECO>() 
+    ILDUiterPreconditioner( MAT const & _M, PRE const & _P, integer _iter ) : Preco<ILDUITERPRECO>() 
     { build_ILDUiter(_M,_P,_iter); }
 
     //!
@@ -87,7 +87,7 @@ namespace SparseTool {
     //!
     template <typename MAT>
     void
-    build( MAT const & _M, indexType _iter )
+    build( MAT const & _M, integer _iter )
     { build_ILDUiter(_M,_M,_iter); }
 
     //!
@@ -95,7 +95,7 @@ namespace SparseTool {
     //!
     template <typename MAT, typename PRE>
     void
-    build( MAT const & _M, PRE const & _P, indexType _iter )
+    build( MAT const & _M, PRE const & _P, integer _iter )
     { build_ILDUiter(_M,_P,_iter); }
 
     //!
@@ -107,11 +107,11 @@ namespace SparseTool {
     assPreco( VECTOR & x, VECTOR const & b ) const {
       VECTOR q(b.size()), r(x.size());
       x = b;
-      for ( indexType i = 0; i < maxIter; ++i ) {
+      for ( integer i = 0; i < maxIter; ++i ) {
         r = b-Mat*x;
         q = r / P;
-        x += valueType(0.5)*q;
-        //r -= valueType(0.1)*Mat*q;
+        x += real_type(0.5)*q;
+        //r -= real_type(0.1)*Mat*q;
       }
     }
 

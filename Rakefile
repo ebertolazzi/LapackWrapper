@@ -22,7 +22,9 @@ TESTS = [
   "test3-BandedMatrix",
   "test4-BFGS",
   "test5-BLOCKTRID",
-  "test6-EIGS"
+  "test6-EIGS",
+  "test7-SparseTool",
+  "test8-SparseToolComplex"
 ]
 
 desc "run tests on linux/osx"

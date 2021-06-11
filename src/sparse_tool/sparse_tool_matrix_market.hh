@@ -104,7 +104,7 @@ namespace SparseTool {
     //! some information about the last loaded matrix. 
     //!
     void
-    info( ostream & stream ) const {
+    info( ostream_type & stream ) const {
       stream << "\nRows:        " << nRows
              << "\nColumns:     " << nCols
              << "\nNon zeros:   " << numNnz
@@ -193,8 +193,8 @@ namespace SparseTool {
         sscanf( line, "%u%u", &nRows, &nCols );
         numNnz = nRows * nCols;
         break;
-      default:
-        break;
+      //default:
+      //  break;
       }
     }
 
@@ -231,7 +231,7 @@ namespace SparseTool {
     }
 
     void
-    read( istream & stream, CCoorMatrix<indexType> & mat ) {
+    read( istream & stream, CCoorMatrix<integer> & mat ) {
 
       readHeader( stream );
 
@@ -363,7 +363,7 @@ namespace SparseTool {
     }
 
     void
-    readFull( istream & stream, Vector<indexType> & mat ) {
+    readFull( istream & stream, Vector<integer> & mat ) {
 
       readHeader( stream );
 
@@ -375,11 +375,11 @@ namespace SparseTool {
         vType == MM_INTEGER,
         "MatrixMarket: try to read an integer matrix into a non integer one!, data is " << *this
       );
-      mat.clear(); mat.resize( numNnz );
+      mat.resize( numNnz );
       for ( unsigned kk = 0; kk < numNnz; ++kk ) {
         int a;
         sscanf(line, "%d", &a);
-        mat.push_back( a );
+        mat(kk) = a;
       }
     }
 
@@ -439,7 +439,7 @@ namespace SparseTool {
     template<typename MAT>
     void
     read( istream & stream, MAT & M ) {
-      CCoorMatrix<typename MAT::valueType> M1;
+      CCoorMatrix<typename MAT::real_type> M1;
       read( stream, M1 );
       M.resize( M1 );
     }
@@ -492,7 +492,7 @@ namespace SparseTool {
     //! Print to the stream object `stream` some
     //! information about the last loaded matrix.
     //!
-    friend ostream & operator << ( ostream & stream, MatrixMarket const & mm )
+    friend ostream_type & operator << ( ostream_type & stream, MatrixMarket const & mm )
     { mm.info( stream ); return stream; }
   };
 
@@ -545,8 +545,8 @@ namespace SparseTool {
             << A.value().real() << '\t'
             << A.value().imag() << '\n';
         break;
-      default:
-        break;
+    //  default:
+    //    break;
     }
 
     file.close();
@@ -601,8 +601,8 @@ namespace SparseTool {
       case MM_COMPLEX:
         SPARSETOOL_ERR("Cannot write a NON complex matrix with a complex type"); 
         break;
-      default:
-        break;
+    //  default:
+    //    break;
     }
 
     file.close();
@@ -630,7 +630,7 @@ namespace SparseTool {
       << "%%MatrixMarket matrix array complex general\n"
       << MM_HEADER
       << V.size() << " 1\n";
-    for ( indexType i = 0; i < V.size(); ++i )
+    for ( integer i = 0; i < V.size(); ++i )
       file << V(i).real() << ' ' << V(i).imag() << '\n';
 
     file.close();
@@ -657,7 +657,7 @@ namespace SparseTool {
     file << "%%MatrixMarket matrix array real general\n"
          << MM_HEADER
          << V.size() << " 1\n";
-    for ( indexType i = 0; i < V.size(); ++i )
+    for ( integer i = 0; i < V.size(); ++i )
       file << V(i) << '\n';
 
     file.close();

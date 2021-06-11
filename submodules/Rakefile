@@ -1,4 +1,5 @@
 require "rake"
+require "fileutils"
 
 task :default => [:install_osx]
 

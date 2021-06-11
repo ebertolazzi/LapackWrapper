@@ -22,7 +22,7 @@ namespace SparseTool {
     typedef Preco<IDPRECO>      PRECO;
     #endif
 
-    typedef T valueType; //!< type of the element of the preconditioner
+    typedef T real_type; //!< type of the element of the preconditioner
 
   public:
 

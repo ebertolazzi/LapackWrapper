@@ -23,20 +23,20 @@ namespace SparseTool {
     typedef Preco<ILDUKPRECO>      PRECO;
     #endif
 
-    typedef T valueType; //!< type of the element of the preconditioner
+    typedef T real_type; //!< type of the element of the preconditioner
 
   private:
 
-    Vector<indexType>          Lnnz, Unnz;
+    Vector<integer>          Lnnz, Unnz;
 
-    Vector<valueType>          W;
-    Vector<valueType>          D;
+    Vector<real_type>          W;
+    Vector<real_type>          D;
 
-    Vector<Vector<valueType> > L_A;
-    Vector<Vector<indexType> > L_J;
+    Vector<Vector<real_type> > L_A;
+    Vector<Vector<integer> > L_J;
 
-    Vector<Vector<valueType> > U_A;
-    Vector<Vector<indexType> > U_I;
+    Vector<Vector<real_type> > U_A;
+    Vector<Vector<integer> > U_I;
 
     //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
@@ -65,8 +65,8 @@ namespace SparseTool {
       Unnz = 0;
 
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
+        integer i = A.row();
+        integer j = A.column();
         if      ( i > j ) ++Lnnz(i);
         else if ( i < j ) ++Unnz(j);
       }
@@ -76,7 +76,7 @@ namespace SparseTool {
       L_J.resize( PRECO::pr_size );
       U_A.resize( PRECO::pr_size );
       U_I.resize( PRECO::pr_size );
-      for ( indexType i = 0; i < PRECO::pr_size; ++i ) {
+      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
         L_A(i).reserve(Lnnz(i));
         L_J(i).reserve(Lnnz(i));
         U_A(i).reserve(Unnz(i));
@@ -86,23 +86,23 @@ namespace SparseTool {
       D.resize( PRECO::pr_size );
       W.resize( PRECO::pr_size );
 
-      D = valueType(1);
-      W = valueType(0);
+      D = real_type(1);
+      W = real_type(0);
 
       // step 2: insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
-        typename MAT::valueType const val = A.value(); // (i,j);
+        integer i = A.row();
+        integer j = A.column();
+        typename MAT::real_type const val = A.value(); // (i,j);
         if      ( i > j ) { L_A(i).push_back(val); L_J(i).push_back(j); }
         else if ( i < j ) { U_A(j).push_back(val); U_I(j).push_back(i); }
         else              D(i) = val;
       }
 
       // SORTING (da eliminare)
-      //for ( indexType i = 0; i < PRECO::pr_size; ++i ) {
-      //  QuickSortI<valueType>( &L_J(i).front(), &L_A(i).front(), L_A(i).size() );
-      //  QuickSortI<valueType>( &U_I(i).front(), &U_A(i).front(), U_A(i).size() );
+      //for ( integer i = 0; i < PRECO::pr_size; ++i ) {
+      //  QuickSortI<real_type>( &L_J(i).front(), &L_A(i).front(), L_A(i).size() );
+      //  QuickSortI<real_type>( &U_I(i).front(), &U_A(i).front(), U_A(i).size() );
       //}
 
       /*
@@ -128,50 +128,50 @@ namespace SparseTool {
       */
 
       // build LDU decomposition
-      for ( indexType k = 1; k < PRECO::pr_size; ++k ) {
-        indexType kk;
-        Vector<valueType> & L_Ak = L_A(k);
-        Vector<indexType> & L_Jk = L_J(k);
-        Vector<valueType> & U_Ak = U_A(k);
-        Vector<indexType> & U_Ik = U_I(k);
+      for ( integer k = 1; k < PRECO::pr_size; ++k ) {
+        integer kk;
+        Vector<real_type> & L_Ak = L_A(k);
+        Vector<integer> & L_Jk = L_J(k);
+        Vector<real_type> & U_Ak = U_A(k);
+        Vector<integer> & U_Ik = U_I(k);
 
         // W = M21^T  ---- l^T = D^(-1)U^(-T) M21^T
         for ( kk = 0; kk < L_Ak.size(); ++kk ) W(L_Jk(kk)) = L_Ak(kk);
 
         // W = U^(-T) W ---- l^T = D^(-1)U^(-T) M21^T
         for ( kk = 0; kk < L_Ak.size(); ++kk ) {
-          indexType              j = L_Jk(kk);
-          Vector<valueType> & U_Aj = U_A(j);
-          Vector<indexType> & U_Ij = U_I(j);
-          valueType bf = 0;
-          for ( indexType jj = 0; jj < U_Aj.size(); ++jj ) bf += W(U_Ij(jj))*U_Aj(jj);
+          integer              j = L_Jk(kk);
+          Vector<real_type> & U_Aj = U_A(j);
+          Vector<integer> & U_Ij = U_I(j);
+          real_type bf = 0;
+          for ( integer jj = 0; jj < U_Aj.size(); ++jj ) bf += W(U_Ij(jj))*U_Aj(jj);
           W(j) -= bf;
         }
         // l^T = D^(-1) W;   W = 0 ---- l^T = D^(-1)U^(-T) M21^T
         for ( kk = 0; kk < L_Ak.size(); ++kk )
-          { indexType j = L_Jk(kk); L_Ak(kk) = W(j) / D(j); W(j) = 0; }
+          { integer j = L_Jk(kk); L_Ak(kk) = W(j) / D(j); W(j) = 0; }
 
         // W = M12  ----  u = D^(-1)L^(-1) M12
         for ( kk = 0; kk < U_Ak.size(); ++kk ) W(U_Ik(kk)) = U_Ak(kk);
 
         // W = L^(-1) W  ----  u = D^(-1)L^(-1) M12
         for ( kk = 0; kk < U_Ak.size(); ++kk ) {
-          indexType              i = U_Ik(kk);
-          Vector<valueType> & L_Ai = L_A(i);
-          Vector<indexType> & L_Ji = L_J(i);
-          valueType bf = 0;
-          for ( indexType ii = 0; ii < L_Ai.size(); ++ii ) bf += W(L_Ji(ii))*L_Ai(ii);
+          integer              i = U_Ik(kk);
+          Vector<real_type> & L_Ai = L_A(i);
+          Vector<integer> & L_Ji = L_J(i);
+          real_type bf = 0;
+          for ( integer ii = 0; ii < L_Ai.size(); ++ii ) bf += W(L_Ji(ii))*L_Ai(ii);
           W(i) -= bf;
         }
 
-        valueType bf = 0;
+        real_type bf = 0;
         for ( kk = 0; kk < L_Ak.size(); ++kk ) bf += L_Ak(kk) * W(L_Jk(kk));
         D(k) -= bf;
 
         for ( kk = 0; kk < U_Ak.size(); ++kk )
-          { indexType i = U_Ik(kk); U_Ak(kk) = W(i) / D(i); W(i) = 0; }
+          { integer i = U_Ik(kk); U_Ak(kk) = W(i) / D(i); W(i) = 0; }
 
-        SPARSETOOL_ASSERT( D(k) != valueType(0), "ILDUKpreconditioner found D(" << k << ") == 0!" );
+        SPARSETOOL_ASSERT( D(k) != real_type(0), "ILDUKpreconditioner found D(" << k << ") == 0!" );
       }
     }
 
@@ -197,13 +197,13 @@ namespace SparseTool {
     void
     assPreco( VECTOR & res, VECTOR const & v ) const {
       res = v;
-      indexType k = 0;
+      integer k = 0;
       // solve L
       while ( ++k < PRECO::pr_size ) {
-        indexType i_cnt = L_A(k).size();
-        valueType const * pA = &L_A(k).front();
-        indexType const * pJ = &L_J(k).front();
-        valueType bf = 0;
+        integer i_cnt = L_A(k).size();
+        real_type const * pA = &L_A(k).front();
+        integer const * pJ = &L_J(k).front();
+        real_type bf = 0;
         while ( i_cnt-- > 0 ) bf += *pA++ * res(*pJ++);
         res(k) -= bf;
       }
@@ -213,10 +213,10 @@ namespace SparseTool {
 
       // solve U
       do {
-        typename VECTOR::valueType resk = res(--k);
-        indexType i_cnt = U_A(k).size();
-        valueType const * pA = &U_A(k).front();
-        indexType const * pI = &U_I(k).front();
+        typename VECTOR::real_type resk = res(--k);
+        integer i_cnt = U_A(k).size();
+        real_type const * pA = &U_A(k).front();
+        integer const * pI = &U_I(k).front();
         while ( i_cnt-- > 0 ) res(*pI++) -= *pA++ * resk;
       } while ( k > 1 );
 

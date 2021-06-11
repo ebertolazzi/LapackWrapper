@@ -79,9 +79,9 @@ namespace SparseTool {
 
       int status = umfpack_di_symbolic(
         A_stored.numRows(), A_stored.numCols(),
-        (int const *)&A_stored.getC().front(),
-        (int const *)&A_stored.getI().front(),
-        &A_stored.getA().front(),
+        (int const *)A_stored.getC().data(),
+        (int const *)A_stored.getI().data(),
+        A_stored.getA().data(),
         &Symbolic, Control, Info
       );
 
@@ -91,9 +91,9 @@ namespace SparseTool {
       }
 
       status = umfpack_di_numeric(
-        (int const *)&A_stored.getC().front(),
-        (int const *)&A_stored.getI().front(),
-        &A_stored.getA().front(),
+        (int const *)A_stored.getC().data(),
+        (int const *)A_stored.getI().data(),
+        A_stored.getA().data(),
         Symbolic, &Numeric, Control, Info
       );
 
@@ -125,9 +125,9 @@ namespace SparseTool {
     ) {
       int status = umfpack_di_solve (
         (transpose ? UMFPACK_At : UMFPACK_A),
-        (int const *)&A_stored.getC().front(),
-        (int const *)&A_stored.getI().front(),
-        &A_stored.getA().front(),
+        (int const *)A_stored.getC().data(),
+        (int const *)A_stored.getI().data(),
+        A_stored.getA().data(),
         x, b, Numeric, Control, Info
       );
       if ( status < 0 ) {
@@ -159,8 +159,8 @@ namespace SparseTool {
     typedef UMFpreconditioner<T> UMFPRECO;
     typedef Preco<UMFPRECO>      PRECO;
     #endif
-    typedef T valueType; //!< type of the element of the preconditioner
-    typedef typename return_trait<T>::valueType realType;
+    typedef T real_type; //!< type of the element of the preconditioner
+    typedef typename return_trait<T>::real_type realType;
 
   private:
 

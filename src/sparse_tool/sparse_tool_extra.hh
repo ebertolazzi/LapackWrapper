@@ -45,8 +45,8 @@ namespace SparseTool {
     std::string       const & fname,
     SparseBase<MAT>   const & sp,
     double            const   xsize,
-    vector<indexType> const * rowLines = nullptr,
-    vector<indexType> const * colLines = nullptr
+    vector<integer> const * rowLines = nullptr,
+    vector<integer> const * colLines = nullptr
   ) {
      std::ofstream file( fname.c_str() );
      Spy( file, sp, xsize, rowLines, colLines );
@@ -69,8 +69,8 @@ namespace SparseTool {
     ostream                 & stream,
     SparseBase<MAT>   const & sp,
     double            const   xsize,
-    vector<indexType> const * rowLines = nullptr,
-    vector<indexType> const * colLines = nullptr
+    vector<integer> const * rowLines = nullptr,
+    vector<integer> const * colLines = nullptr
   ) {
 
     /*
@@ -81,8 +81,8 @@ namespace SparseTool {
     */
 
     // ----------------------------------------------------------------------
-    indexType nc = sp.numCols() + 1;
-    indexType nr = sp.numRows() + 1;
+    integer nc = sp.numCols() + 1;
+    integer nr = sp.numRows() + 1;
 
     double ysize = (xsize*nr) / nc;
 
@@ -140,7 +140,7 @@ namespace SparseTool {
       << "closepath stroke\n";
 
     // drawing the separation lines (if required)
-    vector<indexType>::const_iterator it;
+    vector<integer>::const_iterator it;
     if ( rowLines != nullptr ) {
       stream << sepLaneWidth << " setlinewidth\n";
       for ( it = rowLines -> begin(); it != rowLines -> end(); ++it ) {

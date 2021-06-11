@@ -15,3 +15,4 @@ docs_build/sphinx/_doxygen
 docs_build/sphinx/api-cpp
 docs_build/sphinx/_build
 docs_build/sphinx/api-sparse
+third_parties/Eigen/.gitlab

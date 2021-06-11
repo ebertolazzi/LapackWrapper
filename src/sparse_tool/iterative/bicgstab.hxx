@@ -27,22 +27,24 @@ namespace SparseTool {
    *
    *  \return last computed residual
    */
-  template <typename valueType,
-            typename indexType,
+  template <typename real_type,
+            typename integer,
             typename matrix_type,
             typename vector_type,
             typename preco_type>
-  valueType
+  real_type
   bicgstab(
     matrix_type const & A,
     vector_type const & b,
     vector_type       & x,
     preco_type  const & P,
-    valueType           epsi,
-    indexType           maxIter,
-    indexType         & iter,
+    real_type           epsi,
+    integer             maxIter,
+    integer           & iter,
     ostream           * pStream = nullptr
   ) {
+
+    using std::abs;
 
     SPARSETOOL_ASSERT(
       A.numRows() == b.size() &&
@@ -55,10 +57,10 @@ namespace SparseTool {
       "\ndim unknown = " << x.size()
     )
 
-    using ::SparseToolFun::absval;
-    typedef typename vector_type::valueType vType;
+    using std::abs;
+    typedef typename vector_type::real_type vType;
 
-    indexType neq = b.size();
+    integer neq = b.size();
     vector_type p(neq), s(neq), t(neq), v(neq), r(neq), rtilde(neq);
 
     iter = 1;
@@ -70,7 +72,7 @@ namespace SparseTool {
     r  = b - A * x;
     r  = r / P;
 
-    valueType resid = normi(r);
+    real_type resid = r.template lpNorm<Eigen::Infinity>();
     if ( resid <= epsi ) goto fine;
 
     rtilde = r;
@@ -79,15 +81,15 @@ namespace SparseTool {
 
     do {
 
-      vType rho = dot(rtilde,r);
-      SPARSETOOL_ASSERT( absval(rho) != vType(0), "BiCGSTAB breakdown, rho == 0" )
+      vType rho = rtilde.dot(r);
+      SPARSETOOL_ASSERT( abs(rho) != vType(0), "BiCGSTAB breakdown, rho == 0" )
 
       vType beta = (rho/rhom1) * (alpha/omega);
  
       p = r + beta * (p - omega * v); 
       v = A * p;
       v = v / P;
-      alpha = dot(rtilde,v);
+      alpha = rtilde.dot(v);
       SPARSETOOL_ASSERT( alpha != vType(0), "BiCGSTAB breakdown, tau == 0\n" )
       alpha = rho / alpha;
 
@@ -96,14 +98,14 @@ namespace SparseTool {
       t  = A * s;
       t  = t / P;
 
-      omega = dot(t,t);
-      SPARSETOOL_ASSERT( absval(omega) != vType(0), "BiCGSTAB breakdown, omega == 0\n" )
-      omega = dot(t,s) / omega;
+      omega = t.dot(t);
+      SPARSETOOL_ASSERT( abs(omega) != vType(0), "BiCGSTAB breakdown, omega == 0\n" )
+      omega = t.dot(s) / omega;
 
       x = x + alpha * p + omega * s;
       r = s - omega * t;
 
-      resid = normi(r);
+      resid = r.template lpNorm<Eigen::Infinity>();
       if ( pStream != nullptr ) (*pStream) << "iter = " << iter << " residual = " << resid << '\n';
 
       if ( resid <= epsi) goto fine;

@@ -1,0 +1,25 @@
+require "rake"
+require "fileutils"
+
+desc "install Eigen3"
+task :install do
+  FileUtils.cp_r 'eigen-3.3.9/Eigen', '../../lib3rd/include'
+end
+
+task :install_osx => :install do
+end
+
+task :install_linux => :install do
+end
+
+task :install_win => :install do
+end
+
+task :clean_osx do
+end
+
+task :clean_linux do
+end
+
+task :clean_win do
+end

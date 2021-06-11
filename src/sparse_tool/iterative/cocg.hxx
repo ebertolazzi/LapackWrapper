@@ -27,20 +27,20 @@ namespace SparseTool {
    *  Use preconditioned conjugate gradient (for complex symmetric system)
    *  to solve \f$ A x = b \f$.
    */
-  template <typename valueType,
-            typename indexType,
+  template <typename real_type,
+            typename integer,
             typename matrix_type,
             typename vector_type,
             typename preco_type>
-  valueType
+  real_type
   cocg(
     matrix_type const & A,
     vector_type const & b,
     vector_type       & x,
     preco_type  const & P,
-    valueType   const & epsi,
-    indexType   const   maxIter,
-    indexType         & iter,
+    real_type   const & epsi,
+    integer   const   maxIter,
+    integer         & iter,
     ostream           * pStream = nullptr
   ) {
     
@@ -55,11 +55,11 @@ namespace SparseTool {
       "\ndim unknown = " << x.size()
     )
 
-    typedef typename vector_type::valueType vType;
+    typedef typename vector_type::real_type vType;
 
-    indexType   neq = b.size();
+    integer   neq = b.size();
     vector_type p(neq), q(neq), r(neq), rt(neq);
-    valueType   resid;
+    real_type   resid;
     vType       rho, mu, alpha, beta;
 
     r   = b - A * x;
@@ -69,7 +69,7 @@ namespace SparseTool {
 
     iter = 1;
     do {
-      resid = normi(rt);
+      resid = rt.template lpNorm<Eigen::Infinity>();
 
       if ( pStream != nullptr )
         (*pStream) << "iter = " << iter << " residual = " << resid << '\n';

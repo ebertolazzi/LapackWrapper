@@ -23,21 +23,21 @@ namespace SparseTool {
     typedef Preco<HSS_OPOLY_SSOR_PRECO>      PRECO;
     #endif
 
-    typedef T valueType; //!< type of the elements of the preconditioner
-    typedef typename T::value_type rvalueType; //!< type of the elements of the preconditioner
+    typedef T real_type; //!< type of the elements of the preconditioner
+    typedef typename T::value_type rreal_type; //!< type of the elements of the preconditioner
 
   private:
 
-    indexType neq, mdegree;
-    SSORpreconditioner<rvalueType> preco;
-    //IdPreconditioner<rvalueType>   preco;
-    CCoorMatrix<rvalueType>        Amat;
-    mutable Vector<rvalueType>     s0, s1, As1, y, tmp1, tmp2;
+    integer neq, mdegree;
+    SSORpreconditioner<rreal_type> preco;
+    //IdPreconditioner<rreal_type>   preco;
+    CCoorMatrix<rreal_type>        Amat;
+    mutable Vector<rreal_type>     s0, s1, As1, y, tmp1, tmp2;
 
     //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
-    build_HSS_OPOLY_SSOR( MAT const & A, indexType m, rvalueType const & omega, indexType iterssor ) {
+    build_HSS_OPOLY_SSOR( MAT const & A, integer m, rreal_type const & omega, integer iterssor ) {
 
       SPARSETOOL_ASSERT(
         A.isOrdered(),
@@ -65,8 +65,8 @@ namespace SparseTool {
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
+        integer i = A.row();
+        integer j = A.column();
         Amat.insert(i,j) = A.value().real() + A.value().imag();
       }
       
@@ -77,16 +77,16 @@ namespace SparseTool {
 
     //! apply preconditioner to vector `v`  and store result in vector \c y
     void
-    mulPoly( Vector<rvalueType> & _y, Vector<rvalueType> const & v ) const {
-      s0  = rvalueType(1.5)*v;
+    mulPoly( Vector<rreal_type> & _y, Vector<rreal_type> const & v ) const {
+      s0  = rreal_type(1.5)*v;
       As1 = Amat*v;
       preco.assPreco(_y,As1);
-      s1 = rvalueType(4.)*v - rvalueType(10./3.)*_y;
-      for ( indexType n = 2; n <= mdegree; ++n ) {
-        rvalueType delta = ((3*n+6)*n+2.0)/((n+0.5)*(n+1));
-        rvalueType a = -4+(6*n+10.0)/((n+2)*(n+2));
-        rvalueType b = 2-delta;
-        rvalueType c = -1+delta;
+      s1 = rreal_type(4.)*v - rreal_type(10./3.)*_y;
+      for ( integer n = 2; n <= mdegree; ++n ) {
+        rreal_type delta = ((3*n+6)*n+2.0)/((n+0.5)*(n+1));
+        rreal_type a = -4+(6*n+10.0)/((n+2)*(n+2));
+        rreal_type b = 2-delta;
+        rreal_type c = -1+delta;
         As1 = Amat*s1;
         preco.assPreco(_y,As1);
         _y = a*(_y-v)+b*s1+c*s0;
@@ -102,30 +102,30 @@ namespace SparseTool {
     template <typename MAT>
     HSS_OPOLY_SSOR_Preconditioner(
       MAT        const & M,
-      indexType          m,
-      rvalueType const & omega,
-      indexType          iterssor
+      integer          m,
+      rreal_type const & omega,
+      integer          iterssor
     ) : Preco<HSS_OPOLY_SSOR_PRECO>()
     { build_HSS_OPOLY_SSOR( M, m, omega, iterssor ); }
 
     //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
-    build( MAT const & M, indexType m, rvalueType const & omega, indexType iterssor )
+    build( MAT const & M, integer m, rreal_type const & omega, integer iterssor )
     { build_HSS_OPOLY_SSOR( M, m, omega, iterssor ); }
 
     //! apply preconditioner to vector `v`  and store result to vector \c y
     template <typename VECTOR>
     void
     assPreco( VECTOR & _y, VECTOR const & v ) const {
-      for ( indexType k=0; k < neq; ++k ) tmp2(k) = v(k).real();
+      for ( integer k=0; k < neq; ++k ) tmp2(k) = v(k).real();
       preco.assPreco( tmp1, tmp2 ); tmp1 *= 0.5;
       mulPoly( tmp2, tmp1 );
-      for ( indexType k=0; k < neq; ++k ) { _y(k) = valueType(tmp2(k),_y(k).imag()); tmp2(k) = v(k).imag(); }
+      for ( integer k=0; k < neq; ++k ) { _y(k) = real_type(tmp2(k),_y(k).imag()); tmp2(k) = v(k).imag(); }
       preco.assPreco( tmp1, tmp2 ); tmp1 *= 0.5;
       mulPoly( tmp2, tmp1 );
-      valueType cst = valueType(0.5,-0.5);
-      for ( indexType k=0; k < neq; ++k ) { _y(k) = valueType(_y(k).real(),tmp2(k)); _y(k) *= cst; }
+      real_type cst = real_type(0.5,-0.5);
+      for ( integer k=0; k < neq; ++k ) { _y(k) = real_type(_y(k).real(),tmp2(k)); _y(k) *= cst; }
     }
   };
 

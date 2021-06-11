@@ -39,6 +39,10 @@
 
 #include <cstdint>
 
+#include <Eigen/Core>
+
+#include "Utils.hh"
+
 // workaround for windows macros
 #ifdef max
   #undef max
@@ -86,51 +90,18 @@
 #endif
 
 // loops
-#define SPARSELIB_LOOP(N,DO)   { for ( indexType i = 0; i < N; ++i ) { DO; } }
+#define SPARSELIB_LOOP(N,DO)   { for ( integer i = 0; i < N; ++i ) { DO; } }
 #define SPARSELIB_V1LOOP(DO)   SPARSELIB_LOOP(this->size(),DO)
 #define SPARSELIB_V2LOOP(V,DO) SPARSELIB_LOOP(minIndex(V.size(),this->size()),DO)
 
-#endif
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolFun {
-  static inline float       conj(float       const & a) { return a; }
-  static inline double      conj(double      const & a) { return a; }
-  static inline long double conj(long double const & a) { return a; }
-
-  static inline float       absval(float       const a) { return a > 0 ? a : -a; }
-  static inline double      absval(double      const a) { return a > 0 ? a : -a; }
-  static inline long double absval(long double const a) { return a > 0 ? a : -a; }
-
-  static inline float       absval(std::complex<float>       const & a) { return std::abs(a); }
-  static inline double      absval(std::complex<double>      const & a) { return std::abs(a); }
-  static inline long double absval(std::complex<long double> const & a) { return std::abs(a); }
-
-  static inline float       maxval(float       const a, float       const b) { return a > b ? a : b; }
-  static inline double      maxval(double      const a, double      const b) { return a > b ? a : b; }
-  static inline long double maxval(long double const a, long double const b) { return a > b ? a : b; }
-
-  static inline float       minval(float       const a, float       const b) { return a < b ? a : b; }
-  static inline double      minval(double      const a, double      const b) { return a < b ? a : b; }
-  static inline long double minval(long double const a, long double const b) { return a < b ? a : b; }
-
-  static inline float       maxabsval(float       const a, float       const b) { return std::max(absval(a),absval(b)); }
-  static inline double      maxabsval(double      const a, double      const b) { return std::max(absval(a),absval(b)); }
-  static inline long double maxabsval(long double const a, long double const b) { return std::max(absval(a),absval(b)); }
-
-  static inline float       minabsval(float       const a, float       const b) { return std::min(absval(a),absval(b)); }
-  static inline double      minabsval(double      const a, double      const b) { return std::min(absval(a),absval(b)); }
-  static inline long double minabsval(long double const a, long double const b) { return std::min(absval(a),absval(b)); }
-
-  template <typename T> inline T absval2(T const & a) { return a*a; }
-  template <typename T> inline T absval2(std::complex<T> const & a) { T bf(absval(a)); return bf*bf; }
-}
 #endif
 
 //!
 //! The namespace with the SparseTool toolkit.
 //!
 namespace SparseTool {
+
+  using Utils::ostream_type;
 
   using ::std::vector;
   using ::std::istream;
@@ -183,11 +154,11 @@ namespace SparseTool {
 
   template<typename T>
   struct return_trait {
-    typedef T valueType; //!< type of the trait
+    typedef T real_type; //!< type of the trait
   };
 
   // Partial specialization for `complex` type.
-  template<typename T> struct return_trait<std::complex<T> > { typedef T valueType; };
+  template<typename T> struct return_trait<std::complex<T> > { typedef T real_type; };
 
   //! \internal Class for type promotion
   template<typename T>
@@ -212,72 +183,24 @@ namespace SparseTool {
   // promote `unsigned` `short` to `unsigned`
   template<> struct autopromote_trait<unsigned short>
   { typedef unsigned T_numtype; };
-  
-  template<typename T1, typename T2, bool promoteToT1>
-  struct promote2 { typedef T1 T_promote; };
-
-  template<typename T1, typename T2>
-  struct promote2<T1,T2,false> { typedef T2 T_promote; };
 
   #endif
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  template<typename T1_orig, typename T2_orig>
+  template <typename T1, typename T2>
   class promote_trait {
-  private:
-    //! Handle promotion of small integers to int/unsigned int
-    typedef typename autopromote_trait<T1_orig>::T_numtype T1;
-    //! Handle promotion of small integers to int/unsigned int
-    typedef typename autopromote_trait<T2_orig>::T_numtype T2;
-
-    //! True if T1 is higher ranked
-    static bool const T1IsBetter = precision_trait<T1>::precisionRank >
-                                   precision_trait<T2>::precisionRank;
-
-    //! True if we know ranks for both T1 and T2
-    static bool const knowBothRanks = precision_trait<T1>::knowPrecisionRank
-                                   && precision_trait<T2>::knowPrecisionRank;
-
-    //! True if we know T1 but not T2
-    static bool const knowT1butNotT2 = precision_trait<T1>::knowPrecisionRank &&
-                                      !precision_trait<T2>::knowPrecisionRank;
-
-    //! True if we know T2 but not T1
-    static bool const knowT2butNotT1 = precision_trait<T2>::knowPrecisionRank &&
-                                      !precision_trait<T1>::knowPrecisionRank;
-
-    //! True if T1 is bigger than T2
-    static bool const T1IsLarger = sizeof(T1) >= sizeof(T2);
-
-    /*!
-     * - We know T1 but not T2: true
-     * - We know T2 but not T1: false
-     * - Otherwise, if T1 is bigger than T2: true
-     */
-    static bool const defaultPromotion =
-      knowT1butNotT2 ? false : (knowT2butNotT1 ? true : T1IsLarger);
-
-    /*!
-     * - If we have both ranks, then use them.
-     * - If we have only one rank, then use the unknown type.
-     * - If we have neither rank, then promote to the larger type.
-     */
-    static bool const promoteToT1 = knowBothRanks ? T1IsBetter : defaultPromotion;
-
   public:
     //! promoted type
-    typedef typename promote2<T1,T2,promoteToT1>::T_promote T_promote;
+    typedef decltype( std::declval<T1>() * std::declval<T2>() ) T_promote;
   };
 
   //! Class for promotion with three types
-  template<typename T1_orig, typename T2_orig, typename T3_orig>
+  template<typename T1, typename T2, typename T3>
   class promote_trait3 {
-    //! Handle promotion of small integers to int/unsigned int
-    typedef typename promote_trait<T1_orig,T2_orig>::T_promote T12_promote;
   public:
     //! promoted type
-    typedef typename promote_trait<T12_promote,T3_orig>::T_promote T_promote;
+    typedef decltype( std::declval<T1>() * std::declval<T2>() * std::declval<T3>() ) T_promote;
   };
 
   #ifndef SPARSELIB_FUNCTION_TYPE
@@ -288,38 +211,6 @@ namespace SparseTool {
   #define SPARSELIB_ACCUMULATOR_TYPE double
   #endif
 
-  #define SPARSELIB_PROMOTE(Ta,Tb) promote_trait<Ta,Tb>::T_promote
-  #define SPARSELIB_PROMOTE3(Ta,Tb,Tc) \
-    promote_trait<Ta,typename promote_trait<Tb,Tc>::T_promote>::T_promote
-
-  #define SPARSELIB_ACCUMULATOR_PROMOTE(T) \
-    SPARSELIB_PROMOTE(SPARSELIB_ACCUMULATOR_TYPE,T)
-
-  #define SPARSELIB_ACCUMULATOR_PROMOTE2(Ta,Tb) \
-    SPARSELIB_PROMOTE3(SPARSELIB_ACCUMULATOR_TYPE,Ta,Tb)
-
-  #define SPARSELIB_TYPES_FROM_TYPENAME(A) \
-    typedef typename A::valueType valueType
-
-  #define SPARSELIB_TYPES_FROM_TYPENAME2(A,B)                                \
-    typedef typename                                                         \
-    promote_trait<typename A::valueType,typename B::valueType>::T_promote    \
-    valueType
-
-  #define SPARSELIB_TYPES_FROM_TYPENAME3(S,A)                                \
-    typedef typename promote_trait<S,typename A::valueType>::T_promote       \
-    valueType
-
-  #define SPARSELIB_TYPES_FROM_TYPENAME_FUN1(A) \
-  SPARSELIB_TYPES_FROM_TYPENAME3(SPARSELIB_FUNCTION_TYPE,A)
-
-  #define SPARSELIB_TYPES_FROM_TYPENAME_FUN2(A,B)                            \
-    typedef typename                                                         \
-      promote_trait<typename A::valueType,typename B::valueType>::T_promote  \
-      promoted_valueType;                                                    \
-    typedef typename promote_trait<SPARSELIB_FUNCTION_TYPE,                  \
-                                   promoted_valueType>::T_promote valueType
-
   template <typename T> class Vector;
 
   #endif
@@ -327,20 +218,20 @@ namespace SparseTool {
   //!
   //! Define `uint32_t` as the type for indexing vector and matrices.
   //!
-  typedef uint32_t indexType;
+  typedef uint32_t integer;
 
   //!
   //! Return minimum value between `A` and `b`.
   //!
-  inline indexType
-  minIndex(indexType a, indexType b)
+  inline integer
+  minIndex(integer a, integer b)
   { return a < b ? a : b; }
 
   //!
   //! Return maximum value between `A` and `b`.
   //!
-  inline indexType
-  maxIndex(indexType a, indexType b)
+  inline integer
+  maxIndex(integer a, integer b)
   { return a > b ? a : b; }
   
   //!
@@ -354,7 +245,7 @@ namespace SparseTool {
   //!
   struct all_ok {
     //! return always true
-    bool operator () ( indexType /* i */, indexType /* j */ ) const { return true; }
+    bool operator () ( integer /* i */, integer /* j */ ) const { return true; }
   };
 
   //!
@@ -362,7 +253,7 @@ namespace SparseTool {
   //!
   struct lower_ok {
     //! select lower diagonal indexes
-    bool operator () ( indexType i, indexType j ) const { return i > j; }
+    bool operator () ( integer i, integer j ) const { return i > j; }
   };
 
   //!
@@ -370,7 +261,7 @@ namespace SparseTool {
   //!
   struct lowereq_ok {
     //! select lower diagonal indexes
-    bool operator () ( indexType i, indexType j ) const { return i >= j; }
+    bool operator () ( integer i, integer j ) const { return i >= j; }
   };
 
   //!
@@ -378,7 +269,7 @@ namespace SparseTool {
   //!
   struct upper_ok {
     //! select upper diagonal indexes
-    bool operator () ( indexType i, indexType j ) const { return i < j; }
+    bool operator () ( integer i, integer j ) const { return i < j; }
   };
 
   //!
@@ -386,7 +277,7 @@ namespace SparseTool {
   //!
   struct uppereq_ok {
     //! select upper diagonal indexes
-    bool operator () ( indexType i, indexType j ) const { return i <= j; }
+    bool operator () ( integer i, integer j ) const { return i <= j; }
   };
 
   //!
@@ -394,7 +285,7 @@ namespace SparseTool {
   //!
   struct diag_ok {
     //! select diagonal indexes
-    bool operator () ( indexType i, indexType j ) const { return i==j; }
+    bool operator () ( integer i, integer j ) const { return i==j; }
   };
 
   //@}
@@ -648,23 +539,6 @@ namespace SparseTool {
     {}
   };
 
-  //!
-  //! Template class storing (recursively) vector expression
-  //!
-  template <typename T, typename A>
-  class VectorE {
-  public:
-   typedef T valueType;
-
-  private:
-    A expr;
-
-  public:
-    VectorE(A const & a) : expr(a) { }
-    valueType operator () (indexType i) const { return expr(i); }
-    indexType size(void) const { return expr.size(); }
-  };
-  
   //@}
 
   #endif
@@ -672,1356 +546,315 @@ namespace SparseTool {
   //!
   //! Macro to define the standar matrix/vector operators.
   //!
-  #define SPARSELIB_VECTOR_OPERATIONS(VECTOR) \
-    /*! Assign the vector `v`  derived from `VectorBase` to `*this`  */ \
-    template <typename VEC> inline \
-    VECTOR const & \
-    operator = (VectorBase<T,VEC> const & v) { \
-      SPARSELIB_V2LOOP(v, (*this)(i) = v(i)); \
-      return *this; \
-    } \
-    /*! Assign the vector expression `e` to `*this`  */ \
-    template <typename R> inline \
-    VECTOR const & \
-    operator = (VectorE<T,R> const & e) { \
-      SPARSELIB_V2LOOP(e, (*this)(i) = e(i)); \
-      return *this; \
-    } \
-    /*! Fill the Vector with the constant `s`. */ \
-    VECTOR const & \
-    operator = (valueType const & s) { \
-      SPARSELIB_V1LOOP( (*this)(i) = valueType(s) ); \
-      return *this; \
-    } \
-    /*! Add the element of the `v`  derived from `VectorBase` to `*this`.
-        If the vector are not of the same size then `min(size(),v.size())` elements are copied. */ \
-    template <typename VEC> inline \
-    VECTOR const & \
-    operator += (VectorBase<T,VEC> const & v) { \
-      SPARSELIB_V2LOOP(v, (*this)(i) += v(i)); \
-      return *this; \
-    } \
-    /*! Add the expression `e` to `*this`.
-        If the vector are not of the same size then `min(size(),e.size())` elements are evaluated. */ \
-    template <typename R> inline \
-    VECTOR const & \
-    operator += (VectorE<T,R> const & e) { \
-      SPARSELIB_V2LOOP(e, (*this)(i) += e(i)); \
-      return *this; \
-    } \
-    /*! Add to each element of the vector `*this`  the constant `s`. */ \
-    VECTOR const & \
-    operator += (valueType const & s) { \
-      SPARSELIB_V1LOOP( (*this)(i) += valueType(s)); \
-      return *this; \
-    } \
-    /*! Subtract the element of the Vector `v`  to `*this`.
-        If the vector are not of the same size then `min(size(),v.size())` elements are copied. */ \
-    template <typename VEC> inline \
-    VECTOR const & \
-    operator -= (VectorBase<T,VEC> const & v) { \
-      SPARSELIB_V2LOOP(v, (*this)(i) -= v(i)); \
-      return *this; \
-    } \
-    /*! Subtract the expression `e` to `*this`.
-        If the vector are not of the same size then `min(size(),e.size())` elements are evaluated. */ \
-    template <typename R> inline \
-    VECTOR const & \
-    operator -= (VectorE<T,R> const & e) { \
-      SPARSELIB_V2LOOP(e, (*this)(i) -= e(i)); \
-      return *this; \
-    } \
-    /*! Subtract to each element of the vector `*this`  the constant `s`. */ \
-    VECTOR const & \
-    operator -= (valueType const & s) { \
-      SPARSELIB_V1LOOP( (*this)(i) -= valueType(s)); \
-      return *this; \
-    } \
-    /*! Multiply the element of the Vector `v`  to `*this`.
-        If the vector are not of the same size then `min(size(),v.size())` elements are copied. */ \
-    template <typename VEC> inline \
-    VECTOR const & \
-    operator *= (VectorBase<T,VEC> const & v) { \
-      SPARSELIB_V2LOOP(v, (*this)(i) *= v(i)); \
-      return *this; \
-    } \
-    /*! Multiply the Vector expression `e` to `*this`.
-        If the vector and expression are not of the same size then `min(size(),e.size())` elements are copied. */ \
-    template <typename R> inline \
-    VECTOR const & \
-    operator *= (VectorE<T,R> const & e) { \
-      SPARSELIB_V2LOOP(e, (*this)(i) *= e(i)); \
-      return *this; \
-    } \
-    /*! Multiply each element of the Vector `*this`  by constant `s`. */ \
-    VECTOR const & \
-    operator *= (valueType const & s) { \
-      SPARSELIB_V1LOOP( (*this)(i) *= valueType(s)); \
-      return *this; \
-    } \
-    /*! Divide the element of the Vector `*this`  to the components of vector `v`.
-        If the vector are not of the same size then `min(size(),v.size())` elements are divided. */ \
-    template <typename VEC> inline \
-    VECTOR const & \
-    operator /= (VectorBase<T,VEC> const & v) { \
-      SPARSELIB_V2LOOP(v, (*this)(i) /= v(i)); \
-      return *this; \
-    } \
-    /*! Divide the element of the Vector `*this`  to the components of expression `e`.
-        If the vector and the expression are not of the same size then `min(size(),e.size())` elements are divided. */ \
-    template <typename R> inline \
-    VECTOR const & \
-    operator /= (VectorE<T,R> const & e) { \
-      SPARSELIB_V2LOOP(e, (*this)(i) /= e(i)); \
-      return *this; \
-    } \
-    /*! Divide each element of the Vector by the constant `s`. */ \
-    VECTOR const & \
-    operator /= (valueType const & s) { \
-      SPARSELIB_V1LOOP( (*this)(i) /= valueType(s)); \
-      return *this; \
-    } \
-    /*------------ MM_COMPLEX MATRIX OPERATIONS ---------------------*/ \
-    /*! Assign to `*this`  the evaluation of the expression `a/M` contained in `op` of type `Vector_V_div_M` */ \
-    template <typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator = ( Vector_V_div_M<VA,MATRIX> const & op ) \
-    { op.M.ass_V_div_M(*this, op.a); return *this; } \
-    \
-    /*! Assign to `*this`  the evaluation of the expression `M*a` contained in `op` of type `Vector_M_mul_V` */ \
-    template <typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator = ( Vector_M_mul_V<MATRIX,VA> const & op ) { \
-      *this = valueType(0); \
-      op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.a); \
-      return *this; \
-    } \
-    /*! Add to `*this` the evaluation of the expression `a/M` contained in `op` of type `Vector_V_div_M` */ \
-    template <typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator += ( Vector_M_mul_V<MATRIX,VA> const & op ) { \
-      op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.a); \
-      return *this; \
-    } \
-    /*! Subtract to `*this` the evaluation of the expression `M*a` contained in `op` of type `Vector_M_mul_V` */ \
-    template <typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator -= ( Vector_M_mul_V<MATRIX,VA> const & op ) { \
-      op.M.add_S_mul_M_mul_V(*this, valueType(-1), op.a); \
-      return *this; \
-    } \
-    /*! Assign to `*this` the evaluation of the expression `M^T*a` contained in `op` of type `Vector_Mt_mul_V` */ \
-    template <typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator = (Vector_Mt_mul_V<MATRIX,VA> const & op) { \
-      *this = valueType(0); \
-      op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.a); \
-      return *this; \
-    } \
-    /*! Add to `*this` the evaluation of the expression `M^T*a` contained in `op` of type `Vector_Mt_mul_V` */ \
-    template <typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator += (Vector_Mt_mul_V<MATRIX,VA> const & op) { \
-      op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.a); \
-      return *this; \
-    } \
-    /*! Subtract to `*this` the evaluation of the expression `M^T*a` contained in `op` of type `Vector_Mt_mul_V` */ \
-    template <typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator -= (Vector_Mt_mul_V<MATRIX,VA> const & op) { \
-      op.M.add_S_mul_Mt_mul_V(*this, valueType(-1), op.a); \
-      return *this; \
-    } \
-    /*! Assign to `*this` the evaluation of the expression `s*(M*a)`  contained in `op` of type `Vector_S_mul_M_mul_V` */ \
-    template <typename SCALAR, typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator = (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) { \
-      *this = valueType(0); \
-      op.M.add_S_mul_M_mul_V(*this, op.s, op.a); \
-      return *this; \
-    } \
-    /*! Add to `*this` the evaluation of the expression `s*(M*a)`  contained in `op` of type `Vector_S_mul_M_mul_V` */ \
-    template <typename SCALAR, typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator += (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) { \
-      op.M.add_S_mul_M_mul_V(*this, op.s, op.a); \
-      return *this; \
-    } \
-    /*! Subtract to `*this` the evaluation of the expression `s*(M*a)`  contained in `op` of type `Vector_S_mul_M_mul_V` */ \
-    template <typename SCALAR, typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator -= (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) { \
-      op.M.add_S_mul_M_mul_V(*this, -op.s, op.a); \
-      return *this; \
-    } \
-    /*! Assign to `*this` the evaluation of the expression `s*(M^T*a)`  contained in `op` of type `Vector_S_mul_Mt_mul_V` */ \
-    template <typename SCALAR, typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator = (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) { \
-      *this = valueType(0); \
-      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.a); \
-      return *this; \
-    } \
-    /*! Add to `*this` the evaluation of the expression `s*(M^T*a)`  contained in `op` of type `Vector_S_mul_Mt_mul_V` */ \
-    template <typename SCALAR, typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator += (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) { \
-      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.a); \
-      return *this; \
-    } \
-    /*! Subtract to `*this` the evaluation of the expression `s*(M^T*a)`  contained in `op` of type `Vector_S_mul_Mt_mul_V` */ \
-    template <typename SCALAR, typename MATRIX, typename VA> inline \
-    VECTOR const & \
-    operator -= (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) { \
-      op.M.add_S_mul_Mt_mul_V(*this, -op.s, op.a); \
-      return *this; \
-    } \
-    /*! Assign to `*this` the evaluation of the expression `a+M*b`  contained in `op` of type `Vector_V_sum_M_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator = (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) { \
-      *this = op.a; \
-      op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.b); \
-      return *this; \
-    } \
-    /*! Add to `*this` the evaluation of the expression `a+M*b`  contained in `op` of type `Vector_V_sum_M_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator += (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) { \
-      *this += op.a; \
-      op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.b); \
-      return *this; \
-    } \
-    /*! Subtract to `*this` the evaluation of the expression `a+M*b`  contained in `op` of type `Vector_V_sum_M_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator -= (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) { \
-      *this -= op.a; \
-      op.M.add_S_mul_M_mul_V(*this, valueType(-1), op.b); \
-      return *this; \
-    } \
-    /*! Assign to `*this` the evaluation of the expression `a+M^T*b` contained in `op` of type `Vector_V_sum_Mt_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator = (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) { \
-      *this = op.a; \
-      op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.b); \
-      return *this; \
-    } \
-    /*! Add to `*this` the evaluation of the expression `a+M^T*b` contained in `op` of type `Vector_V_sum_Mt_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator += (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) { \
-      *this += op.a; \
-      op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.b); \
-      return *this; \
-    } \
-    /*! Subtract to `*this` the evaluation of the expression `a+M^T*b` contained in `op` of type `Vector_V_sum_Mt_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator -= (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) { \
-      *this -= op.a; \
-      op.M.add_S_mul_Mt_mul_V(*this, valueType(-1), op.b); \
-      return *this; \
-    } \
-    /*-----------------------*/ \
-    /*! Assign to `*this` the evaluation of the expression `a-M*b` contained in `op` of type `Vector_V_sub_M_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator = (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) { \
-      *this = op.a; \
-      op.M.add_S_mul_M_mul_V(*this, valueType(-1), op.b); \
-      return *this; \
-    } \
-    /*! Add to `*this` the evaluation of the expression `a-M*b` contained in `op` of type `Vector_V_sub_M_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator += (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) { \
-      *this += op.a; \
-      op.M.add_S_mul_M_mul_V(*this, valueType(-1), op.b); \
-      return *this; \
-    } \
-    /*! Subtract to `*this` the evaluation of the expression `a-M*b` contained in `op` of type `Vector_V_sub_M_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator -= (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) { \
-      *this -= op.a; \
-      op.M.add_S_mul_M_mul_V(*this, valueType(+1), op.b); \
-      return *this; \
-    } \
-    /*! Assign to `*this` the evaluation of the expression `a-M^T*b`  contained in `op` of type `Vector_V_sub_Mt_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator = (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) { \
-      *this = op.a; \
-      op.M.add_S_mul_Mt_mul_V(*this, valueType(-1), op.b); \
-      return *this; \
-    } \
-    /*! Add to `*this` the evaluation of the expression `a-M^T*b`  contained in `op` of type `Vector_V_sub_Mt_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator += (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) { \
-      *this += op.a; \
-      op.M.add_S_mul_Mt_mul_V(*this, valueType(-1), op.b); \
-      return *this; \
-    } \
-    /*! Subtract to `*this`  the evaluation of the expression `a-M^T*b`  contained in `op` of type `Vector_V_sub_Mt_mul_V` */ \
-    template <typename VA, typename MATRIX, typename VB> inline \
-    VECTOR const & \
-    operator -= (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) { \
-      *this -= op.a; \
-      op.M.add_S_mul_Mt_mul_V(*this, valueType(+1), op.b); \
-      return *this; \
-    } \
-    /*! Assign to `*this`  the evaluation of the expression `a+s*(M*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
+  #define SPARSELIB_VECTOR_OPERATIONS(VECTOR)                             \
+    /*------------ MM_COMPLEX MATRIX OPERATIONS ---------------------*/   \
+    /*! Assign to `*this`  the evaluation of the expression `a/M`         \
+        contained in `op` of type `Vector_V_div_M` */                     \
+    template <typename MATRIX, typename VA> inline                        \
+    VECTOR const &                                                        \
+    operator = ( Vector_V_div_M<VA,MATRIX> const & op )                   \
+    { op.M.ass_V_div_M(*this, op.a); return *this; }                      \
+                                                                          \
+    /*! Assign to `*this`  the evaluation of the expression `M*a`         \
+        contained in `op` of type `Vector_M_mul_V` */                     \
+    template <typename MATRIX, typename VA> inline                        \
+    VECTOR const &                                                        \
+    operator = ( Vector_M_mul_V<MATRIX,VA> const & op ) {                 \
+      *this = real_type(0);                                               \
+      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.a);                 \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this` the evaluation of the expression `a/M`             \
+        contained in `op` of type `Vector_V_div_M` */                     \
+    template <typename MATRIX, typename VA> inline                        \
+    VECTOR const &                                                        \
+    operator += ( Vector_M_mul_V<MATRIX,VA> const & op ) {                \
+      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.a);                 \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this` the evaluation of the expression `M*a`        \
+        contained in `op` of type `Vector_M_mul_V` */                     \
+    template <typename MATRIX, typename VA> inline                        \
+    VECTOR const &                                                        \
+    operator -= ( Vector_M_mul_V<MATRIX,VA> const & op ) {                \
+      op.M.add_S_mul_M_mul_V(*this, real_type(-1), op.a);                 \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Assign to `*this` the evaluation of the expression `M^T*a`        \
+        contained in `op` of type `Vector_Mt_mul_V` */                    \
+    template <typename MATRIX, typename VA> inline                        \
+    VECTOR const &                                                        \
+    operator = (Vector_Mt_mul_V<MATRIX,VA> const & op) {                  \
+      *this = real_type(0);                                               \
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.a);                \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this` the evaluation of the expression `M^T*a`           \
+        contained in `op` of type `Vector_Mt_mul_V` */                    \
+    template <typename MATRIX, typename VA> inline                        \
+    VECTOR const &                                                        \
+    operator += (Vector_Mt_mul_V<MATRIX,VA> const & op) {                 \
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.a);                \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this` the evaluation of the expression `M^T*a`      \
+        contained in `op` of type `Vector_Mt_mul_V` */                    \
+    template <typename MATRIX, typename VA> inline                        \
+    VECTOR const &                                                        \
+    operator -= (Vector_Mt_mul_V<MATRIX,VA> const & op) {                 \
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(-1), op.a);                \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Assign to `*this` the evaluation of the expression `s*(M*a)`      \
+        contained in `op` of type `Vector_S_mul_M_mul_V` */               \
+    template <typename SCALAR, typename MATRIX, typename VA> inline       \
+    VECTOR const &                                                        \
+    operator = (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) {      \
+      *this = real_type(0);                                               \
+      op.M.add_S_mul_M_mul_V(*this, op.s, op.a);                          \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this` the evaluation of the expression `s*(M*a)`         \
+        contained in `op` of type `Vector_S_mul_M_mul_V` */               \
+    template <typename SCALAR, typename MATRIX, typename VA> inline       \
+    VECTOR const &                                                        \
+    operator += (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) {     \
+      op.M.add_S_mul_M_mul_V(*this, op.s, op.a);                          \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this` the evaluation of the expression `s*(M*a)`    \
+        contained in `op` of type `Vector_S_mul_M_mul_V` */               \
+    template <typename SCALAR, typename MATRIX, typename VA> inline       \
+    VECTOR const &                                                        \
+    operator -= (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) {     \
+      op.M.add_S_mul_M_mul_V(*this, -op.s, op.a);                         \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Assign to `*this` the evaluation of the expression `s*(M^T*a)`    \
+        contained in `op` of type `Vector_S_mul_Mt_mul_V` */              \
+    template <typename SCALAR, typename MATRIX, typename VA> inline       \
+    VECTOR const &                                                        \
+    operator = (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) {     \
+      *this = real_type(0);                                               \
+      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.a);                         \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this` the evaluation of the expression `s*(M^T*a)`       \
+        contained in `op` of type `Vector_S_mul_Mt_mul_V` */              \
+    template <typename SCALAR, typename MATRIX, typename VA> inline       \
+    VECTOR const &                                                        \
+    operator += (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) {    \
+      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.a);                         \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this` the evaluation of the expression `s*(M^T*a)`  \
+        contained in `op` of type `Vector_S_mul_Mt_mul_V` */              \
+    template <typename SCALAR, typename MATRIX, typename VA> inline       \
+    VECTOR const &                                                        \
+    operator -= (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) {    \
+      op.M.add_S_mul_Mt_mul_V(*this, -op.s, op.a);                        \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Assign to `*this` the evaluation of the expression `a+M*b`        \
+        contained in `op` of type `Vector_V_sum_M_mul_V` */               \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator = (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) {          \
+      *this = op.a;                                                       \
+      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.b);                 \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this` the evaluation of the expression `a+M*b`           \
+        contained in `op` of type `Vector_V_sum_M_mul_V` */               \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator += (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) {         \
+      *this += op.a;                                                      \
+      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.b);                 \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this` the evaluation of the expression `a+M*b`      \
+        contained in `op` of type `Vector_V_sum_M_mul_V` */               \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator -= (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) {         \
+      *this -= op.a;                                                      \
+      op.M.add_S_mul_M_mul_V(*this, real_type(-1), op.b);                 \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Assign to `*this` the evaluation of the expression `a+M^T*b`      \
+        contained in `op` of type `Vector_V_sum_Mt_mul_V` */              \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator = (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) {         \
+      *this = op.a;                                                       \
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.b);                \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this` the evaluation of the expression `a+M^T*b`         \
+        contained in `op` of type `Vector_V_sum_Mt_mul_V` */              \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator += (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) {        \
+      *this += op.a;                                                      \
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.b);                \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this` the evaluation of the expression `a+M^T*b`    \
+        contained in `op` of type `Vector_V_sum_Mt_mul_V` */              \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator -= (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) {        \
+      *this -= op.a;                                                      \
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(-1), op.b);                \
+      return *this;                                                       \
+    }                                                                     \
+    /*-----------------------*/                                           \
+    /*! Assign to `*this` the evaluation of the expression `a-M*b`        \
+        contained in `op` of type `Vector_V_sub_M_mul_V` */               \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator = (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) {          \
+      *this = op.a;                                                       \
+      op.M.add_S_mul_M_mul_V(*this, real_type(-1), op.b);                 \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this` the evaluation of the expression `a-M*b`           \
+        contained in `op` of type `Vector_V_sub_M_mul_V` */               \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator += (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) {         \
+      *this += op.a;                                                      \
+      op.M.add_S_mul_M_mul_V(*this, real_type(-1), op.b);                 \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this` the evaluation of the expression `a-M*b`      \
+        contained in `op` of type `Vector_V_sub_M_mul_V` */               \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator -= (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) {         \
+      *this -= op.a;                                                      \
+      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.b);                 \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Assign to `*this` the evaluation of the expression `a-M^T*b`      \
+        contained in `op` of type `Vector_V_sub_Mt_mul_V` */              \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator = (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) {         \
+      *this = op.a;                                                       \
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(-1), op.b);                \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this` the evaluation of the expression `a-M^T*b`         \
+        contained in `op` of type `Vector_V_sub_Mt_mul_V` */              \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator += (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) {        \
+      *this += op.a;                                                      \
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(-1), op.b);                \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this`  the evaluation of the expression `a-M^T*b`   \
+        contained in `op` of type `Vector_V_sub_Mt_mul_V` */              \
+    template <typename VA, typename MATRIX, typename VB> inline           \
+    VECTOR const &                                                        \
+    operator -= (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) {        \
+      *this -= op.a;                                                      \
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.b);                \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Assign to `*this`  the evaluation of the expression `a+s*(M*b)`   \
+        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const & \
+    VECTOR const &                                                        \
     operator = (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this = op.a; \
-      op.M.add_S_mul_M_mul_V(*this, op.s, op.b); \
-      return *this; \
-    } \
-    /*! Add to `*this`  the evaluation of the expression `a+s*(M*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
+      *this = op.a;                                                       \
+      op.M.add_S_mul_M_mul_V(*this, op.s, op.b);                          \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this`  the evaluation of the expression `a+s*(M*b)`      \
+        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const & \
+    VECTOR const &                                                        \
     operator += (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this += op.a; \
-      op.M.add_S_mul_M_mul_V(*this, op.s, op.b); \
-      return *this; \
-    } \
-    /*! Subtract to `*this` the evaluation of the expression `a+s*(M*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
+      *this += op.a;                                                      \
+      op.M.add_S_mul_M_mul_V(*this, op.s, op.b);                          \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this` the evaluation of the expression `a+s*(M*b)`  \
+        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const & \
+    VECTOR const &                                                        \
     operator -= (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this -= op.a; \
-      op.M.add_S_mul_M_mul_V(*this, -op.s, op.b); \
-      return *this; \
-    } \
-    /*! Assign to `*this`  the evaluation of the expression `a+s*(M^T*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
+      *this -= op.a;                                                      \
+      op.M.add_S_mul_M_mul_V(*this, -op.s, op.b);                         \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Assign to `*this`  the evaluation of the expression `a+s*(M^T*b)` \
+        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const & \
+    VECTOR const &                                                        \
     operator = (Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this = op.a; \
-      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.b); \
-      return *this; \
-    } \
-    /*! Add to `*this`  the evaluation of the expression `a+s*(M^T*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
+      *this = op.a;                                                       \
+      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.b);                         \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Add to `*this`  the evaluation of the expression `a+s*(M^T*b)`    \
+        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const & \
+    VECTOR const &                                                        \
     operator += (Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this += op.a; \
-      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.b); \
-      return *this; \
-    } \
-    /*! Subtract to `*this`  the evaluation of the expression `a+s*(M^T*b)`  contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */ \
+      *this += op.a;                                                      \
+      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.b);                         \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Subtract to `*this`  the evaluation of the expression `a+s*(M^T*b)` \
+        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
     template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const & \
+    VECTOR const &                                                        \
     operator -= (Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this -= op.a; \
-      op.M.add_S_mul_Mt_mul_V(*this, -op.s, op.b); \
-      return *this; \
-    } \
-    /*! Assign to `*this`  the evaluation of the preconditioner `a/P` contained in `op` of type `Vector_V_div_P` */ \
-    template <typename VEC, typename PRECO> inline \
-    VECTOR const & \
-    operator = (Vector_V_div_P<VEC,PRECO> const & op) { \
-      op.P.assPreco(*this, op.a); \
-      return *this; \
+      *this -= op.a;                                                      \
+      op.M.add_S_mul_Mt_mul_V(*this, -op.s, op.b);                        \
+      return *this;                                                       \
+    }                                                                     \
+    /*! Assign to `*this`  the evaluation of the preconditioner `a/P`     \
+        contained in `op` of type `Vector_V_div_P` */                     \
+    template <typename VEC, typename PRECO> inline                        \
+    VECTOR const &                                                        \
+    operator = (Vector_V_div_P<VEC,PRECO> const & op) {                   \
+      op.P.assPreco(*this, op.a);                                         \
+      return *this;                                                       \
     }
 
-  /*
-  //  #     #                                   ######
-  //  #     # ######  ####  #####  ####  #####  #     #   ##    ####  ######
-  //  #     # #      #    #   #   #    # #    # #     #  #  #  #      #
-  //  #     # #####  #        #   #    # #    # ######  #    #  ####  #####
-  //   #   #  #      #        #   #    # #####  #     # ######      # #
-  //    # #   #      #    #   #   #    # #   #  #     # #    # #    # #
-  //     #    ######  ####    #    ####  #    # ######  #    #  ####  ######
-  */
-
-  //!
-  //! Base vector class.
-  //! 
-  //! This class in the base class for all the
-  //! vector classes of `SparseTool`.
-  //! This class is incomplete and is used as a 
-  //! pivot for internal operations.
-  //! 
-  template <typename T, typename VECTOR>
-  class VectorBase {
-  public:
-    typedef T                    valueType; //!< type of the element of the vector
-    typedef VectorBase<T,VECTOR> VectorT;   //!< the vector type
-
-  public:
-
-    //!
-    //! Build and empty vector.
-    //!
-    VectorBase() {}
-
-    //!
-    //! Forward the `size()` operator to the derived class.
-    //!
-    indexType size() const
-    { return static_cast<VECTOR const *>(this) -> size(); }
-
-    //!
-    //! Forward the access to the `i-th` element of the vector.
-    //!
-    valueType const &
-    operator [] ( indexType i ) const
-    { return static_cast<VECTOR const *>(this) -> operator [] (i); }
-
-    //!
-    //! Forward the access to the `i-th` element of the vector.
-    //!
-    valueType &
-    operator [] ( indexType i )
-    { return static_cast<VECTOR *>(this) -> operator [] (i); }
-
-    //!
-    //! Forward the access to the `i-th` element of the vector.
-    //!
-    valueType const &
-    operator () ( indexType i ) const
-    { return static_cast<VECTOR const *>(this) -> operator () (i); }
-
-    //!
-    //! Forward the access to the `i-th` element of the vector.
-    //!
-    valueType &
-    operator () ( indexType i )
-    { return static_cast<VECTOR *>(this) -> operator () (i); }
-
-    SPARSELIB_VECTOR_OPERATIONS(VectorT)
-
-  };
-
-  /*
-  //  #     #
-  //  #     # ######  ####  #####  ####  #####
-  //  #     # #      #    #   #   #    # #    #
-  //  #     # #####  #        #   #    # #    #
-  //   #   #  #      #        #   #    # #####
-  //    # #   #      #    #   #   #    # #   #
-  //     #    ######  ####    #    ####  #    #
-  */
-
-  //!
-  //! Variable size full vector class.
-  //!
-  //! This class extend the STL vector class by adding some math operation
-  //! and interaction with sparse matrix classes.
-  //!
   template <typename T>
-  class Vector : public VectorBase<T,Vector<T> >,
-                 public vector<T> {
+  class Vector : public Eigen::Matrix<T,Eigen::Dynamic,1> {
   public:
 
-    //!
-    //! Assign to `valueType` the type of the vector.
-    //!
-    typedef T valueType;
-    
-    //!
-    //! Build an empty Vector with 0 elements.
-    //!
-    Vector() : vector<T>(0) {}
+    typedef Eigen::Matrix<T,Eigen::Dynamic,1> V_base;
+    typedef T real_type;
 
-    //!
-    //! Build a Vector with **numElement** elements.
-    //!
-    Vector( indexType numElement ) : vector<T>(numElement) {}
+    Vector() : V_base() {}
+    Vector( unsigned dim ) : V_base(dim) {}
 
-    //!
-    //! Return the total number of elements of the vector.
-    //!
-    indexType size() const { return indexType(vector<T>::size()); }
-
-    //!
-    //! Access to the `i-th` element of the Vector.
-    //! If `SPARSETOOL_DEBUG` is defined an index bound check is performed.
-    //!
-    valueType const &
-    operator [] ( indexType i ) const {
-      SPARSETOOL_TEST(
-        i < vector<T>::size(),
-        "Vector[" << i << "] Vector size = " << vector<T>::size() << " bad index"
-      )
-      return vector<T>::operator [] (i);
+    Vector<T> const &
+    operator = ( V_base const & v ) {
+      *static_cast<V_base*>(this) = v; return *this;
     }
-
-    //!
-    //! Access to the `i-th` element of the Vector.
-    //! If `SPARSETOOL_DEBUG` is defined an index bound check is performed.
-    //!
-    valueType & 
-    operator [] ( indexType i ) {
-      SPARSETOOL_TEST( i < indexType(vector<T>::size()), "Vector[" << i << "] Vector size = " << vector<T>::size() << " bad index")
-      return vector<T>::operator [] (i);
+    Vector<T> const &
+    operator += ( V_base const & v ) {
+      *static_cast<V_base*>(this) += v; return *this;
     }
-
-    //! 
-    //! Access to the `i-th` element of the Vector.
-    //! No index bound check is performed.
-    //! 
-    valueType const &
-    operator () ( indexType i ) const
-    { return vector<T>::operator [] (i); }
-
-    //! 
-    //! Access to the `i-th` element of the Vector.
-    //! No index bound check is performed.
-    //! 
-    valueType &
-    operator () ( indexType i )
-    { return vector<T>::operator [] (i); }
-
-    //!
-    //! Get a copy of the Vector `v`.
-    //!
-    template <typename VECTOR> inline
-    void
-    load( VectorBase<T,VECTOR> const & v ) {
-      this -> resize( v.size() );
-      SPARSELIB_LOOP( indexType(vector<T>::size()), (*this)(i) = v(i) );
+    Vector<T> const &
+    operator -= ( V_base const & v ) {
+      *static_cast<V_base*>(this) -= v; return *this;
     }
-
-    //!
-    //! Set all elements to 0.
-    //!
-    void
-    setZero() {
-      SPARSELIB_LOOP( indexType(vector<T>::size()), (*this)(i) = valueType(0) );
+    Vector<T> const &
+    operator *= ( V_base const & v ) {
+      *static_cast<V_base*>(this) *= v; return *this;
     }
-
-    //!
-    //! Set all elements to `a`
-    //!
-    void
-    setTo( valueType const & a ) {
-      SPARSELIB_LOOP( indexType(vector<T>::size()), (*this)(i) = a );
-    }
-
-    //!
-    //! Fill the Vector with the value `v` from index `b` to `e`.
-    //!
-    void
-    fill( indexType b, indexType e, valueType const & v ) {
-      SPARSETOOL_TEST(
-        b <= e,
-        "Vector::fill(" << b << "," << e << ") bad range"
-      )
-      SPARSETOOL_TEST(
-        e < indexType(vector<T>::size()),
-        "Vector::fill(" << b << "," << e << ") out of range"
-      )
-      valueType * p = vector<T>::begin() + b;
-      SPARSELIB_LOOP( e-b, *p++ = v);
-    }
-
     SPARSELIB_VECTOR_OPERATIONS(Vector<T>)
-
   };
-
-  /*
-  //  #     #                                       #####                         
-  //  #     # ######  ####  #####  ####  #####     #     # #      #  ####  ###### 
-  //  #     # #      #    #   #   #    # #    #    #       #      # #    # #      
-  //  #     # #####  #        #   #    # #    #     #####  #      # #      #####  
-  //   #   #  #      #        #   #    # #####           # #      # #      #      
-  //    # #   #      #    #   #   #    # #   #     #     # #      # #    # #      
-  //     #    ######  ####    #    ####  #    #     #####  ###### #  ####  ######
-  */
-  //!
-  //! Remapping a piece of memory to a vector
-  //!
-  //! This class extend the `VectorBase` class by adding the capacity
-  //! of remapping a piece o `Vector` or a C-pointer
-  //!
-  template <typename T>
-  class VectorSlice : public VectorBase<T,VectorSlice<T> > {
-  public:
-    typedef T   valueType; //!< type of the element of the vector
-    indexType   len;       //!< length of the slice
-    valueType * values;    //!< poiter to the beginning of the slice
-
-  public:
-
-    //!
-    //! Build an empty Vector with 0 elements
-    //!
-    VectorSlice() : len(0), values(nullptr) {}
-
-    //!
-    //! Map the vector `v` from `v(begin)` to `v(end-1)` in
-    //! `(*this)(0)` to `(*this)(end-begin)`
-    //!
-    VectorSlice<T> &
-    slice( Vector<T> & v, indexType begin, indexType end ) {
-      values = &v(begin);
-      len    = end - begin;
-      return *this;
-    }
-
-    VectorSlice<T> const &
-    slice( Vector<T> const & v, indexType begin, indexType end ) {
-      values = &v(begin);
-      len    = end - begin;
-      return *this;
-    }
-
-    //!
-    //! Map the piece of memory from `pBegin` to `pEnd-1` in
-    //! `(*this)(0)` to `(*this)(pEnd-pBegin)`
-    //!
-    VectorSlice<T> &
-    slice( T * pBegin, T * pEnd )
-    { values = pBegin; len = pEnd - pBegin; return *this; }
-
-    //!
-    //! Return the total number of element of the vector slice.
-    //!
-    indexType size() const { return len; }
-
-    //!
-    //! Access to the `i-th` element of the Vector.
-    //! If `SPARSETOOL_DEBUG` is defined an index bound check is performed.
-    //!
-    valueType const &
-    operator [] ( indexType i ) const {
-      SPARSETOOL_TEST(
-        i < len,
-        "VectorSlice[" << i << "] size = " << len << " bad index"
-      )
-      return values[i];
-    }
-
-    //!
-    //! Access to the `i-th` element of the Vector.
-    //! If `SPARSETOOL_DEBUG` is defined an index bound check is performed.
-    //!
-    valueType & 
-    operator [] ( indexType i ) {
-      SPARSETOOL_TEST(
-        i < len,
-        "VectorSlice[" << i << "] size = " << len << " bad index"
-      )
-      return values[i];
-    }
-
-    //!
-    //! Access to the `i-th` element of the Vector.
-    //! No index bound check is performed.
-    //!
-    valueType const &
-    operator () ( indexType i ) const
-    { return values[i]; }
-
-    //!
-    //! Access to the `i-th` element of the Vector.
-    //! No index bound check is performed.
-    //!
-    valueType & 
-    operator () ( indexType i )
-    { return values[i]; }
-
-    SPARSELIB_VECTOR_OPERATIONS(VectorSlice<T>)
-
-  };
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-  #define SPARSELIB_V(OP,OP_V)                                                \
-  template<typename A>                                                        \
-  class OP_V {                                                                \
-  public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME(A);                                         \
-  private:                                                                    \
-    A const & a;                                                              \
-  public:                                                                     \
-    OP_V(A const & aa) : a(aa) { }                                            \
-    valueType operator () (indexType i) const { return OP a(i); }             \
-    indexType size(void) const { return a.size(); }                           \
-  };                                                                          \
-                                                                              \
-  template<typename T, typename VEC> inline                                   \
-  VectorE<T,OP_V<VectorBase<T,VEC> > >                                        \
-  operator OP (VectorBase<T,VEC> const & a) {                                 \
-    typedef OP_V<VectorBase<T,VEC> > op;                                      \
-    return VectorE<T,op>(op(a));                                              \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename A> inline                                    \
-  VectorE<T,OP_V<VectorE<T,A> > >                                             \
-  operator OP (VectorE<T,A> const & a) {                                      \
-    typedef OP_V<VectorE<T,A> > op;                                           \
-    return VectorE<T,op>(op(a));                                              \
-  }
-
-  #define SPARSELIB_VV(OP,V_OP_V)                                             \
-  template<typename A, typename B>                                            \
-  class V_OP_V {                                                              \
-  public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME2(A,B);                                      \
-  private:                                                                    \
-    A const & a;                                                              \
-    B const & b;                                                              \
-  public:                                                                     \
-    V_OP_V(A const & aa, B const & bb) : a(aa), b(bb) { }                     \
-    valueType operator () (indexType i) const { return a(i) OP b(i); }        \
-    indexType size(void) const { return minIndex(a.size(), b.size()); }       \
-  };                                                                          \
-                                                                              \
-  template<typename T, typename VA, typename VB> inline                       \
-  VectorE<T,V_OP_V<VectorBase<T,VA>,VectorBase<T,VB> > >                      \
-  operator OP (VectorBase<T,VA> const & a, VectorBase<T,VB> const & b) {      \
-    typedef V_OP_V<VectorBase<T,VA>,VectorBase<T,VB> > op;                    \
-    return VectorE<T,op>(op(a,b));                                            \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename A, typename VB> inline                       \
-  VectorE<T,V_OP_V<VectorE<T,A>,VectorBase<T,VB> > >                          \
-  operator OP (VectorE<T,A> const & a, VectorBase<T,VB> const & b) {          \
-    typedef V_OP_V<VectorE<T,A>,VectorBase<T,VB> > op;                        \
-    return VectorE<T,op>(op(a,b));                                            \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename VA, typename B> inline                       \
-  VectorE<T,V_OP_V<VectorBase<T,VA>,VectorE<T,B> > >                          \
-  operator OP (VectorBase<T,VA> const & a, VectorE<T,B> const & b) {          \
-    typedef V_OP_V<VectorBase<T,VA>,VectorE<T,B> > op;                        \
-    return VectorE<T,op>(op(a,b));                                            \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename A, typename B> inline                        \
-  VectorE<T,V_OP_V<VectorE<T,A>, VectorE<T,B> > >                             \
-  operator OP (VectorE<T,A> const & a, VectorE<T,B> const & b) {              \
-    typedef V_OP_V<VectorE<T,A>,VectorE<T,B> > op;                            \
-    return VectorE<T,op>(op(a,b));                                            \
-  }
-
-  #define SPARSELIB_SV(OP,S_OP_V)                                             \
-  template<typename S, typename B>                                            \
-  class S_OP_V {                                                              \
-  public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME3(S,B);                                      \
-  private:                                                                    \
-    S const & a;                                                              \
-    B const & b;                                                              \
-  public:                                                                     \
-    S_OP_V(S const & aa, B const & bb) : a(aa), b(bb) { }                     \
-    valueType operator () (indexType i) const { return a OP b(i); }           \
-    indexType size(void) const { return b.size(); }                           \
-  };                                                                          \
-                                                                              \
-  template <typename T, typename VEC> inline                                  \
-  VectorE<T,S_OP_V<T,VectorBase<T,VEC> > >                                    \
-  operator OP (T const & s, VectorBase<T,VEC> const & v) {                    \
-    typedef S_OP_V<T,VectorBase<T,VEC> > op;                                  \
-    return VectorE<T,op>(op(s,v));                                            \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename A> inline                                    \
-  VectorE<T,S_OP_V<T,VectorE<T,A> > >                                         \
-  operator OP (T const & s, VectorE<T,A> const & v) {                         \
-    typedef S_OP_V<T,VectorE<T,A> > op;                                       \
-    return VectorE<T,op>(op(s,v));                                            \
-  }
-
-  #define SPARSELIB_VS(OP,V_OP_S)                                             \
-  template<typename S, typename A>                                            \
-  class V_OP_S {                                                              \
-  public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME3(S,A);                                      \
-  private:                                                                    \
-    A const & a;                                                              \
-    S const & b;                                                              \
-  public:                                                                     \
-    V_OP_S(A const & aa, S const & bb) : a(aa), b(bb) { }                     \
-    valueType operator () (indexType i) const { return a(i) OP b; }           \
-    indexType size(void) const { return a.size(); }                           \
-  };                                                                          \
-                                                                              \
-  template <typename T, typename VEC> inline                                  \
-  VectorE<T,V_OP_S<T,VectorBase<T,VEC> > >                                    \
-  operator OP (VectorBase<T,VEC> const & v, T const & s) {                    \
-    typedef V_OP_S<T,VectorBase<T,VEC> > op;                                  \
-    return VectorE<T,op>(op(v,s));                                            \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename A> inline                                    \
-  VectorE<T, V_OP_S<T,VectorE<T,A> > >                                        \
-  operator OP (VectorE<T,A> const & v, T const & s) {                         \
-    typedef V_OP_S<T,VectorE<T,A> > op;                                       \
-    return VectorE<T,op>(op(v,s));                                            \
-  }
-  
-  #endif
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-  SPARSELIB_V(-,Vector_neg_V)
-
-  SPARSELIB_VV(+,Vector_V_sum_V)
-  SPARSELIB_VV(-,Vector_V_sub_V)
-  SPARSELIB_VV(*,Vector_V_mul_V)
-  SPARSELIB_VV(/,Vector_V_div_V)
-
-  SPARSELIB_SV(+,Vector_S_sum_V)
-  SPARSELIB_SV(-,Vector_S_sub_V)
-  SPARSELIB_SV(*,Vector_S_mul_V)
-  SPARSELIB_SV(/,Vector_S_div_V)
-
-  SPARSELIB_VS(+,Vector_V_sum_S)
-  SPARSELIB_VS(-,Vector_V_sub_S)
-  SPARSELIB_VS(*,Vector_V_mul_S)
-  SPARSELIB_VS(/,Vector_V_div_S)
-
-  #endif
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-  #define SPARSELIB_F_V(FUN)                                                  \
-  template<typename A>                                                        \
-  class Vector_##FUN {                                                        \
-  public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME_FUN1(A);                                    \
-  private:                                                                    \
-    A const & a;                                                              \
-  public:                                                                     \
-    Vector_##FUN(A const & aa) : a(aa) { }                                    \
-    valueType operator () (indexType i) const                                 \
-      { return ::SparseToolFun::FUN(a(i)); }                                  \
-    indexType size(void) const { return a.size(); }                           \
-  };
-
-  #define SPARSELIB_F_V_TREE(FUN)                                             \
-  template<typename T> inline                                                 \
-  VectorE<T,Vector_##FUN<Vector<T> > >                                        \
-  FUN(Vector<T> const & a) {                                                  \
-    typedef Vector_##FUN<Vector<T> > op;                                      \
-    return VectorE<T,op>(op(a));                                              \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename A> inline                                    \
-  VectorE<T,Vector_##FUN<VectorE<T,A> > >                                     \
-  FUN(VectorE<T,A> const & a) {                                               \
-    typedef Vector_##FUN<VectorE<T,A> > op;                                   \
-    return VectorE<T,op>(op(a));                                              \
-  }
-
-  #define SPARSELIB_F_VV(FUN)                                                 \
-  template<typename A, typename B>                                            \
-  class Vector_##FUN {                                                        \
-  public:                                                                     \
-    SPARSELIB_TYPES_FROM_TYPENAME_FUN2(A,B);                                  \
-  private:                                                                    \
-    A const & a;                                                              \
-    B const & b;                                                              \
-  public:                                                                     \
-    Vector_##FUN(A const & aa, B const & bb) : a(aa), b(bb) { }               \
-    valueType operator () (indexType i) const                                 \
-      { return ::SparseToolFun::FUN(a(i), b(i)); }                            \
-    indexType size(void) const { return minIndex(a.size(), b.size()); }       \
-  };
-
-  #define SPARSELIB_F_VV_TREE(FUN)                                            \
-  template<typename T> inline                                                 \
-  VectorE<T,Vector_##FUN<Vector<T>,Vector<T> > >                              \
-  FUN(Vector<T> const & a, Vector<T> const & b) {                             \
-    typedef Vector_##FUN<Vector<T>,Vector<T> > op;                            \
-    return VectorE<T,op>(op(a,b));                                            \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename A> inline                                    \
-  VectorE<T,Vector_##FUN<VectorE<T,A>,Vector<T> > >                           \
-  FUN(VectorE<T,A> const & a, Vector<T> const & b) {                          \
-    typedef Vector_##FUN<VectorE<T,A>,Vector<T> > op;                         \
-    return VectorE<T,op>(op(a,b));                                            \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename B> inline                                    \
-  VectorE<T,Vector_##FUN<Vector<T>,VectorE<T,B> > >                           \
-  FUN(Vector<T> const & a, VectorE<T,B> const & b) {                          \
-    typedef Vector_##FUN<Vector<T>,VectorE<T,B> > op;                         \
-    return VectorE<T,op>(op(a,b));                                            \
-  }                                                                           \
-                                                                              \
-  template <typename T, typename A, typename B> inline                        \
-  VectorE<T,Vector_##FUN<VectorE<T,A>, VectorE<T,B> > >                       \
-  FUN(VectorE<T,A> const & a, VectorE<T,B> const & b) {                       \
-    typedef Vector_##FUN<VectorE<T,A>,VectorE<T,B> > op;                      \
-    return VectorE<T,op>(op(a,b));                                            \
-  }
-  #endif
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-  SPARSELIB_F_V(absval)
-  SPARSELIB_F_V(sin)
-  SPARSELIB_F_V(cos)
-  SPARSELIB_F_V(tan)
-  SPARSELIB_F_V(asin)
-  SPARSELIB_F_V(acos)
-  SPARSELIB_F_V(atan)
-  SPARSELIB_F_V(cosh)
-  SPARSELIB_F_V(sinh)
-  SPARSELIB_F_V(tanh)
-
-  SPARSELIB_F_V(sqrt)
-  SPARSELIB_F_V(ceil)
-  SPARSELIB_F_V(floor)
-  SPARSELIB_F_V(log)
-  SPARSELIB_F_V(log10)
-
-  SPARSELIB_F_VV(pow)
-  SPARSELIB_F_VV(atan2)
-
-  SPARSELIB_F_VV(minval)
-  SPARSELIB_F_VV(maxval)
-
-  SPARSELIB_F_VV(minabsval)
-  SPARSELIB_F_VV(maxabsval)
-
-  #endif
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-  template<typename A>
-  class F1 {
-  public:
-    typedef typename A::valueType valueType;
-
-    static inline
-    typename return_trait<valueType>::valueType
-    norm1(A const & a) {
-      using ::SparseToolFun::absval;
-      valueType res = 0;
-      SPARSELIB_LOOP( a.size(), res += absval(a(i)) );
-      return res;
-    }
-
-    static inline
-    typename return_trait<valueType>::valueType
-    normi(A const & a) {
-      using ::SparseToolFun::absval;
-      typename return_trait<valueType>::valueType bf, res = 0;
-      SPARSELIB_LOOP( a.size(), bf = absval(a(i)); if ( bf > res ) res = bf );
-      return res;
-    }
-
-    static inline
-    typename return_trait<valueType>::valueType
-    norm2(A const & a) {
-      using ::SparseToolFun::absval2;
-      using ::SparseToolFun::sqrt;
-      typename return_trait<valueType>::valueType res = 0;
-      SPARSELIB_LOOP( a.size(), res += absval2(a(i)) );
-      return sqrt(res);
-    }
-
-    static inline
-    typename return_trait<valueType>::valueType
-    normp(A const & a, valueType const & p) {
-      using ::SparseToolFun::absval;
-      using ::SparseToolFun::pow;
-      typename return_trait<valueType>::valueType res = 0;
-      SPARSELIB_LOOP( a.size(), res += pow(absval(a(i)),p) );
-      return pow(res,1/p);
-    }
-
-    static inline
-    valueType
-    sum(A const & a) {
-      valueType res = 0;
-      SPARSELIB_LOOP( a.size(), res += a(i) );
-      return res;
-    }
-
-    static inline
-    valueType
-    prod(A const & a) {
-      valueType res = 1;
-      SPARSELIB_LOOP( a.size(), res *= a(i) );
-      return res;
-    }
-
-    static inline
-    valueType
-    maxval(A const & a) {
-      valueType res = a(0);
-      SPARSELIB_LOOP( a.size(), if ( a(i) > res ) res = a(i) );
-      return res;
-    }
-
-    static inline
-    valueType
-    minval(A const & a) {
-      valueType res = a(0);
-      SPARSELIB_LOOP( a.size(), if ( a(i) < res ) res = a(i) );
-      return res;
-    }
-
-    static inline
-    typename return_trait<valueType>::valueType
-    maxabsval(A const & a) {
-      using ::SparseToolFun::absval;
-      typename return_trait<valueType>::valueType tmp, res = absval(a(0));
-      SPARSELIB_LOOP( a.size(), tmp = absval(a(i)); if ( tmp > res ) res = tmp );
-      return res;
-    }
-
-    static inline
-    typename return_trait<valueType>::valueType
-    minabsval(A const & a) {
-      using ::SparseToolFun::absval;
-      typename return_trait<valueType>::valueType tmp, res = absval(a(0));
-      SPARSELIB_LOOP( a.size(), tmp = absval(a(i)); if ( tmp < res ) res = tmp );
-      return res;
-    }
-
-  };
-
-  template<typename A, typename B>
-  class F2 {
-  public:
-
-    SPARSELIB_TYPES_FROM_TYPENAME2(A,B);
-
-    static inline
-    valueType
-    dot(A const & a, B const & b) {
-      using ::SparseToolFun::conj;
-      valueType res = 0;
-      SPARSELIB_LOOP( minIndex(a.size(),b.size()), res += conj(a(i)) * b(i) );
-      return res;
-    }
-
-    static inline
-    valueType
-    rdot(A const & a, B const & b) {
-      using ::SparseToolFun::conj;
-      valueType res = 0;
-      SPARSELIB_LOOP( minIndex(a.size(),b.size()), res += a(i) * b(i) );
-      return res;
-    }
-
-    static inline
-    typename return_trait<valueType>::valueType
-    dist2(A const & a, B const & b) {
-      using ::SparseToolFun::absval2;
-      typename return_trait<valueType>::valueType res = 0;
-      SPARSELIB_LOOP( minIndex( a.size(), b.size() ), res += absval2(a(i) - b(i)) );
-      return res;
-    }
-
-    static inline
-    typename return_trait<valueType>::valueType
-    dist(A const & a, B const & b) {
-      using ::SparseToolFun::absval2;
-      typename return_trait<valueType>::valueType res = 0;
-      SPARSELIB_LOOP( minIndex( a.size(), b.size() ), res += absval2(a(i) - b(i)) );
-      return ::SparseToolFun::sqrt(res);
-    }
-
-  };
-  
-  #endif
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-  SPARSELIB_F_V_TREE(absval)
-  SPARSELIB_F_V_TREE(sin)
-  SPARSELIB_F_V_TREE(cos)
-  SPARSELIB_F_V_TREE(tan)
-  SPARSELIB_F_V_TREE(asin)
-  SPARSELIB_F_V_TREE(acos)
-  SPARSELIB_F_V_TREE(atan)
-  SPARSELIB_F_V_TREE(cosh)
-  SPARSELIB_F_V_TREE(sinh)
-  SPARSELIB_F_V_TREE(tanh)
-
-  SPARSELIB_F_V_TREE(sqrt)
-  SPARSELIB_F_V_TREE(ceil)
-  SPARSELIB_F_V_TREE(floor)
-  SPARSELIB_F_V_TREE(log)
-  SPARSELIB_F_V_TREE(log10)
-
-  SPARSELIB_F_VV_TREE(pow)
-  SPARSELIB_F_VV_TREE(atan2)
-  SPARSELIB_F_VV_TREE(minval)
-  SPARSELIB_F_VV_TREE(maxval)
-  SPARSELIB_F_VV_TREE(minabsval)
-  SPARSELIB_F_VV_TREE(maxabsval)
-
-  #endif
-
-  #undef SPARSELIB_V
-  #undef SPARSELIB_VV
-  #undef SPARSELIB_SV
-  #undef SPARSELIB_VS
-  #undef SPARSELIB_F_V
-  #undef SPARSELIB_F_V_TREE
-  #undef SPARSELIB_F_VV
-  #undef SPARSELIB_F_VV_TREE
-
-  //!
-  //! \name Vector norm
-  //!
-  //@{
-
-  // N O R M 1
-  //! Evaluate the 1-norm of the vector `v`
-  template <typename T, typename V> inline
-  typename return_trait<T>::valueType norm1(VectorBase<T,V> const & v)
-  { return F1<VectorBase<T,V> >::norm1(v); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate the 1-norm of the vector expression `e`
-  template <typename T, typename A> inline
-  typename return_trait<T>::valueType norm1(VectorE<T,A> const & e)
-  { return F1<VectorE<T,A> >::norm1(e); }
-  #endif
-
-  // N O R M 2
-  //! Evaluate the 2-norm of the vector `v`  
-  template <typename T, typename V> inline
-  typename return_trait<T>::valueType norm2(VectorBase<T,V> const & v)
-  { return F1<VectorBase<T,V> >::norm2(v); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate the 2-norm of the vector expression `e`
-  template <typename T, typename A> inline
-  typename return_trait<T>::valueType norm2(VectorE<T,A> const & e)
-  { return F1<VectorE<T,A> >::norm2(e); }
-  #endif
-
-  // N O R M I
-  //! Evaluate the infinity-norm of the vector `v`
-  template <typename T, typename V> inline
-  typename return_trait<T>::valueType normi(VectorBase<T,V> const & v)
-  { return F1<VectorBase<T,V> >::normi(v); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate the infinity-norm of the vector expression `e`
-  template <typename T, typename A> inline
-  typename return_trait<T>::valueType normi(VectorE<T,A> const & e)
-  { return F1<VectorE<T,A> >::normi(e); }
-  #endif
-
-  // N O R M P
-  //! Evaluate the p-norm of the vector `v`
-  template <typename T, typename S, typename V> inline
-  typename return_trait<T>::valueType normp(VectorBase<T,V> const & v, S const & p)
-  { return F1<VectorBase<T,V> >::normp(v,T(p)); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate the p-norm of the vector `e`
-  template <typename T, typename A, typename S> inline
-  typename return_trait<T>::valueType normp(VectorE<T,A> const & e, S const & p)
-  { return F1<VectorE<T,A> >::normp(e,T(p)); }
-  #endif
-  //@}
-
-  //!
-  //! \name sum and product
-  //!
-  //@{
-
-  // S U M
-  //! Evaluate sum of the entries the vector `v`
-  template <typename T, typename V> inline
-  T sum(VectorBase<T,V> const & v)
-  { return F1<VectorBase<T,V> >::sum(v); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate sum of the entries the vector expression `v`
-  template <typename T, typename A> inline
-  T sum(VectorE<T,A> const & e)
-  { return F1<VectorE<T,A> >::sum(e); }
-  #endif
-
-  //! Evaluate product of the entries the vector `v`
-  template <typename T, typename V> inline
-  T prod(VectorBase<T,V> const & v)
-  { return F1<VectorBase<T,V> >::prod(v); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate product of the entries the vector expression `v`
-  template <typename T, typename A> inline
-  T prod(VectorE<T,A> const & e)
-  { return F1<VectorE<T,A> >::prod(e); }
-  #endif
-
-  //@}
-
-  //!
-  //! \name Vector minimum maximum values.
-  //!
-  //@{
-
-  // M A X
-  //! Evaluate the maximum value of the vector `v`
-  template <typename T, typename V> inline
-  T maxval(VectorBase<T,V> const & v)
-  { return F1<VectorBase<T,V> >::maxval(v); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate the maximum value of the vector expression `e`
-  template <typename T, typename A> inline
-  T maxval(VectorE<T,A> const & e)
-  { return F1<VectorE<T,A> >::maxval(e); }
-  #endif
-
-  // M I N
-  //! Evaluate the minimum value of the vector `v`
-  template <typename T, typename V> inline
-  T minval(VectorBase<T,V> const & v)
-  { return F1<VectorBase<T,V> >::minval(v); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate the maximum value of the vector `e`
-  template <typename T, typename A> inline
-  T minval(VectorE<T,A> const & e)
-  { return F1<VectorE<T,A> >::minval(e); }
-  #endif
-
-  // M A X
-  //! Evaluate the maximum absolute value of the vector `v`
-  template <typename T, typename V> inline
-  T maxabsval(VectorBase<T,V> const & v)
-  { return F1<VectorBase<T,V> >::maxabsval(v); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate the maximum value of the vector expression `e`
-  template <typename T, typename A> inline
-  T maxabsval(VectorE<T,A> const & e)
-  { return F1<VectorE<T,A> >::maxabsval(e); }
-  #endif
-
-  // M I N
-  //! Evaluate the minimum value of the vector `v`
-  template <typename T, typename V> inline
-  T minabsval(VectorBase<T,V> const & v)
-  { return F1<VectorBase<T,V> >::minabsval(v); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate the maximum value of the vector `e`
-  template <typename T, typename A> inline
-  T minabsval(VectorE<T,A> const & e)
-  { return F1<VectorE<T,A> >::minabsval(e); }
-  #endif
-
-  //@}
-
-  //!
-  //! \name Vector Dot Product.
-  //!
-  //@{
-
-  // D O T
-  //! Evaluate dot product between vector `A`  and vector `b`
-  template <typename T, typename V1, typename V2> inline
-  T dot(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
-  { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::dot(a,b); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate dot product between vector expression `A`  and vector `b`
-  template <typename T, typename A, typename V> inline
-  T dot(VectorE<T,A> const & a, VectorBase<T,V> const & b)
-  { return F2<VectorE<T,A>,VectorBase<T,V> >::dot(a,b); }
-
-  //! Evaluate dot product between vector `A`  and vector expression `b`
-  template <typename T, typename A, typename V> inline
-  T dot(VectorBase<T,V> const & a, VectorE<T,A> const & b)
-  { return F2<VectorBase<T,V>,VectorE<T,A> >::dot(a,b); }
-
-  //! Evaluate dot product between vector expression  `A`  and vector expression `b`
-  template <typename T, typename A, typename B> inline
-  T dot(VectorE<T,A> const & a, VectorE<T,B> const & b)
-  { return F2<VectorE<T,A>,VectorE<T,B> >::dot(a,b); }
-  #endif
-
-  // R D O T
-  //! Evaluate dot product between vector `A`  and vector `b`
-  template <typename T, typename V1, typename V2> inline
-  T rdot(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
-  { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::rdot(a,b); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate dot product between vector expression `A`  and vector `b`
-  template <typename T, typename A, typename V> inline
-  T rdot(VectorE<T,A> const & a, VectorBase<T,V> const & b)
-  { return F2<VectorE<T,A>,VectorBase<T,V> >::rdot(a,b); }
-
-  //! Evaluate dot product between vector `A`  and vector expression `b`
-  template <typename T, typename A, typename V> inline
-  T rdot(VectorBase<T,V> const & a, VectorE<T,A> const & b)
-  { return F2<VectorBase<T,V>,VectorE<T,A> >::rdot(a,b); }
-
-  //! Evaluate dot product between vector expression  `A`  and vector expression `b`
-  template <typename T, typename A, typename B> inline
-  T rdot(VectorE<T,A> const & a, VectorE<T,B> const & b)
-  { return F2<VectorE<T,A>,VectorE<T,B> >::rdot(a,b); }
-  #endif
-
-  //@}
-
-  //!
-  //! \name Vector Distance.
-  //!
-  //@{
-
-  // D I S T
-  //! Evaluate euclidean distance between vector `A`  and vector `b`
-  template <typename T, typename V1, typename V2> inline
-  typename return_trait<T>::valueType dist(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
-  { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::dist(a,b); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate euclidean distance between vector expression `A`  and vector `b`
-  template <typename T, typename A, typename V> inline
-  typename return_trait<T>::valueType dist(VectorE<T,A> const & a, VectorBase<T,V> const & b)
-  { return F2<VectorE<T,A>,VectorBase<T,V> >::dist(a,b); }
-
-  //! Evaluate euclidean distance between vector `A`  and vector expression `b`
-  template <typename T, typename A, typename V> inline
-  typename return_trait<T>::valueType dist(VectorBase<T,V> const & a, VectorE<T,A> const & b)
-  { return F2<VectorBase<T,V>,VectorE<T,A> >::dist(a,b); }
-
-  //! Evaluate euclidean distance between vector expression `A`  and vector expression `b`
-  template <typename T, typename A, typename B> inline
-  typename return_trait<T>::valueType dist(VectorE<T,A> const & a, VectorE<T,B> const & b)
-  { return F2<VectorE<T,A>,VectorE<T,B> >::dist(a,b); }
-  #endif
-
-  // D I S T 2
-
-  //! Evaluate square of euclidean distance between vector `A`  and vector `b`
-  template <typename T, typename V1, typename V2> inline
-  typename return_trait<T>::valueType dist2(VectorBase<T,V1> const & a, VectorBase<T,V2> const & b)
-  { return F2<VectorBase<T,V1>,VectorBase<T,V2> >::dist2(a,b); }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! Evaluate square of euclidean distance between vector expression `A`  and vector `b`
-  template <typename T, typename A, typename V> inline
-  typename return_trait<T>::valueType dist2(VectorE<T,A> const & a, VectorBase<T,V> const & b)
-  { return F2<VectorE<T,A>,Vector<T> >::dist2(a,b); }
-
-  //! Evaluate square of euclidean distance between vector `A`  and vector expression `b`
-  template <typename T, typename A, typename V> inline
-  typename return_trait<T>::valueType dist2(VectorBase<T,V> const & a, VectorE<T,A> const & b)
-  { return F2<VectorBase<T,V>,VectorE<T,A> >::dist2(a,b); }
-
-  //! Evaluate square of euclidean distance between vector expression `A`  and vector expression `b`   
-  template <typename T, typename A, typename B> inline
-  typename return_trait<T>::valueType dist2(VectorE<T,A> const & a, VectorE<T,B> const & b)
-  { return F2<VectorE<T,A>,VectorE<T,B> >::dist2(a,b); }
-  #endif
-
-  //@}
 
   /*
   //  #####  #     #  ###   #####  #    #        #####  ####### ######  #######
@@ -2040,15 +873,15 @@ namespace SparseTool {
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  typedef struct { indexType lo, hi; } stack_node;
+  typedef struct { integer lo, hi; } stack_node;
 
   static inline
-  bool GT( indexType i, indexType i1 )
+  bool GT( integer i, integer i1 )
   { return i>i1; }
     
   static inline
-  bool GT( indexType i,  indexType j,
-           indexType i1, indexType j1 )
+  bool GT( integer i,  integer j,
+           integer i1, integer j1 )
   { return j==j1 ? i>i1 : j>j1; }
 
   #endif
@@ -2066,10 +899,10 @@ namespace SparseTool {
   static
   void
   QuickSortI(
-    I_type    I[],
-    T_type    A[],
-    indexType total_elems,
-    indexType MAX_THRESH = 4
+    I_type  I[],
+    T_type  A[],
+    integer total_elems,
+    integer MAX_THRESH = 4
   ) {
 
     using ::std::swap;
@@ -2077,8 +910,8 @@ namespace SparseTool {
     if ( total_elems <= 1 ) return;
     if ( total_elems <= MAX_THRESH ) goto insert_sort;
     {
-      indexType lo = 0;
-      indexType hi = total_elems - 1;
+      integer lo = 0;
+      integer hi = total_elems - 1;
 
       stack_node stack[128];
       stack_node *top = stack;
@@ -2111,9 +944,9 @@ namespace SparseTool {
           }
         }
 
-        indexType Pivot     = I_mid;
-        indexType left_ptr  = lo + 1;
-        indexType right_ptr = hi - 1;
+        integer Pivot     = I_mid;
+        integer left_ptr  = lo + 1;
+        integer right_ptr = hi - 1;
 
         /* Here's the famous ``collapse the walls'' section of quicksort. *\
          * Gotta like those tight inner loops!  They are the main reason  *
@@ -2173,8 +1006,8 @@ namespace SparseTool {
 
   insert_sort:
 
-    for ( indexType i = 1; i < total_elems; ++i ) {
-      for ( indexType j = i; j > 0; --j ) {
+    for ( integer i = 1; i < total_elems; ++i ) {
+      for ( integer j = i; j > 0; --j ) {
         if ( GT(I[j], I[j-1]) ) break;
         swap( I[j], I[j-1] );
         swap( A[j], A[j-1] );
@@ -2195,10 +1028,10 @@ namespace SparseTool {
   static
   void
   QuickSortIJ(
-    I_type    I[],
-    I_type    J[],
-    indexType total_elems,
-    indexType MAX_THRESH = 4
+    I_type  I[],
+    I_type  J[],
+    integer total_elems,
+    integer MAX_THRESH = 4
   ) {
 
     using ::std::swap;
@@ -2207,8 +1040,8 @@ namespace SparseTool {
     if ( total_elems <= MAX_THRESH ) goto insert_sort;
 
     {
-      indexType lo = 0;
-      indexType hi = total_elems - 1;
+      integer lo = 0;
+      integer hi = total_elems - 1;
 
       stack_node stack[128];
       stack_node *top = stack;
@@ -2241,10 +1074,10 @@ namespace SparseTool {
           }
         }
 
-        indexType IPivot    = I_mid;
-        indexType JPivot    = J_mid;
-        indexType left_ptr  = lo + 1;
-        indexType right_ptr = hi - 1;
+        integer IPivot    = I_mid;
+        integer JPivot    = J_mid;
+        integer left_ptr  = lo + 1;
+        integer right_ptr = hi - 1;
 
         /* Here's the famous ``collapse the walls'' section of quicksort. *\
          * Gotta like those tight inner loops!  They are the main reason  *
@@ -2304,8 +1137,8 @@ namespace SparseTool {
 
   insert_sort:
 
-    for ( indexType i = 1; i < total_elems; ++i ) {
-      for ( indexType j = i; j > 0; --j ) {
+    for ( integer i = 1; i < total_elems; ++i ) {
+      for ( integer j = i; j > 0; --j ) {
         if ( GT(I[j], J[j], I[j-1], J[j-1]) ) break;
         swap( I[j], I[j-1] );
         swap( J[j], J[j-1] );
@@ -2327,11 +1160,11 @@ namespace SparseTool {
   static
   void
   QuickSortIJ2(
-    I_type    I[],
-    I_type    J[],
-    T_type    A[],
-    indexType total_elems,
-    indexType MAX_THRESH = 4
+    I_type  I[],
+    I_type  J[],
+    T_type  A[],
+    integer total_elems,
+    integer MAX_THRESH = 4
   ) {
  
     using ::std::swap;
@@ -2340,8 +1173,8 @@ namespace SparseTool {
     if ( total_elems <= MAX_THRESH ) goto insert_sort;
 
     {
-      indexType lo = 0;
-      indexType hi = total_elems - 1;
+      integer lo = 0;
+      integer hi = total_elems - 1;
 
       stack_node stack[128];
       stack_node *top = stack;
@@ -2381,10 +1214,10 @@ namespace SparseTool {
           }
         }
 
-        indexType IPivot    = I_mid;
-        indexType JPivot    = J_mid;
-        indexType left_ptr  = lo + 1;
-        indexType right_ptr = hi - 1;
+        integer IPivot    = I_mid;
+        integer JPivot    = J_mid;
+        integer left_ptr  = lo + 1;
+        integer right_ptr = hi - 1;
 
         /* Here's the famous ``collapse the walls'' section of quicksort. *\
          * Gotta like those tight inner loops!  They are the main reason  *
@@ -2445,8 +1278,8 @@ namespace SparseTool {
 
   insert_sort:
 
-    for ( indexType i = 1; i < total_elems; ++i ) {
-      for ( indexType j = i; j > 0; --j ) {
+    for ( integer i = 1; i < total_elems; ++i ) {
+      for ( integer j = i; j > 0; --j ) {
         if ( GT(I[j], J[j], I[j-1], J[j-1]) ) break;
         swap( I[j], I[j-1] );
         swap( J[j], J[j-1] );
@@ -2472,104 +1305,88 @@ namespace SparseTool {
   //! standard matrix-vector expressions.
   //!
   #define SPARSELIB_MUL_STRUCTURES(MATRIX)                                    \
-  template <typename TM, typename T, typename VEC> inline                     \
-  Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VEC> >                              \
-  operator * (MATRIX<TM> const & M, VectorBase<T,VEC> const & a) {            \
-    return Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VEC> >(M,a);               \
+  template <typename TM, typename VEC> inline                                 \
+  Vector_M_mul_V<MATRIX<TM>,VEC>                                              \
+  operator * (MATRIX<TM> const & M, VEC const & a) {                          \
+    return Vector_M_mul_V<MATRIX<TM>,VEC>(M,a);                               \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM> inline                                   \
-  Vector_S_mul_M<T,MATRIX<TM> >                                               \
-  operator * (T const & s, MATRIX<TM> const & M) {                            \
-    return Vector_S_mul_M<T, MATRIX<TM> >(s,M);                               \
+  template <typename S, typename TM> inline                                   \
+  Vector_S_mul_M<S,MATRIX<TM> >                                               \
+  operator * (S const & s, MATRIX<TM> const & M) {                            \
+    return Vector_S_mul_M<S,MATRIX<TM> >(s,M);                                \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VEC> inline                     \
-  Vector_S_mul_M_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >                     \
-  operator * (Vector_S_mul_M<T,MATRIX<TM> > const & sM,                       \
-              VectorBase<T,VEC>             const & v) {                      \
-    return Vector_S_mul_M_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >            \
-           (sM.s,sM.M,v);                                                     \
+  template <typename S, typename TM, typename VEC> inline                     \
+  Vector_S_mul_M_mul_V<S,MATRIX<TM>, VEC>                                     \
+  operator * (Vector_S_mul_M<S,MATRIX<TM> > const & sM,                       \
+              VEC                           const & v) {                      \
+    return Vector_S_mul_M_mul_V<S,MATRIX<TM>,VEC>(sM.s,sM.M,v);               \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VEC> inline                     \
-  Vector_S_mul_M_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >                     \
-  operator * (T const & s,                                                    \
-              Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VEC> > const & Mv) {    \
-    return Vector_S_mul_M_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >            \
-           (s,Mv.M,Mv.a);                                                     \
+  template <typename S, typename TM, typename VEC> inline                     \
+  Vector_S_mul_M_mul_V<S,MATRIX<TM>,VEC>                                      \
+  operator * (S const & s, Vector_M_mul_V<MATRIX<TM>,VEC> const & Mv) {       \
+    return Vector_S_mul_M_mul_V<S,MATRIX<TM>,VEC>(s,Mv.M,Mv.a);               \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VA, typename VB> inline         \
-  Vector_V_sum_M_mul_V<VectorBase<T,VA>, MATRIX<TM>, VectorBase<T,VB> >       \
-  operator + (VectorBase<T,VA> const & a,                                     \
-              Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VB> > const & Mv) {     \
-    return Vector_V_sum_M_mul_V<VectorBase<T,VA>, MATRIX<TM>,                 \
-                                VectorBase<T,VB> >(a,Mv.M,Mv.a);              \
+  template <typename TM, typename VA, typename VB> inline                     \
+  Vector_V_sum_M_mul_V<VA,MATRIX<TM>,VB>                                      \
+  operator + (VA const & a, Vector_M_mul_V<MATRIX<TM>,VB> const & Mv ) {      \
+    return Vector_V_sum_M_mul_V<VA,MATRIX<TM>,VB>(a,Mv.M,Mv.a);               \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VA, typename VB> inline         \
-  Vector_V_sub_M_mul_V<VectorBase<T,VA>,MATRIX<TM>,VectorBase<T,VB> >         \
-  operator - (VectorBase<T,VA> const & a,                                     \
-              Vector_M_mul_V<MATRIX<TM>, VectorBase<T,VB> > const & Mv) {     \
-    return Vector_V_sub_M_mul_V<VectorBase<T,VA>,MATRIX<TM>,                  \
-                                VectorBase<T,VB> >(a,Mv.M,Mv.a);              \
+  template <typename TM, typename VA, typename VB> inline                     \
+  Vector_V_sub_M_mul_V<VA,MATRIX<TM>,VB>                                      \
+  operator - ( VA const & a, Vector_M_mul_V<MATRIX<TM>, VB> const & Mv ) {    \
+    return Vector_V_sub_M_mul_V<VA,MATRIX<TM>,VB>(a,Mv.M,Mv.a);               \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VA, typename VB> inline         \
-  Vector_V_sum_S_mul_M_mul_V<VectorBase<T,VA>,T,MATRIX<TM>,VectorBase<T,VB> > \
-  operator + (VectorBase<T,VA> const & a,                                     \
-              Vector_S_mul_M_mul_V<T,MATRIX<TM>,VectorBase<T,VB> > const & sMv) { \
-    return Vector_V_sum_S_mul_M_mul_V<VectorBase<T,VA>,T,MATRIX<TM>,          \
-                                      VectorBase<T,VB> >                      \
-                                      (a,sMv.s,sMv.M,sMv.a);                  \
+  template <typename VA, typename S, typename TM, typename VB> inline         \
+  Vector_V_sum_S_mul_M_mul_V<VA,S,MATRIX<TM>,VB>                              \
+  operator + ( VA const & a,                                                  \
+               Vector_S_mul_M_mul_V<S,MATRIX<TM>,VB> const & sMv ) {          \
+    return Vector_V_sum_S_mul_M_mul_V<VA,S,MATRIX<TM>,VB>(a,sMv.s,sMv.M,sMv.a); \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VEC> inline                     \
-  Vector_Mt_mul_V<MATRIX<TM>, VectorBase<T,VEC> >                             \
-  operator ^ (MATRIX<TM> const & M, VectorBase<T,VEC> const & a) {            \
-    return Vector_Mt_mul_V<MATRIX<TM>, VectorBase<T,VEC> >(M,a);              \
+  template <typename TM, typename VEC> inline                                 \
+  Vector_Mt_mul_V<MATRIX<TM>, VEC>                                            \
+  operator ^ ( MATRIX<TM> const & M, VEC const & a ) {                        \
+    return Vector_Mt_mul_V<MATRIX<TM>,VEC>(M,a);                              \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VEC> inline                     \
-  Vector_S_mul_Mt_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >                    \
-  operator ^ (Vector_S_mul_M<T,MATRIX<TM> > const & sM,                       \
-              VectorBase<T,VEC>             const & v) {                      \
-    return Vector_S_mul_Mt_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >           \
-           (sM.s,sM.M,v);                                                     \
+  template <typename S, typename TM, typename VEC> inline                     \
+  Vector_S_mul_Mt_mul_V<S,MATRIX<TM>,VEC>                                     \
+  operator ^ (Vector_S_mul_M<S,MATRIX<TM> > const & sM, VEC const & v) {      \
+    return Vector_S_mul_Mt_mul_V<S,MATRIX<TM>,VEC>(sM.s,sM.M,v);              \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VEC> inline                     \
-  Vector_S_mul_Mt_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >                    \
-  operator * (T const & s,                                                    \
-              Vector_Mt_mul_V<MATRIX<TM>, VectorBase<T,VEC> > const & Mv) {   \
-    return Vector_S_mul_Mt_mul_V<T, MATRIX<TM>, VectorBase<T,VEC> >           \
-           (s,Mv.M,Mv.a);                                                     \
+  template <typename S, typename TM, typename VEC> inline                     \
+  Vector_S_mul_Mt_mul_V<S,MATRIX<TM>,VEC>                                     \
+  operator * (S const & s,                                                    \
+              Vector_Mt_mul_V<MATRIX<TM>,VEC> const & Mv ) {                  \
+    return Vector_S_mul_Mt_mul_V<S,MATRIX<TM>,VEC>(s,Mv.M,Mv.a);              \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VA, typename VB> inline         \
-  Vector_V_sum_Mt_mul_V<VectorBase<T,VA>,MATRIX<TM>,VectorBase<T,VB> >        \
-  operator + (VectorBase<T,VA> const & a,                                     \
-              Vector_Mt_mul_V<MATRIX<TM>, VectorBase<T,VB> > const & Mv) {    \
-    return Vector_V_sum_Mt_mul_V<VectorBase<T,VA>,MATRIX<TM>,                 \
-                                 VectorBase<T,VB> >(a,Mv.M,Mv.a);             \
+  template <typename VA, typename TM, typename VB> inline                     \
+  Vector_V_sum_Mt_mul_V<VA,MATRIX<TM>,VB>                                     \
+  operator + ( VA const & a,                                                  \
+               Vector_Mt_mul_V<MATRIX<TM>,VB> const & Mv ) {                  \
+    return Vector_V_sum_Mt_mul_V<VA,MATRIX<TM>,VB>(a,Mv.M,Mv.a);              \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VA, typename VB> inline         \
-  Vector_V_sub_Mt_mul_V<VectorBase<T,VA>,MATRIX<TM>,VectorBase<T,VB> >        \
-  operator - (VectorBase<T,VA> const & a,                                     \
-              Vector_Mt_mul_V<MATRIX<TM>,VectorBase<T,VB> > const & Mv) {     \
-    return Vector_V_sub_Mt_mul_V<VectorBase<T,VA>,MATRIX<TM>,                 \
-                                 VectorBase<T,VB> >(a,Mv.M,Mv.a);             \
+  template <typename VA, typename TM, typename VB> inline                     \
+  Vector_V_sub_Mt_mul_V<VA,MATRIX<TM>,VB>                                     \
+  operator - ( VA const & a,                                                  \
+               Vector_Mt_mul_V<MATRIX<TM>,VB> const & Mv ) {                  \
+    return Vector_V_sub_Mt_mul_V<VA,MATRIX<TM>,VB>(a,Mv.M,Mv.a);              \
   }                                                                           \
                                                                               \
-  template <typename T, typename TM, typename VA, typename VB> inline         \
-  Vector_V_sum_S_mul_Mt_mul_V<VectorBase<T,VA>,T,MATRIX<TM>,VectorBase<T,VB> >\
-  operator + (VectorBase<T,VA> const & a,                                     \
-              Vector_S_mul_Mt_mul_V<T,MATRIX<TM>,VectorBase<T,VB> > const & sMv) { \
-    return Vector_V_sum_S_mul_Mt_mul_V<VectorBase<T,VA>,T,MATRIX<TM>,         \
-                                       VectorBase<T,VB> >                     \
-                                       (a,sMv.s,sMv.M,sMv.a);                 \
+  template <typename VA, typename S, typename TM, typename VB> inline         \
+  Vector_V_sum_S_mul_Mt_mul_V<VA,S,MATRIX<TM>,VB>                             \
+  operator + ( VA const & a,                                                  \
+               Vector_S_mul_Mt_mul_V<S,MATRIX<TM>,VB> const & sMv ) {         \
+    return Vector_V_sum_S_mul_Mt_mul_V<VA,S,MATRIX<TM>,VB>(a,sMv.s,sMv.M,sMv.a); \
   }
 
   #endif
@@ -2583,14 +1400,14 @@ namespace SparseTool {
   class SparseBase {
   protected:
 
-    indexType sp_nrows;     //!< Number of rows of the derived class
-    indexType sp_ncols;     //!< Number of columns of the derived class
-    indexType sp_min_size;  //!< Minimum between `sp`_nrows and `sp`_ncols
-    indexType sp_max_size;  //!< Minimum between `sp`_nrows and `sp`_ncols
-    indexType sp_nnz;       //!< Total number of nonzeros of the derived sparse matrix
-    indexType sp_lower_nnz; //!< Total number of nonzeros under the main diagonal
-    indexType sp_upper_nnz; //!< Total number of nonzeros over the main diagonal
-    indexType sp_diag_nnz;  //!< Total number of nonzeros on the main diagonal
+    integer sp_nrows;     //!< Number of rows of the derived class
+    integer sp_ncols;     //!< Number of columns of the derived class
+    integer sp_min_size;  //!< Minimum between `sp`_nrows and `sp`_ncols
+    integer sp_max_size;  //!< Minimum between `sp`_nrows and `sp`_ncols
+    integer sp_nnz;       //!< Total number of nonzeros of the derived sparse matrix
+    integer sp_lower_nnz; //!< Total number of nonzeros under the main diagonal
+    integer sp_upper_nnz; //!< Total number of nonzeros over the main diagonal
+    integer sp_diag_nnz;  //!< Total number of nonzeros on the main diagonal
     bool      sp_isOrdered;
     /*!< \brief Some sparse matrix can be internally in a state not ordered.
          When in this state the random access to element is unpredictable
@@ -2602,7 +1419,7 @@ namespace SparseTool {
     //! and error is issued.
     //!
     void
-    test_nnz(indexType idx) const {
+    test_nnz(integer idx) const {
       SPARSETOOL_TEST(
         idx < sp_nnz,
         "Sparse::operator [" << idx << "] index out of range"
@@ -2614,7 +1431,7 @@ namespace SparseTool {
     //! If out of the range of the matrix and error is issued.
     //!
     void
-    test_index(indexType i, indexType j) const {
+    test_index(integer i, integer j) const {
       SPARSETOOL_TEST(
         i < sp_nrows && j < sp_ncols,
         "Sparse::test_index(" << i << "," << j << ") index out of range"
@@ -2626,7 +1443,7 @@ namespace SparseTool {
     //! If out of the row range of the matrix and error is issued.
     //!
     void
-    test_row(indexType i) const {
+    test_row(integer i) const {
       SPARSETOOL_TEST(
         i < sp_nrows,
         "Sparse::test_row(" << i << ") index out of range"
@@ -2638,7 +1455,7 @@ namespace SparseTool {
     //! If out of the column range of the matrix and error is issued.
     //!
     void
-    test_col(indexType j) const {
+    test_col(integer j) const {
       SPARSETOOL_TEST(
         j < sp_ncols,
         "Sparse::test_col(" << j << ") index out of range"
@@ -2649,7 +1466,7 @@ namespace SparseTool {
     //! Initialize the class `Sparse` with `nr` rows and `nc` columns.
     //!
     void
-    setup( indexType nr, indexType nc ) {
+    setup( integer nr, integer nc ) {
       sp_nrows     = nr;
       sp_ncols     = nc;
       sp_min_size  = std::min(nr,nc);
@@ -2665,7 +1482,7 @@ namespace SparseTool {
     //! Update the counter for the lower, upper and diagonal elements.
     //!
     void
-    ldu_count(indexType i, indexType j) {
+    ldu_count(integer i, integer j) {
       if      ( j < i ) ++sp_lower_nnz;
       else if ( j > i ) ++sp_upper_nnz;
       else              ++sp_diag_nnz;
@@ -2677,11 +1494,11 @@ namespace SparseTool {
     ~SparseBase(void) {}
 
     // common data
-    indexType numRows (void) const { return sp_nrows; }    //!< return the number of rows of the `Sparse` object
-    indexType numCols (void) const { return sp_ncols; }    //!< return the number of columns of the `Sparse` object
-    indexType minSize (void) const { return sp_min_size; } //!< return the minimum between rows and columns
-    indexType maxSize (void) const { return sp_max_size; } //!< return the maximum between rows and columns
-    indexType nnz     (void) const { return sp_nnz; }      //!< return the total number of nonzeros
+    integer numRows (void) const { return sp_nrows; }    //!< return the number of rows of the `Sparse` object
+    integer numCols (void) const { return sp_ncols; }    //!< return the number of columns of the `Sparse` object
+    integer minSize (void) const { return sp_min_size; } //!< return the minimum between rows and columns
+    integer maxSize (void) const { return sp_max_size; } //!< return the maximum between rows and columns
+    integer nnz     (void) const { return sp_nnz; }      //!< return the total number of nonzeros
 
     //!
     //! Return the number of nonzeros of the derived sparse
@@ -2689,7 +1506,7 @@ namespace SparseTool {
     //! over the main diagonal (**upper**) and on the diagonal (**diag**)
     //!
     void
-    nnz ( indexType & lower, indexType & diag, indexType & upper) const {
+    nnz ( integer & lower, integer & diag, integer & upper) const {
       lower = sp_lower_nnz;
       diag  = sp_diag_nnz;
       upper = sp_upper_nnz;
@@ -2711,9 +1528,9 @@ namespace SparseTool {
     //! 
     //! permits to loops on all the elements, while the methods
     //! 
-    //! - `indexType row()`
-    //! - `indexType column()`
-    //! - `valueType value()`
+    //! - `integer row()`
+    //! - `integer column()`
+    //! - `real_type value()`
     //! 
     //! permits to access values of the actual elements
     //! pointed by the iterator. For example to print all the stored
@@ -2745,12 +1562,12 @@ namespace SparseTool {
     //!
     //! The **row** of the pointed element.
     //!
-    indexType row(void) const { return static_cast<Matrix const *>(this) -> row(); }
+    integer row(void) const { return static_cast<Matrix const *>(this) -> row(); }
 
     //!
     //! The **column** of the pointed element.
     //!
-    indexType column(void) const { return static_cast<Matrix const *>(this) -> column(); }
+    integer column(void) const { return static_cast<Matrix const *>(this) -> column(); }
 
     //!
     //! Assign the pointed element to `rhs`.
@@ -2768,7 +1585,7 @@ namespace SparseTool {
     //! a nonzeros of the derived matrix.
     //!
     bool
-    exists( indexType i, indexType j )
+    exists( integer i, integer j )
     { return static_cast<Matrix const *>(this) -> exists( i, j ); }
 
     //!
@@ -2776,8 +1593,8 @@ namespace SparseTool {
     //! in the internal structure. If the element `(i,j)` do not
     //! exist it return `nnz()`
     //!
-    indexType
-    position( indexType i, indexType j ) const
+    integer
+    position( integer i, integer j ) const
     { return static_cast<Matrix const *>(this) -> position( i, j ); }
 
   };
@@ -2793,7 +1610,7 @@ namespace SparseTool {
   class Sparse : public SparseBase<Matrix> {
     typedef SparseBase<Matrix> SBASE;
   public:
-    typedef T valueType; //!< type of the element of the matrix
+    typedef T real_type; //!< type of the element of the matrix
 
     Sparse(void) { SBASE::setup(0, 0); }
     ~Sparse(void) {}
@@ -2801,7 +1618,7 @@ namespace SparseTool {
     //!
     //! The **value** of the pointed element.
     //!
-    valueType value (void) const { return static_cast<Matrix const *>(this) -> value(); }
+    real_type value (void) const { return static_cast<Matrix const *>(this) -> value(); }
 
     //!
     //! Assign the pointed element to `rhs`.
@@ -2824,8 +1641,8 @@ namespace SparseTool {
     //! If at the `(i,j)` coordinate there are no elements
     //! an error is issued.
     //! 
-    valueType const &
-    operator () ( indexType i, indexType j ) const
+    real_type const &
+    operator () ( integer i, integer j ) const
     { return static_cast<Matrix const *>(this) -> operator () (i,j); }
 
     //! 
@@ -2835,8 +1652,8 @@ namespace SparseTool {
     //! matrix at the `i-th` row and `j`-th column.
     //! If at the `(i,j)` coordinate there are no elements an error is issued.
     //! 
-    valueType &
-    operator () ( indexType i, indexType j )
+    real_type &
+    operator () ( integer i, integer j )
     { return static_cast<Matrix *>(this) -> operator () (i,j); }
 
     //! 
@@ -2846,8 +1663,8 @@ namespace SparseTool {
     //! matrix at the `i-th` row and `j-th` column.  If at the `(i,j)`
     //! coordinate there are no elements a reference to a value **0** is returned
     //! 
-    valueType const &
-    value( indexType i, indexType j ) const
+    real_type const &
+    value( integer i, integer j ) const
     { return static_cast<Matrix const *>(this) -> value(i,j); }
 
     //!
@@ -2855,7 +1672,7 @@ namespace SparseTool {
     //! is a nonzeros of the derived matrix.
     //!
     bool
-    exists( indexType i, indexType j )
+    exists( integer i, integer j )
     { return static_cast<Matrix const *>(this) -> exists( i, j ); }
 
     //! 
@@ -2863,24 +1680,24 @@ namespace SparseTool {
     //! in the internal structure. If the element `(i,j)` do not
     //! exist it return `nnz()`.
     //! 
-    indexType
-    position( indexType i, indexType j ) const
+    integer
+    position( integer i, integer j ) const
     { return static_cast<Matrix const *>(this) -> position( i, j ); }
 
     //!
     //! Return the reference of the `idx-th` element
     //! of the vector of stored values.
     //!
-    valueType const &
-    operator [] (indexType idx) const
+    real_type const &
+    operator [] (integer idx) const
     { return static_cast<Matrix const *>(this) -> operator[] (idx); }
 
     //!
     //! Return the reference of the `idx-th`
     //! element of the vector of stored values.
     //!
-    valueType &
-    operator [] (indexType idx)
+    real_type &
+    operator [] (integer idx)
     { return static_cast<Matrix *>(this) -> operator[] (idx); }
 
     //@}
@@ -2896,21 +1713,21 @@ namespace SparseTool {
     //! Multiply all the nonzeros of the sparse matrix by `s`.
     //!
     void
-    scaleValues( valueType const & s )
+    scaleValues( real_type const & s )
     { return static_cast<Matrix const *>(this) -> scaleValues( s ); }
 
     //!
     //! Multiply all the nonzeros of the row `nr` matrix by `val`.
     //!
     void
-    scaleRow( indexType nr, valueType const & val )
+    scaleRow( integer nr, real_type const & val )
     { return static_cast<Matrix const *>(this) -> scaleRow( nr, val ); }
 
     //!
     //! Multiply all the nonzeros of the column `nc` matrix by `val`.
     //!
     void
-    scaleColumn( indexType nc, valueType const & val )
+    scaleColumn( integer nc, real_type const & val )
     { return static_cast<Matrix const *>(this) -> scaleColumn( nc, val ); }
 
     //!
@@ -2939,10 +1756,10 @@ namespace SparseTool {
     //! \f]
     //!
     Matrix &
-    operator = ( valueType const & s ) {
+    operator = ( real_type const & s ) {
       setZero();
       if ( s != 0 )
-        for ( indexType k = 0; k < SBASE::sp_min_size; ++k )
+        for ( integer k = 0; k < SBASE::sp_min_size; ++k )
           (*this)(k,k) = s;
       return *this;
     }
@@ -2969,8 +1786,8 @@ namespace SparseTool {
     //! \f]
     //! 
     Matrix &
-    operator += ( valueType const & s ) {
-      for ( indexType k = 0; k < SBASE::sp_min_size; ++k )
+    operator += ( real_type const & s ) {
+      for ( integer k = 0; k < SBASE::sp_min_size; ++k )
         (*this)(k,k) += s;
       return *this;
     }
@@ -2997,8 +1814,8 @@ namespace SparseTool {
     //! \f]
     //! 
     Matrix &
-    operator -= ( valueType const & s ) {
-      for ( indexType k = 0; k < SBASE::sp_min_size; ++k )
+    operator -= ( real_type const & s ) {
+      for ( integer k = 0; k < SBASE::sp_min_size; ++k )
         (*this)(k,k) -= s;
       return *this;
     }
@@ -3025,7 +1842,7 @@ namespace SparseTool {
     //! \f]
     //! 
     Matrix &
-    operator *= ( valueType const & s )
+    operator *= ( real_type const & s )
     { scaleValues(s); return * this; }
 
     //!
@@ -3050,8 +1867,8 @@ namespace SparseTool {
     //! \f]
     //! 
     Matrix &
-    operator /= ( valueType const & s)
-    { valueType ss = 1/s; scaleValues(ss); return * this; }
+    operator /= ( real_type const & s)
+    { real_type ss = 1/s; scaleValues(ss); return * this; }
 
     // ------------------------
     //!
@@ -3082,12 +1899,12 @@ namespace SparseTool {
     //! Notice that only the first `v.size()` diagonal elements are
     //! set while the rest of the matrix is set to `0`.
     //!
-    template <typename V> inline
+    template <typename TV> inline
     Matrix &
-    operator = ( VectorBase<T,V> const & v ) {
-      indexType n = minIndex(v.size(),  SBASE::sp_min_size );
+    operator = ( Vector<TV> const & v ) {
+      integer n = minIndex(v.size(), SBASE::sp_min_size );
       setZero();
-      for ( indexType k = 0; k < n; ++k )
+      for ( integer k = 0; k < n; ++k )
         (*this)(k,k) = v(k);
       return *this;
     }
@@ -3117,11 +1934,11 @@ namespace SparseTool {
     //!   \end{pmatrix}
     //! \f]
     //! 
-    template <typename V> inline
+    template <typename TV> inline
     Matrix &
-    operator += ( VectorBase<T,V> const & v ) {
-      indexType n = minIndex(v.size(),  SBASE::sp_min_size );
-      for ( indexType k = 0; k < n; ++k )
+    operator += ( Vector<TV> const & v ) {
+      integer n = minIndex( v.size(), SBASE::sp_min_size );
+      for ( integer k = 0; k < n; ++k )
         (*this)(k,k) += v(k);
       return *this;
     }
@@ -3151,11 +1968,11 @@ namespace SparseTool {
     //!  \end{pmatrix}
     //! \f]
     //!
-    template <typename V> inline
+    template <typename TV> inline
     Matrix &
-    operator -= ( VectorBase<T,V> const & v ) {
-      indexType n = minIndex(v.size(),  SBASE::sp_min_size);
-      for ( indexType k = 0; k < n; ++k )
+    operator -= ( Vector<TV> const & v ) {
+      integer n = minIndex(v.size(),  SBASE::sp_min_size);
+      for ( integer k = 0; k < n; ++k )
         (*this)(k,k) -= v(k);
       return *this;
     }
@@ -3190,12 +2007,12 @@ namespace SparseTool {
     //!   \end{pmatrix}
     //! \f]
     //!
-    template <typename R> inline
+    template <typename VEC_EXPR> inline
     Matrix &
-    operator = ( VectorE<T,R> const & e ) {
-      indexType n = minIndex(e.size(),  SBASE::sp_min_size );
+    operator = ( VEC_EXPR const & e ) {
+      integer n = minIndex(e.size(), SBASE::sp_min_size );
       setZero();
-      for ( indexType k = 0; k < n; ++k )
+      for ( integer k = 0; k < n; ++k )
         (*this)(k,k) = e(k);
       return *this;
     }
@@ -3230,11 +2047,11 @@ namespace SparseTool {
     //!  \end{pmatrix}
     //! \f]
     //!
-    template <typename R> inline
+    template <typename VEC_EXPR> inline
     Matrix &
-    operator += ( VectorE<T,R> const & e ) {
-      indexType n = minIndex(e.size(),  SBASE::sp_min_size );
-      for ( indexType k = 0; k < n; ++k )
+    operator += ( VEC_EXPR const & e ) {
+      integer n = minIndex(e.size(), SBASE::sp_min_size );
+      for ( integer k = 0; k < n; ++k )
         (*this)(k,k) += e(k);
       return *this;
     }
@@ -3269,12 +2086,12 @@ namespace SparseTool {
     //! \end{pmatrix}
     //! \f]
     //!
-    template <typename R>
+    template <typename VEC_EXPR>
     inline
     Matrix &
-    operator -= ( VectorE<T,R> const & e ) {
-      indexType n = minIndex(e.size(),  SBASE::sp_min_size );
-      for ( indexType k = 0; k < n; ++k )
+    operator -= ( VEC_EXPR const & e ) {
+      integer n = minIndex(e.size(),  SBASE::sp_min_size );
+      for ( integer k = 0; k < n; ++k )
         (*this)(k,k) -= e(k);
       return *this;
     }
@@ -3291,12 +2108,12 @@ namespace SparseTool {
     template <typename VA, typename VB>
     void
     add_S_mul_M_mul_V(
-      VectorBase<T,VA>       & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VA       & res,
+      T  const & s,
+      VB const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)(&res) != (void*)(&x),
+        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
         "add_S_mul_M_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
@@ -3313,12 +2130,12 @@ namespace SparseTool {
     template <typename VA, typename VB>
     void
     add_S_mul_Mt_mul_V(
-      VectorBase<T,VA>       & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VA       & res,
+      T  const & s,
+      VB const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)(&res) != (void*)(&x),
+        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
         "add_S_mul_M_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
@@ -3341,7 +2158,7 @@ namespace SparseTool {
   class Preco {
   protected:
     //! The number of row/column of the preconditioner matrix.
-    indexType pr_size;
+    integer pr_size;
   public:
     //!
     //! Create an empty preconditioner.
@@ -3351,7 +2168,7 @@ namespace SparseTool {
     //!
     //! Return the number of row/column of the preconditioner matrix.
     //!
-    indexType size(void) const { return pr_size; }
+    integer size(void) const { return pr_size; }
   };
 
   /*
@@ -3458,24 +2275,24 @@ namespace SparseTool {
     typedef SparsePattern             MATRIX;
     typedef SparseBase<SparsePattern> SPARSE;
 
-    Vector<indexType> I;    //!< Vector of row index
-    Vector<indexType> J;    //!< Vector of column index
-    mutable indexType ipos; //!< Actual position of iterator
+    Vector<integer> I;    //!< Vector of row index
+    Vector<integer> J;    //!< Vector of column index
+    mutable integer ipos; //!< Actual position of iterator
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
     template <typename MAT, typename Compare>
     void
     convert( SparseBase<MAT> const & M, Compare cmp ) {
       // count nonzero
-      indexType nz = 0;
+      integer nz = 0;
       for ( M.Begin(); M.End(); M.Next() )
         if ( cmp( M.row(), M.column() ) ) ++nz;
 
       resize( M.numRows(), M.numCols(), nz );
 
       for ( M.Begin(); M.End(); M.Next() ) {
-        indexType i = M.row();
-        indexType j = M.column();
+        integer i = M.row();
+        integer j = M.column();
         if ( cmp(i,j) ) insert(i,j);
       }
       internalOrder();
@@ -3495,9 +2312,9 @@ namespace SparseTool {
     //! with reserved room for `mnnz` nonzeros.
     //! 
     SparsePattern(
-      indexType nr,
-      indexType nc,
-      indexType mnnz = SPARSETOOL_DEFAULT_NNZ
+      integer nr,
+      integer nc,
+      integer mnnz = SPARSETOOL_DEFAULT_NNZ
     )
     { resize(nr, nc, mnnz); }
 
@@ -3558,8 +2375,10 @@ namespace SparseTool {
         SPARSE::setup( SP.numRows(), SP.numCols() );
         SPARSE::sp_nnz       = SP.nnz();
         SPARSE::sp_isOrdered = SP.isOrdered();
-        I.load( SP.I );
-        J.load( SP.J );
+        I.resize( SPARSE::sp_nnz );
+        J.resize( SPARSE::sp_nnz );
+        I = SP.I.head(SPARSE::sp_nnz);
+        J = SP.J.head(SPARSE::sp_nnz);
         if ( !SPARSE::sp_isOrdered ) internalOrder();
       }
       return *this;
@@ -3581,10 +2400,10 @@ namespace SparseTool {
     //! with reserved room for `mnnz` nonzeros.
     //! 
     void
-    resize( indexType nr, indexType nc, indexType mnnz = SPARSETOOL_DEFAULT_NNZ ) {
+    resize( integer nr, integer nc, integer mnnz = SPARSETOOL_DEFAULT_NNZ ) {
       SPARSE::setup( nr, nc );
-      I.reserve( mnnz ); I.resize( 0 );
-      J.reserve( mnnz ); J.resize( 0 );
+      I.resize( mnnz );
+      J.resize( mnnz );
     }
 
     //!
@@ -3616,9 +2435,9 @@ namespace SparseTool {
     //!
     void
     internalOrder() {
-      QuickSortIJ<indexType>( &I.front(), &J.front(), SPARSE::sp_nnz );
+      QuickSortIJ<integer>( I.data(), J.data(), SPARSE::sp_nnz );
       // eliminate duplicate elements
-      indexType i1 = 0, i = 0;
+      integer i1 = 0, i = 0;
       SPARSE::sp_lower_nnz = 0;
       SPARSE::sp_diag_nnz  = 0;
       SPARSE::sp_upper_nnz = 0;
@@ -3646,10 +2465,15 @@ namespace SparseTool {
     //! Insert `(i,j)` in the sparse pattern.
     //!
     SparsePattern &
-    insert( indexType i, indexType j ) {
+    insert( integer i, integer j ) {
       SPARSE::test_index(i,j);
-      I.push_back(i);
-      J.push_back(j);
+      if ( I.size() < SPARSE::sp_nnz ) {
+        integer newdim = SPARSE::sp_nnz + (SPARSE::sp_nnz>>3) + 100;
+        I.conservativeResize( newdim );
+        J.conservativeResize( newdim );
+      }
+      I(SPARSE::sp_nnz) = i;
+      J(SPARSE::sp_nnz) = j;
       ++SPARSE::sp_nnz;
       SPARSE::sp_isOrdered = false;
       return *this;
@@ -3657,9 +2481,9 @@ namespace SparseTool {
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     //! Return the row index vector.
-    Vector<indexType> const & getI(void) const { return I; }
+    Vector<integer> const & getI(void) const { return I; }
     //! Return the column index vector.
-    Vector<indexType> const & getJ(void) const { return J; }
+    Vector<integer> const & getJ(void) const { return J; }
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // ITERATORS
@@ -3673,10 +2497,10 @@ namespace SparseTool {
     bool End(void) const { return ipos < SPARSE::sp_nnz; }
     
     //! The row of the element pointed by iterator.
-    indexType row(void) const { return I(ipos); }
+    integer row(void) const { return I(ipos); }
 
     //! The column of the element pointed by iterator.
-    indexType column(void) const { return J(ipos); }
+    integer column(void) const { return J(ipos); }
   };
 
   /*
@@ -3766,7 +2590,7 @@ namespace SparseTool {
   //! ccoor.resize(sobj);
   //! \endcode
   //!
-  //! - `valueType & insert(i,j)`
+  //! - `real_type & insert(i,j)`
   //!    this method permit to insert an item in the matrix.  For example
   //!    matrix `A`  previously defined can be constructed with
   //!
@@ -3797,29 +2621,29 @@ namespace SparseTool {
     typedef CCoorMatrix<T>   MATRIX;
     typedef Sparse<T,MATRIX> SPARSE;
   public:
-    typedef T valueType; //!< the type of the elements of the matrix
+    typedef T real_type; //!< the type of the elements of the matrix
 
   private:
 
-    Vector<indexType> I, J, C;
-    Vector<valueType> A;
+    Vector<integer> I, J, C;
+    Vector<real_type> A;
 
-    mutable indexType ipos;
+    mutable integer ipos;
 
     template <typename MAT, typename Compare> inline
     void
     convert( SparseBase<MAT> const & M, Compare cmp ) {
       // count nonzero
-      indexType nz = 0;
+      integer nz = 0;
       for ( M.Begin(); M.End(); M.Next() )
         if ( cmp( M.row(), M.column() ) ) ++nz;
 
       resize( M.numRows(), M.numCols(), nz );
 
       for ( M.Begin(); M.End(); M.Next() ) {
-        indexType i = M.row();
-        indexType j = M.column();
-        if ( cmp(i,j) ) M.assign ( insert(i,j) );
+        integer i = M.row();
+        integer j = M.column();
+        if ( cmp(i,j) ) M.assign( insert(i,j) );
       }
       internalOrder();
     }
@@ -3836,7 +2660,7 @@ namespace SparseTool {
     //! Initialize and empty empty sparse compressed coordinate matrix
     //! of `nr` rows and `nc` columns with reserved room for `mnnz` nonzeros.
     //!
-    CCoorMatrix( indexType nr, indexType nc, indexType mnnz = SPARSETOOL_DEFAULT_NNZ )
+    CCoorMatrix( integer nr, integer nc, integer mnnz = SPARSETOOL_DEFAULT_NNZ )
     { resize(nr, nc, mnnz); }
 
     //!
@@ -3889,10 +2713,11 @@ namespace SparseTool {
       resize( M.numRows(), M.numCols(), M.nnz() );
       SPARSE::sp_nnz       = M.nnz();
       SPARSE::sp_isOrdered = M.isOrdered();
-      A.load( M.A );
-      I.load( M.I );
-      J.load( M.J );
-      C.load( M.C );
+
+      A.resize(SPARSE::sp_nnz); A = M.A.head(SPARSE::sp_nnz);
+      I.resize(SPARSE::sp_nnz); I = M.I.head(SPARSE::sp_nnz);
+      J.resize(SPARSE::sp_nnz); J = M.J.head(SPARSE::sp_nnz);
+      C.resize(SPARSE::sp_nnz); C = M.C.head(SPARSE::sp_nnz);
       if ( !SPARSE::sp_isOrdered ) internalOrder();
       return *this;
     }
@@ -3913,12 +2738,12 @@ namespace SparseTool {
     //! with reserved room for `mnnz` nonzeros.
     //!
     void
-    resize( indexType nr, indexType nc, indexType mnnz = SPARSETOOL_DEFAULT_NNZ ) {
+    resize( integer nr, integer nc, integer mnnz = SPARSETOOL_DEFAULT_NNZ ) {
       SPARSE::setup(nr, nc);
-      I.resize(0); I.reserve(mnnz);
-      J.resize(0); J.reserve(mnnz);
-      A.resize(1); A.reserve(mnnz+1);
-      A.back() = T(0);
+      I.resize(mnnz);
+      J.resize(mnnz);
+      A.resize(mnnz+1);
+      A(0) = T(0);
       C.resize( SPARSE::sp_ncols + 1 );
     }
 
@@ -3955,9 +2780,9 @@ namespace SparseTool {
     //!
     void
     internalOrder() {
-      QuickSortIJ2<indexType,T>( &I.front(), &J.front(), &A.front(), SPARSE::sp_nnz);
+      QuickSortIJ2<integer,T>( I.data(), J.data(), A.data(), SPARSE::sp_nnz);
       // eliminate duplicate elements
-      indexType i1 = 0, i = 0;
+      integer i1 = 0, i = 0;
       SPARSE::sp_lower_nnz = 0;
       SPARSE::sp_diag_nnz  = 0;
       SPARSE::sp_upper_nnz = 0;
@@ -3976,17 +2801,17 @@ namespace SparseTool {
       I.resize(SPARSE::sp_nnz);
       J.resize(SPARSE::sp_nnz);
       A.resize(SPARSE::sp_nnz+1);
-      A.back() = T(0);
+      A(SPARSE::sp_nnz) = T(0);
 
-      indexType nc = 0;
+      integer nc = 0;
       C(0) = 0;
-      for ( indexType k = 1; k < SPARSE::sp_nnz; ++k ) {
+      for ( integer k = 1; k < SPARSE::sp_nnz; ++k ) {
         SPARSETOOL_TEST(
           J(k-1) <= J(k),
           "CCoorMatrix::internalOrderRowMajor() internal error J(" << k-1 <<
           ") is not <= J(" << k << ")"
         )
-        indexType kk = J(k) - J(k-1);
+        integer kk = J(k) - J(k-1);
         while ( kk-- > 0 ) C(++nc) = k;
       }
       SPARSETOOL_TEST(
@@ -4002,16 +2827,16 @@ namespace SparseTool {
     //! Return the position of the element `(i,j)`
     //! in the vector storing elements.
     //!
-    indexType
-    position( indexType i, indexType j ) const {
+    integer
+    position( integer i, integer j ) const {
       SPARSE::test_index(i,j);
-      indexType lo  = C(j);
-      indexType hi  = C(j+1);
-      indexType len = hi - lo;
+      integer lo  = C(j);
+      integer hi  = C(j+1);
+      integer len = hi - lo;
 
       while ( len > 0 ) {
-        indexType half = len / 2;
-        indexType mid  = lo + half;
+        integer half = len / 2;
+        integer mid  = lo + half;
         if ( I(mid) < i ) {
           lo = mid + 1;
           len -= half + 1;
@@ -4024,40 +2849,45 @@ namespace SparseTool {
     //!
     //! Insert `(i,j)` in the sparse pattern.
     //!
-    valueType &
-    insert( indexType i, indexType j ) {
+    real_type &
+    insert( integer i, integer j ) {
       SPARSE::test_index(i,j);
-      I.push_back(i);
-      J.push_back(j);
-      A.push_back(T(0));
+      if ( I.size() < SPARSE::sp_nnz ) {
+        integer newdim = SPARSE::sp_nnz + (SPARSE::sp_nnz>>3) + 100;
+        I.conservativeResize( newdim );
+        J.conservativeResize( newdim );
+        A.conservativeResize( newdim+1 );
+      }
+      I(SPARSE::sp_nnz) = i;
+      J(SPARSE::sp_nnz) = j;
       SPARSE::sp_nnz++;
       SPARSE::sp_isOrdered = false;
       return A(SPARSE::sp_nnz-1);
     }
 
-    valueType const &
-    operator [] (indexType idx) const {
+    real_type const &
+    operator [] (integer idx) const {
       SPARSE::test_nnz(idx);
       return A(idx);
     }
 
-    valueType &
-    operator [] (indexType idx) {
+    real_type &
+    operator [] (integer idx) {
       SPARSE::test_nnz(idx);
       return A(idx);
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    void setZero() { A = valueType(0); }
-    void scaleValues( valueType const & s ) { A *= s; }
+    void setZero() { A = real_type(0); }
+    void scaleValues( real_type const & s ) { A *= s; }
 
-    valueType const &
-    value( indexType i, indexType j ) const
+    real_type const &
+    value( integer i, integer j ) const
     { return A(position(i,j)); }
 
-    valueType const & 
-    operator ()( indexType i, indexType j ) const {
-      indexType pos = position(i,j);
+    real_type const & 
+    operator ()( integer i, integer j ) const {
+      integer pos = position(i,j);
       SPARSETOOL_TEST(
         pos != SPARSE::sp_nnz,
         "CCoorMatrix(" << i << "," << j <<
@@ -4066,9 +2896,9 @@ namespace SparseTool {
       return A(pos);
     }
 
-    valueType & 
-    operator ()( indexType i, indexType j ) {
-      indexType pos = position(i,j);
+    real_type & 
+    operator ()( integer i, integer j ) {
+      integer pos = position(i,j);
       SPARSETOOL_TEST(
         pos != SPARSE::sp_nnz,
         "CCoorMatrix(" << i << "," << j <<
@@ -4078,16 +2908,16 @@ namespace SparseTool {
     }
 
     bool
-    exists( indexType i, indexType j ) {
+    exists( integer i, integer j ) {
       return position(i,j) != SPARSE::sp_nnz;
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Vector<valueType> const & getA(void) const { return A; } //!< return the value vector
-    Vector<valueType>       & getA(void)       { return A; } //!< return the value vector
-    Vector<indexType> const & getI(void) const { return I; } //!< return the row index vector
-    Vector<indexType> const & getJ(void) const { return J; } //!< return the column index vector
-    Vector<indexType> const & getC(void) const { return C; } //!< return the pointer of the column index (valid after ordering)
+    Vector<real_type> const & getA(void) const { return A; } //!< return the value vector
+    Vector<real_type>       & getA(void)       { return A; } //!< return the value vector
+    Vector<integer>   const & getI(void) const { return I; } //!< return the row index vector
+    Vector<integer>   const & getJ(void) const { return J; } //!< return the column index vector
+    Vector<integer>   const & getC(void) const { return C; } //!< return the pointer of the column index (valid after ordering)
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // ITERATOR
@@ -4095,10 +2925,10 @@ namespace SparseTool {
     inline void Next  (void) const { ++ipos; }
     inline bool End   (void) const { return ipos < SPARSE::sp_nnz; }
 
-    indexType         row    (void) const { return I(ipos); }
-    indexType         column (void) const { return J(ipos); }
-    valueType const & value  (void) const { return A(ipos); }
-    valueType       & value  (void)       { return A(ipos); }
+    integer         row    (void) const { return I(ipos); }
+    integer         column (void) const { return J(ipos); }
+    real_type const & value  (void) const { return A(ipos); }
+    real_type       & value  (void)       { return A(ipos); }
 
     //!
     //! Assign the pointed element to `rhs`.
@@ -4112,21 +2942,21 @@ namespace SparseTool {
     template <typename VRES, typename VB> inline
     void
     add_S_mul_M_mul_V(
-      VectorBase<T,VRES>     & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VRES     & res,
+      T  const & s,
+      VB const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)(&res) != (void*)(&x),
+        std::addressof(res) != std::addressof(x),
         "add_S_mul_M_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
         res.size() >= SPARSE::sp_nrows,
         "result vector too small"
       )
-      indexType const * pI = & I.front();
-      indexType const * pJ = & J.front();
-      valueType const * pA = & A.front();
+      integer   const * pI = I.data();
+      integer   const * pJ = J.data();
+      real_type const * pA = A.data();
       SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pI++) += s * *pA++ * x(*pJ++) );
     }
 
@@ -4136,21 +2966,21 @@ namespace SparseTool {
     template <typename VRES, typename VB> inline
     void
     add_S_mul_Mt_mul_V(
-      VectorBase<T,VRES>     & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VRES     & res,
+      T  const & s,
+      VB const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)(&res) != (void*)(&x),
+        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
         "add_S_mul_Mt_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
         res.size() >= SPARSE::sp_ncols,
         "result vector too small"
       )
-      indexType const * pI = & I.front();
-      indexType const * pJ = & J.front();
-      valueType const * pA = & A.front();
+      integer   const * pI = I.data();
+      integer   const * pJ = J.data();
+      real_type const * pA = A.data();
       SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pJ++) += s * *pA++ * x(*pI++) );
     }
   };
@@ -4184,26 +3014,26 @@ namespace SparseTool {
   template <typename T, typename VR, typename VX> inline
   void
   S_mul_M_mul_V(
-    indexType                 numRows,
-    Vector<indexType> const & RR,
-    Vector<indexType> const & JJ,
-    Vector<T>         const & AA,
-    T const &                 s,
-    VectorBase<T,VR>        & res,
-    VectorBase<T,VX>  const & x
+    integer                 numRows,
+    Vector<integer> const & RR,
+    Vector<integer> const & JJ,
+    Vector<T>       const & AA,
+    T               const & s,
+    VR                    & res,
+    VX              const & x
   ) {
     SPARSETOOL_TEST(
-      (void*)(&res) != (void*)(&x),
+      reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
       "M_mul_V equal pointer"
     )
     SPARSETOOL_TEST(
       res.size() >= numRows,
       "result vector too small"
     )
-    indexType const * R = & RR.front();
-    indexType const * J = & JJ.front();
-    T const *         A = & AA.front();
-    for ( indexType ir = 0; ir < numRows; ++ir, ++R ) {
+    integer const * R = RR.data();
+    integer const * J = JJ.data();
+    T       const * A = AA.data();
+    for ( integer ir = 0; ir < numRows; ++ir, ++R ) {
       T bf(0);
       SPARSELIB_LOOP( R[1] - R[0], bf += *A++ * x(*J++) );
       res(ir) += s * bf;
@@ -4226,26 +3056,26 @@ namespace SparseTool {
   template <typename T, typename VR, typename VX> inline
   void
   S_mul_Mt_mul_V(
-    indexType                 numRows,
-    Vector<indexType> const & RR,
-    Vector<indexType> const & JJ,
-    Vector<T>         const & AA,
-    T const &                 s,
-    VectorBase<T,VR>        & res,
-    VectorBase<T,VX>  const & x
+    integer                 numRows,
+    Vector<integer> const & RR,
+    Vector<integer> const & JJ,
+    Vector<T>       const & AA,
+    T               const & s,
+    VR                    & res,
+    VX              const & x
   ) {
     SPARSETOOL_TEST(
-      (void*)(&res) != (void*)(&x),
+      reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
       "M_mul_V equal pointer"
     )
     SPARSETOOL_TEST(
       res.size() >= numRows,
       "result vector too small"
     )
-    indexType const * R = & RR.front();
-    indexType const * J = & JJ.front();
-    T const *         A = & AA.front();
-    for ( indexType ir = 0; ir < numRows; ++ir, ++R ) {
+    integer const * R = RR.data();
+    integer const * J = JJ.data();
+    T const *       A = AA.data();
+    for ( integer ir = 0; ir < numRows; ++ir, ++R ) {
       T bf = s*x(ir);
       SPARSELIB_LOOP( R[1] - R[0], res(*J++) += *A++ * bf );
     }
@@ -4327,16 +3157,16 @@ namespace SparseTool {
     typedef CRowMatrix<T>    MATRIX;
     typedef Sparse<T,MATRIX> SPARSE;
   public:
-    typedef T valueType; //!< the type of the elements of the matrix
+    typedef T real_type; //!< the type of the elements of the matrix
 
   private:
 
-    Vector<valueType> A;
-    Vector<indexType> R;
-    Vector<indexType> J;
+    Vector<real_type> A;
+    Vector<integer>   R;
+    Vector<integer>   J;
 
-    mutable indexType iter_row;
-    mutable indexType iter_ptr;
+    mutable integer iter_row;
+    mutable integer iter_ptr;
 
     void
     internalOrder() {
@@ -4344,14 +3174,14 @@ namespace SparseTool {
         R[SPARSE::sp_nrows] == SPARSE::sp_nnz,
         "CRowMatrix::internalOrder() bad data for matrix"
       )
-      indexType ii, kk, rk, rk1;
+      integer ii, kk, rk, rk1;
       SPARSE::sp_lower_nnz = 0;
       SPARSE::sp_diag_nnz  = 0;
       SPARSE::sp_upper_nnz = 0;
       for ( ii = 0, rk = R(0); ii < SPARSE::sp_nrows; ++ii, rk = rk1 ) {
         rk1 = R(ii+1);
         if ( rk1 > rk ) { // skip empty rows
-          QuickSortI<indexType,T>( &J(rk), &A(rk), rk1 - rk);
+          QuickSortI<integer,T>( &J(rk), &A(rk), rk1 - rk );
           // setup statistic
           for ( kk = rk; kk < rk1; ++kk ) SPARSE::ldu_count(ii,J(kk));
   #ifdef SPARSETOOL_DEBUG
@@ -4381,22 +3211,22 @@ namespace SparseTool {
       J.resize( SPARSE::sp_nnz );
       R.resize( SPARSE::sp_nrows + 1 );
       A(SPARSE::sp_nnz) = 0;
-      R = 0;
+      R.setZero();
 
       // step 1: Evaluate not zero pattern
       for ( M.Begin(); M.End();  M.Next() ) {
-        indexType i = M.row();
-        indexType j = M.column();
+        integer i = M.row();
+        integer j = M.column();
         if ( cmp(i, j) ) ++R(i);
       }
-      for ( indexType k = 0; k < SPARSE::sp_nrows; ++k ) R(k+1) += R(k);
+      for ( integer k = 0; k < SPARSE::sp_nrows; ++k ) R(k+1) += R(k);
 
       // step 2: Fill matrix
       for ( M.Begin(); M.End(); M.Next() ) {
-        indexType i = M.row();
-        indexType j = M.column();
+        integer i = M.row();
+        integer j = M.column();
         if ( cmp(i,j) ) {
-          indexType ii = --R(i);
+          integer ii = --R(i);
           M.assign(A(ii));
           J(ii) = j;
         }
@@ -4468,9 +3298,9 @@ namespace SparseTool {
       SPARSE::setup( M.numRows(), M.numCols() );
       SPARSE::sp_nnz       = M.nnz();
       SPARSE::sp_isOrdered = M.isOrdered();
-      A.load( M.A );
-      R.load( M.R );
-      J.load( M.J );
+      A.resize(SPARSE::sp_nnz);     A = M.A.head(SPARSE::sp_nnz);
+      R.resize(SPARSE::sp_nrows+1); R = M.R.head(SPARSE::sp_nrows+1);
+      J.resize(SPARSE::sp_nnz);     J = M.J.head(SPARSE::sp_nnz);
       if ( !SPARSE::sp_isOrdered ) internalOrder();
       return *this;
     }
@@ -4509,38 +3339,38 @@ namespace SparseTool {
     { resize(M,all_ok()); }
 
     void
-    scaleRow( indexType nr, valueType const & val ) {
+    scaleRow( integer nr, real_type const & val ) {
       SPARSE::test_row(nr);
-      valueType * pA = &A.front() + R(nr);
-      valueType * pB = &A.front() + R(nr+1);
+      real_type * pA = &A.front() + R(nr);
+      real_type * pB = &A.front() + R(nr+1);
       while ( pA < pB ) *pA++ *= val;
     }
 
     void
-    scaleColumn(indexType nc, valueType const & val) {
+    scaleColumn(integer nc, real_type const & val) {
       SPARSE::test_col(nc);
-      for ( indexType i = 0; i < SPARSE::sp_nrows; ++i ) {
-        indexType pos = position(i,nc,true);
+      for ( integer i = 0; i < SPARSE::sp_nrows; ++i ) {
+        integer pos = position(i,nc,true);
         if ( pos != SPARSE::sp_nnz ) A(pos) *= val;
       }
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Vector<valueType> const & getA(void) const { return A; } //!< return the value vector
-    Vector<valueType>       & getA(void)       { return A; } //!< return the value vector
-    Vector<indexType> const & getR(void) const { return R; } //!< return the row pointer
-    Vector<indexType> const & getJ(void) const { return J; } //!< return the column index vector
+    Vector<real_type> const & getA(void) const { return A; } //!< return the value vector
+    Vector<real_type>       & getA(void)       { return A; } //!< return the value vector
+    Vector<integer> const & getR(void) const { return R; } //!< return the row pointer
+    Vector<integer> const & getJ(void) const { return J; } //!< return the column index vector
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    indexType
-    position( indexType i, indexType j ) const {
+    integer
+    position( integer i, integer j ) const {
       SPARSE::test_index(i,j);
-      indexType lo  = R(i);
-      indexType hi  = R(i+1);
-      indexType len = hi - lo;
+      integer lo  = R(i);
+      integer hi  = R(i+1);
+      integer len = hi - lo;
       while (len > 0) {
-        indexType half = len / 2;
-        indexType mid = lo + half;
+        integer half = len / 2;
+        integer mid = lo + half;
         if ( J(mid) < j ) {
           lo = mid + 1;
           len -= half + 1;
@@ -4551,12 +3381,12 @@ namespace SparseTool {
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    void setZero() { A = valueType(0); }
-    void scaleValues( valueType const & s ) { A *= s; }
+    void setZero() { A = real_type(0); }
+    void scaleValues( real_type const & s ) { A *= s; }
 
-    valueType const & 
-    operator ()( indexType i, indexType j ) const {
-      indexType pos = position(i,j);
+    real_type const & 
+    operator ()( integer i, integer j ) const {
+      integer pos = position(i,j);
       SPARSETOOL_TEST(
         pos != SPARSE::sp_nnz,
         "CRowMatrix(" << i << "," << j <<
@@ -4565,9 +3395,9 @@ namespace SparseTool {
       return A(pos);
     }
 
-    valueType & 
-    operator ()( indexType i, indexType j ) {
-      indexType pos = position(i,j);
+    real_type & 
+    operator ()( integer i, integer j ) {
+      integer pos = position(i,j);
       SPARSETOOL_TEST(
         pos != SPARSE::sp_nnz,
         "CRowMatrix(" << i << "," << j <<
@@ -4576,21 +3406,21 @@ namespace SparseTool {
       return A(pos);
     }
 
-    valueType const &
-    value( indexType i, indexType j) const
+    real_type const &
+    value( integer i, integer j) const
     { return A(position(i,j)); }
 
     bool
-    exists( indexType i, indexType j ) {
+    exists( integer i, integer j ) {
       return position(i,j) != SPARSE::sp_nnz;
     }
 
-    valueType const &
-    operator [] (indexType idx) const
+    real_type const &
+    operator [] (integer idx) const
     { SPARSE::test_nnz(idx); return A(idx); }
 
-    valueType &
-    operator [] (indexType idx)
+    real_type &
+    operator [] (integer idx)
     { SPARSE::test_nnz(idx); return A(idx); }
 
     // ****************************************************************
@@ -4605,10 +3435,10 @@ namespace SparseTool {
     }
     bool End(void) const { return iter_ptr < SPARSE::sp_nnz; }
 
-    indexType         row    (void) const { return iter_row-1; }
-    indexType         column (void) const { return J(iter_ptr); }
-    valueType const & value  (void) const { return A(iter_ptr); }
-    valueType       & value  (void)       { return A(iter_ptr); }
+    integer         row    (void) const { return iter_row-1; }
+    integer         column (void) const { return J(iter_ptr); }
+    real_type const & value  (void) const { return A(iter_ptr); }
+    real_type       & value  (void)       { return A(iter_ptr); }
 
     //!
     //! Assign the pointed element to `rhs`.
@@ -4622,9 +3452,9 @@ namespace SparseTool {
     template <typename VRES, typename VB> inline
     void
     add_S_mul_M_mul_V(
-      VectorBase<T,VRES>     & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VRES     & res,
+      T  const & s,
+      VB const & x
     ) const {
       S_mul_M_mul_V( SPARSE::sp_nrows, R, J, A, s, res, x );
     }
@@ -4635,9 +3465,9 @@ namespace SparseTool {
     template <typename VRES, typename VB> inline
     void
     add_S_mul_Mt_mul_V(
-      VectorBase<T,VRES>     & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VRES     & res,
+      T  const & s,
+      VB const & x
     ) const {
       S_mul_Mt_mul_V( SPARSE::sp_nrows, R, J, A, s, res, x );
     }
@@ -4727,25 +3557,25 @@ namespace SparseTool {
     typedef CColMatrix<T>    MATRIX;
     typedef Sparse<T,MATRIX> SPARSE;
   public:
-    typedef T valueType; //!< the type of the elements of the matrix
+    typedef T real_type; //!< the type of the elements of the matrix
 
   private:
-    Vector<valueType> A;
-    Vector<indexType> C, I;
+    Vector<real_type> A;
+    Vector<integer> C, I;
 
-    mutable indexType iter_col;
-    mutable indexType iter_ptr;
+    mutable integer iter_col;
+    mutable integer iter_ptr;
 
     void
     internalOrder() {
-      indexType jj, kk, ck, ck1;
+      integer jj, kk, ck, ck1;
       SPARSE::sp_lower_nnz = 0;
       SPARSE::sp_diag_nnz  = 0;
       SPARSE::sp_upper_nnz = 0;
       for ( jj = 0, ck = C(0); jj < SPARSE::sp_ncols; ++jj, ck = ck1 ) {
         ck1 = C(jj+1);
         if ( ck1 > ck ) { // skip empty columns
-          QuickSortI<indexType,T>( &I(ck), &A(ck), ck1 - ck );
+          QuickSortI<integer,T>( &I(ck), &A(ck), ck1 - ck );
           // setup statistic
           for ( kk = ck; kk < ck1; ++kk ) SPARSE::ldu_count(I(kk),jj);
   #ifdef SPARSETOOL_DEBUG
@@ -4773,23 +3603,23 @@ namespace SparseTool {
       A.resize( SPARSE::sp_nnz + 1 );
       I.resize( SPARSE::sp_nnz );
       C.resize( SPARSE::sp_ncols + 1 );
-      C = 0;
+      C.setZero();
       A(SPARSE::sp_nnz) = 0;
 
       // step 1: Evaluate not zero
       for ( M.Begin(); M.End(); M.Next() ) {
-        indexType i = M.row();
-        indexType j = M.column();
+        integer i = M.row();
+        integer j = M.column();
         if ( cmp(i,j) ) ++C(j);
       }
-      for ( indexType k = 0; k < SPARSE::sp_ncols; ++k ) C(k+1) += C(k);
+      for ( integer k = 0; k < SPARSE::sp_ncols; ++k ) C(k+1) += C(k);
 
       // step 2: Fill matrix
       for ( M.Begin(); M.End(); M.Next() ) {
-        indexType i = M.row();
-        indexType j = M.column();
+        integer i = M.row();
+        integer j = M.column();
         if ( cmp(i,j) ) {
-          indexType jj = --C(j);
+          integer jj = --C(j);
           M.assign(A(jj));
           I(jj) = i;
         }
@@ -4860,9 +3690,9 @@ namespace SparseTool {
       resize( M.numRows(), M.numCols(), M.nnz() );
       SPARSE::sp_nnz       = M.nnz();
       SPARSE::sp_isOrdered = M.isOrdered();
-      A.load( M.A );
-      C.load( M.C );
-      I.load( M.I );
+      A.resize( SPARSE::sp_nnz );     A = M.A.head( SPARSE::sp_nnz );
+      C.resize( SPARSE::sp_ncols+1 ); C = M.C.head( SPARSE::sp_ncols+1 );
+      I.resize( SPARSE::sp_nnz );     I = M.I.head( SPARSE::sp_nnz );
       if ( !SPARSE::sp_isOrdered ) internalOrder();
       return *this;
     }
@@ -4902,38 +3732,38 @@ namespace SparseTool {
     { resize(M,all_ok()); }
 
     void
-    scaleRow( indexType nr, valueType const & val ) {
+    scaleRow( integer nr, real_type const & val ) {
       SPARSE::test_row(nr);
-      for ( indexType j = 0; j < SPARSE::sp_ncols; ++j ) {
-        indexType pos = position(nr,j,true);
+      for ( integer j = 0; j < SPARSE::sp_ncols; ++j ) {
+        integer pos = position(nr,j,true);
         if ( pos != SPARSE::sp_nnz ) A(pos) *= val;
       }
     }
 
     void
-    scaleColumn( indexType nc, valueType const & val ) {
+    scaleColumn( integer nc, real_type const & val ) {
       SPARSE::test_col(nc);
-      valueType * pA = &A.front() + C(nc);
-      valueType * pB = &A.front() + C(nc+1);
+      real_type * pA = &A.front() + C(nc);
+      real_type * pB = &A.front() + C(nc+1);
       while ( pA < pB ) *pA++ *= val;
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Vector<valueType> const & getA(void) const { return A; } //!< return the value vector
-    Vector<valueType>       & getA(void)       { return A; } //!< return the value vector
-    Vector<indexType> const & getI(void) const { return I; } //!< return the row index vector
-    Vector<indexType> const & getC(void) const { return C; } //!< return the column pointer vector
+    Vector<real_type> const & getA(void) const { return A; } //!< return the value vector
+    Vector<real_type>       & getA(void)       { return A; } //!< return the value vector
+    Vector<integer>   const & getI(void) const { return I; } //!< return the row index vector
+    Vector<integer>   const & getC(void) const { return C; } //!< return the column pointer vector
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    indexType
-    position( indexType i, indexType j ) const {
+    integer
+    position( integer i, integer j ) const {
       SPARSE::test_index(i,j);
-      indexType lo  = C(j);
-      indexType hi  = C(j+1);
-      indexType len = hi - lo;
+      integer lo  = C(j);
+      integer hi  = C(j+1);
+      integer len = hi - lo;
       while (len > 0) {
-        indexType half = len / 2;
-        indexType mid = lo + half;
+        integer half = len / 2;
+        integer mid = lo + half;
         if ( I(mid) < i ) {
           lo = mid + 1;
           len -= half + 1;
@@ -4944,12 +3774,12 @@ namespace SparseTool {
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    void setZero() { A = valueType(0); }
-    void scaleValues( valueType const & s ) { A *= s; }
+    void setZero() { A = real_type(0); }
+    void scaleValues( real_type const & s ) { A *= s; }
 
-    valueType const &
-    operator () (indexType i, indexType j) const {
-      indexType pos = position(i,j);
+    real_type const &
+    operator () (integer i, integer j) const {
+      integer pos = position(i,j);
       SPARSETOOL_TEST(
         pos != SPARSE::sp_nnz,
         "CColMatrix(" << i << "," << j <<
@@ -4958,9 +3788,9 @@ namespace SparseTool {
       return A(pos);
     }
 
-    valueType &
-    operator () (indexType i, indexType j) {
-      indexType pos = position(i,j);
+    real_type &
+    operator () (integer i, integer j) {
+      integer pos = position(i,j);
       SPARSETOOL_TEST(
         pos != SPARSE::sp_nnz,
         "CColMatrix(" << i << "," << j <<
@@ -4969,21 +3799,21 @@ namespace SparseTool {
       return A(pos);
     }
 
-    valueType const &
-    value(indexType i, indexType j) const
+    real_type const &
+    value(integer i, integer j) const
     { return A(position(i,j)); }
 
     bool
-    exists( indexType i, indexType j ) {
+    exists( integer i, integer j ) {
       return position(i,j) != SPARSE::sp_nnz;
     }
 
-    valueType const &
-    operator [] (indexType idx) const
+    real_type const &
+    operator [] (integer idx) const
     { SPARSE::test_nnz(idx); return A(idx); }
 
-    valueType &
-    operator [] (indexType idx)
+    real_type &
+    operator [] (integer idx)
     { SPARSE::test_nnz(idx); return A(idx); }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -4997,10 +3827,10 @@ namespace SparseTool {
     }
     bool End(void) const { return iter_ptr < SPARSE::sp_nnz; }
 
-    indexType         row    (void) const { return I(iter_ptr); }
-    indexType         column (void) const { return iter_col-1;  }
-    valueType const & value  (void) const { return A(iter_ptr); }
-    valueType       & value  (void)       { return A(iter_ptr); }
+    integer         row    (void) const { return I(iter_ptr); }
+    integer         column (void) const { return iter_col-1;  }
+    real_type const & value  (void) const { return A(iter_ptr); }
+    real_type       & value  (void)       { return A(iter_ptr); }
 
     //!
     //! Assign the pointed element to `rhs`.
@@ -5014,9 +3844,9 @@ namespace SparseTool {
     template <typename VRES, typename VB> inline
     void
     add_S_mul_M_mul_V(
-      VectorBase<T,VRES>     & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VRES     & res,
+      T  const & s,
+      VB const & x
     ) const {
       S_mul_Mt_mul_V( SPARSE::sp_ncols, C, I, A, s, res, x );
     }
@@ -5027,9 +3857,9 @@ namespace SparseTool {
     template <typename VRES, typename VB> inline
     void
     add_S_mul_Mt_mul_V(
-      VectorBase<T,VRES>     & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VRES     & res,
+      T  const & s,
+      VB const & x
     ) const {
       S_mul_M_mul_V( SPARSE::sp_ncols, C, I, A, s, res, x );
     }
@@ -5063,7 +3893,7 @@ namespace SparseTool {
   //! ------------------
   //! 
   //! The class `TridMatrix<T>` implement a sparse band matrix.
-  //! It consists of a big matrix of `valueType` which contain the values
+  //! It consists of a big matrix of `real_type` which contain the values
   //! of nonzero elements.  We call `M` this big matrix which
   //! represents an \f$ n\times m \f$ matrix which stores the rows of nonzero.
   //! For example the following band matrix
@@ -5118,7 +3948,7 @@ namespace SparseTool {
     typedef TridMatrix<T>    MATRIX;
     typedef Sparse<T,MATRIX> SPARSE;
   public:
-    typedef T valueType; //!< type of the element of the matrix
+    typedef T real_type; //!< type of the element of the matrix
 
   private:
 
@@ -5129,7 +3959,7 @@ namespace SparseTool {
       VECTOR ll(SPARSE::sp_nrows-1), dd(SPARSE::sp_nrows);
 
       // LU DEC
-      indexType k = 0;
+      integer k = 0;
       dd(0) = D(0);
       for ( k = 1; k < SPARSE::sp_nrows; ++k ) {
         ll(k-1) = L(k-1) / dd(k-1);
@@ -5149,10 +3979,10 @@ namespace SparseTool {
 
     }
 
-    Vector<T>      A;
-    VectorSlice<T> L, D, U;
+    Vector<T>              A;
+    Eigen::Map<Vector<T> > L, D, U;
 
-    mutable indexType iter_counter, iter_row, iter_col;
+    mutable integer iter_counter, iter_row, iter_col;
 
   public:
 
@@ -5164,7 +3994,7 @@ namespace SparseTool {
     //!
     //! Contruct a `n x n` tridiagonal matrix.
     //!
-    TridMatrix( indexType ns ) { resize(ns); }
+    TridMatrix( integer ns ) { resize(ns); }
 
     //!
     //! Contruct a copy of the tridiagonal matrix `TM`.
@@ -5186,9 +4016,9 @@ namespace SparseTool {
     //! Resize to a `n x n` tridiagonal matrix.
     //!
     void
-    resize( indexType ns ) {
+    resize( integer ns ) {
       A.resize(3*ns-2);
-      indexType kk = 0;
+      integer kk = 0;
       L.slice(A, kk, kk + ns-1 ); kk += ns-1;
       D.slice(A, kk, kk + ns   ); kk += ns;
       U.slice(A, kk, kk + ns-1 );
@@ -5196,20 +4026,20 @@ namespace SparseTool {
       SPARSE::sp_nnz = 3*ns-2;
     }
 
-    valueType const &
-    operator [] (indexType idx) const {
+    real_type const &
+    operator [] (integer idx) const {
       SPARSE::test_nnz(idx);
       return A(idx);
     }
 
-    valueType &
-    operator [] (indexType idx) {
+    real_type &
+    operator [] (integer idx) {
       SPARSE::test_nnz(idx);
       return A(idx);
     }
 
     void
-    scaleRow( indexType nr, valueType const & val ) {
+    scaleRow( integer nr, real_type const & val ) {
       SPARSE::test_row(nr);
       D(nr) *= val;
       if ( nr < SPARSE::sp_now ) U(nr)   *= val;
@@ -5217,7 +4047,7 @@ namespace SparseTool {
     }
 
     void
-    scaleColumn( indexType nc, valueType const & val ) {
+    scaleColumn( integer nc, real_type const & val ) {
       SPARSE::test_col(nc);
       D(nc) *= val;
       if ( nc > 0               ) U(nc-1) *= val;
@@ -5248,7 +4078,7 @@ namespace SparseTool {
     //! \f]
     //! 
     TridMatrix<T> &
-    operator = ( valueType const & s )
+    operator = ( real_type const & s )
     { L = 0; U = 0; D = s; return *this; }
 
     //!
@@ -5271,7 +4101,7 @@ namespace SparseTool {
     //! \f]
     //!
     TridMatrix<T> &
-    operator += ( valueType const & s )
+    operator += ( real_type const & s )
     { D += s; return *this; }
 
     //!
@@ -5294,7 +4124,7 @@ namespace SparseTool {
     //! \f]
     //!
     TridMatrix<T> &
-    operator -= ( valueType const & s )
+    operator -= ( real_type const & s )
     { D -= s; return *this; }
 
     //!
@@ -5316,7 +4146,7 @@ namespace SparseTool {
     //! \f]
     //!
     TridMatrix<T> &
-    operator *= ( valueType const & s )
+    operator *= ( real_type const & s )
     { A *= s; return *this; }
 
     //!
@@ -5338,7 +4168,7 @@ namespace SparseTool {
     //! \f]
     //!
     TridMatrix<T> &
-    operator /= ( valueType const & s )
+    operator /= ( real_type const & s )
     { A /= s; return *this; }
 
     //!
@@ -5364,10 +4194,10 @@ namespace SparseTool {
     //! \end{pmatrix}
     //! \f]
     //!
-    template <typename VECTOR>
+    template <typename TV>
     inline
     TridMatrix<T> &
-    operator = ( VectorBase<T,VECTOR> const & v )
+    operator = ( Vector<TV> const & v )
     { L = 0; U = 0; D = v; return *this; }
 
     //!
@@ -5394,10 +4224,10 @@ namespace SparseTool {
     //! \f]
     //! \htmlonly </TD></TR></TABLE> \endhtmlonly
     //!
-    template <typename VECTOR>
+    template <typename TV>
     inline
     TridMatrix<T> &
-    operator += ( VectorBase<T,VECTOR> const & v )
+    operator += ( Vector<TV> const & v )
     { D += v; return *this; }
 
     //!
@@ -5423,10 +4253,10 @@ namespace SparseTool {
     //! \end{pmatrix}
     //! \f]
     //!
-    template <typename VECTOR>
+    template <typename TV>
     inline
     TridMatrix<T> &
-    operator -= ( VectorBase<T,VECTOR> const & v )
+    operator -= ( Vector<TV> const & v )
     { D -= v; return *this; }
 
     //!
@@ -5455,10 +4285,10 @@ namespace SparseTool {
     //! \end{pmatrix}
     //! \f]
     //!
-    template <typename R>
+    template <typename VEC_EXPR>
     inline
     TridMatrix<T> &
-    operator = ( VectorE<T,R> const & e )
+    operator = ( VEC_EXPR const & e )
     { L = 0; U = 0; D = e;; return *this; }
 
     //!
@@ -5487,11 +4317,11 @@ namespace SparseTool {
     //! \end{pmatrix}
     //! \f]
     //!
-    template <typename R>
+    template <typename VEC_EXPR>
     inline
     TridMatrix<T> &
-    operator += ( VectorE<T,R> const & e )
-    { D += e;; return *this; }
+    operator += ( VEC_EXPR const & e )
+    { D += e; return *this; }
 
     //!
     //! Add to the diagonal values of the sparse
@@ -5519,18 +4349,18 @@ namespace SparseTool {
     //! \end{pmatrix}
     //! \f]
     //!
-    template <typename R>
+    template <typename VEC_EXPR>
     inline
     TridMatrix<T> &
-    operator -= ( VectorE<T,R> const & e )
+    operator -= ( VEC_EXPR const & e )
     { D -= e;; return *this; }
 
     //@}
 
-    valueType const &
-    operator () ( indexType i, indexType j ) const {
+    real_type const &
+    operator () ( integer i, integer j ) const {
       SPARSE::test_index(i,j);
-      indexType kk = ((j+1)-i); 
+      integer kk = ((j+1)-i); 
       SPARSETOOL_TEST(
         kk < 3,
         "TridMatrix(" << i << "," << j << ") index out of range"
@@ -5538,10 +4368,10 @@ namespace SparseTool {
       return A( kk*SPARSE::sp_nrows+i-1);
     }
 
-    valueType &
-    operator () ( indexType i, indexType j ) {
+    real_type &
+    operator () ( integer i, integer j ) {
       SPARSE::test_index(i,j);
-      indexType kk = ((j+1)-i); 
+      integer kk = ((j+1)-i); 
       SPARSETOOL_TEST(
         kk < 3,
         "TridMatrix(" << i << "," << j << ") index out of range"
@@ -5549,25 +4379,25 @@ namespace SparseTool {
       return A( kk*SPARSE::sp_nrows+i-1);
     }
 
-    valueType const &
-    value( indexType i, indexType j ) const {
+    real_type const &
+    value( integer i, integer j ) const {
       static const T zero(0);
       SPARSE::test_index(i,j);
-      indexType kk = ((j+1)-i);
+      integer kk = ((j+1)-i);
       if ( kk < 3 ) return A( kk*SPARSE::sp_nrows+i-1);
       else          return zero;
     }
 
     bool
-    exists( indexType i, indexType j ) {
+    exists( integer i, integer j ) {
       return i < SPARSE::sp_nrows &&
              j < SPARSE::sp_nrows &&
              (i <= j+1 || j <= i+1 );
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    Vector<valueType> const & getA(void) const { return A; } //!< return the value vector
-    Vector<valueType>       & getA(void)       { return A; } //!< return the value vector
+    Vector<real_type> const & getA(void) const { return A; } //!< return the value vector
+    Vector<real_type>       & getA(void)       { return A; } //!< return the value vector
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     void
@@ -5588,10 +4418,10 @@ namespace SparseTool {
     End(void) const
     { return iter_counter < SPARSE::sp_nnz; }
 
-    indexType         row    (void) const { return iter_row; }
-    indexType         column (void) const { return iter_col; }
-    valueType const & value  (void) const { return A(iter_counter); }
-    valueType       & value  (void)       { return A(iter_counter); }
+    integer         row    (void) const { return iter_row; }
+    integer         column (void) const { return iter_col; }
+    real_type const & value  (void) const { return A(iter_counter); }
+    real_type       & value  (void)       { return A(iter_counter); }
 
     //!
     //! Assign the pointed element to `rhs`.
@@ -5608,12 +4438,12 @@ namespace SparseTool {
     inline
     void
     add_S_mul_M_mul_V(
-      VectorBase<T,VRES>     & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VRES     & res,
+      T  const & s,
+      VB const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)(&res) != (void*)(&x),
+        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
         "add_S_mul_M_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
@@ -5632,12 +4462,12 @@ namespace SparseTool {
     inline
     void
     add_S_mul_Mt_mul_V(
-      VectorBase<T,VRES>     & res,
-      T const                & s,
-      VectorBase<T,VB> const & x
+      VRES     & res,
+      T  const & s,
+      VB const & x
     ) const {
       SPARSETOOL_TEST(
-        (void*)(&res) != (void*)(&x),
+        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
         "add_S_mul_Mt_mul_V equal pointer"
       )
       SPARSETOOL_TEST(
@@ -5689,38 +4519,25 @@ namespace SparseTool {
   //!
   //! Print the contents of vector `v` to the stream `s`.
   //!
-  template <typename T, typename VEC>
+  template <typename T, typename VEC_EXPR>
   inline
   void
-  print( ostream & s, VectorBase<T,VEC> const & v ) {
-    indexType sz1 = v.size() - 1;
+  print( ostream_type & s, VEC_EXPR const & v ) {
+    integer sz1 = v.size() - 1;
     s << "[";
-    for ( indexType i = 0; i < sz1; ++i ) s << v(i) << " , ";
+    for ( integer i = 0; i < sz1; ++i ) s << v(i) << " , ";
     s << v(sz1) << "]";
   }
 
   //!
   //! Print the contents of vector `v` to the stream `s`.
   //!
-  template <typename T, typename VEC> inline
-  ostream &
-  operator << ( ostream & s, VectorBase<T,VEC> const & v ) {
+  template <typename T, typename VEC_EXPR> inline
+  ostream_type &
+  operator << ( ostream_type & s, VEC_EXPR const & v ) {
     print(s,v);
     return s;
   }
-
-  #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //!
-  //! Print the contents of vector expression `e` to the stream `s`.
-  //!
-  template <typename T, typename A>
-  inline
-  ostream &
-  operator << (ostream & s, VectorE<T,A> const & e) {
-    print(s,e);
-    return s;
-  }
-  #endif
 
   //!
   //! Read from the stream `s` to the vector `v`.
@@ -5738,8 +4555,8 @@ namespace SparseTool {
   //! Print the contents of the SparsePattern `S` to the stream `s`.
   //!
   inline
-  ostream &
-  operator << ( ostream & s, SparsePattern const & S ) {
+  ostream_type &
+  operator << ( ostream_type & s, SparsePattern const & S ) {
     for ( S.Begin(); S.End(); S.Next() )
       s << S.row() << " " << S.column() << "\n";
     return s;
@@ -5752,19 +4569,19 @@ namespace SparseTool {
   //! object `N` to the stream `s`.
   //!
   template <typename T, typename MAT> inline
-  ostream &
-  operator << ( ostream & s, Sparse<T,MAT> const & M ) {
+  ostream_type &
+  operator << ( ostream_type & s, Sparse<T,MAT> const & M ) {
     s << "\nsize    = " << M.numRows() << " x " << M.numCols()
       << "\nnnz     = " << M.nnz();
     if ( M.isOrdered() ) {
-      indexType l,d,u;
+      integer l,d,u;
       M.nnz( l, d, u );
       s << "  (diag=" << d << ", lower=" << l << ", upper=" << u << ")\nordered = YES\n";
     } else {
       s << "\nordered = NO\n";
     }
-    indexType N = 1;
-    indexType n = M.maxSize();
+    integer N = 1;
+    integer n = M.maxSize();
     while ( (n/=10) > 0 ) ++N; 
     for ( M.Begin(); M.End(); M.Next() ) {
       s << "("    << setw(N) << M.row()
@@ -5782,47 +4599,11 @@ namespace SparseTool {
 namespace SparseToolLoad {
 
   using ::SparseTool::Vector;
-  using ::SparseTool::VectorSlice;
   using ::SparseTool::SparsePattern;
   using ::SparseTool::CCoorMatrix;
   using ::SparseTool::CRowMatrix;
   using ::SparseTool::CColMatrix;
   using ::SparseTool::TridMatrix;
-
-  using ::SparseTool::absval;
-  using ::SparseTool::sin;
-  using ::SparseTool::cos;
-  using ::SparseTool::tan;
-  using ::SparseTool::asin;
-  using ::SparseTool::acos;
-  using ::SparseTool::atan;
-  using ::SparseTool::cosh;
-  using ::SparseTool::sinh;
-  using ::SparseTool::tanh;
-
-  using ::SparseTool::sqrt;
-  using ::SparseTool::ceil;
-  using ::SparseTool::floor;
-  using ::SparseTool::log;
-  using ::SparseTool::log10;
-
-  using ::SparseTool::pow;
-  using ::SparseTool::atan2;
-
-  using ::SparseTool::norm1;
-  using ::SparseTool::norm2;
-  using ::SparseTool::normi;
-  using ::SparseTool::normp;
-  using ::SparseTool::maxval;
-  using ::SparseTool::minval;
-  using ::SparseTool::maxabsval;
-  using ::SparseTool::minabsval;
-  using ::SparseTool::dot;
-  using ::SparseTool::rdot;
-  using ::SparseTool::sum;
-  using ::SparseTool::prod;
-  using ::SparseTool::dist;
-  using ::SparseTool::dist2;
 
   // I/O
   using ::SparseTool::operator >>;

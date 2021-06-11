@@ -233,18 +233,18 @@ namespace SparseTool {
 
       // step 1: Evaluate not zero pattern
       for ( M.Begin(); M.End();  M.Next() ) {
-        indexType i = M.row();
-        indexType j = M.column();
+        integer i = M.row();
+        integer j = M.column();
         if ( cmp(i,j) ) ++R(i);
       }
-      for ( indexType k = 0; k < n; ++k ) R(k+1) += R(k);
+      for ( integer k = 0; k < n; ++k ) R(k+1) += R(k);
 
       // step 2: Fill matrix
       for ( M.Begin(); M.End(); M.Next() ) {
-        indexType i = M.row();
-        indexType j = M.column();
+        integer i = M.row();
+        integer j = M.column();
         if ( cmp(i,j) ) {
-          indexType ii = --R(i);
+          integer ii = --R(i);
           M.assign(A(ii));
           J(ii) = j;
         }
@@ -255,8 +255,8 @@ namespace SparseTool {
         "Pardiso interface, load failed"
       )
       // step 3: internalOrder matrix
-      std::vector<int> index;
-      indexType ii, rk, rk1;
+      Vector<int> index;
+      integer ii, rk, rk1;
       for ( ii = 0, rk = R(0); ii < n; ++ii, rk = rk1 ) {
         rk1 = R(ii+1);
         // skip empty rows or row with 1 element

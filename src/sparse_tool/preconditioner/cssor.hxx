@@ -31,35 +31,35 @@ namespace SparseTool {
     typedef Preco<CSSORPRECO>      PRECO;
     #endif
 
-    typedef typename T::value_type valueType; //!< type of the elements of the preconditioner
+    typedef typename T::value_type real_type; //!< type of the elements of the preconditioner
 
   private:
 
-    valueType         omega, omega1;
-    indexType         maxIter;
+    real_type         omega, omega1;
+    integer         maxIter;
 
-    Vector<indexType> L_R;
-    Vector<indexType> L_J;
-    Vector<valueType> L_A;
+    Vector<integer> L_R;
+    Vector<integer> L_J;
+    Vector<real_type> L_A;
 
-    Vector<indexType> U_C;
-    Vector<indexType> U_I;
-    Vector<valueType> U_A;
+    Vector<integer> U_C;
+    Vector<integer> U_I;
+    Vector<real_type> U_A;
 
-    Vector<valueType> D;
+    Vector<real_type> D;
 
-    Vector<indexType> B_R;
-    Vector<indexType> B_J;
-    Vector<valueType> B_A;
+    Vector<integer> B_R;
+    Vector<integer> B_J;
+    Vector<real_type> B_A;
 
-    Vector<indexType> Lnnz, Unnz, Bnnz;
+    Vector<integer> Lnnz, Unnz, Bnnz;
 
-    mutable Vector<valueType> br, bi, x, y;
+    mutable Vector<real_type> br, bi, x, y;
 
     //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
-    build_SOR( MAT const & A, valueType const & _omega, indexType _maxIter ) {
+    build_SOR( MAT const & A, real_type const & _omega, integer _maxIter ) {
 
       SPARSETOOL_ASSERT(
         A.isOrdered(),
@@ -88,11 +88,11 @@ namespace SparseTool {
       Lnnz = 0;
       Unnz = 0;
       Bnnz = 0;
-      D    = valueType(0);
+      D    = real_type(0);
 
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
+        integer i = A.row();
+        integer j = A.column();
         ++Bnnz(i);
         if      ( i > j ) ++Lnnz(i);
         else if ( i < j ) ++Unnz(j);
@@ -104,7 +104,7 @@ namespace SparseTool {
       B_R.resize( PRECO::pr_size + 1 );
 
       L_R(0) = U_C(0) = B_R(0) = 0;
-      for ( indexType i = 0; i < PRECO::pr_size; ++i ) {
+      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
         L_R(i+1) = L_R(i) + Lnnz(i);
         U_C(i+1) = U_C(i) + Unnz(i);
         B_R(i+1) = B_R(i) + Bnnz(i);
@@ -126,15 +126,15 @@ namespace SparseTool {
       
       // step 3: fill structure
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
+        integer i = A.row();
+        integer j = A.column();
         B_J(B_R(i)+(--Bnnz(i))) = j;
         if      ( i > j ) L_J(L_R(i)+(--Lnnz(i))) = j;
         else if ( i < j ) U_I(U_C(j)+(--Unnz(j))) = i;
       }
 
       // step 4: sort structure
-      for ( indexType i = 0; i < PRECO::pr_size; ++i ) {
+      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
         std::sort( &L_J(L_R(i)), &L_J(L_R(i+1)) );
         std::sort( &U_I(U_C(i)), &U_I(U_C(i+1)) );
         std::sort( &B_J(B_R(i)), &B_J(B_R(i+1)) );
@@ -142,40 +142,40 @@ namespace SparseTool {
 
       // step 5: insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i    = A.row();
-        indexType j    = A.column();
-        valueType rval = A.value().real();
-        valueType ival = A.value().imag();
+        integer i    = A.row();
+        integer j    = A.column();
+        real_type rval = A.value().real();
+        real_type ival = A.value().imag();
         { // costruisco B
-          indexType lo  = B_R(i);
-          indexType hi  = B_R(i+1);
-          indexType len = hi - lo;
+          integer lo  = B_R(i);
+          integer hi  = B_R(i+1);
+          integer len = hi - lo;
           while ( len > 0 ) {
-            indexType half = len / 2;
-            indexType mid  = lo + half;
+            integer half = len / 2;
+            integer mid  = lo + half;
             if ( B_J(mid) < j ) { lo = mid + 1; len -= half + 1; }
             else                  len = half;
           }
           B_A(lo) = ival;
         }
         if ( i > j ) { // costruisco L
-          indexType lo  = L_R(i);
-          indexType hi  = L_R(i+1);
-          indexType len = hi - lo;
+          integer lo  = L_R(i);
+          integer hi  = L_R(i+1);
+          integer len = hi - lo;
           while ( len > 0 ) {
-            indexType half = len / 2;
-            indexType mid  = lo + half;
+            integer half = len / 2;
+            integer mid  = lo + half;
             if ( L_J(mid) < j ) { lo = mid + 1; len -= half + 1; }
             else                  len = half;
           }
           L_A(lo) = rval;
         } else if ( i < j ) { // costruisco U
-          indexType lo  = U_C(j);
-          indexType hi  = U_C(j+1);
-          indexType len = hi - lo;
+          integer lo  = U_C(j);
+          integer hi  = U_C(j+1);
+          integer len = hi - lo;
           while ( len > 0 ) {
-            indexType half = len / 2;
-            indexType mid  = lo + half;
+            integer half = len / 2;
+            integer mid  = lo + half;
             if ( U_I(mid) < i ) { lo = mid + 1; len -= half + 1; }
             else                  len = half;
           }
@@ -184,8 +184,8 @@ namespace SparseTool {
           D(i) = rval;
         }
       }
-      for ( indexType i = 0; i < PRECO::pr_size; ++i )
-        SPARSETOOL_ASSERT( D(i) != valueType(0),
+      for ( integer i = 0; i < PRECO::pr_size; ++i )
+        SPARSETOOL_ASSERT( D(i) != real_type(0),
                             "CSSORpreconditioner::D(" << i << ") = " << D(i) << " size = " << D.size() );
 
       // step 6: allocate working vectors
@@ -200,13 +200,13 @@ namespace SparseTool {
     CSSORpreconditioner(void) : Preco<CSSORPRECO>() {}
     
     template <typename MAT>
-    CSSORpreconditioner( MAT const & M, valueType _omega, indexType _maxIter ) : Preco<CSSORPRECO>()
+    CSSORpreconditioner( MAT const & M, real_type _omega, integer _maxIter ) : Preco<CSSORPRECO>()
     { build_SOR( M, _omega, _maxIter ); }
 
     //! build the preconditioner from matrix `M` with pattern `P` 
     template <typename MAT>
     void
-    build( MAT const & M, valueType _omega, indexType _maxIter )
+    build( MAT const & M, real_type _omega, integer _maxIter )
     { build_SOR( M, _omega, _maxIter ); }
 
     //!
@@ -216,11 +216,11 @@ namespace SparseTool {
     template <typename VECTOR>
     void
     assPreco( VECTOR & xc, VECTOR const & bc ) const {
-      indexType const * pC;  indexType const * pI;  valueType const * pUA;
-      indexType const * pBR; indexType const * pBJ; valueType const * pBA;
-      indexType const * pR;  indexType const * pJ;  valueType const * pLA;
+      integer const * pC;  integer const * pI;  real_type const * pUA;
+      integer const * pBR; integer const * pBJ; real_type const * pBA;
+      integer const * pR;  integer const * pJ;  real_type const * pLA;
  
-      indexType k;
+      integer k;
 
       // copia dato in ingresso
       for ( k=0; k < PRECO::pr_size; ++k ) {
@@ -230,155 +230,155 @@ namespace SparseTool {
 
       x.setZero();
       y.setZero();
-      for ( indexType ii = 0; ii < maxIter; ++ii ) {
+      for ( integer ii = 0; ii < maxIter; ++ii ) {
 
         // calcolo ((1/omega-1)*D-U)*x + B*y + b --------------------
-        pC  = & U_C.front();
-        pI  = & U_I.front();
-        pUA = & U_A.front();
+        pC  = U_C.data();
+        pI  = U_I.data();
+        pUA = U_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          valueType xk = x(k);
+          real_type xk = x(k);
           x(k) = br(k) + omega1 * D(k) * xk;
-          for ( indexType i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
             x(*pI++) -= *pUA++ * xk;
           ++pC;
         }
 
         // aggiungo B*y;
-        pBR = & B_R.front();
-        pBJ = & B_J.front();
-        pBA = & B_A.front();
+        pBR = B_R.data();
+        pBJ = B_J.data();
+        pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          valueType tmp(0);
-          for ( indexType i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
+          real_type tmp(0);
+          for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
             tmp += *pBA++ * y(*pBJ++);
           x(k) += tmp;
           ++pBR;
         };
 
         // solve (D/omega+L) x(n+1) = x(n)
-        pR  = & L_R.front();
-        pJ  = & L_J.front();
-        pLA = & L_A.front();
+        pR  = L_R.data();
+        pJ  = L_J.data();
+        pLA = L_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          valueType tmp(0);
-          for ( indexType i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+          real_type tmp(0);
+          for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
             tmp += *pLA++ * x(*pJ++);
           x(k) = omega*(x(k)-tmp)/D(k);
           ++pR;
         };
 
         // calcolo ((1/omega-1)*D-U)*y - B*x + c  ------------------------
-        pC  = & U_C.front();
-        pI  = & U_I.front();
-        pUA = & U_A.front();
+        pC  = U_C.data();
+        pI  = U_I.data();
+        pUA = U_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          valueType yk = y(k);
+          real_type yk = y(k);
           y(k) = bi(k) + omega1 * D(k) * yk;
-          for ( indexType i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
             y(*pI++) -= *pUA++ * yk;
           ++pC;
         }
 
         // sottraggo B*x;
-        pBR = & B_R.front();
-        pBJ = & B_J.front();
-        pBA = & B_A.front();
+        pBR = B_R.data();
+        pBJ = B_J.data();
+        pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          valueType tmp(0);
-          for ( indexType i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
+          real_type tmp(0);
+          for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
             tmp += *pBA++ * x(*pBJ++);
           y(k) -= tmp;
           ++pBR;
         };
 
         // solve (D/omega+L) y(n+1) = y(n)
-        pR  = & L_R.front();
-        pJ  = & L_J.front();
-        pLA = & L_A.front();
+        pR  = L_R.data();
+        pJ  = L_J.data();
+        pLA = L_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          valueType tmp(0);
-          for ( indexType i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+          real_type tmp(0);
+          for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
             tmp += *pLA++ * y(*pJ++);
           y(k) = omega*(y(k)-tmp)/D(k);
           ++pR;
         };
       }
 
-      for ( indexType ii = 0; ii < maxIter; ++ii ) {
+      for ( integer ii = 0; ii < maxIter; ++ii ) {
 
         // calcolo ((1/omega-1)*D-L)*y - B*x + c -----------------------
-        pR  = & L_R.front() + PRECO::pr_size;
-        pJ  = & L_J.front() + *pR;
-        pLA = & L_A.front() + *pR;
+        pR  = L_R.data() + PRECO::pr_size;
+        pJ  = L_J.data() + *pR;
+        pLA = L_A.data() + *pR;
         k = PRECO::pr_size;
         do {
           --k; --pR;
-          valueType tmp(0);
-          for ( indexType i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+          real_type tmp(0);
+          for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
             tmp += *--pLA * y(*--pJ);
           y(k) = omega1*D(k)*y(k)+bi(k)-tmp;
         } while ( k > 0 );
 
         // sottraggo B*x;
-        pBR = & B_R.front();
-        pBJ = & B_J.front();
-        pBA = & B_A.front();
+        pBR = B_R.data();
+        pBJ = B_J.data();
+        pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          valueType tmp(0);
-          for ( indexType i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
+          real_type tmp(0);
+          for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
             tmp += *pBA++ * x(*pBJ++);
           y(k) -= tmp;
           ++pBR;
         };
 
         // solve (D/omega+U) y(n+1) = y(n)
-        pC  = & U_C.front() + PRECO::pr_size;
-        pI  = & U_I.front() + *pC;
-        pUA = & U_A.front() + *pC;
+        pC  = U_C.data() + PRECO::pr_size;
+        pI  = U_I.data() + *pC;
+        pUA = U_A.data() + *pC;
         k = PRECO::pr_size;
         do {
           --k; --pC;
-          valueType yk = y(k)*omega/D(k);
-          for ( indexType i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+          real_type yk = y(k)*omega/D(k);
+          for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
             y(*--pI) -= *--pUA * yk;
           y(k) = yk;
         } while ( k > 0 );
 
         // calcolo ((1/omega-1)*D-L)*x + B*y + b ----------------------
-        pR  = & L_R.front() + PRECO::pr_size;
-        pJ  = & L_J.front() + *pR;
-        pLA = & L_A.front() + *pR;
+        pR  = L_R.data() + PRECO::pr_size;
+        pJ  = L_J.data() + *pR;
+        pLA = L_A.data() + *pR;
         k = PRECO::pr_size;
         do {
           --k; --pR;
-          valueType tmp(0);
-          for ( indexType i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+          real_type tmp(0);
+          for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
             tmp += *--pLA * x(*--pJ);
           x(k) = omega1*D(k)*x(k)+br(k)-tmp;
         } while ( k > 0 );
 
         // aggiungo B*y;
-        pBR = & B_R.front();
-        pBJ = & B_J.front();
-        pBA = & B_A.front();
+        pBR = B_R.data();
+        pBJ = B_J.data();
+        pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          valueType tmp(0);
-          for ( indexType i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
+          real_type tmp(0);
+          for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
             tmp += *pBA++ * y(*pBJ++);
           x(k) += tmp;
           ++pBR;
         };
 
         // solve (D/omega+U) x(n+1) = x(n)
-        pC  = & U_C.front() + PRECO::pr_size;
-        pI  = & U_I.front() + *pC;
-        pUA = & U_A.front() + *pC;
+        pC  = U_C.data() + PRECO::pr_size;
+        pI  = U_I.data() + *pC;
+        pUA = U_A.data() + *pC;
         k = PRECO::pr_size;
         do {
           --k; --pC;
-          valueType xk = x(k)*omega/D(k);
-          for ( indexType i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+          real_type xk = x(k)*omega/D(k);
+          for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
             x(*--pI) -= *--pUA * xk;
           x(k) = xk;
         } while ( k > 0 );
@@ -386,7 +386,7 @@ namespace SparseTool {
       }
 
       // copia risulatato in uscita
-      for ( k=0; k < PRECO::pr_size; ++k ) xc(k) = valueType(x(k),y(k));
+      for ( k=0; k < PRECO::pr_size; ++k ) xc(k) = real_type(x(k),y(k));
     }
 
   };

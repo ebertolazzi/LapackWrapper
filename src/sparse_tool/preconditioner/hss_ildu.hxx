@@ -23,13 +23,13 @@ namespace SparseTool {
     typedef Preco<HSS_ILDU_PRECO>      PRECO;
     #endif
 
-    typedef T valueType; //!< type of the elements of the preconditioner
-    typedef typename T::value_type rvalueType; //!< type of the elements of the preconditioner
+    typedef T real_type; //!< type of the elements of the preconditioner
+    typedef typename T::value_type rreal_type; //!< type of the elements of the preconditioner
 
   private:
 
-    indexType neq;
-    ILDUpreconditioner<rvalueType> preco;
+    integer neq;
+    ILDUpreconditioner<rreal_type> preco;
 
     //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
@@ -50,12 +50,12 @@ namespace SparseTool {
       )
     
       neq = A.numRows();
-      CCoorMatrix<rvalueType> Amat(neq,neq,A.nnz());
+      CCoorMatrix<rreal_type> Amat(neq,neq,A.nnz());
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
+        integer i = A.row();
+        integer j = A.column();
         Amat.insert(i,j) = A.value().real() + A.value().imag();
       }
       
@@ -85,8 +85,8 @@ namespace SparseTool {
     void
     assPreco( VECTOR & _y, VECTOR const & v ) const {
       preco.assPreco(_y,v);
-      valueType cst = valueType(0.5,-0.5);
-      for ( indexType k=0; k < neq; ++k ) _y(k) *= cst;
+      real_type cst = real_type(0.5,-0.5);
+      for ( integer k=0; k < neq; ++k ) _y(k) *= cst;
     }
   };
 

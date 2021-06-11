@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef SPARSETOOL_ITERATIVE_PRECO_HSS_SSOR_HH
 #define SPARSETOOL_ITERATIVE_PRECO_HSS_SSOR_HH
 
@@ -23,18 +24,18 @@ namespace SparseTool {
     typedef Preco<HSS_SSOR_PRECO>      PRECO;
     #endif
 
-    typedef T valueType; //!< type of the elements of the preconditioner
-    typedef typename T::value_type rvalueType; //!< type of the elements of the preconditioner
+    typedef T real_type; //!< type of the elements of the preconditioner
+    typedef typename T::value_type rreal_type; //!< type of the elements of the preconditioner
 
   private:
 
-    indexType neq;
-    SSORpreconditioner<rvalueType> preco;
+    integer neq;
+    SSORpreconditioner<rreal_type> preco;
 
     //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
-    build_HSSOR( MAT const & A, rvalueType const & omega, indexType m ) {
+    build_HSSOR( MAT const & A, rreal_type const & omega, integer m ) {
 
       SPARSETOOL_ASSERT(
         A.isOrdered(),
@@ -50,12 +51,12 @@ namespace SparseTool {
       )
     
       neq = A.numRows();
-      CCoorMatrix<rvalueType> Amat(neq,neq,A.nnz());
+      CCoorMatrix<rreal_type> Amat(neq,neq,A.nnz());
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
+        integer i = A.row();
+        integer j = A.column();
         Amat.insert(i,j) = A.value().real() + A.value().imag();
       }
       
@@ -68,21 +69,22 @@ namespace SparseTool {
     HSS_SSOR_Preconditioner(void) : Preco<HSS_SSOR_PRECO>() {}
     
     template <typename MAT>
-    HSS_SSOR_Preconditioner( MAT const & M, rvalueType const & omega, indexType m ) : Preco<HSS_SSOR_PRECO>()
+    HSS_SSOR_Preconditioner( MAT const & M, rreal_type const & omega, integer m ) : Preco<HSS_SSOR_PRECO>()
     { build_HSSOR( M, omega, m ); }
 
     //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
-    build( MAT const & M, rvalueType const & omega, indexType m )
+    build( MAT const & M, rreal_type const & omega, integer m )
     { build_HSSOR( M, omega, m ); }
 
     //! apply preconditioner to vector `v`  and store result to vector `res`    template <typename VECTOR>
+    template <typename VECTOR>
     void
     assPreco( VECTOR & _y, VECTOR const & v ) const {
       preco.assPreco(_y,v);
-      valueType cst = valueType(0.5,-0.5);
-      for ( indexType k=0; k < neq; ++k ) _y(k) *= cst;
+      real_type cst = real_type(0.5,-0.5);
+      for ( integer k=0; k < neq; ++k ) _y(k) *= cst;
     }
   };
 
@@ -91,6 +93,7 @@ namespace SparseTool {
   Vector_V_div_P<Vector<T>,HSS_SSOR_Preconditioner<TP> >
   operator / (Vector<T> const & v, HSS_SSOR_Preconditioner<TP> const & P)
   { return Vector_V_div_P<Vector<T>,HSS_SSOR_Preconditioner<TP> >(v,P); }
+  #endif
 
 }
 

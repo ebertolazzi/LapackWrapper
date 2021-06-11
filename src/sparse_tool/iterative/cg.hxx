@@ -27,20 +27,20 @@ namespace SparseTool {
    *
    *  Use preconditioned conjugate gradient to solve \f$ A x = b \f$.
    */
-  template <typename valueType,
-            typename indexType,
+  template <typename real_type,
+            typename integer,
             typename matrix_type,
             typename vector_type,
             typename preco_type>
-  valueType
+  real_type
   cg(
     matrix_type const & A,
     vector_type const & b,
     vector_type       & x,
     preco_type  const & P,
-    valueType   const & epsi,
-    indexType           maxIter,
-    indexType         & iter,
+    real_type   const & epsi,
+    integer           maxIter,
+    integer         & iter,
     ostream           * pStream = nullptr
   ) {
 
@@ -54,11 +54,11 @@ namespace SparseTool {
       "\ndim r.h.s.  = " << b.size() <<
       "\ndim unknown = " << x.size()
     )
-    typedef typename vector_type::valueType vType;
+    typedef typename vector_type::real_type vType;
 
-    indexType   neq = b.size();
+    integer   neq = b.size();
     vector_type p(neq), q(neq), r(neq), Ap(neq);
-    valueType   resid;
+    real_type   resid;
     vType       rho, rho_1;
 
     r   = b - A * x;
@@ -68,7 +68,7 @@ namespace SparseTool {
     iter = 1;
     do {
 
-      resid = normi(r);
+      resid = r.template lpNorm<Eigen::Infinity>();
       if ( pStream != nullptr )
         (*pStream) << "iter = " << iter << " residual = " << resid << '\n';
 

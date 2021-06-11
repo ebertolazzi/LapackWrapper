@@ -23,9 +23,9 @@ namespace SparseTool {
     typedef Dpreconditioner<T> DPRECO;
     typedef Preco<DPRECO>      PRECO;
     #endif
-    typedef T valueType; //!< type of the element of the preconditioner
+    typedef T real_type; //!< type of the element of the preconditioner
 
-    Vector<valueType> D;
+    Vector<real_type> D;
 
   public:
 
@@ -40,16 +40,16 @@ namespace SparseTool {
     void
     build(Sparse<T,MAT> const & A) {
       D . resize( A.numRows() );
-      D = valueType(1);
+      D = real_type(1);
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
+        integer i = A.row();
+        integer j = A.column();
         if ( i == j ) D(i) = A.value();
       }
     }
 
     //! return the diagonal of the diagonal preconditioner
-    Vector<valueType> const & GetD(void) const { return D; }
+    Vector<real_type> const & GetD(void) const { return D; }
 
     //!
     //! Apply preconditioner to vector `v`
@@ -58,7 +58,7 @@ namespace SparseTool {
     template <typename VECTOR>
     void
     assPreco( VECTOR & res, VECTOR const & v ) const {
-      for ( indexType i = 0; i < D.size(); ++i ) res(i) = v(i) / D(i);
+      for ( integer i = 0; i < D.size(); ++i ) res(i) = v(i) / D(i);
     }
 
   };

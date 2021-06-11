@@ -24,8 +24,8 @@
 #include <sparse_tool/sparse_tool_matrix_market.hh>
 
 //#include <sparse_tool/interfaces/MA41.hh>
-#include <sparse_tool/interfaces/mkl_pardiso.hh>
-#include <sparse_tool/interfaces/Pardiso.hh>
+//#include <sparse_tool/interfaces/mkl_pardiso.hh>
+//#include <sparse_tool/interfaces/Pardiso.hh>
 
 #include <fstream>
 #include <iostream>
@@ -35,7 +35,7 @@
 #pragma clang diagnostic ignored "-Wshorten-64-to-32"
 #endif
 
-#include "zstream/izstream.hh"
+#include "Utils.hh"
 
 #ifdef __clang__
 #pragma clang diagnostic pop
@@ -93,10 +93,10 @@ testSparseTool( istream & mm_file ) {
   
   resid = rhs - A*x;
 
-  fmt::print("\nerror    (ildu) = {}\n", dist2( x, exact ) );
-  fmt::print("\nresidual (ildu) = {}\n", normi( resid ) );
+  fmt::print("\nerror    (ildu) = {}\n", (x-exact).norm() );
+  fmt::print("\nresidual (ildu) = {}\n", resid.lpNorm<Eigen::Infinity>() );
 
-#if 1
+#if 0
 
   tm.tic();
   mkl_PardisoComplexU pardiso;
@@ -108,8 +108,8 @@ testSparseTool( istream & mm_file ) {
 
   resid = rhs - A*x;
 
-  fmt::print("error    (pardiso) = {}\n", dist2( x, exact ) );
-  fmt::print("residual (pardiso) = {}\n", normi( resid ) );
+  fmt::print("error    (pardiso) = {}\n", (x-exact).norm() );
+  fmt::print("residual (pardiso) = {}\n", resid.lpNorm<Eigen::Infinity>() );
   fmt::print("elapsed time {} [s]\n", tm.elapsed_s() );
 #endif
 

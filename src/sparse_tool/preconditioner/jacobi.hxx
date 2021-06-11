@@ -23,27 +23,27 @@ namespace SparseTool {
     typedef Preco<JACOBIPRECO>      PRECO;
     #endif
 
-    typedef T valueType; //!< type of the elements of the preconditioner
+    typedef T real_type; //!< type of the elements of the preconditioner
 
   private:
 
-    valueType         omega, omega1;
-    indexType         maxIter;
+    real_type         omega, omega1;
+    integer         maxIter;
 
-    Vector<indexType> LU_R;
-    Vector<indexType> LU_J;
-    Vector<valueType> LU_A;
+    Vector<integer> LU_R;
+    Vector<integer> LU_J;
+    Vector<real_type> LU_A;
 
-    Vector<valueType> D;
+    Vector<real_type> D;
 
-    mutable Vector<valueType> TMP;
+    mutable Vector<real_type> TMP;
 
-    Vector<indexType> LUnnz;
+    Vector<integer> LUnnz;
 
     //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
-    build_JACOBI( MAT const & A, valueType const & _omega, indexType _maxIter ) {
+    build_JACOBI( MAT const & A, real_type const & _omega, integer _maxIter ) {
 
       SPARSETOOL_ASSERT(
         A.isOrdered(),
@@ -72,15 +72,15 @@ namespace SparseTool {
       D     . setZero();
 
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
+        integer i = A.row();
+        integer j = A.column();
         if ( i != j ) ++LUnnz(i);
       }
 
       // step 1: initialize structure
       LU_R.resize( PRECO::pr_size + 1 );
       LU_R(0) = 0;
-      for ( indexType i = 0; i < PRECO::pr_size; ++i ) LU_R(i+1) = LU_R(i) + LUnnz(i);
+      for ( integer i = 0; i < PRECO::pr_size; ++i ) LU_R(i+1) = LU_R(i) + LUnnz(i);
 
       // step 2: allocate memory
       LU_A.resize( LU_R(PRECO::pr_size) );
@@ -89,27 +89,27 @@ namespace SparseTool {
 
       // step 3: fill structure
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i = A.row();
-        indexType j = A.column();
+        integer i = A.row();
+        integer j = A.column();
         if ( i != j ) LU_J(LU_R(i)+(--LUnnz(i))) = j;
       }
 
       // step 4: sort structure
-      for ( indexType i = 0; i < PRECO::pr_size; ++i )
+      for ( integer i = 0; i < PRECO::pr_size; ++i )
         std::sort( &LU_J(LU_R(i)), &LU_J(LU_R(i+1)) );
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        indexType i   = A.row();
-        indexType j   = A.column();
-        valueType val = A.value(); // (i,j);
+        integer i   = A.row();
+        integer j   = A.column();
+        real_type val = A.value(); // (i,j);
         if ( i != j ) { // costruisco LU
-          indexType lo  = LU_R(i);
-          indexType hi  = LU_R(i+1);
-          indexType len = hi - lo;
+          integer lo  = LU_R(i);
+          integer hi  = LU_R(i+1);
+          integer len = hi - lo;
           while ( len > 0 ) {
-            indexType half = len / 2;
-            indexType mid  = lo + half;
+            integer half = len / 2;
+            integer mid  = lo + half;
             if ( LU_J(mid) < j ) { lo = mid + 1; len -= half + 1; }
             else                   len = half;
           }
@@ -118,9 +118,9 @@ namespace SparseTool {
           D(i) = val;
         }
       }
-      for ( indexType i = 0; i < PRECO::pr_size; ++i )
+      for ( integer i = 0; i < PRECO::pr_size; ++i )
         SPARSETOOL_ASSERT(
-          D(i) != valueType(0),
+          D(i) != real_type(0),
           "JACOBIpreconditioner::D(" << i <<
           ") = " << D(i) << " size = " << D.size()
         );
@@ -131,13 +131,13 @@ namespace SparseTool {
     JACOBIpreconditioner(void) : Preco<JACOBIPRECO>() {}
     
     template <typename MAT>
-    JACOBIpreconditioner( MAT const & M, valueType _omega, indexType _maxIter ) : Preco<JACOBIPRECO>()
+    JACOBIpreconditioner( MAT const & M, real_type _omega, integer _maxIter ) : Preco<JACOBIPRECO>()
     { build_JACOBI( M, _omega, _maxIter ); }
 
     //! build the preconditioner from matrix `M` with pattern `P` 
     template <typename MAT>
     void
-    build( MAT const & M, valueType _omega, indexType _maxIter )
+    build( MAT const & M, real_type _omega, integer _maxIter )
     { build_JACOBI( M, _omega, _maxIter ); }
 
     //!
@@ -148,16 +148,16 @@ namespace SparseTool {
     void
     assPreco( VECTOR & x, VECTOR const & b ) const {
       x = omega*(b/D);
-      for ( indexType ii = 0; ii < maxIter; ++ii ) {
+      for ( integer ii = 0; ii < maxIter; ++ii ) {
 
         // calcolo (D/omega)^{-1} [ ((1/omega-1)*D-L-U)*x + b ];
-        indexType const * _pR = & LU_R.front();
-        indexType const * _pJ = & LU_J.front();
-        valueType const * _pA = & LU_A.front();
+        integer const *   _pR = LU_R.data();
+        integer const *   _pJ = LU_J.data();
+        real_type const * _pA = LU_A.data();
 
-        for ( indexType k=0; k < PRECO::pr_size; ++k ) {
-          valueType tmp(0);
-          for ( indexType i_cnt = _pR[1] - _pR[0]; i_cnt > 0; --i_cnt )
+        for ( integer k=0; k < PRECO::pr_size; ++k ) {
+          real_type tmp(0);
+          for ( integer i_cnt = _pR[1] - _pR[0]; i_cnt > 0; --i_cnt )
             tmp += *_pA++ * x(*_pJ++);
           TMP(k) = b(k) + omega1 * D(k) * x(k) - tmp;
           ++_pR;

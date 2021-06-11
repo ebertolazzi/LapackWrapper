@@ -25,13 +25,13 @@ namespace SparseTool {
     T       & sn
   ) {
 
-    using ::SparseToolFun::absval;
-    using ::SparseToolFun::sqrt;
+    using std::abs;
+    using std::sqrt;
 
     if ( dy == 0.0 ) {
       cs = 1.0;
       sn = 0.0;
-    } else if ( absval(dy) > absval(dx) ) {
+    } else if ( abs(dy) > abs(dx) ) {
       T temp = dx / dy;
       sn = 1.0 / sqrt( 1.0 + temp*temp );
       cs = temp * sn;
@@ -70,25 +70,25 @@ namespace SparseTool {
    *  \param pStream pointer to stream object for messages
    *  \return last computed residual
    */
-  template <typename valueType,
-            typename indexType,
+  template <typename real_type,
+            typename integer,
             typename matrix_type,
             typename vector_type,
             typename preco_type>
-  valueType
+  real_type
   gmres(
     matrix_type const & A,
     vector_type const & b,
     vector_type       & x,
     preco_type  const & P,
-    valueType           epsi,
-    indexType           m, // maxSubIter
-    indexType           maxIter,
-    indexType         & iter,
+    real_type           epsi,
+    integer           m, // maxSubIter
+    integer           maxIter,
+    integer         & iter,
     ostream           * pStream = nullptr
   ) {
 
-    using ::SparseToolFun::absval;
+    using std::abs;
 
     SPARSETOOL_ASSERT(
       A.numRows() == b.size() &&
@@ -100,34 +100,34 @@ namespace SparseTool {
       "\ndim r.h.s.  = " << b.size() <<
       "\ndim unknown = " << x.size()
     )
-    valueType resid = 0;
-    indexType m1    = m+1;
-    indexType neq   = b.size();
+    real_type resid = 0;
+    integer m1    = m+1;
+    integer neq   = b.size();
     vector_type w(neq), r(neq), H(m1*m1), s(m1), cs(m1), sn(m1);
     
     Vector<vector_type> v(m1);
-    for ( indexType nv = 0; nv <= m; ++nv ) v(nv) . resize(neq);
+    for ( integer nv = 0; nv <= m; ++nv ) v(nv) . resize(neq);
 
     iter = 1;
     do {
 
       r  = b - A * x;
       r  = r / P;
-      valueType beta = norm2(r);
+      real_type beta = norm2(r);
       if ( beta <= epsi ) goto fine;
  
-      typename vector_type::valueType betax = beta;
+      typename vector_type::real_type betax = beta;
       v(0) = r / betax;
       s(0) = beta;
-      for ( indexType k = 1; k <= m; ++k ) s(k) = 0;
+      for ( integer k = 1; k <= m; ++k ) s(k) = 0;
 
-      indexType i = 0;
+      integer i = 0;
       do {
 
         w = A * v(i);
         w = w / P;
 
-        indexType k;
+        integer k;
         for ( k = 0; k <= i; ++k ) {
           H(k*m1+i) = dot(w, v(k));
           w -= H(k*m1+i) * v(k);
@@ -156,7 +156,7 @@ namespace SparseTool {
           s(jj) -= H(jj*m1+ii) * s(ii);
       }
 
-      for ( indexType jj = 0; jj < i; ++jj )
+      for ( integer jj = 0; jj < i; ++jj )
         x += v(jj) * s(jj);
 
     } while ( iter <= maxIter );

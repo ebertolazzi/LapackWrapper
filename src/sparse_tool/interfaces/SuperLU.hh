@@ -91,9 +91,9 @@ namespace SparseTool {
     integer nRow, nCol, nnz;
 
     // for SuperLU =====================
-    std::vector<integer> slu_perm_r; // row permutations from partial pivoting
-    std::vector<integer> slu_perm_c; // column permutation vector
-    std::vector<integer> slu_etree;
+    Vector<integer> slu_perm_r; // row permutations from partial pivoting
+    Vector<integer> slu_perm_c; // column permutation vector
+    Vector<integer> slu_etree;
 
     superlu_options_t     slu_options;
     mutable SuperLUStat_t slu_stats;
@@ -172,11 +172,14 @@ namespace SparseTool {
       this->nCol = A.numCols();
       this->nnz  = A.nnz();
       // Create matrix A in the format expected by SuperLU.
+      T const   * AA = static_cast<T const *>(A.getA().data());
+      int const * II = reinterpret_cast<int const *>(A.getI().data());
+      int const * CC = reinterpret_cast<int const *>(A.getC().data());
       Create_CompCol_Matrix(
         slu_A, A.numRows(), A.numCols(), A.nnz(),
-        (T*)&A.getA().front(),
-        (int*)&A.getI().front(),
-        (int*)&A.getC().front(),
+        const_cast<double *>(AA),
+        const_cast<int *>(II),
+        const_cast<int *>(CC),
         SLU_NC, SLU_D, SLU_GE
       );
       return factorize();
@@ -212,14 +215,14 @@ namespace SparseTool {
       get_perm_c(
         slu_options.ColPerm,
         &slu_A,
-        &slu_perm_c.front()
+        slu_perm_c.data()
       );
       //cout << "sp_preorder.\n";
       sp_preorder(
         &slu_options,
         &slu_A,
-        &slu_perm_c.front(),
-        &slu_etree.front(),
+        slu_perm_c.data(),
+        slu_etree.data(),
         &slu_AC
       );
 
@@ -228,9 +231,9 @@ namespace SparseTool {
       //cout << "dgstrf.\n";
       int info = this->SuperLU_factor(
         slu_options, slu_AC, relax, panel_size,
-        &slu_etree.front(), nullptr, 0,
-        &slu_perm_c.front(),
-        &slu_perm_r.front(),
+        slu_etree.data(), nullptr, 0,
+        slu_perm_c.data(),
+        slu_perm_r.data(),
         slu_L, slu_U,
       #if defined(SUPERLU_MAJOR_VERSION) && SUPERLU_MAJOR_VERSION >= 5
         slu_glu,
@@ -250,7 +253,7 @@ namespace SparseTool {
       Vector<T>       & x,
       bool transpose = false
     ) {
-      return this->solve( &b.front(), &x.front(), transpose );
+      return this->solve( b.data(), x.data(), transpose );
     }
 
     int
@@ -281,8 +284,8 @@ namespace SparseTool {
       int info = this->SuperLU_solve(
         (transpose ? TRANS : NOTRANS),
         slu_L, slu_U,
-        &slu_perm_c.front(),
-        &slu_perm_r.front(),
+        slu_perm_c.data(),
+        slu_perm_r.data(),
         BX, slu_stats
       );
 
@@ -314,7 +317,7 @@ namespace SparseTool {
     typedef SuperLUpreconditioner<T> SLUPRECO;
     typedef Preco<SLUPRECO>          PRECO;
     #endif
-    typedef T valueType; //!< type of the element of the preconditioner
+    typedef T real_type; //!< type of the element of the preconditioner
     typedef typename RealType<T>::Type realType;
 
   private:
