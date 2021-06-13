@@ -1,10 +1,10 @@
 /*--------------------------------------------------------------------------*\
  |                                                                          |
- |  SparseTool   : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH PARDISO  |
+ |  Sparse_tool  : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH PARDISO  |
  |                                                                          |
  |  date         : 2016, December 6                                         |
  |  version      : 1.0.                                                     |
- |  file         : SparseTool_pardiso.hh                                    |
+ |  file         : mkl_pardiso.hh                                           |
  |  authors      : Enrico Bertolazzi                                        |
  |  affiliations : Dipartimento di Ingegneria Industriale                   |
  |                 Universita` degli Studi di Trento                        |
@@ -31,7 +31,7 @@
 #endif
 #endif
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   typedef double real;
 
@@ -143,10 +143,10 @@ namespace SparseTool {
     template <typename MT, typename Compare>
     void
     load( Sparse<real_or_complex,MT> const & M, Compare cmp ) {
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT(
         M.numRows() == M.numCols(),
-        "Pardiso interface, matrix must be square numRows = " <<
-        M.numRows() << " numCols = " <<  M.numCols()
+        "Sparse_tool: Pardiso interface, matrix must be square {} x {}\n",
+        M.numRows(), M.numCols()
       );
 
       // step 0: Count nonzero
@@ -183,9 +183,9 @@ namespace SparseTool {
         }
       }
 
-      SPARSETOOL_TEST(
+      UTILS_ASSERT0(
         R(0) == 0 && R(n) == nnz,
-        "Pardiso interface, load failed"
+        "Pardiso interface, load failed\n"
       )
       // step 3: internalOrder matrix
       Vector<int> index;
@@ -221,10 +221,10 @@ namespace SparseTool {
         nullptr, nullptr, &error
       );
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT(
         error == 0,
-        "mkl_pardiso interface, during symbolic factorization ERROR N. " << error <<
-        "\n" << error_to_string(error)
+        "Sparse_tool: mkl_pardiso interface, during symbolic factorization ERROR N.{}\n{}\n",
+        error, error_to_string(error)
       );
       // printf("\nNumber of nonzeros in factors  = %d", iparm[17]);
       // printf("\nNumber of factorization MFLOPS = %d", iparm[18]);
@@ -254,10 +254,10 @@ namespace SparseTool {
         nullptr, nullptr, &error
       );
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT(
         error == 0,
-        "mkl_pardiso interface, during numerical factorization ERROR N. " << error <<
-        "\n" << error_to_string(error)
+        "Sparse_tool: mkl_pardiso interface, during numerical factorization ERROR N.{}\n{}\n",
+        error, error_to_string(error)
       );
     }
 
@@ -278,10 +278,10 @@ namespace SparseTool {
         &perm.front(), &nrhs, iparm, &msglvl,
         (real*)b, (real*)x, &error
       );
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT(
         error == 0,
-        "Pardiso interface, during solution ERROR N. " << error <<
-        "\n" << error_to_string(error)
+        "Sparse_tool: Pardiso interface, during solution ERROR N.{},\n{}\n",
+        error, error_to_string(error)
       );
     }
     
@@ -305,10 +305,10 @@ namespace SparseTool {
         nullptr, &nrhs, iparm, &msglvl,
         nullptr, nullptr, &error
       );
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT(
         error == 0,
-        "Pardiso interface, during free memory ERROR N. " << error <<
-        "\n" << error_to_string(error)
+        "Sparse_tool: Pardiso interface, during free memory ERROR N.{}\n{}\n",
+        error, error_to_string(error)
       );
     }
   };
@@ -490,14 +490,14 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::mkl_PardisoRealU;
-  using ::SparseTool::mkl_PardisoRealS;
-  using ::SparseTool::mkl_PardisoRealSPD;
-  using ::SparseTool::mkl_PardisoComplexU;
-  using ::SparseTool::mkl_PardisoComplexS;
-  using ::SparseTool::mkl_PardisoComplexH;
-  using ::SparseTool::mkl_PardisoComplexSPD;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::mkl_PardisoRealU;
+  using ::Sparse_tool::mkl_PardisoRealS;
+  using ::Sparse_tool::mkl_PardisoRealSPD;
+  using ::Sparse_tool::mkl_PardisoComplexU;
+  using ::Sparse_tool::mkl_PardisoComplexS;
+  using ::Sparse_tool::mkl_PardisoComplexH;
+  using ::Sparse_tool::mkl_PardisoComplexSPD;
 }
 #endif
 

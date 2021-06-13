@@ -1,10 +1,10 @@
 /*--------------------------------------------------------------------------*\
  |                                                                          |
- |  SparseTool   : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH UMFPACK  |
+ |  Sparse_tool  : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH UMFPACK  |
  |                                                                          |
  |  date         : 2008, 6 May                                              |
  |  version      : 1.0.1                                                    |
- |  file         : SparseTool_Umf.hh                                        |
+ |  file         : UMF.hh                                                   |
  |  authors      : Enrico Bertolazzi                                        |
  |  affiliations : Dipartimento di Ingegneria Industriale                   |
  |                 Universita` degli Studi di Trento                        |
@@ -22,7 +22,7 @@
 #include <umfpack.h>
 #include <complex>
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   template <typename T>
   class UMF {
@@ -86,8 +86,8 @@ namespace SparseTool {
       );
 
       if (status < 0) {
-        umfpack_di_report_info( Control, Info ) ;
-        umfpack_di_report_status( Control, status ) ;
+        umfpack_di_report_info( Control, Info );
+        umfpack_di_report_status( Control, status );
       }
 
       status = umfpack_di_numeric(
@@ -148,9 +148,9 @@ namespace SparseTool {
   //   #   #       #     #
   //  ###  #######  #####
   */
-  /*! \class UMFpreconditioner
-      \brief Incomplete \c LU preconditioner
-   */
+  //!
+  //! Incomplete `LU` preconditioner.
+  //!
   template <typename T>
   class UMFpreconditioner : public Preco<UMFpreconditioner<T> > {
   public:
@@ -201,9 +201,9 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::UMF;
-  using ::SparseTool::UMFpreconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::UMF;
+  using ::Sparse_tool::UMFpreconditioner;
 }
 #endif
 

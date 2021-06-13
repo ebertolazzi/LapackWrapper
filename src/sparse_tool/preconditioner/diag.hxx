@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_DIAG_HH
 #define SPARSETOOL_ITERATIVE_PRECO_DIAG_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   // ######  ######  ######  #######  #####  #######
@@ -13,9 +13,9 @@ namespace SparseTool {
   // #     # #       #    #  #       #     # #     #
   // ######  #       #     # #######  #####  #######
   */
-  /*! \class Dpreconditioner
-      \brief Diagonal preconditioner class
-   */
+  //!
+  //! Diagonal preconditioner class.
+  //!
   template <typename T>
   class Dpreconditioner : public Preco<Dpreconditioner<T> > {
 
@@ -35,12 +35,14 @@ namespace SparseTool {
     Dpreconditioner( MAT const & M ) : Preco<DPRECO>()
     { build( M ); }
 
-    //! build the preconditioner from matrix \c A
+    //!
+    //! Build the preconditioner from matrix `A`
+    //!
     template <typename MAT>
     void
     build(Sparse<T,MAT> const & A) {
-      D . resize( A.numRows() );
-      D = real_type(1);
+      D.resize( A.numRows() );
+      D.fill(1);
       for ( A.Begin(); A.End(); A.Next() ) {
         integer i = A.row();
         integer j = A.column();
@@ -58,7 +60,17 @@ namespace SparseTool {
     template <typename VECTOR>
     void
     assPreco( VECTOR & res, VECTOR const & v ) const {
-      for ( integer i = 0; i < D.size(); ++i ) res(i) = v(i) / D(i);
+      res = v.array()/D.array();
+    }
+
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
+    //!
+    template <typename VECTOR>
+    void
+    assPreco( VECTOR & inout ) const {
+      inout.array() /= D.array();
     }
 
   };
@@ -72,8 +84,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::Dpreconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::Dpreconditioner;
 }
 #endif
 

@@ -823,7 +823,7 @@ R1
 
   valueType MAT[M*M], MAT1[M*M], MM[M*M];
 
-  valueType rhs[N], b[N], x[M];
+  valueType rhs[N];
   valueType const xe[M] = {1,2,3,4,5,6,7,8};
   lapack_wrapper::gemv(
     lapack_wrapper::TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1

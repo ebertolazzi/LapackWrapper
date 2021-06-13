@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------*\
  |                                                                          |
- |  SparseTool   : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH UMFPACK  |
+ |  Sparse_tool  : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH UMFPACK  |
  |                                                                          |
  |  date         : 2008, 14 April                                           |
  |  version      : 1.0                                                      |
@@ -43,16 +43,36 @@
 #pragma clang diagnostic pop
 #endif
 
-using namespace SparseToolLoad;
+using namespace Sparse_tool_load;
 using namespace std;
 using namespace zstream;
 
+using Utils::istream_type;
+using Utils::ostream_type;
+
 void
-testSparseTool( istream & mm_file ) {
+testSparseTool( istream_type & mm_file ) {
   Utils::TicToc              tm;
   MatrixMarket               mm;
-  ILDUpreconditioner<double> ildu;
-  //ILDUKpreconditioner<double> ildu;
+  //IdPreconditioner<double>   preco;
+  //Dpreconditioner<double>    preco;
+  //SORpreconditioner<double>  preco;
+  //SSORpreconditioner<double>  preco;
+  ILDUpreconditioner<double> preco;
+  //ILDUKpreconditioner<double> preco;
+  //ILDUiterPreconditioner<double> preco;
+  //RILDUpreconditioner<double> preco;
+  //SuperLUpreconditioner<double> preco;
+  //CSSORpreconditioner<double> preco;
+  //SORpreconditioner<double> preco;
+  //JACOBIpreconditioner<double> preco;
+  //UMFpreconditioner
+  //HSS_CGSSOR_Preconditioner
+  //HSS_CHEBYSHEV_Preconditioner
+  //HSS_ILDU_Preconditioner
+  //HSS_OPOLY_Preconditioner
+  //HSS_OPOLY_SSOR_Preconditioner
+  //HSS_SSOR_Preconditioner
   CCoorMatrix<double>        A;
   CRowMatrix<double>         B;
   SparsePattern              SP;
@@ -62,14 +82,14 @@ testSparseTool( istream & mm_file ) {
   mm.read( mm_file, A );
   fmt::print("done\n{}",mm);
   
-  SP . resize( A );
-  B  . resize( SP );
+  SP.resize( A );
+  B.resize( SP );
   //Spy( mm_file + ".eps" , A, 15.0 );
   
-  exact . resize( A.numRows() );
-  x     . resize( A.numRows() );
-  rhs   . resize( A.numRows() );
-  resid . resize( A.numRows() );
+  exact.resize( A.numRows() );
+  x.resize( A.numRows() );
+  rhs.resize( A.numRows() );
+  resid.resize( A.numRows() );
 
   exact.fill(1);
   rhs = A * exact;
@@ -77,20 +97,22 @@ testSparseTool( istream & mm_file ) {
 #if 1
 
   x.setZero();
-  fmt::print("factorize (ildu) ...");
+  fmt::print("factorize (preco) ...");
   tm.tic();
-  ildu.build(A);
+  //preco.build(A,1.5,1);
+  preco.build(A);
+  //preco.build(A,1.2);
   tm.toc();
   fmt::print(" {} [ms] done\n", tm.elapsed_ms());
-  fmt::print("solve (bicgstab) ... ");
+  fmt::print("solve  (bicgstab) ...\n");
   tm.tic();
 
   double   epsi       = 1e-15;
-  unsigned maxIter    = 200;
-  //unsigned maxSubIter = 50;
+  unsigned maxIter    = 1000;
+  unsigned maxSubIter = 50;
   unsigned iter;
-  double   res = bicgstab( A, rhs, x, ildu, epsi, maxIter, iter, &cout );
-  //double   res = gmres( A, rhs, x, ildu, epsi, maxSubIter, maxIter, iter, &cout );
+  double   res = bicgstab( A, rhs, x, preco, epsi, maxIter, iter, &cout );
+  //double   res = gmres( A, rhs, x, preco, epsi, maxSubIter, maxIter, iter, &cout );
 
   tm.toc();
   fmt::print(" {} [ms] done\n",tm.elapsed_ms());
@@ -102,7 +124,7 @@ testSparseTool( istream & mm_file ) {
 #endif
 
 #if 0
-  x = 0;
+  x.setZero();
   MA41<double> ma41;
   ma41.load( A );
   fmt::print("\nsolve    (MA41) ... ");
@@ -117,7 +139,7 @@ testSparseTool( istream & mm_file ) {
 #endif
 
 #if 0
-  x = 0;
+  x.setZero();
   MA48<double> ma48;
   ma48.load( A );
   fmt::print("\nsolve    (MA48) ... ");
@@ -218,9 +240,9 @@ main() {
       exit(0);
     }
     igzstream gz(file);
-    //ifstream file( fname . c_str() );
-    //cout << (file . good()?"OK":"NO") << endl;
-    //cout << (file . fail()?"OK":"NO") << endl; 
+    //ifstream file( fname.c_str() );
+    //cout << (file.good()?"OK":"NO") << endl;
+    //cout << (file.fail()?"OK":"NO") << endl; 
     testSparseTool( gz );
     file.close();
   }

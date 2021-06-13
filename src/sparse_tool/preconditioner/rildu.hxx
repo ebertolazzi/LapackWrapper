@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_RILDU_HH
 #define SPARSETOOL_ITERATIVE_PRECO_RILDU_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //  ######  ### #       ######  #     # 
@@ -13,7 +13,7 @@ namespace SparseTool {
   //  #    #   #  #       #     # #     # 
   //  #     # ### ####### ######   #####  
   */
-  //! Incomplete \c LDU preconditioner for the real part obly of a complex matrix
+  //! Incomplete \c LDU preconditioner for the real part only of a complex matrix
   template <typename T>
   class RILDUpreconditioner : public Preco<RILDUpreconditioner<T> > {
   public:
@@ -27,48 +27,52 @@ namespace SparseTool {
 
   private:
 
-    Vector<integer> L_R;
-    Vector<integer> L_J;
+    Vector<integer>   L_R;
+    Vector<integer>   L_J;
     Vector<real_type> L_A;
 
-    Vector<integer> U_C;
-    Vector<integer> U_I;
+    Vector<integer>   U_C;
+    Vector<integer>   U_I;
     Vector<real_type> U_A;
 
     Vector<real_type> W;
     Vector<real_type> D;
 
-    Vector<integer> Lnnz, Unnz;
+    Vector<integer>   Lnnz, Unnz;
 
     //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT, typename PAT>
     void
     build_RILDU( MAT const & A, PAT const & P ) {
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         P.isOrdered(),
-        "RILDUpreconditioner::build_LDU pattern must be ordered before use"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: RILDUpreconditioner::build_RILDU\n"
+        "pattern must be ordered before use\n"
+      );
+      UTILS_ASSERT0(
         P.numRows() == A.numRows() && P.numCols() == A.numCols(),
-        "RILDUpreconditioner::build_LDU pattern do not match matrix size"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: RILDUpreconditioner::build_RILDU\n"
+        "pattern do not match matrix size\n"
+      );
+      UTILS_ASSERT0(
         P.numRows() == P.numCols(),
-        "RILDUpreconditioner::build_LDU only square matrix allowed"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: RILDUpreconditioner::build_RILDU\n"
+        "only square matrix allowed\n"
+      );
+      UTILS_ASSERT0(
         P.numRows() > 0,
-        "RILDUpreconditioner::build_LDU empty matrix"
-      )
+        "Sparse_tool: RILDUpreconditioner::build_RILDU\n"
+        "empty matrix\n"
+      );
 
       // step 0: compute necessary memory
       PRECO::pr_size = A.numRows();
       Lnnz.resize( PRECO::pr_size );
       Unnz.resize( PRECO::pr_size );
 
-      Lnnz = 0;
-      Unnz = 0;
+      Lnnz.setZero();
+      Unnz.setZero();
 
       for ( P.Begin(); P.End(); P.Next() ) {
         integer i = P.row();
@@ -97,10 +101,10 @@ namespace SparseTool {
       D.resize( PRECO::pr_size );
       W.resize( PRECO::pr_size );
 
-      D   = real_type(1);
-      W   = real_type(0);
-      L_A = real_type(0);
-      U_A = real_type(0);
+      D.fill(1);
+      W.setZero();
+      L_A.setZero();
+      U_A.setZero();
       
       // step 3: fill structure
       for ( P.Begin(); P.End(); P.Next() ) {
@@ -118,8 +122,8 @@ namespace SparseTool {
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i   = A.row();
-        integer j   = A.column();
+        integer i = A.row();
+        integer j = A.column();
         real_type val = A.value().real(); // (i,j);
         if ( i > j ) {
           integer lo  = L_R(i);
@@ -231,7 +235,10 @@ namespace SparseTool {
         W = 0;
         #endif
 
-        SPARSETOOL_ASSERT( D(k) != real_type(0), "ILDUpreconditioner found D(" << k << ") == 0!" );
+        UTILS_ASSERT(
+          D(k) != real_type(0),
+          "Sparse_tool: ILDUpreconditioner found D({}) == 0!\n", k
+        );
       }
     }
 
@@ -310,8 +317,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::RILDUpreconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::RILDUpreconditioner;
 }
 #endif
 

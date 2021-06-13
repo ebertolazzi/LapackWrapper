@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_HSS_CGSSOR_HH
 #define SPARSETOOL_ITERATIVE_PRECO_HSS_CGSSOR_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //  #     #  #####   #####   #####   #####   #####   #####  ####### ######  
@@ -42,35 +42,38 @@ namespace SparseTool {
     void
     build_HSS_CGSSOR(
       MAT        const & A,
-      integer          mIter,
+      integer            mIter,
       rreal_type const & rtol,
       rreal_type const & omega,
       integer          m
     ) {
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         A.isOrdered(),
-        "HSS_CGSSOR_Preconditioner::build_LDU pattern must be ordered before use"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: HSS_CGSSOR_Preconditioner::build_LDU\n"
+        "pattern must be ordered before use\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() == A.numCols(),
-        "HSS_CGSSOR_Preconditioner::build_LDU only square matrix allowed"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: HSS_CGSSOR_Preconditioner::build_LDU\n"
+        "only square matrix allowed\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() > 0,
-        "HSS_CGSSOR_Preconditioner::build_LDU empty matrix"
-      )
+        "Sparse_tool: HSS_CGSSOR_Preconditioner::build_LDU\n"
+        "empty matrix\n"
+      );
 
       maxIter = mIter;
       epsi    = rtol;
       neq     = A.numRows();
-      Amat . resize(neq,neq,A.nnz());
-      p    . resize(neq);
-      q    . resize(neq);
-      r    . resize(neq);
-      tmp1 . resize(neq);
-      tmp2 . resize(neq);
-      Ap   . resize(neq);
+      Amat.resize(neq,neq,A.nnz());
+      p.resize(neq);
+      q.resize(neq);
+      r.resize(neq);
+      Ap.resize(neq);
+      tmp1.resize(neq);
+      tmp2.resize(neq);
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
@@ -79,15 +82,14 @@ namespace SparseTool {
         Amat.insert(i,j) = A.value().real() + A.value().imag();
       }
 
-      Amat  . internalOrder();
-      preco . build( Amat, omega, m );
+      Amat.internalOrder();
+      preco.build( Amat, omega, m );
     }
 
     //! apply preconditioner to vector `v`  and store result to vector `res`    void
     void
     assPrecoR( Vector<rreal_type> & x, Vector<rreal_type> const & b ) const {
       rreal_type rho, rho_1, normr0;
-      x.setZero();
       r = b; // parto con x = 0
       preco.assPreco(p,r);
       normr0 = p.template lpNorm<Eigen::Infinity>();
@@ -115,7 +117,7 @@ namespace SparseTool {
     template <typename MAT>
     HSS_CGSSOR_Preconditioner(
       MAT        const & M,
-      integer          mIter,
+      integer            mIter,
       rreal_type const & rtol,
       rreal_type const & omega,
       integer          m
@@ -156,8 +158,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::HSS_CGSSOR_Preconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::HSS_CGSSOR_Preconditioner;
 }
 #endif
 

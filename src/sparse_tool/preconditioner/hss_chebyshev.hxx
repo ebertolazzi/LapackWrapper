@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_HSS_CHEBYSHEV_HH
 #define SPARSETOOL_ITERATIVE_PRECO_HSS_CHEBYSHEV_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //    ____ _   _ _____ ______   ______  _   _ _______     __
@@ -43,30 +43,36 @@ namespace SparseTool {
     build_HSS_CHEBYSHEV( MAT const & A, integer m, rreal_type delta ) {
       
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         A.isOrdered(),
-        "HSS_CHEBYSHEV_Preconditioner::build_LDU pattern must be ordered before use"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: HSS_CHEBYSHEV_Preconditioner::build_LDU\n"
+        "pattern must be ordered before use\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() == A.numCols(),
-        "HSS_CHEBYSHEV_Preconditioner::build_LDU only square matrix allowed"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: HSS_CHEBYSHEV_Preconditioner::build_LDU\n"
+        "only square matrix allowed\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() > 0,
-        "HSS_CHEBYSHEV_Preconditioner::build_LDU empty matrix"
-      )
+        "Sparse_tool: HSS_CHEBYSHEV_Preconditioner::build_LDU\n"
+        "empty matrix\n"
+      );
 
       mdegree = m;
       sqrt_epsilon = std::pow( (1+std::sqrt(1-delta*delta))/delta,1.0/(m+1.0) );
       sqrt_epsilon = (sqrt_epsilon-1)/(sqrt_epsilon+1);
 
-      SPARSETOOL_ASSERT( sqrt_epsilon > 0 && sqrt_epsilon < 1,
-                         "HSS_CHEBYSHEV_Preconditioner::build_LDU computed epsilon must be in the interval (0,1)" )
+      UTILS_ASSERT0(
+        sqrt_epsilon > 0 && sqrt_epsilon < 1,
+        "Sparse_tool: HSS_CHEBYSHEV_Preconditioner::build_LDU\n"
+        "computed epsilon must be in the interval (0,1)"
+      );
 
       neq = A.numRows();
-      s0 . resize(neq);
-      s1 . resize(neq);
-      y  . resize(neq);
+      s0.resize(neq);
+      s1.resize(neq);
+      y.resize(neq);
 
       // step 0: compute necessary memory
       PRECO::pr_size = A.numRows();
@@ -197,8 +203,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::HSS_CHEBYSHEV_Preconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::HSS_CHEBYSHEV_Preconditioner;
 }
 #endif
 

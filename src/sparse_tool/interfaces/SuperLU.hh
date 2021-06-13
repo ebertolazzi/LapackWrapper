@@ -1,10 +1,10 @@
 /*--------------------------------------------------------------------------*\
  |                                                                          |
- |  SparseTool   : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH SuperLU  |
+ |  Sparse_tool  : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH SuperLU  |
  |                                                                          |
  |  date         : 2008, 14 April                                           |
  |  version      : 1.0                                                      |
- |  file         : SparseTool_SuperLU.hh                                    |
+ |  file         : SuperLU.hh                                               |
  |  authors      : Enrico Bertolazzi                                        |
  |  affiliations : Dipartimento di Ingegneria Industriale                   |
  |                 Universita` degli Studi di Trento                        |
@@ -64,7 +64,7 @@
 #pragma clang diagnostic pop
 #endif
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*\
    |   ____                        _    _   _
@@ -272,7 +272,7 @@ namespace SparseTool {
       SuperMatrix BX;
 
       // Initialize the statistics variables.
-      StatInit(&slu_stats) ;
+      StatInit(&slu_stats);
 
       int nrow = slu_L.nrow;
 
@@ -289,7 +289,7 @@ namespace SparseTool {
         BX, slu_stats
       );
 
-      Destroy_SuperMatrix_Store( &BX ) ;
+      Destroy_SuperMatrix_Store( &BX );
       StatFree(&slu_stats);
 
       return info;
@@ -306,9 +306,9 @@ namespace SparseTool {
   //   #   #       #     #
   //  ###  #######  #####
   */
-  /*! \class SLUPreco
-      \brief Incomplete \c LU preconditioner
-   */
+  //!
+  //! Incomplete `LU` preconditioner
+  //!
   template <typename T>
   class SuperLUpreconditioner : public Preco<SuperLUpreconditioner<T> > {
   public:
@@ -327,15 +327,15 @@ namespace SparseTool {
   public:
 
     SuperLUpreconditioner(void) : Preco<SLUPRECO>() {}
-    
+
     template <typename MAT>
-    SuperLUpreconditioner( MAT const & M, realType const dropTolerance ) : Preco<SLUPRECO>()
+    SuperLUpreconditioner( MAT const & M, real_type dropTolerance ) : Preco<SLUPRECO>()
     { ILU.load( M, dropTolerance ); }
 
     //! build the preconditioner from matrix `M`.
     template <typename MAT>
     void
-    build( MAT const & M, realType const dropTolerance )
+    build( MAT const & M, real_type dropTolerance )
     { ILU.load( M, dropTolerance ); }
 
     //!
@@ -359,10 +359,10 @@ namespace SparseTool {
   inline
   void
   SuperLU<double>::Create_CompCol_Matrix(
-    SuperMatrix            & A,
+    SuperMatrix &            A,
     SuperLU<double>::integer m,
     SuperLU<double>::integer n,
-    SuperLU<double>::integer nnz,
+    SuperLU<double>::integer numnonzeros,
     double                   nzval[],
     SuperLU<double>::integer rowind[],
     SuperLU<double>::integer colptr[],
@@ -371,7 +371,7 @@ namespace SparseTool {
     Mtype_t                  mtype
   ) {
     dCreate_CompCol_Matrix(
-      &A, m, n, nnz, nzval, rowind, colptr, stype, dtype, mtype
+      &A, m, n, numnonzeros, nzval, rowind, colptr, stype, dtype, mtype
     );
   }
 
@@ -379,19 +379,19 @@ namespace SparseTool {
   inline
   void
   SuperLU<float>::Create_CompCol_Matrix(
-    SuperMatrix & A,
-    integer       m,
-    integer       n,
-    integer       nnz,
-    float         nzval[],
-    integer       rowind[],
-    integer       colptr[],
-    Stype_t       stype,
-    Dtype_t       dtype,
-    Mtype_t       mtype
+    SuperMatrix &           A,
+    SuperLU<float>::integer m,
+    SuperLU<float>::integer n,
+    SuperLU<float>::integer numnonzeros,
+    float                   nzval[],
+    SuperLU<float>::integer rowind[],
+    SuperLU<float>::integer colptr[],
+    Stype_t                 stype,
+    Dtype_t                 dtype,
+    Mtype_t                 mtype
   ) {
     sCreate_CompCol_Matrix(
-      &A, m, n, nnz, nzval, rowind, colptr, stype, dtype, mtype
+      &A, m, n, numnonzeros, nzval, rowind, colptr, stype, dtype, mtype
     );
   }
 
@@ -399,14 +399,14 @@ namespace SparseTool {
   inline
   void
   SuperLU<double>::Create_Dense_Matrix(
-    SuperMatrix & X,
-    integer       m,
-    integer       n,
-    double        x[],
-    integer       ldx,
-    Stype_t       stype,
-    Dtype_t       dtype,
-    Mtype_t       mtype
+    SuperMatrix &            X,
+    SuperLU<double>::integer m,
+    SuperLU<double>::integer n,
+    double                   x[],
+    SuperLU<double>::integer ldx,
+    Stype_t                  stype,
+    Dtype_t                  dtype,
+    Mtype_t                  mtype
   ) {
     dCreate_Dense_Matrix( &X, m, n, x, ldx, stype, dtype, mtype );
   }
@@ -415,14 +415,14 @@ namespace SparseTool {
   inline
   void
   SuperLU<float>::Create_Dense_Matrix(
-    SuperMatrix & X,
-    integer       m,
-    integer       n,
-    float         x[],
-    integer       ldx,
-    Stype_t       stype,
-    Dtype_t       dtype,
-    Mtype_t       mtype
+    SuperMatrix &           X,
+    SuperLU<float>::integer m,
+    SuperLU<float>::integer n,
+    float                   x[],
+    SuperLU<float>::integer ldx,
+    Stype_t                 stype,
+    Dtype_t                 dtype,
+    Mtype_t                 mtype
   ) {
     sCreate_Dense_Matrix( &X, m, n, x, ldx, stype, dtype, mtype );
   }
@@ -431,13 +431,13 @@ namespace SparseTool {
   inline
   int
   SuperLU<float>::SuperLU_solve(
-    trans_t         trans,
-    SuperMatrix   & L,
-    SuperMatrix   & U,
-    integer         perm_c[],
-    integer         perm_r[],
-    SuperMatrix   & B,
-    SuperLUStat_t & stat
+    trans_t                 trans,
+    SuperMatrix &           L,
+    SuperMatrix &           U,
+    SuperLU<float>::integer perm_c[],
+    SuperLU<float>::integer perm_r[],
+    SuperMatrix &           B,
+    SuperLUStat_t &         stat
   ) {
     int info;
     sgstrs( trans, &L, &U, perm_c, perm_r, &B, &stat, &info );
@@ -448,13 +448,13 @@ namespace SparseTool {
   inline
   int
   SuperLU<double>::SuperLU_solve(
-    trans_t         trans,
-    SuperMatrix   & L,
-    SuperMatrix   & U,
-    integer         perm_c[],
-    integer         perm_r[],
-    SuperMatrix   & B,
-    SuperLUStat_t & stat
+    trans_t                  trans,
+    SuperMatrix &            L,
+    SuperMatrix &            U,
+    SuperLU<double>::integer perm_c[],
+    SuperLU<double>::integer perm_r[],
+    SuperMatrix &            B,
+    SuperLUStat_t &          stat
   ) {
     int info;
     dgstrs( trans, &L, &U, perm_c, perm_r, &B, &stat, &info );
@@ -465,21 +465,21 @@ namespace SparseTool {
   inline
   int
   SuperLU<float>::SuperLU_factor(
-    superlu_options_t & options,
-    SuperMatrix       & A,
-    integer             relax,
-    integer             panel_size,
-    integer             etree[],
-    float               work[],
-    integer             lwork,
-    integer             perm_c[],
-    integer             perm_r[],
-    SuperMatrix       & L,
-    SuperMatrix       & U,
+    superlu_options_t &     options,
+    SuperMatrix &           A,
+    SuperLU<float>::integer relax,
+    SuperLU<float>::integer panel_size,
+    SuperLU<float>::integer etree[],
+    float                   work[],
+    SuperLU<float>::integer lwork,
+    SuperLU<float>::integer perm_c[],
+    SuperLU<float>::integer perm_r[],
+    SuperMatrix &           L,
+    SuperMatrix &           U,
     #if defined(SUPERLU_MAJOR_VERSION) && SUPERLU_MAJOR_VERSION >= 5
-    GlobalLU_t        & Glu,
+    GlobalLU_t &            Glu,
     #endif
-    SuperLUStat_t     & stat
+    SuperLUStat_t &         stat
   ) {
     int info;
     sgstrf(
@@ -497,21 +497,21 @@ namespace SparseTool {
   inline
   int
   SuperLU<double>::SuperLU_factor(
-    superlu_options_t & options,
-    SuperMatrix       & A,
-    integer             relax,
-    integer             panel_size,
-    integer             etree[],
-    double              work[],
-    integer             lwork,
-    integer             perm_c[],
-    integer             perm_r[],
-    SuperMatrix       & L,
-    SuperMatrix       & U,
+    superlu_options_t &      options,
+    SuperMatrix &            A,
+    SuperLU<double>::integer relax,
+    SuperLU<double>::integer panel_size,
+    SuperLU<double>::integer etree[],
+    double                   work[],
+    SuperLU<double>::integer lwork,
+    SuperLU<double>::integer perm_c[],
+    SuperLU<double>::integer perm_r[],
+    SuperMatrix &            L,
+    SuperMatrix &            U,
     #if defined(SUPERLU_MAJOR_VERSION) && SUPERLU_MAJOR_VERSION >= 5
-    GlobalLU_t        & Glu,
+    GlobalLU_t &             Glu,
     #endif
-    SuperLUStat_t     & stat
+    SuperLUStat_t &          stat
   ) {
     int info;
     dgstrf(
@@ -528,9 +528,9 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::SuperLU;
-  using ::SparseTool::SuperLUpreconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::SuperLU;
+  using ::Sparse_tool::SuperLUpreconditioner;
 }
 #endif
 

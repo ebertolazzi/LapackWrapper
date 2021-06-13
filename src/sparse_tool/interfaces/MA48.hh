@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------*\
  |                                                                          |
- |  SparseTool   : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH MA41     |
+ |  Sparse_tool  : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH MA41     |
  |                                                                          |
  |  date         : 2011, 18 July                                            |
  |  version      : 1.0.                                                     |
@@ -20,7 +20,7 @@
 #include "../../HSL/hsl.h"
 #include "../../lapack_wrapper_config.hh"
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   template <typename T>
   class MA48 {
@@ -223,10 +223,10 @@ namespace SparseTool {
       integer   j,
       real_type a
     ) {
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT(
         i >= 0 && i < this->nRow && j >= 0 && j < this->nCol,
-        "MA48::insert( " << i << ", " << j << ", a ) out of matrix"
-      )
+        "Sparsetool: MA48::insert( {}, {}, a ) out of matrix\n", i, j
+      );
       IRN.push_back(i+1);
       JCN.push_back(j+1);
       A.push_back(a);
@@ -296,8 +296,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::MA48;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::MA48;
 }
 #endif
 

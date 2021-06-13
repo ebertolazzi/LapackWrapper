@@ -1,7 +1,7 @@
 /*
 
   \file     sparse_tool.hh
-  \mainpage SparseTool: a Sparse Matrix Manager
+  \mainpage Sparse_tool: a Sparse Matrix Manager
   \date     2011, July 21
   \version  1.1
   \note     based on SparseLib 11.0 (C 1999 -- 2008)
@@ -13,10 +13,6 @@
   Universita` degli Studi di Trento
   email: enrico.bertolazzi@unitn.it
 */
-
-/*!
-   \defgroup Promote Promotion Classes and Structures
- */
 
 #ifndef SPARSETOOL_HH
 #define SPARSETOOL_HH
@@ -83,10 +79,8 @@
 
 #ifdef SPARSETOOL_DEBUG
   #define SPARSETOOL_INLINE
-  #define SPARSETOOL_TEST(X,W) SPARSETOOL_ASSERT(X,W)
 #else
   #define SPARSETOOL_INLINE inline
-  #define SPARSETOOL_TEST(X,W)
 #endif
 
 // loops
@@ -97,11 +91,12 @@
 #endif
 
 //!
-//! The namespace with the SparseTool toolkit.
+//! The namespace with the Sparse_tool toolkit.
 //!
-namespace SparseTool {
+namespace Sparse_tool {
 
   using Utils::ostream_type;
+  using Utils::istream_type;
 
   using ::std::vector;
   using ::std::istream;
@@ -543,290 +538,6 @@ namespace SparseTool {
 
   #endif
 
-  //!
-  //! Macro to define the standar matrix/vector operators.
-  //!
-  #define SPARSELIB_VECTOR_OPERATIONS(VECTOR)                             \
-    /*------------ MM_COMPLEX MATRIX OPERATIONS ---------------------*/   \
-    /*! Assign to `*this`  the evaluation of the expression `a/M`         \
-        contained in `op` of type `Vector_V_div_M` */                     \
-    template <typename MATRIX, typename VA> inline                        \
-    VECTOR const &                                                        \
-    operator = ( Vector_V_div_M<VA,MATRIX> const & op )                   \
-    { op.M.ass_V_div_M(*this, op.a); return *this; }                      \
-                                                                          \
-    /*! Assign to `*this`  the evaluation of the expression `M*a`         \
-        contained in `op` of type `Vector_M_mul_V` */                     \
-    template <typename MATRIX, typename VA> inline                        \
-    VECTOR const &                                                        \
-    operator = ( Vector_M_mul_V<MATRIX,VA> const & op ) {                 \
-      *this = real_type(0);                                               \
-      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.a);                 \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this` the evaluation of the expression `a/M`             \
-        contained in `op` of type `Vector_V_div_M` */                     \
-    template <typename MATRIX, typename VA> inline                        \
-    VECTOR const &                                                        \
-    operator += ( Vector_M_mul_V<MATRIX,VA> const & op ) {                \
-      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.a);                 \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this` the evaluation of the expression `M*a`        \
-        contained in `op` of type `Vector_M_mul_V` */                     \
-    template <typename MATRIX, typename VA> inline                        \
-    VECTOR const &                                                        \
-    operator -= ( Vector_M_mul_V<MATRIX,VA> const & op ) {                \
-      op.M.add_S_mul_M_mul_V(*this, real_type(-1), op.a);                 \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Assign to `*this` the evaluation of the expression `M^T*a`        \
-        contained in `op` of type `Vector_Mt_mul_V` */                    \
-    template <typename MATRIX, typename VA> inline                        \
-    VECTOR const &                                                        \
-    operator = (Vector_Mt_mul_V<MATRIX,VA> const & op) {                  \
-      *this = real_type(0);                                               \
-      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.a);                \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this` the evaluation of the expression `M^T*a`           \
-        contained in `op` of type `Vector_Mt_mul_V` */                    \
-    template <typename MATRIX, typename VA> inline                        \
-    VECTOR const &                                                        \
-    operator += (Vector_Mt_mul_V<MATRIX,VA> const & op) {                 \
-      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.a);                \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this` the evaluation of the expression `M^T*a`      \
-        contained in `op` of type `Vector_Mt_mul_V` */                    \
-    template <typename MATRIX, typename VA> inline                        \
-    VECTOR const &                                                        \
-    operator -= (Vector_Mt_mul_V<MATRIX,VA> const & op) {                 \
-      op.M.add_S_mul_Mt_mul_V(*this, real_type(-1), op.a);                \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Assign to `*this` the evaluation of the expression `s*(M*a)`      \
-        contained in `op` of type `Vector_S_mul_M_mul_V` */               \
-    template <typename SCALAR, typename MATRIX, typename VA> inline       \
-    VECTOR const &                                                        \
-    operator = (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) {      \
-      *this = real_type(0);                                               \
-      op.M.add_S_mul_M_mul_V(*this, op.s, op.a);                          \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this` the evaluation of the expression `s*(M*a)`         \
-        contained in `op` of type `Vector_S_mul_M_mul_V` */               \
-    template <typename SCALAR, typename MATRIX, typename VA> inline       \
-    VECTOR const &                                                        \
-    operator += (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) {     \
-      op.M.add_S_mul_M_mul_V(*this, op.s, op.a);                          \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this` the evaluation of the expression `s*(M*a)`    \
-        contained in `op` of type `Vector_S_mul_M_mul_V` */               \
-    template <typename SCALAR, typename MATRIX, typename VA> inline       \
-    VECTOR const &                                                        \
-    operator -= (Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op) {     \
-      op.M.add_S_mul_M_mul_V(*this, -op.s, op.a);                         \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Assign to `*this` the evaluation of the expression `s*(M^T*a)`    \
-        contained in `op` of type `Vector_S_mul_Mt_mul_V` */              \
-    template <typename SCALAR, typename MATRIX, typename VA> inline       \
-    VECTOR const &                                                        \
-    operator = (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) {     \
-      *this = real_type(0);                                               \
-      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.a);                         \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this` the evaluation of the expression `s*(M^T*a)`       \
-        contained in `op` of type `Vector_S_mul_Mt_mul_V` */              \
-    template <typename SCALAR, typename MATRIX, typename VA> inline       \
-    VECTOR const &                                                        \
-    operator += (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) {    \
-      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.a);                         \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this` the evaluation of the expression `s*(M^T*a)`  \
-        contained in `op` of type `Vector_S_mul_Mt_mul_V` */              \
-    template <typename SCALAR, typename MATRIX, typename VA> inline       \
-    VECTOR const &                                                        \
-    operator -= (Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op) {    \
-      op.M.add_S_mul_Mt_mul_V(*this, -op.s, op.a);                        \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Assign to `*this` the evaluation of the expression `a+M*b`        \
-        contained in `op` of type `Vector_V_sum_M_mul_V` */               \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator = (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) {          \
-      *this = op.a;                                                       \
-      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.b);                 \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this` the evaluation of the expression `a+M*b`           \
-        contained in `op` of type `Vector_V_sum_M_mul_V` */               \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator += (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) {         \
-      *this += op.a;                                                      \
-      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.b);                 \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this` the evaluation of the expression `a+M*b`      \
-        contained in `op` of type `Vector_V_sum_M_mul_V` */               \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator -= (Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op) {         \
-      *this -= op.a;                                                      \
-      op.M.add_S_mul_M_mul_V(*this, real_type(-1), op.b);                 \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Assign to `*this` the evaluation of the expression `a+M^T*b`      \
-        contained in `op` of type `Vector_V_sum_Mt_mul_V` */              \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator = (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) {         \
-      *this = op.a;                                                       \
-      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.b);                \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this` the evaluation of the expression `a+M^T*b`         \
-        contained in `op` of type `Vector_V_sum_Mt_mul_V` */              \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator += (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) {        \
-      *this += op.a;                                                      \
-      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.b);                \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this` the evaluation of the expression `a+M^T*b`    \
-        contained in `op` of type `Vector_V_sum_Mt_mul_V` */              \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator -= (Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op) {        \
-      *this -= op.a;                                                      \
-      op.M.add_S_mul_Mt_mul_V(*this, real_type(-1), op.b);                \
-      return *this;                                                       \
-    }                                                                     \
-    /*-----------------------*/                                           \
-    /*! Assign to `*this` the evaluation of the expression `a-M*b`        \
-        contained in `op` of type `Vector_V_sub_M_mul_V` */               \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator = (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) {          \
-      *this = op.a;                                                       \
-      op.M.add_S_mul_M_mul_V(*this, real_type(-1), op.b);                 \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this` the evaluation of the expression `a-M*b`           \
-        contained in `op` of type `Vector_V_sub_M_mul_V` */               \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator += (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) {         \
-      *this += op.a;                                                      \
-      op.M.add_S_mul_M_mul_V(*this, real_type(-1), op.b);                 \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this` the evaluation of the expression `a-M*b`      \
-        contained in `op` of type `Vector_V_sub_M_mul_V` */               \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator -= (Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op) {         \
-      *this -= op.a;                                                      \
-      op.M.add_S_mul_M_mul_V(*this, real_type(+1), op.b);                 \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Assign to `*this` the evaluation of the expression `a-M^T*b`      \
-        contained in `op` of type `Vector_V_sub_Mt_mul_V` */              \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator = (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) {         \
-      *this = op.a;                                                       \
-      op.M.add_S_mul_Mt_mul_V(*this, real_type(-1), op.b);                \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this` the evaluation of the expression `a-M^T*b`         \
-        contained in `op` of type `Vector_V_sub_Mt_mul_V` */              \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator += (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) {        \
-      *this += op.a;                                                      \
-      op.M.add_S_mul_Mt_mul_V(*this, real_type(-1), op.b);                \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this`  the evaluation of the expression `a-M^T*b`   \
-        contained in `op` of type `Vector_V_sub_Mt_mul_V` */              \
-    template <typename VA, typename MATRIX, typename VB> inline           \
-    VECTOR const &                                                        \
-    operator -= (Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op) {        \
-      *this -= op.a;                                                      \
-      op.M.add_S_mul_Mt_mul_V(*this, real_type(+1), op.b);                \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Assign to `*this`  the evaluation of the expression `a+s*(M*b)`   \
-        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
-    template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const &                                                        \
-    operator = (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this = op.a;                                                       \
-      op.M.add_S_mul_M_mul_V(*this, op.s, op.b);                          \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this`  the evaluation of the expression `a+s*(M*b)`      \
-        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
-    template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const &                                                        \
-    operator += (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this += op.a;                                                      \
-      op.M.add_S_mul_M_mul_V(*this, op.s, op.b);                          \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this` the evaluation of the expression `a+s*(M*b)`  \
-        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
-    template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const &                                                        \
-    operator -= (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this -= op.a;                                                      \
-      op.M.add_S_mul_M_mul_V(*this, -op.s, op.b);                         \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Assign to `*this`  the evaluation of the expression `a+s*(M^T*b)` \
-        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
-    template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const &                                                        \
-    operator = (Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this = op.a;                                                       \
-      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.b);                         \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Add to `*this`  the evaluation of the expression `a+s*(M^T*b)`    \
-        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
-    template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const &                                                        \
-    operator += (Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this += op.a;                                                      \
-      op.M.add_S_mul_Mt_mul_V(*this, op.s, op.b);                         \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Subtract to `*this`  the evaluation of the expression `a+s*(M^T*b)` \
-        contained in `op` of type `Vector_V_sum_S_mul_M_mul_V` */         \
-    template <typename VA, typename SCALAR, typename MATRIX, typename VB> inline \
-    VECTOR const &                                                        \
-    operator -= (Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op) { \
-      *this -= op.a;                                                      \
-      op.M.add_S_mul_Mt_mul_V(*this, -op.s, op.b);                        \
-      return *this;                                                       \
-    }                                                                     \
-    /*! Assign to `*this`  the evaluation of the preconditioner `a/P`     \
-        contained in `op` of type `Vector_V_div_P` */                     \
-    template <typename VEC, typename PRECO> inline                        \
-    VECTOR const &                                                        \
-    operator = (Vector_V_div_P<VEC,PRECO> const & op) {                   \
-      op.P.assPreco(*this, op.a);                                         \
-      return *this;                                                       \
-    }
-
   template <typename T>
   class Vector : public Eigen::Matrix<T,Eigen::Dynamic,1> {
   public:
@@ -835,25 +546,461 @@ namespace SparseTool {
     typedef T real_type;
 
     Vector() : V_base() {}
-    Vector( unsigned dim ) : V_base(dim) {}
+    explicit Vector( unsigned dim ) : V_base(dim) {}
+
+    Vector( Vector<T> const & v ) {
+      this->to_eigen() = v.to_eigen();
+    }
+
+    V_base       & to_eigen()       { return *static_cast<V_base*>(this); }
+    V_base const & to_eigen() const { return *static_cast<V_base const *>(this); }
 
     Vector<T> const &
-    operator = ( V_base const & v ) {
-      *static_cast<V_base*>(this) = v; return *this;
-    }
+    operator = ( T const & v )
+    { this->to_eigen().array() = v; return *this; }
+
     Vector<T> const &
-    operator += ( V_base const & v ) {
-      *static_cast<V_base*>(this) += v; return *this;
-    }
+    operator += ( T const & v )
+    { this->to_eigen().array() += v; return *this; }
+
     Vector<T> const &
-    operator -= ( V_base const & v ) {
-      *static_cast<V_base*>(this) -= v; return *this;
-    }
+    operator -= ( T const & v )
+    { this->to_eigen().array() -= v; return *this; }
+
     Vector<T> const &
-    operator *= ( V_base const & v ) {
-      *static_cast<V_base*>(this) *= v; return *this;
+    operator *= ( T const & v )
+    { this->to_eigen().array() *= v; return *this; }
+
+    Vector<T> const &
+    operator /= ( T const & v )
+    { this->to_eigen().array() /= v; return *this; }
+
+    Vector<T> const &
+    operator = ( Vector<T> const & v )
+    { this->to_eigen() = v.to_eigen(); return *this; }
+
+    Vector<T> const &
+    operator += ( Vector<T> const & v )
+    { this->to_eigen() += v.to_eigen(); return *this; }
+
+    Vector<T> const &
+    operator -= ( Vector<T> const & v )
+    { this->to_eigen() -= v.to_eigen(); return *this; }
+
+    Vector<T> const &
+    operator *= ( Vector<T> const & v )
+    { this->to_eigen().array() *= v.to_eigen().array(); return *this; }
+
+    Vector<T> const &
+    operator /= ( Vector<T> const & v )
+    { this->to_eigen().array() /= v.to_eigen().array(); return *this; }
+
+    Vector<T> const &
+    operator = ( V_base const & v )
+    { this->to_eigen() = v; return *this; }
+
+    Vector<T> const &
+    operator += ( V_base const & v )
+    { this->to_eigen() += v; return *this; }
+
+    Vector<T> const &
+    operator -= ( V_base const & v )
+    { this->to_eigen() -= v; return *this; }
+
+    Vector<T> const &
+    operator *= ( V_base const & v )
+    { this->to_eigen().array() *= v.array(); return *this; }
+
+    Vector<T> const &
+    operator /= ( V_base const & v )
+    { this->to_eigen().array() /= v.array(); return *this; }
+
+    //! \name MM_COMPLEX MATRIX OPERATIONS
+    ///@{
+
+    //!
+    //! Assign to `*this`  the evaluation of the expression `a/M`
+    //! contained in `op` of type `Vector_V_div_M`
+    //!
+    template <typename MATRIX, typename VA>
+    Vector<T> const &
+    operator = ( Vector_V_div_M<VA,MATRIX> const & op )
+    { op.M.ass_V_div_M( *this, op.a ); return *this; }
+
+    //!
+    //! Assign to `*this`  the evaluation of the expression `M*a`
+    //! contained in `op` of type `Vector_M_mul_V`
+    //!
+    template <typename MATRIX, typename VA>
+    Vector<T> const &
+    operator = ( Vector_M_mul_V<MATRIX,VA> const & op ) {
+      this->setZero();
+      op.M.add_S_mul_M_mul_V( *this, real_type(+1), op.a );
+      return *this;
     }
-    SPARSELIB_VECTOR_OPERATIONS(Vector<T>)
+
+    //!
+    //! Add to `*this` the evaluation of the expression `a/M`
+    //! contained in `op` of type `Vector_V_div_M`
+    //!
+    template <typename MATRIX, typename VA>
+    Vector<T> const &
+    operator += ( Vector_M_mul_V<MATRIX,VA> const & op ) {
+      op.M.add_S_mul_M_mul_V( *this, real_type(+1), op.a );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this` the evaluation of the expression `M*a`
+    //! contained in `op` of type `Vector_M_mul_V`
+    //!
+    template <typename MATRIX, typename VA>
+    Vector<T> const &
+    operator -= ( Vector_M_mul_V<MATRIX,VA> const & op ) {
+      op.M.add_S_mul_M_mul_V( *this, real_type(-1), op.a );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this` the evaluation of the expression `M^T*a`
+    //! contained in `op` of type `Vector_Mt_mul_V`
+    //!
+    template <typename MATRIX, typename VA>
+    Vector<T> const &
+    operator = ( Vector_Mt_mul_V<MATRIX,VA> const & op ) {
+      this->setZero();
+      op.M.add_S_mul_Mt_mul_V( *this, real_type(+1), op.a );
+      return *this;
+    }
+
+    //!
+    //! Add to `*this` the evaluation of the expression `M^T*a`
+    //! contained in `op` of type `Vector_Mt_mul_V`
+    //!
+    template <typename MATRIX, typename VA>
+    Vector<T> const &
+    operator += ( Vector_Mt_mul_V<MATRIX,VA> const & op ) {
+      op.M.add_S_mul_Mt_mul_V( *this, real_type(+1), op.a );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this` the evaluation of the expression `M^T*a`
+    //! contained in `op` of type `Vector_Mt_mul_V`
+    //!
+    template <typename MATRIX, typename VA>
+    Vector<T> const &
+    operator -= (Vector_Mt_mul_V<MATRIX,VA> const & op) {
+      op.M.add_S_mul_Mt_mul_V(*this, real_type(-1), op.a);
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this` the evaluation of the expression `s*(M*a)`
+    //! contained in `op` of type `Vector_S_mul_M_mul_V`
+    //!
+    template <typename SCALAR, typename MATRIX, typename VA>
+    Vector<T> const &
+    operator = ( Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op ) {
+      this->setZero();
+      op.M.add_S_mul_M_mul_V( *this, op.s, op.a );
+      return *this;
+    }
+
+    //!
+    //! Add to `*this` the evaluation of the expression `s*(M*a)`
+    //! contained in `op` of type `Vector_S_mul_M_mul_V`
+    //!
+    template <typename SCALAR, typename MATRIX, typename VA>
+    Vector<T> const &
+    operator += ( Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op ) {
+      op.M.add_S_mul_M_mul_V( *this, op.s, op.a );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this` the evaluation of the expression `s*(M*a)`
+    //! contained in `op` of type `Vector_S_mul_M_mul_V`
+    //!
+    template <typename SCALAR, typename MATRIX, typename VA>
+    Vector<T> const &
+    operator -= ( Vector_S_mul_M_mul_V<SCALAR,MATRIX,VA> const & op ) {
+      op.M.add_S_mul_M_mul_V( *this, -op.s, op.a );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this` the evaluation of the expression `s*(M^T*a)`
+    //! contained in `op` of type `Vector_S_mul_Mt_mul_V`
+    //!
+    template <typename SCALAR, typename MATRIX, typename VA>
+    Vector<T> const &
+    operator = ( Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op ) {
+      this->setZero();
+      op.M.add_S_mul_Mt_mul_V( *this, op.s, op.a );
+      return *this;
+    }
+
+    //!
+    //! Add to `*this` the evaluation of the expression `s*(M^T*a)`
+    //! contained in `op` of type `Vector_S_mul_Mt_mul_V`
+    //!
+    template <typename SCALAR, typename MATRIX, typename VA>
+    Vector<T> const &
+    operator += ( Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op ) {
+      op.M.add_S_mul_Mt_mul_V( *this, op.s, op.a );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this` the evaluation of the expression `s*(M^T*a)`
+    //! contained in `op` of type `Vector_S_mul_Mt_mul_V`
+    //!
+    template <typename SCALAR, typename MATRIX, typename VA>
+    Vector<T> const &
+    operator -= ( Vector_S_mul_Mt_mul_V<SCALAR,MATRIX,VA> const & op ) {
+      op.M.add_S_mul_Mt_mul_V( *this, -op.s, op.a );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this` the evaluation of the expression `a+M*b`
+    //! contained in `op` of type `Vector_V_sum_M_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator = ( Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op ) {
+      *this = op.a;
+      op.M.add_S_mul_M_mul_V( *this, real_type(+1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Add to `*this` the evaluation of the expression `a+M*b`
+    //! contained in `op` of type `Vector_V_sum_M_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator += ( Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op ) {
+      *this += op.a;
+      op.M.add_S_mul_M_mul_V( *this, real_type(+1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this` the evaluation of the expression `a+M*b`
+    //! contained in `op` of type `Vector_V_sum_M_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator -= ( Vector_V_sum_M_mul_V<VA,MATRIX,VB> const & op ) {
+      *this -= op.a;
+      op.M.add_S_mul_M_mul_V( *this, real_type(-1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this` the evaluation of the expression `a+M^T*b`
+    //! contained in `op` of type `Vector_V_sum_Mt_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator = ( Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op ) {
+      *this = op.a;
+      op.M.add_S_mul_Mt_mul_V( *this, real_type(+1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Add to `*this` the evaluation of the expression `a+M^T*b`
+    //! contained in `op` of type `Vector_V_sum_Mt_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator += ( Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op ) {
+      *this += op.a;
+      op.M.add_S_mul_Mt_mul_V( *this, real_type(+1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this` the evaluation of the expression `a+M^T*b`
+    //! contained in `op` of type `Vector_V_sum_Mt_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator -= ( Vector_V_sum_Mt_mul_V<VA,MATRIX,VB> const & op ) {
+      *this -= op.a;
+      op.M.add_S_mul_Mt_mul_V( *this, real_type(-1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this` the evaluation of the expression `a-M*b`
+    //! contained in `op` of type `Vector_V_sub_M_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator = ( Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op ) {
+      *this = op.a;
+      op.M.add_S_mul_M_mul_V( *this, real_type(-1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Add to `*this` the evaluation of the expression `a-M*b`
+    //! contained in `op` of type `Vector_V_sub_M_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator += ( Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op ) {
+      *this += op.a;
+      op.M.add_S_mul_M_mul_V( *this, real_type(-1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this` the evaluation of the expression `a-M*b`
+    //! contained in `op` of type `Vector_V_sub_M_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator -= ( Vector_V_sub_M_mul_V<VA,MATRIX,VB> const & op ) {
+      *this -= op.a;
+      op.M.add_S_mul_M_mul_V( *this, real_type(+1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this` the evaluation of the expression `a-M^T*b`
+    //! contained in `op` of type `Vector_V_sub_Mt_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator = ( Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op ) {
+      *this = op.a;
+      op.M.add_S_mul_Mt_mul_V( *this, real_type(-1), op.b);
+      return *this;
+    }
+
+    //!
+    //! Add to `*this` the evaluation of the expression `a-M^T*b`
+    //! contained in `op` of type `Vector_V_sub_Mt_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator += ( Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op ) {
+      *this += op.a;
+      op.M.add_S_mul_Mt_mul_V( *this, real_type(-1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this`  the evaluation of the expression `a-M^T*b`
+    //! contained in `op` of type `Vector_V_sub_Mt_mul_V`
+    //!
+    template <typename VA, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator -= ( Vector_V_sub_Mt_mul_V<VA,MATRIX,VB> const & op ) {
+      *this -= op.a;
+      op.M.add_S_mul_Mt_mul_V( *this, real_type(+1), op.b );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this`  the evaluation of the expression `a+s*(M*b)`
+    //! contained in `op` of type `Vector_V_sum_S_mul_M_mul_V`
+    //!
+    template <typename VA, typename SCALAR, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator = (Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op) {
+      *this = op.a;
+      op.M.add_S_mul_M_mul_V( *this, op.s, op.b );
+      return *this;
+    }
+
+    //!
+    //! Add to `*this`  the evaluation of the expression `a+s*(M*b)`
+    //! contained in `op` of type `Vector_V_sum_S_mul_M_mul_V`
+    //!
+    template <typename VA, typename SCALAR, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator += ( Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op ) {
+      *this += op.a;
+      op.M.add_S_mul_M_mul_V( *this, op.s, op.b );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this` the evaluation of the expression `a+s*(M*b)`
+    //! contained in `op` of type `Vector_V_sum_S_mul_M_mul_V`
+    //!
+    template <typename VA, typename SCALAR, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator -= ( Vector_V_sum_S_mul_M_mul_V<VA,SCALAR,MATRIX,VB> const & op ) {
+      *this -= op.a;
+      op.M.add_S_mul_M_mul_V( *this, -op.s, op.b );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this`  the evaluation of the expression `a+s*(M^T*b)`
+    //! contained in `op` of type `Vector_V_sum_S_mul_M_mul_V`
+    //!
+    template <typename VA, typename SCALAR, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator = ( Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op ) {
+      *this = op.a;
+      op.M.add_S_mul_Mt_mul_V( *this, op.s, op.b );
+      return *this;
+    }
+
+    //!
+    //! Add to `*this`  the evaluation of the expression `a+s*(M^T*b)`
+    //! contained in `op` of type `Vector_V_sum_S_mul_M_mul_V`
+    //!
+    template <typename VA, typename SCALAR, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator += ( Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op ) {
+      *this += op.a;
+      op.M.add_S_mul_Mt_mul_V( *this, op.s, op.b );
+      return *this;
+    }
+
+    //!
+    //! Subtract to `*this`  the evaluation of the expression `a+s*(M^T*b)`
+    //! contained in `op` of type `Vector_V_sum_S_mul_M_mul_V`
+    //!
+    template <typename VA, typename SCALAR, typename MATRIX, typename VB>
+    Vector<T> const &
+    operator -= ( Vector_V_sum_S_mul_Mt_mul_V<VA,SCALAR,MATRIX,VB> const & op ) {
+      *this -= op.a;
+      op.M.add_S_mul_Mt_mul_V( *this, -op.s, op.b );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this`  the evaluation of the preconditioner `a/P`
+    //! contained in `op` of type `Vector_V_div_P`
+    //!
+    template <typename VEC, typename PRECO>
+    Vector<T> const &
+    operator = ( Vector_V_div_P<VEC,PRECO> const & op ) {
+      op.P.assPreco( *this, op.a );
+      return *this;
+    }
+
+    //!
+    //! Assign to `*this`  the evaluation of the preconditioner `*this/P`
+    //!
+    template <typename PRECO>
+    Vector<T> const &
+    operator /= ( PRECO const & P ) {
+      P.assPreco( *this );
+      return *this;
+    }
+
+    ///@}
   };
 
   /*
@@ -1393,7 +1540,7 @@ namespace SparseTool {
 
   //! 
   //! This class in the base class for all the
-  //! sparse matrix classes of `SparseTool`.
+  //! sparse matrix classes of `Sparse_tool`.
   //! This class is incomplete and is used as a pivot for internal operations.
   //! 
   template <typename Matrix>
@@ -1420,10 +1567,10 @@ namespace SparseTool {
     //!
     void
     test_nnz(integer idx) const {
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         idx < sp_nnz,
-        "Sparse::operator [" << idx << "] index out of range"
-      )
+        "Sparse::operator [{}] index out of range\n", idx
+      );
     }
 
     //!
@@ -1432,10 +1579,10 @@ namespace SparseTool {
     //!
     void
     test_index(integer i, integer j) const {
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         i < sp_nrows && j < sp_ncols,
-        "Sparse::test_index(" << i << "," << j << ") index out of range"
-      )
+        "Sparse::test_index({},{}) index out of range\n", i, j
+      );
     }
 
     //!
@@ -1444,10 +1591,10 @@ namespace SparseTool {
     //!
     void
     test_row(integer i) const {
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         i < sp_nrows,
-        "Sparse::test_row(" << i << ") index out of range"
-      )
+        "Sparse::test_row({}) index out of range\n", i
+      );
     }
 
     //!
@@ -1456,10 +1603,10 @@ namespace SparseTool {
     //!
     void
     test_col(integer j) const {
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         j < sp_ncols,
-        "Sparse::test_col(" << j << ") index out of range"
-      )
+        "Sparse::test_col({}) index out of range\n", j
+      );
     }
 
     //!
@@ -1601,7 +1748,7 @@ namespace SparseTool {
 
   //! 
   //! This class in the base class for all the
-  //! sparse matrix classes of `SparseTool`.
+  //! sparse matrix classes of `Sparse_tool`.
   //! This class is incomplete and is used 
   //! as a pivot for internal operations.
   //! 
@@ -1618,7 +1765,7 @@ namespace SparseTool {
     //!
     //! The **value** of the pointed element.
     //!
-    real_type value (void) const { return static_cast<Matrix const *>(this) -> value(); }
+    real_type value(void) const { return static_cast<Matrix const *>(this) -> value(); }
 
     //!
     //! Assign the pointed element to `rhs`.
@@ -2105,6 +2252,50 @@ namespace SparseTool {
     //!
     //! Perform the operation `res += s * (A * x)`
     //!
+    template <typename VEC>
+    void
+    add_S_mul_M_mul_V(
+      VEC       & res,
+      T   const & s,
+      VEC const & x
+    ) const {
+      UTILS_ASSERT0(
+        std::addressof(res) != std::addressof(x),
+        "Sparse_tool: [res += s * (A * x)]: add_S_mul_M_mul_V `res` and `x` cant be the same"
+      );
+      UTILS_ASSERT0(
+        res.size() >= SBASE::sp_nrows,
+        "Sparse_tool: [res += s * (A * x)] result vector too small"
+      );
+      for ( SBASE::Begin(); SBASE::End(); SBASE::Next() )
+        res(SBASE::row()) += s * value() * x(SBASE::column());
+    }
+
+    //!
+    //! perform the operation `res += s * (A^T * x)`
+    //!
+    template <typename VEC>
+    void
+    add_S_mul_Mt_mul_V(
+      VEC       & res,
+      T   const & s,
+      VEC const & x
+    ) const {
+      UTILS_ASSERT0(
+        std::addressof(res) != std::addressof(&x),
+        "Sparse_tool: [res += s * (A^T * x)] add_S_mul_M_mul_V, `res` and `x` cant be the same"
+      );
+      UTILS_ASSERT0(
+        res.size() >= SBASE::sp_ncols,
+        "Sparse_tool: [res += s * (A^T * x)] result vector too small"
+      );
+      for ( SBASE::Begin(); SBASE::End(); SBASE::Next() )
+        res(SBASE::column()) += s * value() * x(SBASE::row());
+    }
+
+    //!
+    //! Perform the operation `res += s * (A * x)`
+    //!
     template <typename VA, typename VB>
     void
     add_S_mul_M_mul_V(
@@ -2112,20 +2303,16 @@ namespace SparseTool {
       T  const & s,
       VB const & x
     ) const {
-      SPARSETOOL_TEST(
-        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
-        "add_S_mul_M_mul_V equal pointer"
-      )
-      SPARSETOOL_TEST(
+      UTILS_ASSERT0(
         res.size() >= SBASE::sp_nrows,
-        "result vector too small"
-      )
+        "Sparse_tool: [res += s * (A * x)] result vector too small"
+      );
       for ( SBASE::Begin(); SBASE::End(); SBASE::Next() )
         res(SBASE::row()) += s * value() * x(SBASE::column());
     }
 
     //!
-    //! perform the operation `res += s * (A ^ x)`
+    //! perform the operation `res += s * (A^T * x)`
     //!
     template <typename VA, typename VB>
     void
@@ -2134,23 +2321,20 @@ namespace SparseTool {
       T  const & s,
       VB const & x
     ) const {
-      SPARSETOOL_TEST(
-        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
-        "add_S_mul_M_mul_V equal pointer"
-      )
-      SPARSETOOL_TEST(
+      UTILS_ASSERT0(
         res.size() >= SBASE::sp_ncols,
-        "result vector too small"
-      )
+        "Sparse_tool: [res += s * (A^T * x)] result vector too small"
+      );
       for ( SBASE::Begin(); SBASE::End(); SBASE::Next() )
         res(SBASE::column()) += s * value() * x(SBASE::row());
     }
+
     //@}
   };
 
   //! 
   //! This class in the base class for all the preconditioner
-  //! of sparse matrix classes of `SparseTool`.
+  //! of sparse matrix classes of `Sparse_tool`.
   //! This class is incomplete and is used as a
   //! pivot for internal operations.
   //! 
@@ -2322,7 +2506,7 @@ namespace SparseTool {
     //! Assign the pointed element to `rhs`.
     //!
     template <typename T>
-    void assign( T & rhs ) const { /* do nothing! */ }
+    void assign( T & ) const { /* do nothing! */ }
 
     //!
     //! Insert the element of the sparse pattern `sp`
@@ -2467,7 +2651,7 @@ namespace SparseTool {
     SparsePattern &
     insert( integer i, integer j ) {
       SPARSE::test_index(i,j);
-      if ( I.size() < SPARSE::sp_nnz ) {
+      if ( I.size() <= SPARSE::sp_nnz ) {
         integer newdim = SPARSE::sp_nnz + (SPARSE::sp_nnz>>3) + 100;
         I.conservativeResize( newdim );
         J.conservativeResize( newdim );
@@ -2565,11 +2749,11 @@ namespace SparseTool {
   //!
   //! // instance a CCoorMatrix<double> class of nr rows and nc columns.
   //! // The number nnz is an unsigned integer which determine the pre-allocated number of elements
-  //! // stored in the class, in practice it is the initial dimension of vectors I, J and \c A.
+  //! // stored in the class, in practice it is the initial dimension of vectors `I`, `J` and `A`.
   //! //  If needed the vectors are enlarged.
   //! CCoorMatrix<double> ccoor(nr, nc, nnz);
   //! 
-  //! // instance a CCoorMatrix<double> class with the sparsity pattern defined of the SparsePattern class sp.
+  //! // instance a CCoorMatrix<double> class with the sparsity pattern defined of the SparsePattern class `sp`.
   //! // nr will be sp.numRows(), ncol will be sp.numCols().
   //! CCoorMatrix<double> ccoor(sp);
   //! 
@@ -2780,7 +2964,7 @@ namespace SparseTool {
     //!
     void
     internalOrder() {
-      QuickSortIJ2<integer,T>( I.data(), J.data(), A.data(), SPARSE::sp_nnz);
+      QuickSortIJ2<integer,T>( I.data(), J.data(), A.data(), SPARSE::sp_nnz );
       // eliminate duplicate elements
       integer i1 = 0, i = 0;
       SPARSE::sp_lower_nnz = 0;
@@ -2798,28 +2982,30 @@ namespace SparseTool {
       }
       SPARSE::sp_nnz       = i;
       SPARSE::sp_isOrdered = true;
-      I.resize(SPARSE::sp_nnz);
-      J.resize(SPARSE::sp_nnz);
-      A.resize(SPARSE::sp_nnz+1);
+      I.conservativeResize(SPARSE::sp_nnz);
+      J.conservativeResize(SPARSE::sp_nnz);
+      A.conservativeResize(SPARSE::sp_nnz+1);
       A(SPARSE::sp_nnz) = T(0);
+      C.resize(SPARSE::sp_ncols+1);
 
       integer nc = 0;
       C(0) = 0;
       for ( integer k = 1; k < SPARSE::sp_nnz; ++k ) {
-        SPARSETOOL_TEST(
+        UTILS_ASSERT(
           J(k-1) <= J(k),
-          "CCoorMatrix::internalOrderRowMajor() internal error J(" << k-1 <<
-          ") is not <= J(" << k << ")"
-        )
+          "CCoorMatrix::internalOrderRowMajor() internal error\n"
+          "J({}) is not <= J({})\n",
+          k-1, k
+        );
         integer kk = J(k) - J(k-1);
         while ( kk-- > 0 ) C(++nc) = k;
       }
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         nc < SPARSE::sp_ncols || SPARSE::sp_nnz == 0,
-        "CCoorMatrix::internalOrder() nc = " << nc <<
-        " is not less of sp_ncols = " << SPARSE::sp_ncols <<
-        " sp_nnz = " << SPARSE::sp_nnz
-      )
+        "CCoorMatrix::internalOrder()\n"
+        "nc = {} is not less of sp_ncols = {}, sp_nnz = {}\n",
+        nc, SPARSE::sp_ncols, SPARSE::sp_nnz
+      );
       while ( ++nc <= SPARSE::sp_ncols ) C(nc) = SPARSE::sp_nnz;
     }
 
@@ -2852,7 +3038,7 @@ namespace SparseTool {
     real_type &
     insert( integer i, integer j ) {
       SPARSE::test_index(i,j);
-      if ( I.size() < SPARSE::sp_nnz ) {
+      if ( I.size() <= SPARSE::sp_nnz ) {
         integer newdim = SPARSE::sp_nnz + (SPARSE::sp_nnz>>3) + 100;
         I.conservativeResize( newdim );
         J.conservativeResize( newdim );
@@ -2888,22 +3074,20 @@ namespace SparseTool {
     real_type const & 
     operator ()( integer i, integer j ) const {
       integer pos = position(i,j);
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
-        "CCoorMatrix(" << i << "," << j <<
-        ") referring to a non existent element"
-      )
+        "CCoorMatrix({},{}) referring to a non existent element", i, j
+      );
       return A(pos);
     }
 
     real_type & 
     operator ()( integer i, integer j ) {
       integer pos = position(i,j);
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
-        "CCoorMatrix(" << i << "," << j <<
-        ") referring to a non existent element"
-      )
+        "CCoorMatrix({},{}) referring to a non existent element", i, j
+      );
       return A(pos);
     }
 
@@ -2925,8 +3109,8 @@ namespace SparseTool {
     inline void Next  (void) const { ++ipos; }
     inline bool End   (void) const { return ipos < SPARSE::sp_nnz; }
 
-    integer         row    (void) const { return I(ipos); }
-    integer         column (void) const { return J(ipos); }
+    integer           row    (void) const { return I(ipos); }
+    integer           column (void) const { return J(ipos); }
     real_type const & value  (void) const { return A(ipos); }
     real_type       & value  (void)       { return A(ipos); }
 
@@ -2939,21 +3123,21 @@ namespace SparseTool {
     //!
     //! perform the operation `res += s * (A * x)`
     //!
-    template <typename VRES, typename VB> inline
+    template <typename VEC> inline
     void
     add_S_mul_M_mul_V(
-      VRES     & res,
-      T  const & s,
-      VB const & x
+      VEC       & res,
+      T   const & s,
+      VEC const & x
     ) const {
-      SPARSETOOL_TEST(
+      UTILS_ASSERT0(
         std::addressof(res) != std::addressof(x),
-        "add_S_mul_M_mul_V equal pointer"
-      )
-      SPARSETOOL_TEST(
+        "Sparse_tool: [res += s * (A * x)] add_S_mul_M_mul_V, `res` and `x` cant be the same"
+      );
+      UTILS_ASSERT0(
         res.size() >= SPARSE::sp_nrows,
-        "result vector too small"
-      )
+        "Sparse_tool: [res += s * (A * x)] result vector too small"
+      );
       integer   const * pI = I.data();
       integer   const * pJ = J.data();
       real_type const * pA = A.data();
@@ -2961,7 +3145,51 @@ namespace SparseTool {
     }
 
     //!
-    //! perform the operation `res += s * (A ^ x)`
+    //! perform the operation `res += s * (A^T * x)`
+    //!
+    template <typename VEC> inline
+    void
+    add_S_mul_Mt_mul_V(
+      VEC       & res,
+      T   const & s,
+      VEC const & x
+    ) const {
+      UTILS_ASSERT0(
+        std::addressof(res) != std::addressof(x),
+        "Sparse_tool: [res += s * (A^T * x)] add_S_mul_Mt_mul_V, `res` and `x` cant be the same"
+      );
+      UTILS_ASSERT0(
+        res.size() >= SPARSE::sp_ncols,
+        "Sparse_tool: [res += s * (A^T * x)] result vector too small"
+      );
+      integer   const * pI = I.data();
+      integer   const * pJ = J.data();
+      real_type const * pA = A.data();
+      SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pJ++) += s * *pA++ * x(*pI++) );
+    }
+
+    //!
+    //! perform the operation `res += s * (A * x)`
+    //!
+    template <typename VRES, typename VB> inline
+    void
+    add_S_mul_M_mul_V(
+      VRES     & res,
+      T  const & s,
+      VB const & x
+    ) const {
+      UTILS_ASSERT0(
+        res.size() >= SPARSE::sp_nrows,
+        "Sparse_tool: [res += s * (A * x)] result vector too small"
+      );
+      integer   const * pI = I.data();
+      integer   const * pJ = J.data();
+      real_type const * pA = A.data();
+      SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pI++) += s * *pA++ * x(*pJ++) );
+    }
+
+    //!
+    //! perform the operation `res += s * (A^T * x)`
     //!
     template <typename VRES, typename VB> inline
     void
@@ -2970,19 +3198,16 @@ namespace SparseTool {
       T  const & s,
       VB const & x
     ) const {
-      SPARSETOOL_TEST(
-        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
-        "add_S_mul_Mt_mul_V equal pointer"
-      )
-      SPARSETOOL_TEST(
+      UTILS_ASSERT0(
         res.size() >= SPARSE::sp_ncols,
-        "result vector too small"
-      )
+        "Sparse_tool: [res += s * (A^T * x)] result vector too small"
+      );
       integer   const * pI = I.data();
       integer   const * pJ = J.data();
       real_type const * pA = A.data();
       SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pJ++) += s * *pA++ * x(*pI++) );
     }
+
   };
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -3022,14 +3247,14 @@ namespace SparseTool {
     VR                    & res,
     VX              const & x
   ) {
-    SPARSETOOL_TEST(
-      reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
-      "M_mul_V equal pointer"
-    )
-    SPARSETOOL_TEST(
+    UTILS_ASSERT0(
+      std::addressof(res) != std::addressof(x),
+      "Sparse_tool: [res += s * (A * x)] S_mul_M_mul_V, `res` and `x` cant be the same"
+    );
+    UTILS_ASSERT0(
       res.size() >= numRows,
-      "result vector too small"
-    )
+      "Sparse_tool: [res += s * (A * x)] result vector too small"
+    );
     integer const * R = RR.data();
     integer const * J = JJ.data();
     T       const * A = AA.data();
@@ -3044,7 +3269,7 @@ namespace SparseTool {
   //! Perform matrix multiplication of a transopose of a matrix in Compressed Coordinate
   //! with a full vector `x`.
   //!
-  //! \code res += s * (A ^ x) \endcode
+  //! \code res += s * (A^T * x) \endcode
   //! \param numRows numer of rows
   //! \param RR      vector of row pointers
   //! \param JJ      vector of column indexes
@@ -3064,17 +3289,17 @@ namespace SparseTool {
     VR                    & res,
     VX              const & x
   ) {
-    SPARSETOOL_TEST(
-      reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
-      "M_mul_V equal pointer"
-    )
-    SPARSETOOL_TEST(
+    UTILS_ASSERT0(
+      std::addressof(res) != std::addressof(x),
+      "Sparse_tool: [res += s * (A^T * x)] S_mul_Mt_mul_V, `res` and `x` cant be the same"
+    );
+    UTILS_ASSERT0(
       res.size() >= numRows,
-      "result vector too small"
-    )
+      "Sparse_tool: [res += s * (A^T * x)] result vector too small"
+    );
     integer const * R = RR.data();
     integer const * J = JJ.data();
-    T const *       A = AA.data();
+    T       const * A = AA.data();
     for ( integer ir = 0; ir < numRows; ++ir, ++R ) {
       T bf = s*x(ir);
       SPARSELIB_LOOP( R[1] - R[0], res(*J++) += *A++ * bf );
@@ -3170,10 +3395,10 @@ namespace SparseTool {
 
     void
     internalOrder() {
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         R[SPARSE::sp_nrows] == SPARSE::sp_nnz,
-        "CRowMatrix::internalOrder() bad data for matrix"
-      )
+        "Sparse_tool: CRowMatrix::internalOrder() bad data for matrix\n"
+      );
       integer ii, kk, rk, rk1;
       SPARSE::sp_lower_nnz = 0;
       SPARSE::sp_diag_nnz  = 0;
@@ -3186,10 +3411,10 @@ namespace SparseTool {
           for ( kk = rk; kk < rk1; ++kk ) SPARSE::ldu_count(ii,J(kk));
   #ifdef SPARSETOOL_DEBUG
           for ( kk = rk+1; kk < rk1; ++kk )
-            SPARSETOOL_ASSERT(
+            UTILS_ASSERT0(
               J(kk-1) < J(kk),
-              "CRowMatrix::internalOrder() failed"
-            )
+              "Sparse_tool: CRowMatrix::internalOrder() failed\n"
+            );
   #endif
         }
       }
@@ -3232,10 +3457,10 @@ namespace SparseTool {
         }
       }
 
-      SPARSETOOL_TEST(
+      UTILS_ASSERT0(
         R(0) == 0 && R(SPARSE::sp_nrows) == SPARSE::sp_nnz,
-        "CRowMatrix::resize(Sparse & A) failed"
-      )
+        "CRowMatrix::resize(Sparse & A) failed\n"
+      );
       // step 3: internalOrder matrix
       internalOrder();
     }
@@ -3341,8 +3566,8 @@ namespace SparseTool {
     void
     scaleRow( integer nr, real_type const & val ) {
       SPARSE::test_row(nr);
-      real_type * pA = &A.front() + R(nr);
-      real_type * pB = &A.front() + R(nr+1);
+      real_type * pA = A.data() + R(nr);
+      real_type * pB = A.data() + R(nr+1);
       while ( pA < pB ) *pA++ *= val;
     }
 
@@ -3358,8 +3583,8 @@ namespace SparseTool {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     Vector<real_type> const & getA(void) const { return A; } //!< return the value vector
     Vector<real_type>       & getA(void)       { return A; } //!< return the value vector
-    Vector<integer> const & getR(void) const { return R; } //!< return the row pointer
-    Vector<integer> const & getJ(void) const { return J; } //!< return the column index vector
+    Vector<integer>   const & getR(void) const { return R; } //!< return the row pointer
+    Vector<integer>   const & getJ(void) const { return J; } //!< return the column index vector
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     integer
@@ -3387,22 +3612,20 @@ namespace SparseTool {
     real_type const & 
     operator ()( integer i, integer j ) const {
       integer pos = position(i,j);
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
-        "CRowMatrix(" << i << "," << j <<
-        ") referring to a non existent element"
-      )
+        "CRowMatrix({},{}) referring to a non existent element\n", i, j
+      );
       return A(pos);
     }
 
     real_type & 
     operator ()( integer i, integer j ) {
       integer pos = position(i,j);
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
-        "CRowMatrix(" << i << "," << j <<
-        ") referring to a non existent element"
-      )
+        "CRowMatrix({},{}) referring to a non existent element\n", i, j
+      );
       return A(pos);
     }
 
@@ -3435,8 +3658,8 @@ namespace SparseTool {
     }
     bool End(void) const { return iter_ptr < SPARSE::sp_nnz; }
 
-    integer         row    (void) const { return iter_row-1; }
-    integer         column (void) const { return J(iter_ptr); }
+    integer           row    (void) const { return iter_row-1; }
+    integer           column (void) const { return J(iter_ptr); }
     real_type const & value  (void) const { return A(iter_ptr); }
     real_type       & value  (void)       { return A(iter_ptr); }
 
@@ -3561,7 +3784,7 @@ namespace SparseTool {
 
   private:
     Vector<real_type> A;
-    Vector<integer> C, I;
+    Vector<integer>   C, I;
 
     mutable integer iter_col;
     mutable integer iter_ptr;
@@ -3580,10 +3803,10 @@ namespace SparseTool {
           for ( kk = ck; kk < ck1; ++kk ) SPARSE::ldu_count(I(kk),jj);
   #ifdef SPARSETOOL_DEBUG
           for ( kk = ck+1; kk < ck1; ++kk )
-            SPARSETOOL_ASSERT(
+            UTILS_ASSERT0(
               I(kk-1) < I(kk),
-              "CColMatrix::internalOrder() failed"
-            )
+              "Sparse_tool: CColMatrix::internalOrder() failed\n"
+            );
   #endif
         }
       }
@@ -3624,10 +3847,10 @@ namespace SparseTool {
           I(jj) = i;
         }
       }
-      SPARSETOOL_TEST(
+      UTILS_ASSERT0(
         C(0) == 0 && C(SPARSE::sp_ncols) == SPARSE::sp_nnz,
-        "CColMatrix::resize(Sparse & A) failed"
-      )
+        "CColMatrix::resize(Sparse & A) failed\n"
+      );
       // step 3: internalOrder matrix
       internalOrder();
     }
@@ -3743,8 +3966,8 @@ namespace SparseTool {
     void
     scaleColumn( integer nc, real_type const & val ) {
       SPARSE::test_col(nc);
-      real_type * pA = &A.front() + C(nc);
-      real_type * pB = &A.front() + C(nc+1);
+      real_type * pA = A.data() + C(nc);
+      real_type * pB = A.data() + C(nc+1);
       while ( pA < pB ) *pA++ *= val;
     }
 
@@ -3780,22 +4003,20 @@ namespace SparseTool {
     real_type const &
     operator () (integer i, integer j) const {
       integer pos = position(i,j);
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
-        "CColMatrix(" << i << "," << j <<
-        ") referring to a non existent element"
-      )
+        "CColMatrix({},{}) referring to a non existent element\n", i, j
+      );
       return A(pos);
     }
 
     real_type &
     operator () (integer i, integer j) {
       integer pos = position(i,j);
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
-        "CColMatrix(" << i << "," << j <<
-        ") referring to a non existent element"
-      )
+        "CColMatrix({},{}) referring to a non existent element\n", i, j
+      );
       return A(pos);
     }
 
@@ -3804,9 +4025,8 @@ namespace SparseTool {
     { return A(position(i,j)); }
 
     bool
-    exists( integer i, integer j ) {
-      return position(i,j) != SPARSE::sp_nnz;
-    }
+    exists( integer i, integer j )
+    { return position(i,j) != SPARSE::sp_nnz; }
 
     real_type const &
     operator [] (integer idx) const
@@ -3827,8 +4047,8 @@ namespace SparseTool {
     }
     bool End(void) const { return iter_ptr < SPARSE::sp_nnz; }
 
-    integer         row    (void) const { return I(iter_ptr); }
-    integer         column (void) const { return iter_col-1;  }
+    integer           row    (void) const { return I(iter_ptr); }
+    integer           column (void) const { return iter_col-1;  }
     real_type const & value  (void) const { return A(iter_ptr); }
     real_type       & value  (void)       { return A(iter_ptr); }
 
@@ -3947,14 +4167,21 @@ namespace SparseTool {
   class TridMatrix : public Sparse<T,TridMatrix<T> > {
     typedef TridMatrix<T>    MATRIX;
     typedef Sparse<T,MATRIX> SPARSE;
+    typedef typename Vector<T>::V_base VBASE;
   public:
     typedef T real_type; //!< type of the element of the matrix
 
   private:
 
+    Vector<T>         A;
+    Eigen::Map<VBASE> L, D, U;
+
+    mutable integer iter_counter, iter_row, iter_col;
+    mutable Vector<T> TMP;
+
     template <typename VECTOR>
     void
-    solve(VECTOR const & b, VECTOR & x) const {
+    solve( VECTOR const & b, VECTOR & x ) const {
 
       VECTOR ll(SPARSE::sp_nrows-1), dd(SPARSE::sp_nrows);
 
@@ -3979,27 +4206,28 @@ namespace SparseTool {
 
     }
 
-    Vector<T>              A;
-    Eigen::Map<Vector<T> > L, D, U;
-
-    mutable integer iter_counter, iter_row, iter_col;
-
   public:
 
     //!
     //! Contruct and exmpty `0x0` tridiagonal matrix.
     //!
-    TridMatrix( void ) {}
+    TridMatrix()
+    : L(NULL,0)
+    , D(NULL,0)
+    , U(NULL,0)
+    {}
 
     //!
     //! Contruct a `n x n` tridiagonal matrix.
     //!
-    TridMatrix( integer ns ) { resize(ns); }
+    TridMatrix( integer ns ) : TridMatrix()
+    { resize(ns); }
 
     //!
     //! Contruct a copy of the tridiagonal matrix `TM`.
     //!
-    TridMatrix( TridMatrix<T> const & TM ) { resize(TM); }
+    TridMatrix( TridMatrix<T> const & TM ) : TridMatrix()
+    { resize(TM); }
 
     //!
     //! Contruct a copy of the tridiagonal matrix `TM`.
@@ -4007,7 +4235,7 @@ namespace SparseTool {
     TridMatrix<T> const &
     operator = ( TridMatrix<T> const & TM ) {
       if ( &TM == this ) return *this; // avoid copy to itself
-      resize( A.nnz() );
+      resize( A.numRows() );
       A = TM.A;
       return *this;
     }
@@ -4019,21 +4247,22 @@ namespace SparseTool {
     resize( integer ns ) {
       A.resize(3*ns-2);
       integer kk = 0;
-      L.slice(A, kk, kk + ns-1 ); kk += ns-1;
-      D.slice(A, kk, kk + ns   ); kk += ns;
-      U.slice(A, kk, kk + ns-1 );
+      new (&L) Eigen::Map<VBASE>(A.data()+kk, ns-1 ); kk += ns-1;
+      new (&D) Eigen::Map<VBASE>(A.data()+kk, ns   ); kk += ns;
+      new (&U) Eigen::Map<VBASE>(A.data()+kk, ns-1 );
+      TMP.resize( ns );
       SPARSE::setup(ns,ns);
       SPARSE::sp_nnz = 3*ns-2;
     }
 
     real_type const &
-    operator [] (integer idx) const {
+    operator [] ( integer idx ) const {
       SPARSE::test_nnz(idx);
       return A(idx);
     }
 
     real_type &
-    operator [] (integer idx) {
+    operator [] ( integer idx ) {
       SPARSE::test_nnz(idx);
       return A(idx);
     }
@@ -4079,7 +4308,7 @@ namespace SparseTool {
     //! 
     TridMatrix<T> &
     operator = ( real_type const & s )
-    { L = 0; U = 0; D = s; return *this; }
+    { A.setZero(); D = s; return *this; }
 
     //!
     //! Add `s` to all the components of the diagonal,
@@ -4102,7 +4331,7 @@ namespace SparseTool {
     //!
     TridMatrix<T> &
     operator += ( real_type const & s )
-    { D += s; return *this; }
+    { D.array() += s; return *this; }
 
     //!
     //! Subtract `s` to all the components of the diagonal,
@@ -4125,7 +4354,7 @@ namespace SparseTool {
     //!
     TridMatrix<T> &
     operator -= ( real_type const & s )
-    { D -= s; return *this; }
+    { D.array() -= s; return *this; }
 
     //!
     //! Multiply by `s` to all the nonzeros.  For example
@@ -4198,7 +4427,7 @@ namespace SparseTool {
     inline
     TridMatrix<T> &
     operator = ( Vector<TV> const & v )
-    { L = 0; U = 0; D = v; return *this; }
+    { A.setZero(); D = v; return *this; }
 
     //!
     //! Add  `v` to the diagonal values of the sparse
@@ -4289,7 +4518,7 @@ namespace SparseTool {
     inline
     TridMatrix<T> &
     operator = ( VEC_EXPR const & e )
-    { L = 0; U = 0; D = e;; return *this; }
+    { A.setZero(); D = e; return *this; }
 
     //!
     //! Add to the diagonal values of the sparse
@@ -4321,7 +4550,7 @@ namespace SparseTool {
     inline
     TridMatrix<T> &
     operator += ( VEC_EXPR const & e )
-    { D += e; return *this; }
+    { TMP = e; D += TMP; return *this; }
 
     //!
     //! Add to the diagonal values of the sparse
@@ -4353,7 +4582,7 @@ namespace SparseTool {
     inline
     TridMatrix<T> &
     operator -= ( VEC_EXPR const & e )
-    { D -= e;; return *this; }
+    { TMP = e; D -= TMP; return *this; }
 
     //@}
 
@@ -4361,10 +4590,10 @@ namespace SparseTool {
     operator () ( integer i, integer j ) const {
       SPARSE::test_index(i,j);
       integer kk = ((j+1)-i); 
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         kk < 3,
-        "TridMatrix(" << i << "," << j << ") index out of range"
-      )
+        "TridMatrix({},{}) index out of range\n", i, j
+      );
       return A( kk*SPARSE::sp_nrows+i-1);
     }
 
@@ -4372,10 +4601,10 @@ namespace SparseTool {
     operator () ( integer i, integer j ) {
       SPARSE::test_index(i,j);
       integer kk = ((j+1)-i); 
-      SPARSETOOL_TEST(
+      UTILS_ASSERT(
         kk < 3,
-        "TridMatrix(" << i << "," << j << ") index out of range"
-      )
+        "TridMatrix({},{}) index out of range\n", i, j
+      );
       return A( kk*SPARSE::sp_nrows+i-1);
     }
 
@@ -4434,6 +4663,56 @@ namespace SparseTool {
     //!
     //! Perform the operation `res += s * (A * x)`
     //!
+    template <typename VEC>
+    inline
+    void
+    add_S_mul_M_mul_V(
+      VEC       & res,
+      T   const & s,
+      VEC const & x
+    ) const {
+      UTILS_ASSERT0(
+        std::addressof(res) != std::addressof(x),
+        "Sparse_tool: [res += s * (A * x)] add_S_mul_M_mul_V, `res` and `x` cant be the same\n"
+      );
+      UTILS_ASSERT0(
+        res.size() >= SPARSE::sp_nrows,
+        "Sparse_tool: [res += s * (A * x)] result vector too small\n"
+      );
+      TMP = s*x;
+      res += D.array() * TMP.array();
+      integer nn = SPARSE::sp_nrows-1;
+      res.head(nn).array() += U.array() * TMP.tail(nn).array();
+      res.tail(nn).array() += L.array() * TMP.head(nn).array();
+    }
+
+    //!
+    //! Perform the operation `res += s * (A^T * x)`.
+    //!
+    template <typename VEC>
+    inline
+    void
+    add_S_mul_Mt_mul_V(
+      VEC       & res,
+      T   const & s,
+      VEC const & x
+    ) const {
+      UTILS_ASSERT0(
+        std::addressof(res) != std::addressof(x),
+        "Sparse_tool: [res += s * (A^T * x)] add_S_mul_Mt_mul_V, `res` and `x` cant be the same\n"
+      );
+      UTILS_ASSERT0(
+        res.size() >= SPARSE::sp_nrows,
+        "Sparse_tool: [res += s * (A^T * x)] result vector too small\n"
+      );
+      res += s * D * x;
+      res += s * L * x;
+      SPARSELIB_LOOP( SPARSE::sp_nrows - 1, res(i+1) += s * U(i) * x(i+1) );
+    }
+
+    //!
+    //! Perform the operation `res += s * (A * x)`
+    //!
     template <typename VRES, typename VB>
     inline
     void
@@ -4442,21 +4721,17 @@ namespace SparseTool {
       T  const & s,
       VB const & x
     ) const {
-      SPARSETOOL_TEST(
-        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
-        "add_S_mul_M_mul_V equal pointer"
-      )
-      SPARSETOOL_TEST(
+      UTILS_ASSERT0(
         res.size() >= SPARSE::sp_nrows,
-        "result vector too small"
-      )
+        "[res += s * (A * x)] result vector too small\n"
+      );
       res += s * D * x;
       res += s * U * x;
       SPARSELIB_LOOP( SPARSE::sp_nrows - 1, res(i+1) += s * L(i) * x(i+1) );
     }
 
     //!
-    //! Perform the operation `res += s * (A ^ x)`.
+    //! Perform the operation `res += s * (A^T * x)`.
     //!
     template <typename VRES, typename VB>
     inline
@@ -4466,14 +4741,10 @@ namespace SparseTool {
       T  const & s,
       VB const & x
     ) const {
-      SPARSETOOL_TEST(
-        reinterpret_cast<void*>(&res) != reinterpret_cast<void*>(&x),
-        "add_S_mul_Mt_mul_V equal pointer"
-      )
-      SPARSETOOL_TEST(
+      UTILS_ASSERT0(
         res.size() >= SPARSE::sp_nrows,
-        "result vector too small"
-      )
+        "[res += s * (A^T * x)] result vector too small\n"
+      );
       res += s * D * x;
       res += s * L * x;
       SPARSELIB_LOOP( SPARSE::sp_nrows - 1, res(i+1) += s * U(i) * x(i+1) );
@@ -4543,8 +4814,8 @@ namespace SparseTool {
   //! Read from the stream `s` to the vector `v`.
   //!
   template <typename T> inline
-  istream &
-  operator >> (istream & s, Vector<T> & v) {
+  istream_type &
+  operator >> ( istream_type & s, Vector<T> & v ) {
     typename Vector<T>::pointer pv=v.begin();
     while ( pv != v.end() ) s >> *pv++;
     return s;
@@ -4596,18 +4867,19 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
+namespace Sparse_tool_load {
 
-  using ::SparseTool::Vector;
-  using ::SparseTool::SparsePattern;
-  using ::SparseTool::CCoorMatrix;
-  using ::SparseTool::CRowMatrix;
-  using ::SparseTool::CColMatrix;
-  using ::SparseTool::TridMatrix;
+  using ::Sparse_tool::Vector;
+  using ::Sparse_tool::Sparse;
+  using ::Sparse_tool::SparsePattern;
+  using ::Sparse_tool::CCoorMatrix;
+  using ::Sparse_tool::CRowMatrix;
+  using ::Sparse_tool::CColMatrix;
+  using ::Sparse_tool::TridMatrix;
 
   // I/O
-  using ::SparseTool::operator >>;
-  using ::SparseTool::operator <<;
+  using ::Sparse_tool::operator >>;
+  using ::Sparse_tool::operator <<;
 }
 #endif
 

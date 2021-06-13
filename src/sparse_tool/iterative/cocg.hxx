@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_COCG_dot_HH
 #define SPARSETOOL_ITERATIVE_COCG_dot_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //   ####   ####   ####   ####
@@ -12,26 +12,28 @@ namespace SparseTool {
   //  #    # #    # #    # #    #
   //   ####   ####   ####   ####
   */
-  /*!
-   *  Preconditioned Conjugate Gradient Iterative Solver
-   *  \param A       coefficient matrix
-   *  \param b       righ hand side
-   *  \param x       guess and solution
-   *  \param P       preconditioner
-   *  \param epsi    Admitted tolerance
-   *  \param maxIter maximum number of admitted iteration
-   *  \param iter    total number of performed itaration
-   *  \param pStream pointer to stream object for messages
-   *  \return last computed residual
-   *
-   *  Use preconditioned conjugate gradient (for complex symmetric system)
-   *  to solve \f$ A x = b \f$.
-   */
-  template <typename real_type,
-            typename integer,
-            typename matrix_type,
-            typename vector_type,
-            typename preco_type>
+  //!
+  //! Preconditioned Conjugate Gradient Iterative Solver.
+  //!
+  //! \param A       coefficient matrix
+  //! \param b       righ hand side
+  //! \param x       guess and solution
+  //! \param P       preconditioner
+  //! \param epsi    Admitted tolerance
+  //! \param maxIter maximum number of admitted iteration
+  //! \param iter    total number of performed itaration
+  //! \param pStream pointer to stream object for messages
+  //! \return last computed residual
+  //!
+  //! Use preconditioned conjugate gradient (for complex symmetric system)
+  //! to solve \f$ A x = b \f$.
+  //!
+  template <
+    typename real_type,
+    typename matrix_type,
+    typename vector_type,
+    typename preco_type
+  >
   real_type
   cocg(
     matrix_type const & A,
@@ -39,21 +41,21 @@ namespace SparseTool {
     vector_type       & x,
     preco_type  const & P,
     real_type   const & epsi,
-    integer   const   maxIter,
-    integer         & iter,
-    ostream           * pStream = nullptr
+    integer             maxIter,
+    integer           & iter,
+    ostream_type      * pStream = nullptr
   ) {
-    
-    SPARSETOOL_ASSERT(
+
+    UTILS_ASSERT(
       A.numRows() == b.size() &&
       A.numCols() == x.size() &&
       A.numRows() == A.numCols(),
-      "Bad system in cocg" <<
-      "dim matrix  = " << A.numRows() <<
-      " x " << A.numCols() <<
-      "\ndim r.h.s.  = " << b.size() <<
-      "\ndim unknown = " << x.size()
-    )
+      "Sparse_tool::cocg, bad system:\n"
+      "dim matrix  = {} x {}\n"
+      "dim r.h.s.  = {}\n"
+      "dim unknown = {}\n",
+      A.numRows(), A.numCols(), b.size(), x.size()
+    );
 
     typedef typename vector_type::real_type vType;
 
@@ -65,20 +67,25 @@ namespace SparseTool {
     r   = b - A * x;
     p   = r / P;
     rt  = p;
-    rho = rdot(r,rt);
+    rho = r.conjugate().dot(rt);
 
     iter = 1;
     do {
       resid = rt.template lpNorm<Eigen::Infinity>();
 
       if ( pStream != nullptr )
-        (*pStream) << "iter = " << iter << " residual = " << resid << '\n';
+        fmt::print( *pStream,
+          "[cocg] iter = {:4} residual = {:.6}\n", iter, resid
+        );
 
       if ( resid <= epsi ) break;
 
       q  = A * p;
-      mu = rdot(q,p);
-      SPARSETOOL_ASSERT( mu != vType(0), "COCG failed found mu == 0\n" )
+      mu = q.conjugate().dot(p);
+      UTILS_ASSERT0(
+        mu != vType(0),
+        "Sparse_tool: COCG failed found mu == 0\n"
+      );
 
       alpha = rho/mu;
       x  += alpha * p;
@@ -86,7 +93,7 @@ namespace SparseTool {
       rt  = r / P;
 
       beta = rho;
-      rho  = rdot(r,rt);
+      rho  = r.conjugate().dot(rt);
       beta = rho/beta;
 
       p = rt + beta * p;
@@ -99,8 +106,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::cocg;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::cocg;
 }
 #endif
 

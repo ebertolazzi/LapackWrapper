@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_HSS_OPOLY_SSOR_HH
 #define SPARSETOOL_ITERATIVE_PRECO_HSS_OPOLY_SSOR_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   // #     #  #####   #####  ######  ####### #    #     #  #####   #####  ####### ######
@@ -39,29 +39,31 @@ namespace SparseTool {
     void
     build_HSS_OPOLY_SSOR( MAT const & A, integer m, rreal_type const & omega, integer iterssor ) {
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         A.isOrdered(),
-        "HSS_OPOLY_SSOR_Preconditioner::build_LDU pattern must be ordered before use"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: HSS_OPOLY_SSOR_Preconditioner::build_LDU\n"
+        "pattern must be ordered before use\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() == A.numCols(),
-        "HSS_OPOLY_SSOR_Preconditioner::build_LDU only square matrix allowed"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: HSS_OPOLY_SSOR_Preconditioner::build_LDU\n"
+        "only square matrix allowed\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() > 0,
-        "HSS_OPOLY_SSOR_Preconditioner::build_LDU empty matrix"
-      )
+        "Sparse_tool: HSS_OPOLY_SSOR_Preconditioner::build_LDU\n"
+        "empty matrix\n"
+      );
     
       mdegree = m;
       neq     = A.numRows();
-      Amat . resize(neq,neq,A.nnz());
-      s0   . resize(neq);
-      s1   . resize(neq);
-      As1  . resize(neq);
-      y    . resize(neq);
-
-      tmp1 . resize(neq);
-      tmp2 . resize(neq);
+      Amat.resize(neq,neq,A.nnz());
+      s0.resize(neq);
+      s1.resize(neq);
+      y.resize(neq);
+      As1.resize(neq);
+      tmp1.resize(neq);
+      tmp2.resize(neq);
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
@@ -71,7 +73,7 @@ namespace SparseTool {
       }
       
       Amat.internalOrder();
-      preco . build( Amat, omega, iterssor );
+      preco.build( Amat, omega, iterssor );
       //preco . build( Amat );
     }
 
@@ -138,8 +140,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::HSS_OPOLY_SSOR_Preconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::HSS_OPOLY_SSOR_Preconditioner;
 }
 #endif
 

@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------*\
  |                                                                          |
- |  SparseTool   : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH UMFPACK  |
+ |  Sparse_tool  : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH UMFPACK  |
  |                                                                          |
  |  date         : 2008, 14 April                                           |
  |  version      : 1.0                                                      |
@@ -41,18 +41,22 @@
 #pragma clang diagnostic pop
 #endif
 
-using namespace SparseToolLoad;
+using namespace Sparse_tool_load;
 using namespace std;
 using namespace zstream;
+
+using Utils::istream_type;
+using Utils::ostream_type;
 
 typedef std::complex<double> cplx;
 
 void
-testSparseTool( istream & mm_file ) {
+testSparseTool( istream_type & mm_file ) {
   Utils::TicToc            tm;
   MatrixMarket             mm;
-  ILDUpreconditioner<cplx> ildu;
-  //ILDUKpreconditioner<cplx> ildu;
+  IdPreconditioner<cplx> preco;
+  //ILDUpreconditioner<cplx> preco;
+  //ILDUKpreconditioner<cplx> preco;
   CCoorMatrix<cplx>        A;
   Vector<cplx>             x, rhs, exact, resid;
 
@@ -64,14 +68,14 @@ testSparseTool( istream & mm_file ) {
 
   //Spy( mm_file + ".eps" , A, 15.0 );
   
-  exact . resize( A.numRows() );
-  x     . resize( A.numRows() );
-  rhs   . resize( A.numRows() );
-  resid . resize( A.numRows() );
+  exact.resize( A.numRows() );
+  x.resize( A.numRows() );
+  rhs.resize( A.numRows() );
+  resid.resize( A.numRows() );
 
   fmt::print("factorize (ildu) ...");
   tm.tic();
-  ildu.build(A);
+  preco.build(A);
   tm.toc();
   fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
@@ -85,8 +89,8 @@ testSparseTool( istream & mm_file ) {
   unsigned maxIter = 200;
   //unsigned maxSubIter = 50;
   unsigned iter;
-  double   res = bicgstab( A, rhs, x, ildu, epsi, maxIter, iter, &cout );
-  //double   res = gmres( A, rhs, x, ildu, epsi, maxSubIter, maxIter, iter, &cout );
+  double   res = bicgstab( A, rhs, x, preco, epsi, maxIter, iter, &cout );
+  //double   res = gmres( A, rhs, x, preco, epsi, maxSubIter, maxIter, iter, &cout );
 
   tm.toc();
   fmt::print( " {} [s] done\n", tm.elapsed_s());
@@ -119,13 +123,13 @@ int
 main() {
   char const * rMatrix[] = {
     //"conf5_4-8x8-05.mtx.gz", // no
-    "dielFilterV2clx.mtx.gz", // 607232, ok 52 gmres, 11 bcgstab
+    //"dielFilterV2clx.mtx.gz", // 607232, ok 52 gmres, 11 bcgstab
     //"dielFilterV3clx.mtx.gz", // 420408, ok 53 gmres, ok 11 bicgstab
     //"fem_filter.mtx.gz", // 74062, fail gmres, fail bcgstab
     //"fem_hifreq_circuit.mtx.gz", // 491100, fail gmres, fail bicgstab
     //"mono_500Hz.mtx.gz", // 169410 fail gmres, fail bicgstab
     //"mplate.mtx.gz", // 5962, 7 bicgstab
-    //"qc2534.mtx.gz", // 2534, 35 bicgstab
+    "qc2534.mtx.gz", // 2534, 35 bicgstab
     //"qc324.mtx.gz", // ok 5 bicgstab
     //"RFdevice.mtx.gz", // 74104 fail gmres, fail bicgstab
     //"ted_AB.mtx.gz", // 10605 fail gmres, fail bicgstab
@@ -140,7 +144,7 @@ main() {
     string fname = string("mmc/")+*p;
     ifstream file( fname.c_str() );
     if ( !file.good() ) {
-      fmt::print("Cannot open file: {}\n", fname);
+      cerr << "Cannot open file: " << fname << "\n";
       exit(0);
     }
     igzstream gz(file);

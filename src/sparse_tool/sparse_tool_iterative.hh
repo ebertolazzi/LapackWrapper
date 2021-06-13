@@ -28,7 +28,160 @@
 #include "iterative/cocg.hxx"
 #include "iterative/cocr.hxx"
 
-namespace SparseTool {
+namespace Sparse_tool {
+
+  //!
+  //! Build incomplete SOR preconditioner.
+  //!
+  template <typename MAT, typename real_type>
+  void
+  separate_LDU(
+    MAT const &         A,
+    Vector<real_type> & L_A,
+    Vector<integer>   & L_R,
+    Vector<integer>   & L_J,
+    Vector<real_type> & D,
+    Vector<real_type> & U_A,
+    Vector<integer>   & U_I,
+    Vector<integer>   & U_C
+  ) {
+    UTILS_ASSERT0(
+      A.isOrdered(),
+      "Sparse_Tool: separate_LDU\n"
+      "pattern must be ordered before use\n"
+    );
+    UTILS_ASSERT0(
+      A.numRows() == A.numCols(),
+      "Sparse_Tool: separate_LDU\n"
+      "only square matrix allowed\n"
+    );
+    UTILS_ASSERT0(
+      A.numRows() > 0,
+      "Sparse_Tool: separate_LDU\n"
+      "empty matrix\n"
+    );
+
+    // step 0: compute necessary memory
+    integer nr = A.numRows();
+    Vector<real_type> Lnnz( nr ), Unnz( nr );
+
+    D.resize( nr );
+
+    Lnnz.setZero();
+    Unnz.setZero();
+    D.setZero();
+
+    // cout nnz
+    for ( A.Begin(); A.End(); A.Next() ) {
+      integer i = A.row();
+      integer j = A.column();
+      if      ( i > j ) ++Lnnz(i);
+      else if ( i < j ) ++Unnz(j);
+    }
+
+    // step 1: initialize structure
+    L_R.resize( nr + 1 );
+    U_C.resize( nr + 1 );
+
+    L_R(0) = U_C(0) = 0;
+    for ( integer i = 0; i < nr; ++i ) {
+      L_R(i+1) = L_R(i) + Lnnz(i);
+      U_C(i+1) = U_C(i) + Unnz(i);
+    }
+
+    // step 2: allocate memory
+    L_A.resize( L_R( nr ) );
+    L_J.resize( L_R( nr ) );
+
+    U_A.resize( U_C( nr ) );
+    U_I.resize( U_C( nr ) );
+
+    L_A.setZero();
+    U_A.setZero();
+
+    // step 3: fill structure
+    for ( A.Begin(); A.End(); A.Next() ) {
+      integer   i = A.row();
+      integer   j = A.column();
+      real_type a = A.value();
+      if ( i > j ) {
+        integer ipos = L_R(i)+(--Lnnz(i));
+        L_J(ipos) = j;
+        L_A(ipos) = a;
+      } else if ( i < j ) {
+        integer ipos = U_C(j)+(--Unnz(j));
+        U_I(ipos) = i;
+        U_A(ipos) = a;
+      } else {
+        D(i) = a;
+      }
+    }
+
+    // step 4: sort structure
+    for ( integer i = 0; i < nr; ++i ) {
+      QuickSortI( L_J.data()+L_R(i), L_A.data()+L_R(i), L_R(i+1)-L_R(i) );
+      QuickSortI( U_I.data()+U_C(i), U_A.data()+U_C(i), U_C(i+1)-U_C(i) );
+    }
+  }
+
+  //!
+  //! \f[ \mathbf{x} = (\eta \mathbf{D}+\mathbf{L})^{-1} \mathbf{x} \f]
+  //!
+  template <typename real_type>
+  void
+  solve_DL(
+    real_type                 eta,
+    Vector<real_type> const & D,
+    Vector<real_type> const & L_A,
+    Vector<integer>   const & L_R,
+    Vector<integer>   const & L_J,
+    Vector<real_type>       & x
+  ) {
+    integer nr = D.size();
+    // solve (eta*D+L) x(n+1) = x(n)
+    integer   const * pR  = L_R.data();
+    integer   const * pJ  = L_J.data();
+    real_type const * pLA = L_A.data();
+    for ( integer k=0; k < nr; ++k ) {
+      real_type tt(0);
+      for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+        tt += *pLA++ * x(*pJ++);
+      x(k) -= tt;
+      x(k) /= eta*D(k);
+      ++pR;
+    };
+  }
+
+  //!
+  //! \f[ \mathbf{x} = (\eta \mathbf{D}+\mathbf{U})^{-1} \mathbf{x} \f]
+  //!
+  template <typename real_type>
+  void
+  solve_DU(
+    real_type                 eta,
+    Vector<real_type> const & D,
+    Vector<real_type> const & U_A,
+    Vector<integer>   const & U_I,
+    Vector<integer>   const & U_C,
+    Vector<real_type>       & x
+  ) {
+
+    // calcolo b-(U+(1-1/omega)*D)*x
+    integer nr  = D.size();
+    integer nnz = U_I.size();
+    integer   const * pC  = U_C.data()+nr;
+    integer   const * pI  = U_I.data()+nnz;
+    real_type const * pUA = U_A.data()+nnz;
+
+    integer k = nr;
+    while ( k-- > 0 ) {
+      x(k) /= eta*D(k);
+      --pC;
+      real_type xk = x(k);
+      for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+        x(*--pI) -= *--pUA * xk;
+    }
+  }
 
   /*
   //  ### #       ######  #     #                       
@@ -39,7 +192,9 @@ namespace SparseTool {
   //   #  #       #     # #     # #   #   #      #   #  
   //  ### ####### ######   #####  #   #   ###### #    # 
   */
-  //! Incomplete `LDU` preconditioner
+  //!
+  //! Incomplete `LDU` preconditioner.
+  //!
   template <typename T>
   class ILDUiterPreconditioner : public Preco<ILDUiterPreconditioner<T> > {
   public:
@@ -53,9 +208,10 @@ namespace SparseTool {
 
   private:
 
-    integer                      maxIter;
-    RILDUpreconditioner<real_type> P;
-    CRowMatrix<real_type>          Mat;
+    integer                       maxIter;
+    ILDUpreconditioner<real_type> P;
+    CRowMatrix<real_type>         Mat;
+    mutable Vector<real_type>     tmp;
 
     //!
     //! Build incomplete `LDU` decomposition with specified pattern `P`.
@@ -66,8 +222,7 @@ namespace SparseTool {
       maxIter = iter;
       P.build(A,PT);
       Mat = A;
-      //q.resize(A.numRows());
-      //r.resize(A.numRows());
+      tmp.resize(A.numRows());
     }
 
   public:
@@ -99,8 +254,8 @@ namespace SparseTool {
     { build_ILDUiter(_M,_P,_iter); }
 
     //!
-    //! Apply preconditioner to vector `v`
-    //! and store result to vector `res`.
+    //! Apply preconditioner to vector `b`
+    //! and store result to vector `x`.
     //!
     template <typename VECTOR>
     void
@@ -115,6 +270,17 @@ namespace SparseTool {
       }
     }
 
+    //!
+    //! Apply preconditioner to vector `x`
+    //! and store result to vector `res`.
+    //!
+    template <typename VECTOR>
+    void
+    assPreco( VECTOR & x ) const {
+      tmp = x;
+      assPreco( x, tmp );
+    }
+
   };
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -127,8 +293,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::ILDUiterPreconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::ILDUiterPreconditioner;
 }
 #endif
 

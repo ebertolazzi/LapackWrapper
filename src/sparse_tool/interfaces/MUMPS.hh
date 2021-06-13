@@ -1,10 +1,10 @@
 /*--------------------------------------------------------------------------*\
  |                                                                          |
- |  SparseTool   : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH MUMPS    |
+ |  Sparse_tool  : DRIVER FOR TESTING THE TOOLKIT INTERFACING WITH MUMPS    |
  |                                                                          |
  |  date         : 2011, 17 July                                            |
  |  version      : 1.0                                                      |
- |  file         : SparseTool_MUMPS.hh                                      |
+ |  file         : MUMPS.hh                                                 |
  |  authors      : Enrico Bertolazzi                                        |
  |  affiliations : Dipartimento di Ingegneria Industriale                   |
  |                 Universita` degli Studi di Trento                        |
@@ -25,7 +25,7 @@
 #include <zmumps_c.h>
 #include <complex>
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   extern int myid;
 
@@ -171,7 +171,7 @@ namespace SparseTool {
       bool transpose = false
     ) {
 
-      if ( x.size() < mumpsStruct.n ) x . resize( mumpsStruct.n );
+      if ( x.size() < mumpsStruct.n ) x.resize( mumpsStruct.n );
       x = b;
       // MUMPS solution
       mumpsStruct.job = JOB_SOLVE;
@@ -205,10 +205,10 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::MUMPS;
-  using ::SparseTool::initMUMPS;
-  using ::SparseTool::endMUMPS;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::MUMPS;
+  using ::Sparse_tool::initMUMPS;
+  using ::Sparse_tool::endMUMPS;
 }
 #endif
 

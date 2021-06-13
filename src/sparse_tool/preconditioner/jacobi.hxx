@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_JACOBI_HH
 #define SPARSETOOL_ITERATIVE_PRECO_JACOBI_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //        #                               
@@ -28,35 +28,42 @@ namespace SparseTool {
   private:
 
     real_type         omega, omega1;
-    integer         maxIter;
+    integer           maxIter;
 
-    Vector<integer> LU_R;
-    Vector<integer> LU_J;
+    Vector<integer>   LU_R;
+    Vector<integer>   LU_J;
     Vector<real_type> LU_A;
 
     Vector<real_type> D;
 
-    mutable Vector<real_type> TMP;
+    mutable Vector<real_type> TMP, TMP1;
 
     Vector<integer> LUnnz;
 
     //! build incomplete LDU decomposition with specified pattern `P` 
     template <typename MAT>
     void
-    build_JACOBI( MAT const & A, real_type const & _omega, integer _maxIter ) {
+    build_JACOBI(
+      MAT       const & A,
+      real_type const & _omega,
+      integer           _maxIter
+    ) {
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         A.isOrdered(),
-        "JACOBIpreconditioner::build_JACOBI pattern must be ordered before use"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: JACOBIpreconditioner::build_JACOBI\n"
+        "pattern must be ordered before use\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() == A.numCols(),
-        "JACOBIpreconditioner::build_JACOBI only square matrix allowed"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: ACOBIpreconditioner::build_JACOBI\n"
+        "only square matrix allowed\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() > 0,
-        "JACOBIpreconditioner::build_JACOBI empty matrix"
-      )
+        "Sparse_tool: JACOBIpreconditioner::build_JACOBI\n"
+        "empty matrix\n"
+      );
 
       this -> omega   = _omega;
       this -> omega1  = 1.0/_omega-1.0;
@@ -64,12 +71,13 @@ namespace SparseTool {
 
       // step 0: compute necessary memory
       PRECO::pr_size = A.numRows();
-      LUnnz . resize( PRECO::pr_size );
-      D     . resize( PRECO::pr_size );
-      TMP   . resize( PRECO::pr_size );
+      LUnnz.resize( PRECO::pr_size );
+      D.resize( PRECO::pr_size );
+      TMP.resize( PRECO::pr_size );
+      TMP1.resize( PRECO::pr_size );
 
-      LUnnz . setZero();
-      D     . setZero();
+      LUnnz.setZero();
+      D.setZero();
 
       for ( A.Begin(); A.End(); A.Next() ) {
         integer i = A.row();
@@ -96,12 +104,12 @@ namespace SparseTool {
 
       // step 4: sort structure
       for ( integer i = 0; i < PRECO::pr_size; ++i )
-        std::sort( &LU_J(LU_R(i)), &LU_J(LU_R(i+1)) );
+        std::sort( LU_J.data()+LU_R(i), LU_J.data()+LU_R(i+1) );
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i   = A.row();
-        integer j   = A.column();
+        integer i = A.row();
+        integer j = A.column();
         real_type val = A.value(); // (i,j);
         if ( i != j ) { // costruisco LU
           integer lo  = LU_R(i);
@@ -119,10 +127,10 @@ namespace SparseTool {
         }
       }
       for ( integer i = 0; i < PRECO::pr_size; ++i )
-        SPARSETOOL_ASSERT(
+        UTILS_ASSERT(
           D(i) != real_type(0),
-          "JACOBIpreconditioner::D(" << i <<
-          ") = " << D(i) << " size = " << D.size()
+          "Sparse_tool: JACOBIpreconditioner::D({}) = {}, size = {}\n",
+          i, D(i), D.size()
         );
     }
 
@@ -141,18 +149,23 @@ namespace SparseTool {
     { build_JACOBI( M, _omega, _maxIter ); }
 
     //!
-    //! Apply preconditioner to vector `v`
-    //! and store result to vector `res`.
+    //! Apply preconditioner to vector `b`
+    //! and store result to vector `x`.
     //!
     template <typename VECTOR>
     void
     assPreco( VECTOR & x, VECTOR const & b ) const {
-      x = omega*(b/D);
+      UTILS_ASSERT0(
+        std::addressof(x) != std::addressof(b),
+        "Sparse_tool: JACOBIpreconditioner::assPreco(x,b)\n"
+        "`x` and `b` cant be the same\n"
+      );
+      x = omega*(b.array()/D.array());
       for ( integer ii = 0; ii < maxIter; ++ii ) {
 
         // calcolo (D/omega)^{-1} [ ((1/omega-1)*D-L-U)*x + b ];
-        integer const *   _pR = LU_R.data();
-        integer const *   _pJ = LU_J.data();
+        integer   const * _pR = LU_R.data();
+        integer   const * _pJ = LU_J.data();
         real_type const * _pA = LU_A.data();
 
         for ( integer k=0; k < PRECO::pr_size; ++k ) {
@@ -162,8 +175,18 @@ namespace SparseTool {
           TMP(k) = b(k) + omega1 * D(k) * x(k) - tmp;
           ++_pR;
         }
-        x = omega * (TMP / D);
+        x = omega * (TMP.array()/D.array());
       }
+    }
+
+    //!
+    //! Apply preconditioner to vector `x`.
+    //!
+    template <typename VECTOR>
+    void
+    assPreco( VECTOR & x ) const {
+      TMP1 = x;
+      assPreco( x, TMP1 );
     }
 
   };
@@ -178,8 +201,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::JACOBIpreconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::JACOBIpreconditioner;
 }
 #endif
 

@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_ID_HH
 #define SPARSETOOL_ITERATIVE_PRECO_ID_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //  ###        ######  ######  #######  #####  ####### 
@@ -13,7 +13,10 @@ namespace SparseTool {
   //   #  #    # #       #    #  #       #     # #     # 
   //  ### #####  #       #     # #######  #####  ####### 
   */
-  //! Identity matrix preconditioner
+
+  //!
+  //! Identity matrix preconditioner.
+  //!
   template <typename T>
   class IdPreconditioner : public Preco<IdPreconditioner<T> > {
 
@@ -28,9 +31,14 @@ namespace SparseTool {
 
     IdPreconditioner(void) : Preco<IdPreconditioner<T> >() {}
 
-    //! build the preconditioner from matrix \c A
     template <typename MAT>
-    void build(Sparse<T,MAT> const &) {}
+    IdPreconditioner( Sparse<T,MAT> const & ) : IdPreconditioner<T>() {}
+
+    //!
+    //! Build the preconditioner from matrix `A`.
+    //!
+    template <typename MAT>
+    void build( Sparse<T,MAT> const & ) {}
 
     //!
     //! Apply preconditioner to vector `v`
@@ -39,6 +47,11 @@ namespace SparseTool {
     template <typename VECTOR>
     void assPreco( VECTOR & res, VECTOR const & v ) const { res = v; }
 
+    //!
+    //! Apply preconditioner to vector `v`
+    //!
+    template <typename VECTOR>
+    void assPreco( VECTOR & ) const { /* Nothing to do */ }
   };
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -51,8 +64,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::IdPreconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::IdPreconditioner;
 }
 #endif
 

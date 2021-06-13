@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_GMRES_dot_HH
 #define SPARSETOOL_ITERATIVE_GMRES_dot_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //   #####    #     #  #####   #####   ####
@@ -57,84 +57,98 @@ namespace SparseTool {
   }
   #endif
 
-  /*!
-   *  Generalized Minimal Residual Iterative Solver
-   *  \param A       coefficient matrix
-   *  \param b       righ hand side
-   *  \param x       guess and solution
-   *  \param P       preconditioner
-   *  \param epsi    Admitted tolerance
-   *  \param m       maximum dimension of Krilov subspace
-   *  \param maxIter maximum number of admitted iteration
-   *  \param iter    total number of performed itaration
-   *  \param pStream pointer to stream object for messages
-   *  \return last computed residual
-   */
-  template <typename real_type,
-            typename integer,
-            typename matrix_type,
-            typename vector_type,
-            typename preco_type>
+  //!
+  //! Generalized Minimal Residual Iterative Solver.
+  //!
+  //! \param A       coefficient matrix
+  //! \param b       righ hand side
+  //! \param x       guess and solution
+  //! \param P       preconditioner
+  //! \param epsi    Admitted tolerance
+  //! \param m       maximum dimension of Krilov subspace
+  //! \param maxIter maximum number of admitted iteration
+  //! \param iter    total number of performed itaration
+  //! \param pStream pointer to stream object for messages
+  //! \return        last computed residual
+  //!
+  template<
+    typename real_type,
+    typename matrix_type,
+    typename vector_type,
+    typename preco_type
+  >
   real_type
   gmres(
     matrix_type const & A,
     vector_type const & b,
-    vector_type       & x,
+    vector_type &       x,
     preco_type  const & P,
     real_type           epsi,
-    integer           m, // maxSubIter
-    integer           maxIter,
-    integer         & iter,
-    ostream           * pStream = nullptr
+    integer             m, // maxSubIter
+    integer             maxIter,
+    integer &           iter,
+    ostream_type *      pStream = nullptr
   ) {
 
     using std::abs;
 
-    SPARSETOOL_ASSERT(
+    UTILS_ASSERT(
       A.numRows() == b.size() &&
       A.numCols() == x.size() &&
       A.numRows() == A.numCols(),
-      "Bad system in gmres" <<
-      "dim matrix  = " << A.numRows() <<
-      " x " << A.numCols() <<
-      "\ndim r.h.s.  = " << b.size() <<
-      "\ndim unknown = " << x.size()
-    )
-    real_type resid = 0;
-    integer m1    = m+1;
-    integer neq   = b.size();
-    vector_type w(neq), r(neq), H(m1*m1), s(m1), cs(m1), sn(m1);
-    
-    Vector<vector_type> v(m1);
-    for ( integer nv = 0; nv <= m; ++nv ) v(nv) . resize(neq);
+      "Sparse_tool::gmres, bad system:\n"
+      "dim matrix  = {} x {}\n"
+      "dim r.h.s.  = {}\n"
+      "dim unknown = {}\n",
+      A.numRows(), A.numCols(), b.size(), x.size()
+    );
 
-    iter = 1;
+    real_type resid = 0;
+    integer   m1    = m+1;
+    integer   neq   = b.size();
+    vector_type w(neq), r(neq), H(m1*m1), s(m1), cs(m1), sn(m1);
+
+    Eigen::Matrix<typename vector_type::real_type,Eigen::Dynamic,Eigen::Dynamic> v(neq,m+1);
+
+    iter = 0;
     do {
 
-      r  = b - A * x;
-      r  = r / P;
-      real_type beta = norm2(r);
+      r = b - A * x;
+      if ( pStream != nullptr )
+        fmt::print( *pStream,
+          "[gmres] initial (unpreconditioned) residual [inf norm] = {}\n",
+          r.template lpNorm<Eigen::Infinity>()
+       );
+
+      r /= P;
+      if ( pStream != nullptr )
+        fmt::print( *pStream,
+          "[gmres] initial (preconditioned) residual [inf norm]   = {}\n",
+          r.template lpNorm<Eigen::Infinity>()
+        );
+
+      real_type beta = r.norm();
       if ( beta <= epsi ) goto fine;
  
       typename vector_type::real_type betax = beta;
-      v(0) = r / betax;
-      s(0) = beta;
+      v.col(0) = r / betax;
+      s(0)     = beta;
       for ( integer k = 1; k <= m; ++k ) s(k) = 0;
 
       integer i = 0;
       do {
 
-        w = A * v(i);
-        w = w / P;
+        w = A * v.col(i);
+        w /= P;
 
         integer k;
         for ( k = 0; k <= i; ++k ) {
-          H(k*m1+i) = dot(w, v(k));
-          w -= H(k*m1+i) * v(k);
+          H(k*m1+i) = w.dot(v.col(k));
+          w -= H(k*m1+i) * v.col(k);
         }
 
-        H((i+1)*m1+i) = norm2(w);
-        v(i+1)        = w / H((i+1)*m1+i);
+        H((i+1)*m1+i) = w.norm();
+        v.col(i+1)    = w / H((i+1)*m1+i);
 
         for ( k = 0; k < i; ++k )
           ApplyPlaneRotation(H(k*m1+i), H((k+1)*m1+i), cs(k), sn(k));
@@ -144,12 +158,13 @@ namespace SparseTool {
         ApplyPlaneRotation(s(i), s(i+1), cs(i), sn(i));
       
         ++i; ++iter;
-        resid = absval(s(i));
-        if ( pStream != nullptr ) (*pStream) << "iter = " << iter << " residual = " << resid << '\n';
+        resid = abs(s(i));
+        if ( pStream != nullptr )
+          fmt::print( *pStream, "[gmres] iter = {:<5} residual [2 norm] = {}\n", iter, resid );
 
       } while ( i < m && iter <= maxIter && resid > epsi );
 
-      // Backsolve:  
+      // Backsolve:
       for ( int ii = i-1; ii >= 0; --ii ) {
         s(ii) /= H(ii*m1+ii);
         for ( int jj = ii - 1; jj >= 0; --jj )
@@ -157,7 +172,7 @@ namespace SparseTool {
       }
 
       for ( integer jj = 0; jj < i; ++jj )
-        x += v(jj) * s(jj);
+        x += v.col(jj) * s(jj);
 
     } while ( iter <= maxIter );
 
@@ -168,8 +183,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::gmres;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::gmres;
 }
 #endif
 

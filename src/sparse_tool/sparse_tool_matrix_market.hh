@@ -22,10 +22,11 @@
   #define sscanf sscanf_s
 #endif
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   using ::std::ifstream;
   using ::std::ofstream;
+  using ::std::string;
 
   /*
   //  #     #                              
@@ -66,7 +67,7 @@ namespace SparseTool {
   static char const *cV[] = { "pattern", "integer", "real", "complex" };
   static char const *cM[] = { "general", "symmetric", "skew-symmetric", "Hermitian" };
   
-  static char const MM_HEADER[] = "% Generated with saveToMatrixMarket of toolkit SparseTool\n"
+  static char const MM_HEADER[] = "% Generated with saveToMatrixMarket of toolkit Sparse_tool\n"
                                   "% by Enrico Bertolazzi\n"
                                   "%--------------------------------------------------------\n";
   #endif
@@ -76,8 +77,8 @@ namespace SparseTool {
   //!
   class MatrixMarket {
 
-    char       line[128], str[5][128];
-    unsigned   nRows, nCols, numNnz, numLine;
+    char     line[128], str[5][128];
+    unsigned nRows, nCols, numNnz, numLine;
 
     //! the type of matrix data: sparse or full
     CoorType   cType;
@@ -86,7 +87,7 @@ namespace SparseTool {
     MatrixType mType; //! the matrix type
 
     bool
-    getLine( istream & stream ) {
+    getLine( istream_type & stream ) {
       stream.getline( line, 128 );
       ++numLine;
       return line[0] == '%';
@@ -105,25 +106,28 @@ namespace SparseTool {
     //!
     void
     info( ostream_type & stream ) const {
-      stream << "\nRows:        " << nRows
-             << "\nColumns:     " << nCols
-             << "\nNon zeros:   " << numNnz
-             << "\nADDRESSING:  " << cC[cType]
-             << "\nDATA:        " << cV[vType]
-             << "\nMATRIX TYPE: " << cM[mType]
-             << "\n\n";
+      fmt::print( stream,
+        "Rows:        {}\n"
+        "Columns:     {}\n"
+        "Non zeros:   {}\n"
+        "ADDRESSING:  {}\n"
+        "DATA:        {}\n"
+        "MATRIX TYPE: {}\n",
+        nRows, nCols, numNnz,
+        cC[cType], cV[vType], cM[mType]
+      );
     }
-    
+
     //!
     //! read the file in MM format from the opened stream `s`.
     //! The result is stored in the class instance
     //!
     void
-    readHeader( istream & stream ) {
+    readHeader( istream_type & stream ) {
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         stream.good(),
-        "In reading Matrix Market File, cannot read header!"
+        "Sparse_tool: In reading Matrix Market File, cannot read header!\n"
       );
 
       numLine = 0;
@@ -163,25 +167,27 @@ namespace SparseTool {
           else if ( strcmp( p, "skew-symmetric") == 0 ) mType = MM_SKEW_SYMMETRIC;
           else if ( strcmp( p, "Hermitian")      == 0 ) mType = MM_HERMITIAN;
           
-          else SPARSETOOL_ASSERT( false, "bad MatrixMarket file format" );
+          else UTILS_ASSERT0( false, "bad MatrixMarket file format" );
         }
       }
       
       // check consistency of type
       if ( mType == MM_HERMITIAN ) {
-        SPARSETOOL_ASSERT(
+        UTILS_ASSERT(
           vType == MM_COMPLEX,
-          "inconsistent file data:\n" <<
-          "a matrix with entries of type: " << cV[vType] <<
-          "can be a matrix of type: " << cM[mType]
+          "Sparse_tool: inconsistent file data:\n"
+          "a matrix with entries of type: {}\n"
+          "can be a matrix of type: {}\n",
+          cV[vType], cM[mType]
         );
       }
       if ( mType == MM_SKEW_SYMMETRIC ) {
-        SPARSETOOL_ASSERT(
+        UTILS_ASSERT(
           vType == MM_REAL || vType == MM_COMPLEX,
-          "inconsistent file data:\n" <<
-          "a matrix with entries of type: " << cV[vType] <<
-          "can be a matrix of type: " << cM[mType]
+          "Sparse_tool: inconsistent file data:\n"
+          "a matrix with entries of type: {}\n"
+          "can be a matrix of type: {}\n",
+          cV[vType], cM[mType]
         );
       }
 
@@ -199,13 +205,13 @@ namespace SparseTool {
     }
 
     void
-    read( istream & stream, SparsePattern & sp ) {
+    read( istream_type & stream, SparsePattern & sp ) {
 
       readHeader( stream );
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         cType == MM_COORDINATE,
-        "MatrixMarket: file must be a coordinate file!"
+        "Sparse_tool: MatrixMarket: file must be a coordinate file!"
       );
 
       sp.resize( nRows, nCols, numNnz );
@@ -216,10 +222,10 @@ namespace SparseTool {
         sscanf( line, "%u%u", &i, &j );
         --i; --j; // zero base index
 
-        SPARSETOOL_ASSERT(
+        UTILS_ASSERT(
           i <= nRows && j <= nCols,
-          "In reading Matrix Market File, bad pattern index on line " <<
-          numLine << "\nRead: <<" << line << ">>"
+          "Sparse_tool: In reading Matrix Market File, bad pattern index on line {}\nRead: <<{}>>\n",
+          numLine, line
         );
 
         sp.insert( i, j );
@@ -231,17 +237,17 @@ namespace SparseTool {
     }
 
     void
-    read( istream & stream, CCoorMatrix<integer> & mat ) {
+    read( istream_type & stream, CCoorMatrix<integer> & mat ) {
 
       readHeader( stream );
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         cType == MM_COORDINATE,
-        "MatrixMarket: file must be a coordinate file!"
+        "Sparse_tool: MatrixMarket: file must be a coordinate file!\n"
       );
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         vType == MM_INTEGER,
-        "MatrixMarket: file must have integer entries!"
+        "Sparse_tool: MatrixMarket: file must have integer entries!\n"
       );
 
       mat.resize( nRows, nCols, numNnz );
@@ -253,10 +259,10 @@ namespace SparseTool {
         sscanf( line, "%u%u%d", &i, &j, &a );
         --i; --j; // zero base index
 
-        SPARSETOOL_ASSERT(
+        UTILS_ASSERT(
           i <= nRows && j <= nCols,
-          "In reading Matrix Market File, bad pattern index on line " <<
-          numLine << "\nRead<<" << line << ">>"
+          "Sparse_tool: In reading Matrix Market File, bad pattern index on line {}\nRead: <<{}>>\n",
+          numLine, line
         );
 
         mat.insert(i,j) = a;
@@ -273,19 +279,20 @@ namespace SparseTool {
 
     template <typename T>
     void
-    read( istream & stream, CCoorMatrix<std::complex<T> > & mat ) {
+    read( istream_type & stream, CCoorMatrix<std::complex<T> > & mat ) {
 
       readHeader( stream );
 
       static char const *fmts[4] = { "%u%u", "%u%u%d", "%u%u%lf", "%u%u%lf%lf" };
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         cType == MM_COORDINATE,
-        "MatrixMarket: file must be a coordinate file!"
+        "Sparse_tool: MatrixMarket: file must be a coordinate file!\n"
       );
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         vType != MM_PATTERN,
-        "MatrixMarket: try to read a matrix from a pattern only file!"
+        "Sparse_tool: MatrixMarket\n"
+        "try to read a matrix from a pattern only file!\n"
       );
 
       mat.resize( nRows, nCols, numNnz );
@@ -297,10 +304,11 @@ namespace SparseTool {
         sscanf( line, fmts[vType], &i, &j, &re, &im );
         --i; --j; // zero base index
 
-        SPARSETOOL_ASSERT(
+        UTILS_ASSERT(
           i <= nRows && j <= nCols,
-          "In reading Matrix Market File, bad pattern index on line " <<
-          numLine << "\nRead<<" << line << ">>"
+          "Sparse_tool: MatrixMarket\n"
+          "In reading Matrix Market File, bad pattern index on line {}\nRead: <<{}>>\n",
+          numLine, line
         );
 
         mat.insert(i,j) = std::complex<T>(re,im);
@@ -318,21 +326,21 @@ namespace SparseTool {
 
     template <typename T>
     void
-    read( istream & stream, CCoorMatrix<T> & mat ) {
+    read( istream_type & stream, CCoorMatrix<T> & mat ) {
 
       readHeader( stream );
 
       SPARSETOOL_ASSERT(
         cType == MM_COORDINATE,
-        "MatrixMarket: file must be a coordinate file!, data is " << *this
+        "Sparse_tool: MatrixMarket: file must be a coordinate file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_PATTERN,
-        "MatrixMarket: try to read a matrix from a pattern only file!, data is " << *this
+        "Sparse_tool: MatrixMarket: try to read a matrix from a pattern only file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_COMPLEX,
-        "MatrixMarket: try to read a complex matrix into a non complex one!, data is " << *this
+        "Sparse_tool: MatrixMarket: try to read a complex matrix into a non complex one!, data is " << *this
       );
 
       mat.resize( nRows, nCols, numNnz );
@@ -346,7 +354,7 @@ namespace SparseTool {
 
         SPARSETOOL_ASSERT(
           i <= nRows && j <= nCols,
-          "In reading Matrix Market File, bad pattern index on line " <<
+          "Sparse_tool: MatrixMarket: In reading Matrix Market File, bad pattern index on line " <<
           numLine << "\nRead<<" << line << ">>, data is " << *this
         );
 
@@ -363,17 +371,17 @@ namespace SparseTool {
     }
 
     void
-    readFull( istream & stream, Vector<integer> & mat ) {
+    readFull( istream_type & stream, Vector<integer> & mat ) {
 
       readHeader( stream );
 
       SPARSETOOL_ASSERT(
         cType == MM_ARRAY,
-        "MatrixMarket: file must be an array file!, data is " << *this
+        "Sparse_tool: MatrixMarket: file must be an array file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType == MM_INTEGER,
-        "MatrixMarket: try to read an integer matrix into a non integer one!, data is " << *this
+        "Sparse_tool: MatrixMarket: try to read an integer matrix into a non integer one!, data is " << *this
       );
       mat.resize( numNnz );
       for ( unsigned kk = 0; kk < numNnz; ++kk ) {
@@ -385,17 +393,17 @@ namespace SparseTool {
 
     template <typename T>
     void
-    readFull( istream & stream, Vector<std::complex<T> > & mat ) {
+    readFull( istream_type & stream, Vector<std::complex<T> > & mat ) {
 
       readHeader( stream );
 
       SPARSETOOL_ASSERT(
         cType == MM_ARRAY,
-        "MatrixMarket: file must be an array file!, data is " << *this
+        "Sparse_tool: MatrixMarket: file must be an array file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_PATTERN,
-        "MatrixMarket: try to read a pattern from a full matrix!, data is " << *this
+        "Sparse_tool: MatrixMarket: try to read a pattern from a full matrix!, data is " << *this
       );
       static char const *fmts[4] = { "", "%lf", "%lf", "%lf%lf" };
       mat.clear(); mat.resize( numNnz );
@@ -408,21 +416,21 @@ namespace SparseTool {
 
     template <typename T>
     void
-    readFull( istream & stream, Vector<T> & mat ) {
+    readFull( istream_type & stream, Vector<T> & mat ) {
 
       readHeader( stream );
 
       SPARSETOOL_ASSERT(
         cType == MM_ARRAY,
-        "MatrixMarket: file must be an array file!, data is " << *this
+        "Sparse_tool: MatrixMarket: file must be an array file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_PATTERN,
-        "MatrixMarket: try to read a pattern from a full matrix!, data is " << *this
+        "Sparse_tool: MatrixMarket: try to read a pattern from a full matrix!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_COMPLEX,
-        "MatrixMarket: try to read a a complex matrix into a non complex one!, data is " << *this
+        "Sparse_tool: MatrixMarket: try to read a a complex matrix into a non complex one!, data is " << *this
       );
       //static char const *fmts[4] = { "", "%lf", "%lf", "%lf%lf" };
       mat.clear(); mat.resize( numNnz );
@@ -434,29 +442,47 @@ namespace SparseTool {
     }
 
     //!
-    //! Read the red matrix in the template `M1` class.
+    //! Read the red matrix in the template `MAT` class.
     //!
     template<typename MAT>
     void
-    read( istream & stream, MAT & M ) {
+    read( istream_type & stream, MAT & M ) {
       CCoorMatrix<typename MAT::real_type> M1;
       read( stream, M1 );
       M.resize( M1 );
     }
-        
+
     //!
-    //! Read the red matrix in the template `M1` class.
+    //! Read the red matrix in the template `MAT` class.
     //!
     template<typename MAT>
     void
     read( char const fname[], MAT & M ) {
       ifstream file(fname);
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT(
         file.is_open(),
-        "In reading Matrix Market File, cannot open " << fname << '\n'
+        "Sparse_tool: MatrixMarket\n"
+        "In reading Matrix Market File, cannot open {}\n",
+        fname
       );
-      read( file, M );
+      integer len = strlen(fname);
+      if ( len > 4 && strcmp(fname+len-3,".gz") == 0 ) {
+        // copmpressed file
+        zstream::igzstream fz(file);
+        read( fz, M );
+      } else {
+        read( file, M );
+      }
       file.close();
+    }
+
+    //!
+    //! Read the red matrix in the template `MAT` class.
+    //!
+    template<typename MAT>
+    void
+    read( string const & fname, MAT & M ) {
+      read( fname.c_str(), M );
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -501,8 +527,8 @@ namespace SparseTool {
   //!
   //! \param fname the name of the file to save
   //! \param A     sparse matrix to save
-  //! \param vType \copydoc SparseTool::CoorType
-  //! \param mType \copydoc SparseTool::MatrixType
+  //! \param vType \copydoc Sparse_tool::CoorType
+  //! \param mType \copydoc Sparse_tool::MatrixType
   //!
   template <typename T,typename M>
   static
@@ -535,7 +561,7 @@ namespace SparseTool {
         break;
       case MM_INTEGER:
       case MM_REAL:
-        SPARSETOOL_ERR("Cannot write a complex matrix with non complex type"); 
+        SPARSETOOL_ERR("Sparse_tool: MatrixMarket: Cannot write a complex matrix with non complex type");
         break;
       case MM_COMPLEX:
         for ( A.Begin(); A.End(); A.Next() )
@@ -557,8 +583,8 @@ namespace SparseTool {
   //!
   //! \param fname the name of the file to save
   //! \param A     sparse matrix to save
-  //! \param vType \copydoc SparseTool::CoorType
-  //! \param mType \copydoc SparseTool::MatrixType
+  //! \param vType \copydoc Sparse_tool::CoorType
+  //! \param mType \copydoc Sparse_tool::MatrixType
   //! 
   template <typename T,typename M>
   static
@@ -599,7 +625,7 @@ namespace SparseTool {
             << A.value()    << '\n';
         break;
       case MM_COMPLEX:
-        SPARSETOOL_ERR("Cannot write a NON complex matrix with a complex type"); 
+        SPARSETOOL_ERR("Sparse_tool: MatrixMarket: Cannot write a NON complex matrix with a complex type"); 
         break;
     //  default:
     //    break;
@@ -668,7 +694,7 @@ namespace SparseTool {
   //!
   //! \param fname the name of the file to save
   //! \param A     sparse matrix to save
-  //! \param mType \copydoc SparseTool::MatrixType
+  //! \param mType \copydoc Sparse_tool::MatrixType
   //! 
   static
   inline
@@ -696,21 +722,21 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
+namespace Sparse_tool_load {
 
-  using ::SparseTool::MatrixMarket;
-  using ::SparseTool::MatrixMarketSaveToFile;
+  using ::Sparse_tool::MatrixMarket;
+  using ::Sparse_tool::MatrixMarketSaveToFile;
 
-  using ::SparseTool::MM_COORDINATE;
-  using ::SparseTool::MM_ARRAY;
-  using ::SparseTool::MM_PATTERN;
-  using ::SparseTool::MM_INTEGER;
-  using ::SparseTool::MM_REAL;
-  using ::SparseTool::MM_COMPLEX;
-  using ::SparseTool::MM_GENERAL;
-  using ::SparseTool::MM_SYMMETRIC;
-  using ::SparseTool::MM_SKEW_SYMMETRIC;
-  using ::SparseTool::MM_HERMITIAN;
+  using ::Sparse_tool::MM_COORDINATE;
+  using ::Sparse_tool::MM_ARRAY;
+  using ::Sparse_tool::MM_PATTERN;
+  using ::Sparse_tool::MM_INTEGER;
+  using ::Sparse_tool::MM_REAL;
+  using ::Sparse_tool::MM_COMPLEX;
+  using ::Sparse_tool::MM_GENERAL;
+  using ::Sparse_tool::MM_SYMMETRIC;
+  using ::Sparse_tool::MM_SKEW_SYMMETRIC;
+  using ::Sparse_tool::MM_HERMITIAN;
 
 }
 #endif

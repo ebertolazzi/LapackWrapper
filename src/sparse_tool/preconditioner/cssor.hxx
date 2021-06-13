@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_CSSOR_HH
 #define SPARSETOOL_ITERATIVE_PRECO_CSSOR_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //   #####   #####   #####  ####### ######  
@@ -35,21 +35,21 @@ namespace SparseTool {
 
   private:
 
-    real_type         omega, omega1;
-    integer         maxIter;
+    real_type omega, omega1;
+    integer   maxIter;
 
-    Vector<integer> L_R;
-    Vector<integer> L_J;
+    Vector<integer>   L_R;
+    Vector<integer>   L_J;
     Vector<real_type> L_A;
 
-    Vector<integer> U_C;
-    Vector<integer> U_I;
+    Vector<integer>   U_C;
+    Vector<integer>   U_I;
     Vector<real_type> U_A;
 
     Vector<real_type> D;
 
-    Vector<integer> B_R;
-    Vector<integer> B_J;
+    Vector<integer>   B_R;
+    Vector<integer>   B_J;
     Vector<real_type> B_A;
 
     Vector<integer> Lnnz, Unnz, Bnnz;
@@ -61,18 +61,21 @@ namespace SparseTool {
     void
     build_SOR( MAT const & A, real_type const & _omega, integer _maxIter ) {
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         A.isOrdered(),
-        "CSSORpreconditioner::build_SOR pattern must be ordered before use"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: CSSORpreconditioner::build_SOR\n"
+        "pattern must be ordered before use\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() == A.numCols(),
-        "CSSORpreconditioner::build_SOR only square matrix allowed"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: CSSORpreconditioner::build_SOR\n"
+        "only square matrix allowed\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() > 0,
-        "CSSORpreconditioner::build_SOR empty matrix"
-      )
+        "Sparse_tool: CSSORpreconditioner::build_SOR\n"
+        "empty matrix\n"
+      );
 
       this -> omega   = _omega;
       this -> omega1  = 1.0/_omega-1.0;
@@ -80,15 +83,15 @@ namespace SparseTool {
 
       // step 0: compute necessary memory
       PRECO::pr_size = A.numRows();
-      Lnnz . resize( PRECO::pr_size );
-      Unnz . resize( PRECO::pr_size );
-      Bnnz . resize( PRECO::pr_size );
-      D    . resize( PRECO::pr_size );
+      Lnnz.resize( PRECO::pr_size );
+      Unnz.resize( PRECO::pr_size );
+      Bnnz.resize( PRECO::pr_size );
+      D.resize( PRECO::pr_size );
 
-      Lnnz = 0;
-      Unnz = 0;
-      Bnnz = 0;
-      D    = real_type(0);
+      Lnnz.setZero();
+      Unnz.setZero();
+      Bnnz.setZero();
+      D.setZero();
 
       for ( A.Begin(); A.End(); A.Next() ) {
         integer i = A.row();
@@ -185,14 +188,17 @@ namespace SparseTool {
         }
       }
       for ( integer i = 0; i < PRECO::pr_size; ++i )
-        SPARSETOOL_ASSERT( D(i) != real_type(0),
-                            "CSSORpreconditioner::D(" << i << ") = " << D(i) << " size = " << D.size() );
+        UTILS_ASSERT(
+          D(i) != real_type(0),
+          "Sparse_tool: CSSORpreconditioner::D({}) = {}, size = {}\n",
+          i, D(i), D.size()
+        );
 
       // step 6: allocate working vectors
-      br . resize( PRECO::pr_size );
-      bi . resize( PRECO::pr_size );
-      x  . resize( PRECO::pr_size );
-      y  . resize( PRECO::pr_size );
+      br.resize( PRECO::pr_size );
+      bi.resize( PRECO::pr_size );
+      x.resize( PRECO::pr_size );
+      y.resize( PRECO::pr_size );
     }
 
   public:
@@ -401,8 +407,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::CSSORpreconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::CSSORpreconditioner;
 }
 #endif
 

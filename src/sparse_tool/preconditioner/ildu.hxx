@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_ILDU_HH
 #define SPARSETOOL_ITERATIVE_PRECO_ILDU_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //  ###  #       ######  #     #
@@ -27,40 +27,46 @@ namespace SparseTool {
 
   private:
 
-    Vector<integer> L_R;
-    Vector<integer> L_J;
+    Vector<integer>   L_R;
+    Vector<integer>   L_J;
     Vector<real_type> L_A;
 
-    Vector<integer> U_C;
-    Vector<integer> U_I;
+    Vector<integer>   U_C;
+    Vector<integer>   U_I;
     Vector<real_type> U_A;
 
     Vector<real_type> W;
     Vector<real_type> D;
 
-    Vector<integer> Lnnz, Unnz;
+    Vector<integer>   Lnnz, Unnz;
 
-    //! build incomplete LDU decomposition with specified pattern `P` 
+    //!
+    //! Build incomplete LDU decomposition with specified pattern `P`.
+    //! 
     template <typename MAT, typename PAT>
     void
     build_ILDU( MAT const & A, PAT const & P ) {
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         P.isOrdered(),
-        "ILDUpreconditioner::build_LDU pattern must be ordered before use"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: ILDUpreconditioner::build_LDU\n"
+        "pattern must be ordered before use\n"
+      );
+      UTILS_ASSERT0(
         P.numRows() == A.numRows() && P.numCols() == A.numCols(),
-        "ILDUpreconditioner::build_LDU pattern do not match matrix size"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: ILDUpreconditioner::build_LDU\n"
+        "pattern do not match matrix size\n"
+      );
+      UTILS_ASSERT0(
         P.numRows() == P.numCols(),
-        "ILDUpreconditioner::build_LDU only square matrix allowed"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: ILDUpreconditioner::build_LDU\n"
+        "only square matrix allowed\n"
+      );
+      UTILS_ASSERT0(
         P.numRows() > 0,
-        "ILDUpreconditioner::build_LDU empty matrix"
-      )
+        "Sparse_tool: ILDUpreconditioner::build_LDU\n"
+        "empty matrix\n"
+      );
 
       // step 0: compute necessary memory
       PRECO::pr_size = A.numRows();
@@ -112,8 +118,8 @@ namespace SparseTool {
 
       // step 4: sort structure
       for ( integer i = 0; i < PRECO::pr_size; ++i ) {
-        std::sort( &L_J(L_R(i)), &L_J(L_R(i+1)) );
-        std::sort( &U_I(U_C(i)), &U_I(U_C(i+1)) );
+        std::sort( L_J.data()+L_R(i), L_J.data()+L_R(i+1) );
+        std::sort( U_I.data()+U_C(i), U_I.data()+U_C(i+1) );
       }
 
       // insert values
@@ -231,7 +237,10 @@ namespace SparseTool {
         W = 0;
         #endif
 
-        SPARSETOOL_ASSERT( D(k) != real_type(0), "ILDUpreconditioner found D(" << k << ") == 0!" );
+        UTILS_ASSERT(
+          D(k) != real_type(0),
+          "Sparse_tool: ILDUpreconditioner found D({}) == 0!\n", k
+        );
       }
     }
 
@@ -247,13 +256,17 @@ namespace SparseTool {
     ILDUpreconditioner( MAT const & M, PRE const & P ) : Preco<ILDUPRECO>() 
     { build_ILDU(M,P); }
 
-    //! build the preconditioner from matrix `M`.
+    //!
+    //! Build the preconditioner from matrix `M`.
+    //!
     template <typename MAT>
     void
     build( MAT const & M )
     { build_ILDU(M,M); }
 
-    //! build the preconditioner from matrix `M` with pattern `P` 
+    //!
+    //! Build the preconditioner from matrix `M` with pattern `P`.
+    //! 
     template <typename MAT, typename PRE>
     void
     build( MAT const & M, PRE const & P )
@@ -265,12 +278,10 @@ namespace SparseTool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & res, VECTOR const & v ) const {
-      res = v;
-
+    assPreco( VECTOR & v ) const {
       // solve L
-      integer const *   pR  = L_R.data();
-      integer const *   pJ  = L_J.data();
+      integer   const * pR  = L_R.data();
+      integer   const * pJ  = L_J.data();
       real_type const * pLA = L_A.data();
       integer k;
 
@@ -278,25 +289,36 @@ namespace SparseTool {
         ++pR;
         typename VECTOR::real_type tmp(0);
         for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
-          tmp += *pLA++ * res(*pJ++);
-        res(k) -= tmp;
+          tmp += *pLA++ * v(*pJ++);
+        v(k) -= tmp;
       };
 
       // solve D
-      for ( k = 0; k < PRECO::pr_size; ++k ) res(k) /= D(k);
+      v /= D;
 
       // solve U
-      integer const *   pC  = U_C.data() + PRECO::pr_size;
-      integer const *   pI  = U_I.data() + *pC;
+      integer   const * pC  = U_C.data() + PRECO::pr_size;
+      integer   const * pI  = U_I.data() + *pC;
       real_type const * pUA = U_A.data() + *pC;
 
       do {
-        typename VECTOR::real_type resk = res(--k);
+        typename VECTOR::real_type vk = v(--k);
         --pC;
         for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
-          res(*--pI) -= *--pUA * resk;
+          v(*--pI) -= *--pUA * vk;
       } while ( k > 1 );
 
+    }
+
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
+    //!
+    template <typename VECTOR>
+    void
+    assPreco( VECTOR & res, VECTOR const & v ) const {
+      res = v;
+      this->assPreco( res );
     }
 
   };
@@ -311,8 +333,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::ILDUpreconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::ILDUpreconditioner;
 }
 #endif
 

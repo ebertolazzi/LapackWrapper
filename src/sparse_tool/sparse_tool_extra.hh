@@ -1,10 +1,10 @@
 /*--------------------------------------------------------------------------*\
  |                                                                          |
- |  SparseTool   : Simple Class for timing code                             |
+ |  Sparse_tool  : Simple Class for timing code                             |
  |                                                                          |
  |  date         : 2008, 14 April                                           |
  |  version      : 1.0                                                      |
- |  file         : SparseTool_Extra.hh                                      |
+ |  file         : Sparse_tool_Extra.hh                                     |
  |  authors      : Enrico Bertolazzi                                        |
  |  affiliations : Dipartimento di Ingegneria Industriale                   |
  |                 Universita` degli Studi di Trento                        |
@@ -18,7 +18,7 @@
 
 #include "sparse_tool.hh"
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //   ____
@@ -42,15 +42,15 @@ namespace SparseTool {
   template <typename MAT>
   void
   Spy(
-    std::string       const & fname,
-    SparseBase<MAT>   const & sp,
-    double            const   xsize,
+    std::string     const & fname,
+    SparseBase<MAT> const & sp,
+    double          const   xsize,
     vector<integer> const * rowLines = nullptr,
     vector<integer> const * colLines = nullptr
   ) {
      std::ofstream file( fname.c_str() );
      Spy( file, sp, xsize, rowLines, colLines );
-     file . close();
+     file.close();
   }
 
   //!
@@ -66,9 +66,9 @@ namespace SparseTool {
   template <typename MAT>
   void
   Spy(
-    ostream                 & stream,
-    SparseBase<MAT>   const & sp,
-    double            const   xsize,
+    ostream_type          & stream,
+    SparseBase<MAT> const & sp,
+    double          const   xsize,
     vector<integer> const * rowLines = nullptr,
     vector<integer> const * colLines = nullptr
   ) {
@@ -120,7 +120,7 @@ namespace SparseTool {
     // begin of output
     stream
       << "%!PS-Adobe-3.0 EPSF-3.0\n"
-      << "%%Creator: SparseTool by Enrico Bertolazzi\n"
+      << "%%Creator: Sparse_tool by Enrico Bertolazzi\n"
       << "%%BoundingBox: " << round(xl) << ' '
                            << round(yb) << ' '
                            << round(xr) << ' '
@@ -172,8 +172,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::Spy;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::Spy;
 }
 #endif
 

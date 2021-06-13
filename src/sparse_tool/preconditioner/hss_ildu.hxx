@@ -2,7 +2,7 @@
 #ifndef SPARSETOOL_ITERATIVE_PRECO_HSS_ILDU_HH
 #define SPARSETOOL_ITERATIVE_PRECO_HSS_ILDU_HH
 
-namespace SparseTool {
+namespace Sparse_tool {
 
   /*
   //  #     #  #####   #####  ### #       ######  #     #
@@ -36,18 +36,21 @@ namespace SparseTool {
     void
     build_HSS_ILDU( MAT const & A ) {
 
-      SPARSETOOL_ASSERT(
+      UTILS_ASSERT0(
         A.isOrdered(),
-        "HSS_ILDU_Preconditioner::build_LDU pattern must be ordered before use"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: HSS_ILDU_Preconditioner::build_LDU\n"
+        "pattern must be ordered before use\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() == A.numCols(),
-        "HSS_ILDU_Preconditioner::build_LDU only square matrix allowed"
-      )
-      SPARSETOOL_ASSERT(
+        "Sparse_tool: HSS_ILDU_Preconditioner::build_LDU\n"
+        "only square matrix allowed\n"
+      );
+      UTILS_ASSERT0(
         A.numRows() > 0,
-        "HSS_ILDU_Preconditioner::build_LDU empty matrix"
-      )
+        "Sparse_tool: HSS_ILDU_Preconditioner::build_LDU\n"
+        "empty matrix\n"
+      );
     
       neq = A.numRows();
       CCoorMatrix<rreal_type> Amat(neq,neq,A.nnz());
@@ -100,8 +103,8 @@ namespace SparseTool {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace SparseToolLoad {
-  using ::SparseTool::HSS_ILDU_Preconditioner;
+namespace Sparse_tool_load {
+  using ::Sparse_tool::HSS_ILDU_Preconditioner;
 }
 #endif
 
