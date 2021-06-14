@@ -16,6 +16,9 @@
 #ifndef SPARSETOOL_MATRIX_MARKET_HH
 #define SPARSETOOL_MATRIX_MARKET_HH
 
+#include "sparse_tool.hh"
+
+#include <Utils.hh>
 #include <string.h>
 
 #if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)

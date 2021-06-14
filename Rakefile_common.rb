@@ -111,6 +111,8 @@ def extract_tgz( tar_gz_archive, destination = '.' )
         FileUtils.chmod entry.header.mode, dest, :verbose => false
       elsif entry.header.typeflag == '2' #Symlink!
         File.symlink entry.header.linkname, dest
+      elsif entry.header.typeflag == 'g' && entry.full_name == "pax_global_header"
+        puts "Skip entry: #{entry.full_name} type: #{entry.header.typeflag}."
       else
         puts "Unkown tar entry: #{entry.full_name} type: #{entry.header.typeflag}."
       end

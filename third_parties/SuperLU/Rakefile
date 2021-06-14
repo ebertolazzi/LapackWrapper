@@ -3,11 +3,11 @@ require_relative "../../Rakefile_common.rb"
 
 task :default => [:install_osx]
 
-VER='5.2.1'
+VER='5.2.2'
 
-desc "download superlu_#{VER}.tar.gz lib"
+desc "download superlu-#{VER}.tar.gz lib"
 task :download do
-  filename = "superlu_#{VER}.tar.gz"
+  filename = "superlu-#{VER}.tar.gz"
   url_download( "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/#{filename}", filename )
 end
 
@@ -18,14 +18,14 @@ end
 
 desc "build superlu lib for osx"
 task :build_osx => [:download] do
-  filename = "superlu_#{VER}.tar.gz"
+  filename = "superlu-#{VER}.tar.gz"
   if File.exists?('lib/lib/libsuperlu_osx_static.a') then
     puts "SuperLU already compiled"
   else
     extract_tgz(filename)
 
     FileUtils.rm_rf 'superlu'
-    FileUtils.mv    'SuperLU_'+VER, 'superlu'
+    FileUtils.mv    'SuperLU-'+VER, 'superlu'
 
     ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
     ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
@@ -51,13 +51,13 @@ end
 
 desc "build superlu lib for linux"
 task :build_linux => [:download] do
-  filename = "superlu_#{VER}.tar.gz"
+  filename = "superlu-#{VER}.tar.gz"
   if File.exists?('lib/lib/libsuperlu_linux_static.a') then
     puts "SuperLU already compiled"
   else
     extract_tgz(filename)
     FileUtils.rm_rf 'superlu'
-    FileUtils.mv    'SuperLU_'+VER, 'superlu'
+    FileUtils.mv    'SuperLU-'+VER, 'superlu'
 
     ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
     ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
@@ -85,14 +85,14 @@ desc "build superlu lib for windows"
 task :build_win, [:year, :bits] => [:download] do |t, args|
   args.with_defaults(:year => "2017", :bits => "x64" )
 
-  if File.exists?("ibs/lib/libsuperlu_win_#{args.bits}_static.lib") and
-     File.exists?("ibs/lib/libsuperlu_win_#{args.bits}_static_debug.lib") then
+  if File.exists?("lib/lib/libsuperlu_win_#{args.bits}_static.lib") and
+     File.exists?("lib/lib/libsuperlu_win_#{args.bits}_static_debug.lib") then
     puts "SuperLU already compiled"
   else
-    filename = "superlu_#{VER}.tar.gz"
+    filename = "superlu-#{VER}.tar.gz"
     extract_tgz(filename)
     FileUtils.rm_rf 'superlu'
-    FileUtils.mv    'SuperLU_'+VER, 'superlu'
+    FileUtils.mv    'SuperLU-'+VER, 'superlu'
 
     ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
     ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
@@ -138,11 +138,7 @@ task :install_common do |t, args|
     puts "Copy header #{f}".green
     FileUtils.cp f, prefix+'/include/superlu/'+File.basename(f)
   end
-  Dir['lib/lib/*'].each do |f|
-    puts "Copy static lib #{f}".green
-    FileUtils.cp f, prefix+'/lib/'+File.basename(f)
-  end
-  Dir['lib/lib/*'].each do |f|
+  Dir['lib/lib/*.*'].each do |f|
     puts "Copy static lib #{f}".green
     FileUtils.cp f, prefix+'/lib/'+File.basename(f)
   end
