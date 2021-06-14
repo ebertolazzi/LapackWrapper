@@ -275,25 +275,25 @@ namespace Sparse_tool {
       res = v;
 
       // solve L
-      integer const *   pR  = L_R.data();
-      integer const *   pJ  = L_J.data();
+      integer   const * pR  = L_R.data();
+      integer   const * pJ  = L_J.data();
       real_type const * pLA = L_A.data();
       integer k;
 
       for ( k=1; k < PRECO::pr_size; ++k ) {
         ++pR;
-        typename VECTOR::real_type tmp(0);
+        typename VECTOR::real_type tt(0);
         for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
-          tmp += *pLA++ * res(*pJ++);
-        res(k) -= tmp;
+          tt += *pLA++ * res(*pJ++);
+        res(k) -= tt;
       };
 
       // solve D
       for ( k = 0; k < PRECO::pr_size; ++k ) res(k) /= D(k);
 
       // solve U
-      integer const *   pC  = U_C.data() + PRECO::pr_size;
-      integer const *   pI  = U_I.data() + *pC;
+      integer   const * pC  = U_C.data() + PRECO::pr_size;
+      integer   const * pI  = U_I.data() + *pC;
       real_type const * pUA = U_A.data() + *pC;
 
       do {

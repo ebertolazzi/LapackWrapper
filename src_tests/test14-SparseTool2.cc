@@ -49,7 +49,7 @@ using namespace ::std;
 typedef typename Vector<double>::V_base VBASE;
 
 int main() {
-  integer i, iter, nr = 7, nc = 4, nnz = 12;
+  integer iter, nr = 7, nc = 4, nnz = 12;
   integer I[] = { 0, 4, 5, 1, 4, 5, 2, 4, 6, 3, 4, 6 };
   integer J[] = { 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 };
   integer V[] = { 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2 };
@@ -58,7 +58,7 @@ int main() {
   Vector<double>      rhs(nr+nc), X(nr+nc), bf1(nr), bf2(nc);
   
   // build matrix A
-  for ( i = 0; i < nnz; ++i ) A.insert(I[i],J[i]) = V[i];
+  for ( integer i = 0; i < nnz; ++i ) A.insert(I[i],J[i]) = V[i];
   A.internalOrder();
   
   // build block matrix
@@ -72,7 +72,7 @@ int main() {
     M.insert(i,j+nr) = A.value();
     M.insert(j+nr,i) = A.value();
   }
-  for ( i = 0; i < nr; ++i ) M.insert(i,i) = 1;
+  for ( integer i = 0; i < nr; ++i ) M.insert(i,i) = 1;
   M.internalOrder();
   
   Eigen::Map<VBASE> b1(NULL,0), b2(NULL,0), r(NULL,0), x(NULL,0);

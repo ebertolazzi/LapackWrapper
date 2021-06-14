@@ -31,7 +31,7 @@ namespace Sparse_tool {
     typedef Preco<CSSORPRECO>      PRECO;
     #endif
 
-    typedef typename T::value_type real_type; //!< type of the elements of the preconditioner
+    typedef T real_type; //!< type of the elements of the preconditioner
 
   private:
 
@@ -46,7 +46,7 @@ namespace Sparse_tool {
     Vector<integer>   U_I;
     Vector<real_type> U_A;
 
-    Vector<real_type> D;
+    Vector<real_type> D, tmp;
 
     Vector<integer>   B_R;
     Vector<integer>   B_J;
@@ -87,6 +87,7 @@ namespace Sparse_tool {
       Unnz.resize( PRECO::pr_size );
       Bnnz.resize( PRECO::pr_size );
       D.resize( PRECO::pr_size );
+      tmp.resize( PRECO::pr_size );
 
       Lnnz.setZero();
       Unnz.setZero();
@@ -145,8 +146,8 @@ namespace Sparse_tool {
 
       // step 5: insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i    = A.row();
-        integer j    = A.column();
+        integer   i    = A.row();
+        integer   j    = A.column();
         real_type rval = A.value().real();
         real_type ival = A.value().imag();
         { // costruisco B
@@ -255,10 +256,10 @@ namespace Sparse_tool {
         pBJ = B_J.data();
         pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          real_type tmp(0);
+          real_type tt(0);
           for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
-            tmp += *pBA++ * y(*pBJ++);
-          x(k) += tmp;
+            tt += *pBA++ * y(*pBJ++);
+          x(k) += tt;
           ++pBR;
         };
 
@@ -267,10 +268,10 @@ namespace Sparse_tool {
         pJ  = L_J.data();
         pLA = L_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          real_type tmp(0);
+          real_type tt(0);
           for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
-            tmp += *pLA++ * x(*pJ++);
-          x(k) = omega*(x(k)-tmp)/D(k);
+            tt += *pLA++ * x(*pJ++);
+          x(k) = omega*(x(k)-tt)/D(k);
           ++pR;
         };
 
@@ -291,10 +292,10 @@ namespace Sparse_tool {
         pBJ = B_J.data();
         pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          real_type tmp(0);
+          real_type tt(0);
           for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
-            tmp += *pBA++ * x(*pBJ++);
-          y(k) -= tmp;
+            tt += *pBA++ * x(*pBJ++);
+          y(k) -= tt;
           ++pBR;
         };
 
@@ -303,10 +304,10 @@ namespace Sparse_tool {
         pJ  = L_J.data();
         pLA = L_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          real_type tmp(0);
+          real_type tt(0);
           for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
-            tmp += *pLA++ * y(*pJ++);
-          y(k) = omega*(y(k)-tmp)/D(k);
+            tt += *pLA++ * y(*pJ++);
+          y(k) = omega*(y(k)-tt)/D(k);
           ++pR;
         };
       }
@@ -320,10 +321,10 @@ namespace Sparse_tool {
         k = PRECO::pr_size;
         do {
           --k; --pR;
-          real_type tmp(0);
+          real_type tt(0);
           for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
-            tmp += *--pLA * y(*--pJ);
-          y(k) = omega1*D(k)*y(k)+bi(k)-tmp;
+            tt += *--pLA * y(*--pJ);
+          y(k) = omega1*D(k)*y(k)+bi(k)-tt;
         } while ( k > 0 );
 
         // sottraggo B*x;
@@ -331,10 +332,10 @@ namespace Sparse_tool {
         pBJ = B_J.data();
         pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          real_type tmp(0);
+          real_type tt(0);
           for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
-            tmp += *pBA++ * x(*pBJ++);
-          y(k) -= tmp;
+            tt += *pBA++ * x(*pBJ++);
+          y(k) -= tt;
           ++pBR;
         };
 
@@ -358,10 +359,10 @@ namespace Sparse_tool {
         k = PRECO::pr_size;
         do {
           --k; --pR;
-          real_type tmp(0);
+          real_type tt(0);
           for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
-            tmp += *--pLA * x(*--pJ);
-          x(k) = omega1*D(k)*x(k)+br(k)-tmp;
+            tt += *--pLA * x(*--pJ);
+          x(k) = omega1*D(k)*x(k)+br(k)-tt;
         } while ( k > 0 );
 
         // aggiungo B*y;
@@ -369,10 +370,10 @@ namespace Sparse_tool {
         pBJ = B_J.data();
         pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          real_type tmp(0);
+          real_type tt(0);
           for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
-            tmp += *pBA++ * y(*pBJ++);
-          x(k) += tmp;
+            tt += *pBA++ * y(*pBJ++);
+          x(k) += tt;
           ++pBR;
         };
 
@@ -393,6 +394,17 @@ namespace Sparse_tool {
 
       // copia risulatato in uscita
       for ( k=0; k < PRECO::pr_size; ++k ) xc(k) = real_type(x(k),y(k));
+    }
+
+    //!
+    //! Apply preconditioner to vector `v`
+    //! and store result to vector `res`.
+    //!
+    template <typename VECTOR>
+    void
+    assPreco( VECTOR & xx ) const {
+      tmp = xx;
+      assPreco( xx, tmp );
     }
 
   };

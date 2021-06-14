@@ -49,6 +49,10 @@ namespace Sparse_tool {
       // step 0: compute necessary memory
       PRECO::pr_size = A.numRows();
       separate_LDU( A, L_A, L_R, L_J, D, U_A, U_I, U_C );
+      UTILS_ASSERT0(
+        D.array().abs().minCoeff() > 0,
+        "Sparse_tool:: build_SOR, Matrix has some zeros on the diagonal\n"
+      );
     }
 
   public:

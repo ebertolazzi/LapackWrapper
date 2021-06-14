@@ -38,121 +38,40 @@ namespace Sparse_tool {
     Vector<real_type> W;
     Vector<real_type> D;
 
-    Vector<integer>   Lnnz, Unnz;
-
     //!
     //! Build incomplete LDU decomposition with specified pattern `P`.
-    //! 
+    //!
     template <typename MAT, typename PAT>
     void
     build_ILDU( MAT const & A, PAT const & P ) {
 
       UTILS_ASSERT0(
         P.isOrdered(),
-        "Sparse_tool: ILDUpreconditioner::build_LDU\n"
+        "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "pattern must be ordered before use\n"
       );
       UTILS_ASSERT0(
         P.numRows() == A.numRows() && P.numCols() == A.numCols(),
-        "Sparse_tool: ILDUpreconditioner::build_LDU\n"
+        "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "pattern do not match matrix size\n"
       );
       UTILS_ASSERT0(
         P.numRows() == P.numCols(),
-        "Sparse_tool: ILDUpreconditioner::build_LDU\n"
+        "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "only square matrix allowed\n"
       );
       UTILS_ASSERT0(
         P.numRows() > 0,
-        "Sparse_tool: ILDUpreconditioner::build_LDU\n"
+        "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "empty matrix\n"
       );
 
       // step 0: compute necessary memory
       PRECO::pr_size = A.numRows();
-      Lnnz.resize( PRECO::pr_size );
-      Unnz.resize( PRECO::pr_size );
 
-      Lnnz.setZero();
-      Unnz.setZero();
-
-      for ( P.Begin(); P.End(); P.Next() ) {
-        integer i = P.row();
-        integer j = P.column();
-        if      ( i > j ) ++Lnnz(i);
-        else if ( i < j ) ++Unnz(j);
-      }
-
-      // step 1: initialize structure
-      L_R.resize( PRECO::pr_size + 1 );
-      U_C.resize( PRECO::pr_size + 1 );
-
-      L_R(0) = U_C(0) = 0;
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
-        L_R(i+1) = L_R(i) + Lnnz(i);
-        U_C(i+1) = U_C(i) + Unnz(i);
-      }
-
-      // step 2: allocate memory
-      L_A.resize( L_R(PRECO::pr_size) );
-      L_J.resize( L_R(PRECO::pr_size) );
-
-      U_A.resize( U_C(PRECO::pr_size) );
-      U_I.resize( U_C(PRECO::pr_size) );
-
-      D.resize( PRECO::pr_size );
-      W.resize( PRECO::pr_size );
-
-      D.fill(1);
+      separate_LDU( A, L_A, L_R, L_J, D, U_A, U_I, U_C );
+      W.resize(PRECO::pr_size);
       W.setZero();
-      L_A.setZero();
-      U_A.setZero();
-      
-      // step 3: fill structure
-      for ( P.Begin(); P.End(); P.Next() ) {
-        integer i = P.row();
-        integer j = P.column();
-        if      ( i > j ) { integer ii = --Lnnz(i); L_J(L_R(i)+ii) = j; }
-        else if ( i < j ) { integer jj = --Unnz(j); U_I(U_C(j)+jj) = i; }
-      }
-
-      // step 4: sort structure
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
-        std::sort( L_J.data()+L_R(i), L_J.data()+L_R(i+1) );
-        std::sort( U_I.data()+U_C(i), U_I.data()+U_C(i+1) );
-      }
-
-      // insert values
-      for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
-        typename MAT::real_type const val = A.value(); // (i,j);
-        if ( i > j ) {
-          integer lo  = L_R(i);
-          integer hi  = L_R(i+1);
-          integer len = hi - lo;
-          while ( len > 0 ) {
-            integer half = len / 2;
-            integer mid  = lo + half;
-            if ( L_J(mid) < j ) { lo = mid + 1; len -= half + 1; }
-            else                  len = half;
-          }
-          L_A(lo) = val;
-        } else if ( i < j ) {
-          integer lo  = U_C(j);
-          integer hi  = U_C(j+1);
-          integer len = hi - lo;
-          while ( len > 0 ) {
-            integer half = len / 2;
-            integer mid  = lo + half;
-            if ( U_I(mid) < i ) { lo = mid + 1; len -= half + 1; }
-            else                  len = half;
-          }
-          U_A(lo) = val;
-        } else {
-          D(i) = val;
-        }
-      }
 
       /*
       //
@@ -188,7 +107,7 @@ namespace Sparse_tool {
         for ( kk = LRk; kk < LRk1; ++kk ) W(L_J(kk)) = L_A(kk);
 
         //  W = U^(-T) W ---- l^T = D^(-1)U^(-T) M21^T
-        #define LDU_FAST
+        //#define LDU_FAST
         #ifdef LDU_FAST
         for ( kk = LRk; kk < LRk1; ++kk ) {
           integer j = L_J(kk);
@@ -287,10 +206,10 @@ namespace Sparse_tool {
 
       for ( k=1; k < PRECO::pr_size; ++k ) {
         ++pR;
-        typename VECTOR::real_type tmp(0);
+        typename VECTOR::real_type tt(0);
         for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
-          tmp += *pLA++ * v(*pJ++);
-        v(k) -= tmp;
+          tt += *pLA++ * v(*pJ++);
+        v(k) -= tt;
       };
 
       // solve D

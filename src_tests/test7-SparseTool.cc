@@ -54,11 +54,11 @@ void
 testSparseTool( istream_type & mm_file ) {
   Utils::TicToc              tm;
   MatrixMarket               mm;
-  //IdPreconditioner<double>   preco;
+  IdPreconditioner<double>   preco;
   //Dpreconditioner<double>    preco;
   //SORpreconditioner<double>  preco;
   //SSORpreconditioner<double>  preco;
-  ILDUpreconditioner<double> preco;
+  //ILDUpreconditioner<double> preco;
   //ILDUKpreconditioner<double> preco;
   //ILDUiterPreconditioner<double> preco;
   //RILDUpreconditioner<double> preco;
@@ -111,8 +111,8 @@ testSparseTool( istream_type & mm_file ) {
   unsigned maxIter    = 1000;
   unsigned maxSubIter = 50;
   unsigned iter;
-  double   res = bicgstab( A, rhs, x, preco, epsi, maxIter, iter, &cout );
-  //double   res = gmres( A, rhs, x, preco, epsi, maxSubIter, maxIter, iter, &cout );
+  //double   res = bicgstab( A, rhs, x, preco, epsi, maxIter, iter, &cout );
+  double   res = gmres( A, rhs, x, preco, epsi, maxSubIter, maxIter, iter, &cout );
 
   tm.toc();
   fmt::print(" {} [ms] done\n",tm.elapsed_ms());
@@ -207,10 +207,10 @@ testSparseTool( istream_type & mm_file ) {
 int
 main() {
   char const * rMatrix[] = {
-    "af23560.mtx.gz", // MA48 fails
+    //"af23560.mtx.gz", // MA48 fails
     //"memplus.mtx.gz", //
     //"fidap005.mtx.gz",
-    //"ASIC_100k.mtx.gz",           // 99340 (ok) 200 iter
+    "ASIC_100k.mtx.gz",           // 99340 (ok) 200 iter
     //"ASIC_320ks.mtx.gz",          // 321671 (ok) 200 iter
     //"ASIC_680k.mtx.gz",           // 682862 (ok) 200 iter
     //"af23560.mtx.gz",             // 23560 (no)

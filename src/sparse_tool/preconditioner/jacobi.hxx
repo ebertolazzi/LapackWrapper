@@ -169,10 +169,10 @@ namespace Sparse_tool {
         real_type const * _pA = LU_A.data();
 
         for ( integer k=0; k < PRECO::pr_size; ++k ) {
-          real_type tmp(0);
+          real_type tt(0);
           for ( integer i_cnt = _pR[1] - _pR[0]; i_cnt > 0; --i_cnt )
-            tmp += *_pA++ * x(*_pJ++);
-          TMP(k) = b(k) + omega1 * D(k) * x(k) - tmp;
+            tt += *_pA++ * x(*_pJ++);
+          TMP(k) = b(k) + omega1 * D(k) * x(k) - tt;
           ++_pR;
         }
         x = omega * (TMP.array()/D.array());

@@ -4,11 +4,11 @@ require_relative "../../Rakefile_common.rb"
 task :default => [:install_osx]
 
 VER='5.2.2'
+FILENAME="superlu-#{VER}.tar.gz"
 
 desc "download superlu-#{VER}.tar.gz lib"
 task :download do
-  filename = "superlu-#{VER}.tar.gz"
-  url_download( "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/#{filename}", filename )
+  url_download( "https://github.com/xiaoyeli/superlu/archive/refs/tags/v#{VER}.tar.gz", FILENAME )
 end
 
 def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
@@ -18,11 +18,10 @@ end
 
 desc "build superlu lib for osx"
 task :build_osx => [:download] do
-  filename = "superlu-#{VER}.tar.gz"
   if File.exists?('lib/lib/libsuperlu_osx_static.a') then
     puts "SuperLU already compiled"
   else
-    extract_tgz(filename)
+    extract_tgz(FILENAME)
 
     FileUtils.rm_rf 'superlu'
     FileUtils.mv    'SuperLU-'+VER, 'superlu'
@@ -51,11 +50,10 @@ end
 
 desc "build superlu lib for linux"
 task :build_linux => [:download] do
-  filename = "superlu-#{VER}.tar.gz"
   if File.exists?('lib/lib/libsuperlu_linux_static.a') then
     puts "SuperLU already compiled"
   else
-    extract_tgz(filename)
+    extract_tgz(FILENAME)
     FileUtils.rm_rf 'superlu'
     FileUtils.mv    'SuperLU-'+VER, 'superlu'
 
@@ -89,8 +87,7 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
      File.exists?("lib/lib/libsuperlu_win_#{args.bits}_static_debug.lib") then
     puts "SuperLU already compiled"
   else
-    filename = "superlu-#{VER}.tar.gz"
-    extract_tgz(filename)
+    extract_tgz(FILENAME)
     FileUtils.rm_rf 'superlu'
     FileUtils.mv    'SuperLU-'+VER, 'superlu'
 
