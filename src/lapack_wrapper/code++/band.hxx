@@ -35,14 +35,14 @@ namespace lapack_wrapper {
   template <typename T>
   class BandedLU : public LinearSystemSolver<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
     integer     m_m, m_n, m_nL, m_nU, m_ldAB;
     integer   * m_ipiv;
-    valueType * m_AB;
+    real_type * m_AB;
 
     bool        m_is_factorized;
 
@@ -70,16 +70,16 @@ namespace lapack_wrapper {
     void
     check( integer i, integer j ) const;
 
-    valueType const &
+    real_type const &
     operator () ( integer i, integer j ) const
     { return m_AB[iaddr(i,j)]; }
 
-    valueType &
+    real_type &
     operator () ( integer i, integer j )
     { return m_AB[iaddr(i,j)]; }
 
     void
-    insert( integer i, integer j, valueType v, bool sym );
+    insert( integer i, integer j, real_type v, bool sym );
 
     void zero();
 
@@ -87,7 +87,7 @@ namespace lapack_wrapper {
     load_block(
       integer         nr,
       integer         nc,
-      valueType const B[],
+      real_type const B[],
       integer         ldB,
       integer         irow,
       integer         icol
@@ -106,15 +106,15 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    void solve( char const who[], valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
-    void t_solve( char const who[], valueType xb[] ) const override;
+    bool solve( real_type xb[] ) const override;
+    void solve( char const who[], real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
+    void t_solve( char const who[], real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -122,14 +122,14 @@ namespace lapack_wrapper {
     solve(
       char const who[],
       integer    nrhs,
-      valueType  B[],
+      real_type  B[],
       integer    ldB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -137,7 +137,7 @@ namespace lapack_wrapper {
     t_solve(
       char const who[],
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -153,9 +153,9 @@ namespace lapack_wrapper {
     // y <- beta*y + alpha*A*x
     void
     aAxpy(
-      valueType       alpha,
-      valueType const x[],
-      valueType       y[]
+      real_type       alpha,
+      real_type const x[],
+      real_type       y[]
     ) const;
 
     void
@@ -175,12 +175,12 @@ namespace lapack_wrapper {
   template <typename T>
   class BandedSPD : public LinearSystemSolver<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
 
     integer     m_n, m_nD, m_ldAB;
-    valueType * m_AB;
+    real_type * m_AB;
     ULselect    m_UPLO;
     bool        m_is_factorized;
 
@@ -198,16 +198,16 @@ namespace lapack_wrapper {
       integer  nD    // number of upper diagonal
     );
 
-    valueType const &
+    real_type const &
     operator () ( integer i, integer j ) const
     { return m_AB[i+j*m_ldAB]; }
 
-    valueType &
+    real_type &
     operator () ( integer i, integer j )
     { return m_AB[i+j*m_ldAB]; }
 
     void
-    insert( integer i, integer j, valueType v, bool sym );
+    insert( integer i, integer j, real_type v, bool sym );
 
     void zero();
 
@@ -224,15 +224,15 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    void solve( char const who[], valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
-    void t_solve( char const who[], valueType xb[] ) const override;
+    bool solve( real_type xb[] ) const override;
+    void solve( char const who[], real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
+    void t_solve( char const who[], real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -240,14 +240,14 @@ namespace lapack_wrapper {
     solve(
       char const who[],
       integer    nrhs,
-      valueType  B[],
+      real_type  B[],
       integer    ldB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -255,7 +255,7 @@ namespace lapack_wrapper {
     t_solve(
       char const who[],
       integer    nrhs,
-      valueType  B[],
+      real_type  B[],
       integer    ldB
     ) const override;
 
@@ -271,9 +271,9 @@ namespace lapack_wrapper {
     /* not yet available
     // y <- beta*y + alpha*A*x
     void
-    aAxpy( valueType       alpha,
-           valueType const x[],
-           valueType       y[] ) const;
+    aAxpy( real_type       alpha,
+           real_type const x[],
+           real_type       y[] ) const;
 
     void
     dump( ostream_type & stream ) const;

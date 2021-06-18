@@ -78,6 +78,7 @@ main() {
   //double res = cg_poly( A, b, x, 1E-14, maxiter, 10, iter, &cout );
   double res = cocg( A, b, x, P, 1E-14, maxiter, iter, &cout );
   //double res = cocr( A, b, x, P, 1E-14, maxiter, iter, &cout );
+  cout << "res = " << res << '\n';
 
   r = b - A*x;
   cout << "Verify Residual = " << r.template lpNorm<Eigen::Infinity>() << '\n';

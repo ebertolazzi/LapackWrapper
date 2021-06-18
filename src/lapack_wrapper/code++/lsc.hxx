@@ -58,21 +58,21 @@ namespace lapack_wrapper {
   template <typename T>
   class LSC : public LinearSystemSolver<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
     integer     m_NR,  m_NC;
     integer     m_NRA, m_NRB;
     integer   * m_to_rowA;
     integer   * m_to_rowB;
-    valueType * m_Amat;
+    real_type * m_Amat;
     LU<T>       m_lu;
 
-    mutable Malloc<valueType> m_allocWorks;
-    mutable valueType *       m_work;
-    mutable valueType *       m_rhs;
+    mutable Malloc<real_type> m_allocWorks;
+    mutable real_type *       m_work;
+    mutable real_type *       m_rhs;
 
   public:
 
@@ -84,7 +84,7 @@ namespace lapack_wrapper {
       char const []      /* who */,
       integer            /* NR  */,
       integer            /* NC  */,
-      valueType const [] /* M[] */,
+      real_type const [] /* M[] */,
       integer            /* ldM */
     ) override {
       UTILS_ERROR0("LSC::factorize, virtual one not defined!");
@@ -94,7 +94,7 @@ namespace lapack_wrapper {
     factorize(
       integer            /* NR  */,
       integer            /* NC  */,
-      valueType const [] /* M[] */,
+      real_type const [] /* M[] */,
       integer            /* ldM */
     ) override {
       UTILS_ERROR0("LSC::factorize, virtual one not defined!");
@@ -104,23 +104,23 @@ namespace lapack_wrapper {
     factorize(
       integer         NR,
       integer         NC,
-      valueType const M[],
+      real_type const M[],
       integer         ldM,
       bool const      row_select[] // row selected for minimization
     );
 
     bool
-    solve( valueType xb[] ) const override;
+    solve( real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
     bool
-    t_solve( valueType [] ) const override {
+    t_solve( real_type [] ) const override {
       UTILS_ERROR0("LSC::t_solve not defined!");
     }
 

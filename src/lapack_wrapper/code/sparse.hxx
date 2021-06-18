@@ -30,7 +30,7 @@ namespace lapack_wrapper {
   template <typename T>
   class SparseMatrixBase {
   public:
-    typedef T                   valueType;
+    typedef T                   real_type;
     typedef SparseMatrixBase<T> Sparse;
     typedef MatrixWrapper<T>    MatW;
 
@@ -56,9 +56,9 @@ namespace lapack_wrapper {
 
     void
     y_manage(
-      valueType beta,
+      real_type beta,
       integer   DimY,
-      valueType y[],
+      real_type y[],
       integer   incY
     ) const {
       if ( Utils::isZero(beta) ) {
@@ -159,7 +159,7 @@ namespace lapack_wrapper {
     get_data(
       integer   const * & pRows,
       integer   const * & pCols,
-      valueType const * & pValues
+      real_type const * & pValues
     ) const = 0;
 
     //!
@@ -195,7 +195,7 @@ namespace lapack_wrapper {
     push_value_C(
       integer   row,
       integer   col,
-      valueType val
+      real_type val
     ) = 0;
 
     //!
@@ -210,7 +210,7 @@ namespace lapack_wrapper {
     push_value_F(
       integer   row,
       integer   col,
-      valueType val
+      real_type val
     ) = 0;
 
     //!
@@ -313,13 +313,13 @@ namespace lapack_wrapper {
     virtual
     void
     gemv(
-      valueType       alpha,
+      real_type       alpha,
       integer         DimX,
-      valueType const x[],
+      real_type const x[],
       integer         incX,
-      valueType       beta,
+      real_type       beta,
       integer         DimY,
-      valueType       y[],
+      real_type       y[],
       integer         incY
     ) const = 0;
 
@@ -338,13 +338,13 @@ namespace lapack_wrapper {
     virtual
     void
     gemv_Transposed(
-      valueType       alpha,
+      real_type       alpha,
       integer         DimX,
-      valueType const x[],
+      real_type const x[],
       integer         incX,
-      valueType       beta,
+      real_type       beta,
       integer         DimY,
-      valueType       y[],
+      real_type       y[],
       integer         incY
     ) const = 0;
 
@@ -363,19 +363,19 @@ namespace lapack_wrapper {
     virtual
     void
     gemv_Symmetric(
-      valueType       alpha,
+      real_type       alpha,
       integer         DimX,
-      valueType const x[],
+      real_type const x[],
       integer         incX,
-      valueType       beta,
+      real_type       beta,
       integer         DimY,
-      valueType       y[],
+      real_type       y[],
       integer         incY
     ) const = 0;
 
     virtual
     void
-    get_full_view( MatrixWrapper<valueType> & ) {
+    get_full_view( MatrixWrapper<real_type> & ) {
       UTILS_ERROR0( "get_full_view not defined\n");
     }
 
@@ -405,10 +405,10 @@ namespace lapack_wrapper {
   public:
     typedef SparseMatrixBase<real>     Sparse;
     typedef MatrixWrapper<real>        MatW;
-    typedef typename Sparse::valueType valueType;
+    typedef typename Sparse::real_type real_type;
 
   protected:
-    std::vector<valueType> m_vals;  //!< the values of the sparse matrix
+    std::vector<real_type> m_vals;  //!< the values of the sparse matrix
     std::vector<integer>   m_rows;  //!< the rows index
     std::vector<integer>   m_cols;  //!< the columns index
 
@@ -467,14 +467,14 @@ namespace lapack_wrapper {
     push_value_C(
       integer   row,
       integer   col,
-      valueType val
+      real_type val
     ) override;
 
     void
     push_value_F(
       integer   row,
       integer   col,
-      valueType val
+      real_type val
     ) override;
 
     void get_matrix( MatW & M ) const override;
@@ -486,7 +486,7 @@ namespace lapack_wrapper {
     get_data(
       integer   const * & pRows,
       integer   const * & pCols,
-      valueType const * & pValues
+      real_type const * & pValues
     ) const override {
       pRows   = &m_rows.front();
       pCols   = &m_cols.front();
@@ -495,37 +495,37 @@ namespace lapack_wrapper {
 
     void
     gemv(
-      valueType       alpha,
+      real_type       alpha,
       integer         DimX,
-      valueType const x[],
+      real_type const x[],
       integer         incX,
-      valueType       beta,
+      real_type       beta,
       integer         DimY,
-      valueType       y[],
+      real_type       y[],
       integer         incY
     ) const override;
 
     void
     gemv_Transposed(
-      valueType       alpha,
+      real_type       alpha,
       integer         DimX,
-      valueType const x[],
+      real_type const x[],
       integer         incX,
-      valueType       beta,
+      real_type       beta,
       integer         DimY,
-      valueType       y[],
+      real_type       y[],
       integer         incY
     ) const override;
 
     void
     gemv_Symmetric(
-      valueType       alpha,
+      real_type       alpha,
       integer         DimX,
-      valueType const x[],
+      real_type const x[],
       integer         incX,
-      valueType       beta,
+      real_type       beta,
       integer         DimY,
-      valueType       y[],
+      real_type       y[],
       integer         incY
     ) const override;
 
@@ -599,16 +599,16 @@ namespace lapack_wrapper {
     );
 
     void
-    fill( valueType const V[], integer M );
+    fill( real_type const V[], integer M );
 
     void
-    fill( std::vector<valueType> const & V );
+    fill( std::vector<real_type> const & V );
 
     void
     reserve( integer reserve_nnz );
 
     void
-    get_full_view( MatrixWrapper<valueType> & MW ) override {
+    get_full_view( MatrixWrapper<real_type> & MW ) override {
       UTILS_ASSERT0(
         m_matrix_is_full,
         "get_full_view, matrix is sparse\n"

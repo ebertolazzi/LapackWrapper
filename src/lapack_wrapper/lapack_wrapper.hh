@@ -23,8 +23,8 @@
 
 #include "../lapack_wrapper_config.hh"
 
-#ifndef LAPACK_WRAPPER_HH
-#define LAPACK_WRAPPER_HH
+#ifndef LAPACK_WRAPPER_dot_HH
+#define LAPACK_WRAPPER_dot_HH
 
 #define LAPACK_WRAPPER_MAJOR_VERSION 0
 #define LAPACK_WRAPPER_MINOR_VERSION 1
@@ -446,12 +446,11 @@ namespace lapack_wrapper {
 
   extern "C" {
     #ifdef LAPACK_WRAPPER_USE_ACCELERATE
-    void xerbla_( character const * what, integer * info );
+    int xerbla_( character const * what, integer * info, int );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    void xerbla_( character const * what, integer * info );
+    int xerbla_( character const * what, integer * info, int );
     #else
-    void
-    LAPACK_F77NAME(xerbla)( character const * what, integer * info );
+    int LAPACK_F77NAME(xerbla)( character const * what, integer * info, int );
     #endif
   };
 
@@ -459,11 +458,11 @@ namespace lapack_wrapper {
   void
   xerbla( character const * WHAT, integer info ) {
     #ifdef LAPACK_WRAPPER_USE_ACCELERATE
-    xerbla_( WHAT, &info );
+    xerbla_( WHAT, &info, strlen(WHAT) );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    xerbla_( WHAT, &info );
+    xerbla_( WHAT, &info, strlen(WHAT) );
     #else
-    LAPACK_F77NAME(xerbla)( WHAT, &info );
+    LAPACK_F77NAME(xerbla)( WHAT, &info, strlen(WHAT) );
     #endif
   }
 

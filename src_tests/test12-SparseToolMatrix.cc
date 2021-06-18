@@ -49,7 +49,7 @@ class all_matrix_test {
   }
 
   void
-  test_diff(Real const & err) {
+  test_diff( Real const & err ) {
     if ( err < 1e-10 ) {
       cout << " OK! " << err << '\n';
     } else {
@@ -64,22 +64,22 @@ class all_matrix_test {
   }
 
   void
-  add_S_mul_M_mul_V(Vector<Real> & res, Real const s, Vector<Real> const & a) {
+  add_S_mul_M_mul_V( Vector<Real> & Res, Real const s, Vector<Real> const & av ) {
     for ( integer k = 0; k < ccoor.nnz(); ++k ) {
       integer i = ccoor.getI()(k);
       integer j = ccoor.getJ()(k);
       Real    v = ccoor.getA()(k);
-      res(i) += s * v * a(j);
+      Res(i) += s * v * av(j);
     }
   }
 
   void
-  add_S_mul_Mt_mul_V(Vector<Real> & res, Real const s, Vector<Real> const & a) {
+  add_S_mul_Mt_mul_V( Vector<Real> & Res, Real const s, Vector<Real> const & av ) {
     for ( integer k = 0; k < ccoor.nnz(); ++k ) {
       integer i = ccoor.getI()(k);
       integer j = ccoor.getJ()(k);
       Real    v = ccoor.getA()(k);
-      res(j) += s * v * a(i );
+      Res(j) += s * v * av(i);
     }
   }
 
@@ -1047,6 +1047,7 @@ test_CCoor(
   out( N, ccoor.nnz(), timea, timeb );
 }
 
+static
 void
 test_timing() {
   Utils::TicToc tm;
@@ -1135,15 +1136,15 @@ test_timing() {
     fmt::print( "TO CROW {}[ms]\n", timea );
     fmt::print( "TO CCOL {}[ms]\n", timeb );
 
-    integer const n = ccoor.numRows();
+    integer const nr = ccoor.numRows();
 
-    v.resize(n);
-    res.resize(n);
+    v.resize(nr);
+    res.resize(nr);
 
     v = 1;
-    v[n/2] = 234;
-    v[n/4] = -3;
-    v[(n*3)/4 ] = -12;
+    v[nr/2] = 234;
+    v[nr/4] = -3;
+    v[(nr*3)/4 ] = -12;
 
     res = ccoor * v;
     res = res - crow * v;
@@ -1153,7 +1154,7 @@ test_timing() {
     res = res - ccol * v;
     fmt::print( "CCoor - CCol = {}\n", res.template lpNorm<Eigen::Infinity>() );
   
-    integer cicle_repeat = 1 + 400000 / n;
+    integer cicle_repeat = 1 + 400000 / nr;
     test_CRow (cicle_repeat, crow,  v);
     test_CCol (cicle_repeat, ccol,  v);
     test_CCoor(cicle_repeat, ccoor, v);

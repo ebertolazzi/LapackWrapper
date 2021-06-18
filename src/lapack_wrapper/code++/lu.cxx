@@ -49,7 +49,7 @@ namespace lapack_wrapper {
   void
   LU_no_alloc<T>::factorize_nodim(
     char const      who[],
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     integer info = gecopy(
@@ -72,7 +72,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LU_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
+  LU_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );
@@ -102,7 +102,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LU_no_alloc<T>::solve( valueType xb[] ) const {
+  LU_no_alloc<T>::solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
       NO_TRANSPOSE,
@@ -116,7 +116,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  LU_no_alloc<T>::solve( char const who[], valueType xb[] ) const {
+  LU_no_alloc<T>::solve( char const who[], real_type xb[] ) const {
     check_ls("solve");
     integer info = getrs(
       NO_TRANSPOSE,
@@ -131,7 +131,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LU_no_alloc<T>::t_solve( valueType xb[] ) const {
+  LU_no_alloc<T>::t_solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
       TRANSPOSE,
@@ -145,7 +145,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  LU_no_alloc<T>::t_solve( char const who[], valueType xb[] ) const {
+  LU_no_alloc<T>::t_solve( char const who[], real_type xb[] ) const {
     check_ls( who );
     integer info = getrs(
       TRANSPOSE,
@@ -160,7 +160,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LU_no_alloc<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
+  LU_no_alloc<T>::solve( integer nrhs, real_type B[], integer ldB ) const {
     if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
       NO_TRANSPOSE,
@@ -177,7 +177,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::solve(
     char const who[],
     integer    nrhs,
-    valueType  B[],
+    real_type  B[],
     integer    ldB
   ) const {
     check_ls(who);
@@ -196,7 +196,7 @@ namespace lapack_wrapper {
   bool
   LU_no_alloc<T>::t_solve(
     integer    nrhs,
-    valueType  B[],
+    real_type  B[],
     integer    ldB
   ) const {
     if ( m_nrows != m_ncols ) return false;
@@ -215,7 +215,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::t_solve(
     char const who[],
     integer    nrhs,
-    valueType  B[],
+    real_type  B[],
     integer    ldB
   ) const {
     check_ls( who );
@@ -230,9 +230,9 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  typename LU_no_alloc<T>::valueType
-  LU_no_alloc<T>::cond1( valueType norm1 ) const {
-    valueType rcond;
+  typename LU_no_alloc<T>::real_type
+  LU_no_alloc<T>::cond1( real_type norm1 ) const {
+    real_type rcond;
     integer info = gecon1(
       m_nrows, m_Afactorized, m_nrows,
       norm1, rcond, m_Work, m_Iwork
@@ -244,9 +244,9 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  typename LU_no_alloc<T>::valueType
-  LU_no_alloc<T>::condInf( valueType normInf ) const {
-    valueType rcond;
+  typename LU_no_alloc<T>::real_type
+  LU_no_alloc<T>::condInf( real_type normInf ) const {
+    real_type rcond;
     integer info = geconInf(
       m_nrows, m_Afactorized, m_nrows,
       normInf, rcond, m_Work, m_Iwork
@@ -319,7 +319,7 @@ namespace lapack_wrapper {
   LUPQ_no_alloc<T>::no_allocate(
     integer     NRC,
     integer     Lwork,
-    valueType * Work,
+    real_type * Work,
     integer     Liwork,
     integer   * iWork
   ) {
@@ -341,7 +341,7 @@ namespace lapack_wrapper {
   void
   LUPQ_no_alloc<T>::factorize_nodim(
     char const      who[],
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     integer info = gecopy(
@@ -362,7 +362,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LUPQ_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
+  LUPQ_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
     integer info = gecopy(
       m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC
     );
@@ -380,7 +380,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LUPQ_no_alloc<T>::solve( valueType xb[] ) const {
+  LUPQ_no_alloc<T>::solve( real_type xb[] ) const {
     // Apply permutations IPIV to RHS
     swaps( 1, xb, m_nRC, 0, m_nRC-2, m_i_piv, 1 );
 
@@ -406,7 +406,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LUPQ_no_alloc<T>::solve( integer nrhs, valueType B[], integer ldB ) const {
+  LUPQ_no_alloc<T>::solve( integer nrhs, real_type B[], integer ldB ) const {
     // Apply permutations IPIV to RHS
     swaps( nrhs, B, ldB, 0, m_nRC-2, m_i_piv, 1 );
 
@@ -432,7 +432,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LUPQ_no_alloc<T>::t_solve( valueType xb[] ) const {
+  LUPQ_no_alloc<T>::t_solve( real_type xb[] ) const {
     // Apply permutations JPIV to the solution (RHS)
     swaps( 1, xb, m_nRC, 0, m_nRC-2, m_j_piv, 1 );
 
@@ -458,7 +458,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LUPQ_no_alloc<T>::t_solve( integer nrhs, valueType B[], integer ldB ) const {
+  LUPQ_no_alloc<T>::t_solve( integer nrhs, real_type B[], integer ldB ) const {
 
     // Apply permutations JPIV to the solution (RHS)
     swaps( nrhs, B, ldB, 0, m_nRC-2, m_j_piv, 1 );

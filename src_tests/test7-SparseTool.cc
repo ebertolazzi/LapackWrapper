@@ -50,6 +50,7 @@ using namespace zstream;
 using Utils::istream_type;
 using Utils::ostream_type;
 
+static
 void
 testSparseTool( istream_type & mm_file ) {
   Utils::TicToc              tm;
@@ -107,15 +108,16 @@ testSparseTool( istream_type & mm_file ) {
   fmt::print("solve  (bicgstab) ...\n");
   tm.tic();
 
-  double   epsi       = 1e-15;
-  unsigned maxIter    = 1000;
-  unsigned maxSubIter = 50;
-  unsigned iter;
-  //double   res = bicgstab( A, rhs, x, preco, epsi, maxIter, iter, &cout );
-  double   res = gmres( A, rhs, x, preco, epsi, maxSubIter, maxIter, iter, &cout );
+  double               epsi       = 1e-15;
+  Sparse_tool::integer maxIter    = 1000;
+  Sparse_tool::integer maxSubIter = 50;
+  Sparse_tool::integer iter;
+  //double  res = bicgstab( A, rhs, x, preco, epsi, maxIter, iter, &cout );
+  double  res = gmres( A, rhs, x, preco, epsi, maxSubIter, maxIter, iter, &cout );
 
   tm.toc();
   fmt::print(" {} [ms] done\n",tm.elapsed_ms());
+  fmt::print("res = {}\n",res);
   
   resid = rhs - A*x;
 

@@ -49,7 +49,7 @@ namespace lapack_wrapper {
   Eigenvalues<T>::allocate( integer Nin ) {
     m_N = Nin;
     // calcolo memoria ottimale
-    valueType Lworkdummy;
+    real_type Lworkdummy;
     integer info = geev(
       false, false, Nin, nullptr, Nin,
       nullptr, nullptr, nullptr, Nin, nullptr, Nin, &Lworkdummy, -1
@@ -85,7 +85,7 @@ namespace lapack_wrapper {
   template <typename T>
   Eigenvalues<T>::Eigenvalues(
     integer         NRC,
-    valueType const data[],
+    real_type const data[],
     integer         ldData
   )
   : m_mem("Eigenvalues::mem_real")
@@ -118,7 +118,7 @@ namespace lapack_wrapper {
   Eigenvalues<T>::Eigenvalues(
     integer         NRC,
     integer         nnz,
-    valueType const values[],
+    real_type const values[],
     integer   const row[],
     integer   const col[]
   )
@@ -138,7 +138,7 @@ namespace lapack_wrapper {
   void
   Eigenvalues<T>::setup(
     integer         NRC,
-    valueType const data[],
+    real_type const data[],
     integer         ldData
   ) {
     this->allocate( NRC );
@@ -169,7 +169,7 @@ namespace lapack_wrapper {
   Eigenvalues<T>::setup(
     integer         NRC,
     integer         nnz,
-    valueType const values[],
+    real_type const values[],
     integer   const row[],
     integer   const col[]
   ) {
@@ -185,7 +185,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvalues<T>::getEigenvalue(
-    integer n, valueType & re, valueType & im
+    integer n, real_type & re, real_type & im
   ) const {
     re = m_Re[n];
     im = m_Im[n];
@@ -196,9 +196,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvalues<T>::getEigenvalue(
-    integer n, std::complex<valueType> & eig
+    integer n, std::complex<real_type> & eig
   ) const {
-    eig = std::complex<valueType>( m_Re[n], m_Im[n] );
+    eig = std::complex<real_type>( m_Re[n], m_Im[n] );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -206,8 +206,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvalues<T>::getEigenvalues(
-    std::vector<valueType> & re,
-    std::vector<valueType> & im
+    std::vector<real_type> & re,
+    std::vector<real_type> & im
   ) const {
     re.clear(); re.reserve( m_N );
     im.clear(); im.reserve( m_N );
@@ -222,11 +222,11 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvalues<T>::getEigenvalues(
-    std::vector<std::complex<valueType> > & eigs
+    std::vector<std::complex<real_type> > & eigs
   ) const {
     eigs.clear(); eigs.reserve( m_N );
     for ( int i = 0; i < m_N; ++i )
-      eigs.push_back( std::complex<valueType>( m_Re[i], m_Im[i]) );
+      eigs.push_back( std::complex<real_type>( m_Re[i], m_Im[i]) );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -303,7 +303,7 @@ namespace lapack_wrapper {
   template <typename T>
   Eigenvectors<T>::Eigenvectors(
     integer         NRC,
-    valueType const A_data[],
+    real_type const A_data[],
     integer         ldA
   )
   : m_mem("Eigenvectors::mem_real")
@@ -340,7 +340,7 @@ namespace lapack_wrapper {
   Eigenvectors<T>::Eigenvectors(
     integer         NRC,
     integer         A_nnz,
-    valueType const A_values[],
+    real_type const A_values[],
     integer   const A_row[],
     integer   const A_col[]
   )
@@ -362,7 +362,7 @@ namespace lapack_wrapper {
   void
   Eigenvectors<T>::setup(
     integer         NRC,
-    valueType const A_data[],
+    real_type const A_data[],
     integer         ldA
   ) {
     this->allocate( NRC );
@@ -395,7 +395,7 @@ namespace lapack_wrapper {
   Eigenvectors<T>::setup(
     integer         NRC,
     integer         A_nnz,
-    valueType const A_values[],
+    real_type const A_values[],
     integer   const A_row[],
     integer   const A_col[]
   ) {
@@ -411,7 +411,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvectors<T>::getEigenvalue(
-    integer n, valueType & re, valueType & im
+    integer n, real_type & re, real_type & im
   ) const {
     re = m_Re[n];
     im = m_Im[n];
@@ -422,9 +422,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvectors<T>::getEigenvalue(
-    integer n, std::complex<valueType> & eig
+    integer n, std::complex<real_type> & eig
   ) const {
-    eig = std::complex<valueType>( m_Re[n], m_Im[n] );
+    eig = std::complex<real_type>( m_Re[n], m_Im[n] );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -432,8 +432,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvectors<T>::getEigenvalues(
-    std::vector<valueType> & re,
-    std::vector<valueType> & im
+    std::vector<real_type> & re,
+    std::vector<real_type> & im
   ) const {
     re.clear(); re.reserve( m_N );
     im.clear(); im.reserve( m_N );
@@ -448,11 +448,11 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvectors<T>::getEigenvalues(
-    std::vector<std::complex<valueType> > & eigs
+    std::vector<std::complex<real_type> > & eigs
   ) const {
     eigs.clear(); eigs.reserve( m_N );
     for ( int i = 0;i < m_N; ++i )
-      eigs.push_back( std::complex<valueType>( m_Re[i], m_Im[i]) );
+      eigs.push_back( std::complex<real_type>( m_Re[i], m_Im[i]) );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -460,25 +460,25 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvectors<T>::getLeftEigenvector(
-    std::vector<std::vector<complexType> > & vecs
+    std::vector<std::vector<complex_type> > & vecs
   ) const {
     vecs.resize( size_t(m_N) );
     for ( integer n = 0; n < m_N; ++n ) {
-      std::vector<complexType> & v = vecs[n];
+      std::vector<complex_type> & v = vecs[n];
       v.clear(); v.reserve( m_N );
       T const * vr = m_VL + n * m_N;
       if ( m_Im[n] > 0 ) {
-        std::vector<complexType> & v1 = vecs[++n];
+        std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
         T const * vi = vr + m_N;
         for ( integer j = 0; j < m_N; ++j ) {
           // salvo vettore "gia" coniugato
-          v.push_back( complexType( vr[j], -vi[j] ) );
-          v1.push_back( complexType( vr[j], vi[j] ) );
+          v.push_back( complex_type( vr[j], -vi[j] ) );
+          v1.push_back( complex_type( vr[j], vi[j] ) );
         }
       } else {
         for ( integer j = 0; j < m_N; ++j )
-          v.push_back( complexType( vr[j], 0 ) );
+          v.push_back( complex_type( vr[j], 0 ) );
       }
     }
   }
@@ -488,24 +488,24 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvectors<T>::getRightEigenvector(
-    std::vector<std::vector<complexType> > & vecs
+    std::vector<std::vector<complex_type> > & vecs
   ) const {
     vecs.resize( size_t(m_N) );
     for ( integer n = 0; n < m_N; ++n ) {
-      std::vector<complexType> & v = vecs[n];
+      std::vector<complex_type> & v = vecs[n];
       v.clear(); v.reserve( m_N );
       T const * vr = m_VR + n * m_N;
       if ( m_Im[n] > 0 ) {
-        std::vector<complexType> & v1 = vecs[++n];
+        std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
         T const * vi = vr + m_N;
         for ( integer j = 0; j < m_N; ++j ) {
-          v.push_back( complexType( vr[j], vi[j] ) );
-          v1.push_back( complexType( vr[j], -vi[j] ) );
+          v.push_back( complex_type( vr[j], vi[j] ) );
+          v1.push_back( complex_type( vr[j], -vi[j] ) );
         }
       } else {
         for ( integer j = 0; j < m_N; ++j )
-          v.push_back( complexType( vr[j], 0 ) );
+          v.push_back( complex_type( vr[j], 0 ) );
       }
     }
   }
@@ -534,7 +534,7 @@ namespace lapack_wrapper {
   GeneralizedEigenvalues<T>::allocate( integer Nin ) {
     m_N = Nin;
     // calcolo memoria ottimale
-    valueType Lworkdummy;
+    real_type Lworkdummy;
     integer info = ggev(
       false, false, Nin, nullptr, Nin, nullptr, Nin,
       nullptr, nullptr, nullptr,
@@ -579,9 +579,9 @@ namespace lapack_wrapper {
   template <typename T>
   GeneralizedEigenvalues<T>::GeneralizedEigenvalues(
     integer         NRC,
-    valueType const A_data[],
+    real_type const A_data[],
     integer         ldA,
-    valueType const B_data[],
+    real_type const B_data[],
     integer         ldB
   )
   : m_mem("GeneralizedEigenvalues::mem_real")
@@ -620,11 +620,11 @@ namespace lapack_wrapper {
   GeneralizedEigenvalues<T>::GeneralizedEigenvalues(
     integer         NRC,
     integer         A_nnz,
-    valueType const A_values[],
+    real_type const A_values[],
     integer   const A_row[],
     integer   const A_col[],
     integer         B_nnz,
-    valueType const B_values[],
+    real_type const B_values[],
     integer   const B_row[],
     integer   const B_col[]
   )
@@ -650,9 +650,9 @@ namespace lapack_wrapper {
   void
   GeneralizedEigenvalues<T>::setup(
     integer         NRC,
-    valueType const A_data[],
+    real_type const A_data[],
     integer         ldA,
-    valueType const B_data[],
+    real_type const B_data[],
     integer         ldB
   ) {
     this->allocate( NRC );
@@ -689,11 +689,11 @@ namespace lapack_wrapper {
   GeneralizedEigenvalues<T>::setup(
     integer         NRC,
     integer         A_nnz,
-    valueType const A_values[],
+    real_type const A_values[],
     integer   const A_row[],
     integer   const A_col[],
     integer         B_nnz,
-    valueType const B_values[],
+    real_type const B_values[],
     integer   const B_row[],
     integer   const B_col[]
   ) {
@@ -712,7 +712,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvalues<T>::getEigenvalue(
-    integer n, valueType & re, valueType & im
+    integer n, real_type & re, real_type & im
   ) const {
     re = m_alphaRe[n]/m_beta[n];
     im = m_alphaIm[n]/m_beta[n];
@@ -723,9 +723,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvalues<T>::getEigenvalue(
-    integer n, std::complex<valueType> & eig
+    integer n, std::complex<real_type> & eig
   ) const {
-    eig = std::complex<valueType>( m_alphaRe[n], m_alphaIm[n] ) / m_beta[n];
+    eig = std::complex<real_type>( m_alphaRe[n], m_alphaIm[n] ) / m_beta[n];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -733,8 +733,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvalues<T>::getEigenvalues(
-    std::vector<valueType> & re,
-    std::vector<valueType> & im
+    std::vector<real_type> & re,
+    std::vector<real_type> & im
   ) const {
     re.clear(); re.reserve( m_N );
     im.clear(); im.reserve( m_N );
@@ -749,12 +749,12 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvalues<T>::getEigenvalues(
-    std::vector<std::complex<valueType> > & eigs
+    std::vector<std::complex<real_type> > & eigs
   ) const {
     eigs.clear(); eigs.reserve( m_N );
     for ( int i = 0;i < m_N; ++i )
       eigs.push_back(
-        std::complex<valueType>( m_alphaRe[i], m_alphaIm[i] ) / m_beta[i]
+        std::complex<real_type>( m_alphaRe[i], m_alphaIm[i] ) / m_beta[i]
       );
   }
 
@@ -863,9 +863,9 @@ namespace lapack_wrapper {
   template <typename T>
   GeneralizedEigenvectors<T>::GeneralizedEigenvectors(
     integer         NRC,
-    valueType const A_data[],
+    real_type const A_data[],
     integer         ldA,
-    valueType const B_data[],
+    real_type const B_data[],
     integer         ldB
   )
   : m_mem_real("GeneralizedEigenvectors::mem_real")
@@ -922,11 +922,11 @@ namespace lapack_wrapper {
   GeneralizedEigenvectors<T>::GeneralizedEigenvectors(
     integer         NRC,
     integer         A_nnz,
-    valueType const A_values[],
+    real_type const A_values[],
     integer   const A_row[],
     integer   const A_col[],
     integer         B_nnz,
-    valueType const B_values[],
+    real_type const B_values[],
     integer   const B_row[],
     integer   const B_col[]
   )
@@ -961,9 +961,9 @@ namespace lapack_wrapper {
   void
   GeneralizedEigenvectors<T>::setup(
     integer         NRC,
-    valueType const A_data[],
+    real_type const A_data[],
     integer         ldA,
-    valueType const B_data[],
+    real_type const B_data[],
     integer         ldB
   ) {
     this->allocate( NRC );
@@ -1000,11 +1000,11 @@ namespace lapack_wrapper {
   GeneralizedEigenvectors<T>::setup(
     integer         NRC,
     integer         A_nnz,
-    valueType const A_values[],
+    real_type const A_values[],
     integer   const A_row[],
     integer   const A_col[],
     integer         B_nnz,
-    valueType const B_values[],
+    real_type const B_values[],
     integer   const B_row[],
     integer   const B_col[]
   ) {
@@ -1023,7 +1023,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvectors<T>::getEigenvalue(
-    integer n, valueType & re, valueType & im
+    integer n, real_type & re, real_type & im
   ) const {
     re = m_alphaRe[n] / m_beta[n];
     im = m_alphaIm[n] / m_beta[n];
@@ -1034,9 +1034,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvectors<T>::getEigenvalue(
-    integer n, std::complex<valueType> & eig
+    integer n, std::complex<real_type> & eig
   ) const {
-    eig = std::complex<valueType>( m_alphaRe[n], m_alphaIm[n] ) / m_beta[n];
+    eig = std::complex<real_type>( m_alphaRe[n], m_alphaIm[n] ) / m_beta[n];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1044,8 +1044,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvectors<T>::getEigenvalues(
-    std::vector<valueType> & re,
-    std::vector<valueType> & im
+    std::vector<real_type> & re,
+    std::vector<real_type> & im
   ) const {
     re.clear(); re.reserve( m_N );
     im.clear(); im.reserve( m_N );
@@ -1060,12 +1060,12 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvectors<T>::getEigenvalues(
-    std::vector<std::complex<valueType> > & eigs
+    std::vector<std::complex<real_type> > & eigs
   ) const {
     eigs.clear(); eigs.reserve( m_N );
     for ( int i = 0; i < m_N; ++i )
       eigs.push_back(
-        std::complex<valueType>( m_alphaRe[i], m_alphaIm[i] ) / m_beta[i]
+        std::complex<real_type>( m_alphaRe[i], m_alphaIm[i] ) / m_beta[i]
       );
   }
 
@@ -1074,25 +1074,25 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvectors<T>::getLeftEigenvector(
-    std::vector<std::vector<complexType> > & vecs
+    std::vector<std::vector<complex_type> > & vecs
   ) const {
     vecs.resize( size_t(m_N) );
     for ( integer n = 0; n < m_N; ++n ) {
-      std::vector<complexType> & v = vecs[n];
+      std::vector<complex_type> & v = vecs[n];
       v.clear(); v.reserve( size_t(m_N) );
       T const * vr = m_VL + n * m_N;
       if ( m_alphaIm[n] > 0 ) {
-        std::vector<complexType> & v1 = vecs[++n];
+        std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
         T const * vi = vr + m_N;
         for ( integer j = 0; j < m_N; ++j ) {
           // salvo vettore "gia" coniugato
-          v.push_back( complexType( vr[j], -vi[j] ) );
-          v1.push_back( complexType( vr[j], vi[j] ) );
+          v.push_back( complex_type( vr[j], -vi[j] ) );
+          v1.push_back( complex_type( vr[j], vi[j] ) );
         }
       } else {
         for ( integer j = 0; j < m_N; ++j )
-          v.push_back( complexType( vr[j], 0 ) );
+          v.push_back( complex_type( vr[j], 0 ) );
       }
     }
   }
@@ -1102,24 +1102,24 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvectors<T>::getRightEigenvector(
-    std::vector<std::vector<complexType> > & vecs
+    std::vector<std::vector<complex_type> > & vecs
   ) const {
     vecs.resize( size_t(m_N) );
     for ( integer n = 0; n < m_N; ++n ) {
-      std::vector<complexType> & v = vecs[n];
+      std::vector<complex_type> & v = vecs[n];
       v.clear(); v.reserve( size_t(m_N) );
       T const * vr = m_VR + n * m_N;
       if ( m_alphaIm[n] > 0 ) {
-        std::vector<complexType> & v1 = vecs[++n];
+        std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
         T const * vi = vr + m_N;
         for ( integer j = 0; j < m_N; ++j ) {
-          v.push_back( complexType( vr[j], vi[j] ) );
-          v1.push_back( complexType( vr[j], -vi[j] ) );
+          v.push_back( complex_type( vr[j], vi[j] ) );
+          v1.push_back( complex_type( vr[j], -vi[j] ) );
         }
       } else {
         for ( integer j = 0; j < m_N; ++j )
-          v.push_back( complexType( vr[j], 0 ) );
+          v.push_back( complex_type( vr[j], 0 ) );
       }
     }
   }

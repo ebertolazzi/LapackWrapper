@@ -43,11 +43,6 @@ inline
 Real power2( Real const &  a)
 { return a*a; }
 
-void test_vector();
-void test_matrix();
-void test_trid();
-void test_timing();
-
 #include <fstream>
 
 #define LOOP(N)   for ( integer i = 0; i < N; ++i )
@@ -179,7 +174,9 @@ test_CCoor(
   out( N, ccoor.nnz(), timea, timeb );
 }
 
-void test_timing() {
+static
+void
+test_timing() {
   Utils::TicToc tm;
 
   integer const n = 10000;
@@ -267,15 +264,15 @@ void test_timing() {
       timea, timeb
     );
 
-    integer const n = ccoor.numRows();
+    integer const nr = ccoor.numRows();
 
-    v.resize(n);
-    res.resize(n);
+    v.resize(nr);
+    res.resize(nr);
 
     v = 1;
-    v[n/2] = 234;
-    v[n/4] = -3;
-    v[(n*3)/4 ] = -12;
+    v[nr/2] = 234;
+    v[nr/4] = -3;
+    v[(nr*3)/4 ] = -12;
 
     res = ccoor * v;
     res = res - crow * v;
@@ -285,7 +282,7 @@ void test_timing() {
     res = res - ccol * v;
     fmt::print( "CCoor - CCol = {:.5}\n", res.template lpNorm<Eigen::Infinity>() );
   
-    integer cicle_repeat = 1 + 400000 / n;
+    integer cicle_repeat = 1 + 400000 / nr;
     test_CRow (cicle_repeat, crow,  v);
     test_CCol (cicle_repeat, ccol,  v);
     test_CCoor(cicle_repeat, ccoor, v);

@@ -38,7 +38,7 @@ namespace lapack_wrapper {
   integer
   SVD_no_alloc<T>::get_Lwork( integer NR, integer NC ) const {
     integer minRC = std::min(NR,NC);
-    valueType tmp;
+    real_type tmp;
     integer info = gesvd(
       REDUCED, REDUCED,
       NR, NC,
@@ -72,7 +72,7 @@ namespace lapack_wrapper {
     integer     NR,
     integer     NC,
     integer     Lwork,
-    valueType * Work,
+    real_type * Work,
     integer     Liwork,
     integer   * iWork
   ) {
@@ -89,7 +89,7 @@ namespace lapack_wrapper {
       "Lwork must be >= {} and Liwork >= {}\n",
       NR, NC, Lwork, Liwork, Lmin, Limin
     );
-    valueType * ptr = Work;
+    real_type * ptr = Work;
     m_Afactorized = ptr; ptr += NR*NC;
     m_Umat        = ptr; ptr += m_minRC*NR;
     m_VTmat       = ptr; ptr += m_minRC*NC;
@@ -104,7 +104,7 @@ namespace lapack_wrapper {
   void
   SVD_no_alloc<T>::factorize_nodim(
     char const      who[],
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     integer info = gecopy(
@@ -154,7 +154,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  SVD_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
+  SVD_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );
@@ -189,12 +189,12 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  SVD_no_alloc<T>::solve( valueType xb[] ) const {
+  SVD_no_alloc<T>::solve( real_type xb[] ) const {
     // A = U*S*VT
     // U*S*VT*x=b --> VT^T S^+ U^T b
     // U  nRow x minRC
     // VT minRC x nCol
-    valueType smin = m_rcond*m_Svec[0];
+    real_type smin = m_rcond*m_Svec[0];
     Ut_mul( 1.0, xb, 1, 0.0, m_WorkSVD, 1 );
     for ( integer i = 0; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
     V_mul( 1.0, m_WorkSVD, 1, 0.0, xb, 1 );
@@ -205,12 +205,12 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  SVD_no_alloc<T>::t_solve( valueType xb[] ) const {
+  SVD_no_alloc<T>::t_solve( real_type xb[] ) const {
     // A = U*S*VT
     // U*S*VT*x=b --> VT^T S^+ U^T b
     // U  nRow x minRC
     // VT minRC x nCol
-    valueType smin = m_rcond*m_Svec[0];
+    real_type smin = m_rcond*m_Svec[0];
     Vt_mul( 1.0, xb, 1, 0.0, m_WorkSVD, 1 );
     for ( integer i = 0; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
     U_mul( 1.0, m_WorkSVD, 1, 0.0, xb, 1 );
@@ -289,8 +289,8 @@ namespace lapack_wrapper {
     integer         m,
     integer         n,
     integer         p,
-    valueType const A[], integer ldA_in,
-    valueType const B[], integer ldB_in
+    real_type const A[], integer ldA_in,
+    real_type const B[], integer ldB_in
   )
   : m_mem_real("GeneralizedSVD(real)")
   , m_mem_int("GeneralizedSVD(int)")
@@ -342,11 +342,11 @@ namespace lapack_wrapper {
     integer         n,
     integer         p,
     integer         A_nnz,
-    valueType const A_values[],
+    real_type const A_values[],
     integer   const A_row[],
     integer   const A_col[],
     integer         B_nnz,
-    valueType const B_values[],
+    real_type const B_values[],
     integer   const B_row[],
     integer   const B_col[]
   )
@@ -461,8 +461,8 @@ namespace lapack_wrapper {
     integer         m,
     integer         n,
     integer         p,
-    valueType const A[], integer ldA,
-    valueType const B[], integer ldB
+    real_type const A[], integer ldA,
+    real_type const B[], integer ldB
   ) {
     this->allocate( m, n, p );
     integer info = gecopy( m, n, A, ldA, m_A_saved, m );
@@ -504,11 +504,11 @@ namespace lapack_wrapper {
     integer         n,
     integer         p,
     integer         A_nnz,
-    valueType const A_values[],
+    real_type const A_values[],
     integer   const A_row[],
     integer   const A_col[],
     integer         B_nnz,
-    valueType const B_values[],
+    real_type const B_values[],
     integer   const B_row[],
     integer   const B_col[]
   ) {
@@ -524,7 +524,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  GeneralizedSVD<T>::info( ostream_type & stream, valueType eps ) const {
+  GeneralizedSVD<T>::info( ostream_type & stream, real_type eps ) const {
     fmt::print( stream,
       "A = {} x {}\n"
       "B = {} x {}\n",

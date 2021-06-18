@@ -25,18 +25,18 @@ namespace lapack_wrapper {
 
   //============================================================================
 
-  template <typename valueType>
+  template <typename real_type>
   inline
   void
   tridiag_axpy(
     integer         N,
-    valueType       alpha,
-    valueType const L[],
-    valueType const D[],
-    valueType const U[],
-    valueType const x[],
-    valueType       beta,
-    valueType       y[]
+    real_type       alpha,
+    real_type const L[],
+    real_type const D[],
+    real_type const U[],
+    real_type const x[],
+    real_type       beta,
+    real_type       y[]
   ) {
     if ( Utils::isZero(beta) ) {
       y[0] = alpha*(D[0]*x[0] + U[0] * x[1]);
@@ -65,8 +65,8 @@ namespace lapack_wrapper {
   TridiagonalSPD<T>::factorize(
     char const      who[],
     integer         N,
-    valueType const _L[],
-    valueType const _D[]
+    real_type const _L[],
+    real_type const _D[]
   ) {
     if ( m_nRC != N ) {
       m_allocReals.reallocate(3*N);
@@ -90,8 +90,8 @@ namespace lapack_wrapper {
   bool
   TridiagonalSPD<T>::factorize(
     integer         N,
-    valueType const _L[],
-    valueType const _D[]
+    real_type const _L[],
+    real_type const _D[]
   ) {
     if ( m_nRC != N ) {
       m_allocReals.reallocate(3*N);
@@ -110,8 +110,8 @@ namespace lapack_wrapper {
 
   template <typename T>
   T
-  TridiagonalSPD<T>::cond1( valueType norm1 ) const {
-    valueType rcond;
+  TridiagonalSPD<T>::cond1( real_type norm1 ) const {
+    real_type rcond;
     integer info = ptcon1( m_nRC, m_D, m_L, norm1, rcond, m_WORK );
     UTILS_ASSERT( info == 0, "TridiagonalSPD::cond1, return info = {}\n", info );
     return rcond;
@@ -121,7 +121,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalSPD<T>::solve( valueType xb[] ) const {
+  TridiagonalSPD<T>::solve( real_type xb[] ) const {
     integer info = pttrs( m_nRC, 1, m_D, m_L, xb, m_nRC );
     return info == 0;
   }
@@ -130,7 +130,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalSPD<T>::t_solve( valueType xb[] ) const {
+  TridiagonalSPD<T>::t_solve( real_type xb[] ) const {
     integer info = pttrs( m_nRC, 1, m_D, m_L, xb, m_nRC );
     return info == 0;
   }
@@ -139,7 +139,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalSPD<T>::solve( integer nrhs, valueType xb[], integer ldXB ) const {
+  TridiagonalSPD<T>::solve( integer nrhs, real_type xb[], integer ldXB ) const {
     integer info = pttrs( m_nRC, nrhs, m_D, m_L, xb, ldXB );
     return info == 0;
   }
@@ -148,7 +148,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalSPD<T>::t_solve( integer nrhs, valueType xb[], integer ldXB ) const {
+  TridiagonalSPD<T>::t_solve( integer nrhs, real_type xb[], integer ldXB ) const {
     integer info = pttrs( m_nRC, nrhs, m_D, m_L, xb, ldXB );
     return info == 0;
   }
@@ -159,12 +159,12 @@ namespace lapack_wrapper {
   void
   TridiagonalSPD<T>::axpy(
     integer         N,
-    valueType       alpha,
-    valueType const _L[],
-    valueType const _D[],
-    valueType const x[],
-    valueType       beta,
-    valueType       y[]
+    real_type       alpha,
+    real_type const _L[],
+    real_type const _D[],
+    real_type const x[],
+    real_type       beta,
+    real_type       y[]
   ) const {
     tridiag_axpy( N, alpha, _L, _D, _L, x, beta, y );
   }
@@ -183,9 +183,9 @@ namespace lapack_wrapper {
   TridiagonalLU<T>::factorize(
     char const      who[],
     integer         N,
-    valueType const L[],
-    valueType const D[],
-    valueType const U[]
+    real_type const L[],
+    real_type const D[],
+    real_type const U[]
   ) {
     if ( m_nRC != N ) {
       m_nRC = N;
@@ -214,9 +214,9 @@ namespace lapack_wrapper {
   bool
   TridiagonalLU<T>::factorize(
     integer         N,
-    valueType const L[],
-    valueType const D[],
-    valueType const U[]
+    real_type const L[],
+    real_type const D[],
+    real_type const U[]
   ) {
     if ( m_nRC != N ) {
       m_nRC = N;
@@ -241,8 +241,8 @@ namespace lapack_wrapper {
 
   template <typename T>
   T
-  TridiagonalLU<T>::cond1( valueType norm1 ) const {
-    valueType rcond;
+  TridiagonalLU<T>::cond1( real_type norm1 ) const {
+    real_type rcond;
     integer info = gtcon1(
       m_nRC, m_L, m_D, m_U, m_U2, m_IPIV, norm1, rcond, m_WORK, m_IWORK
     );
@@ -254,8 +254,8 @@ namespace lapack_wrapper {
 
   template <typename T>
   T
-  TridiagonalLU<T>::condInf( valueType normInf ) const {
-    valueType rcond;
+  TridiagonalLU<T>::condInf( real_type normInf ) const {
+    real_type rcond;
     integer info = gtconInf(
       m_nRC, m_L, m_D, m_U, m_U2, m_IPIV, normInf, rcond, m_WORK, m_IWORK
     );
@@ -268,7 +268,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalLU<T>::solve( valueType xb[] ) const {
+  TridiagonalLU<T>::solve( real_type xb[] ) const {
     integer info = gttrs(
       NO_TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
@@ -279,7 +279,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  TridiagonalLU<T>::solve( char const who[], valueType xb[] ) const {
+  TridiagonalLU<T>::solve( char const who[], real_type xb[] ) const {
     integer info = gttrs(
       NO_TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
@@ -295,7 +295,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalLU<T>::t_solve( valueType xb[] ) const {
+  TridiagonalLU<T>::t_solve( real_type xb[] ) const {
     integer info = gttrs(
       TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
@@ -306,7 +306,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  TridiagonalLU<T>::t_solve( char const who[], valueType xb[] ) const {
+  TridiagonalLU<T>::t_solve( char const who[], real_type xb[] ) const {
     integer info = gttrs(
       TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
@@ -322,7 +322,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalLU<T>::solve( integer nrhs, valueType xb[], integer ldXB ) const {
+  TridiagonalLU<T>::solve( integer nrhs, real_type xb[], integer ldXB ) const {
     integer info = gttrs(
       NO_TRANSPOSE, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
     );
@@ -336,7 +336,7 @@ namespace lapack_wrapper {
   TridiagonalLU<T>::solve(
     char const who[],
     integer    nrhs,
-    valueType  xb[],
+    real_type  xb[],
     integer    ldXB
   ) const {
     integer info = gttrs(
@@ -354,7 +354,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalLU<T>::t_solve( integer nrhs, valueType xb[], integer ldXB ) const {
+  TridiagonalLU<T>::t_solve( integer nrhs, real_type xb[], integer ldXB ) const {
     integer info = gttrs(
       TRANSPOSE, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
     );
@@ -368,7 +368,7 @@ namespace lapack_wrapper {
   TridiagonalLU<T>::t_solve(
     char const who[],
     integer    nrhs,
-    valueType  xb[],
+    real_type  xb[],
     integer    ldXB
   ) const {
     integer info = gttrs(
@@ -387,13 +387,13 @@ namespace lapack_wrapper {
   void
   TridiagonalLU<T>::axpy(
     integer         N,
-    valueType       alpha,
-    valueType const L[],
-    valueType const D[],
-    valueType const U[],
-    valueType const x[],
-    valueType       beta,
-    valueType       y[]
+    real_type       alpha,
+    real_type const L[],
+    real_type const D[],
+    real_type const U[],
+    real_type const x[],
+    real_type       beta,
+    real_type       y[]
   ) const {
     tridiag_axpy( N, alpha, L, D, U, x, beta, y );
   }
@@ -412,9 +412,9 @@ namespace lapack_wrapper {
   bool
   TridiagonalQR<T>::factorize(
     integer         N,
-    valueType const L[],
-    valueType const D[],
-    valueType const U[]
+    real_type const L[],
+    real_type const D[],
+    real_type const U[]
   ) {
     m_allocReals.reallocate(size_t(5*(N-1)));
     m_nRC = N;
@@ -439,18 +439,18 @@ namespace lapack_wrapper {
     m_normInfA = 0;
     integer i = 0;
     for (; i < N-2; ++i ) {
-      valueType Li = L[i];
+      real_type Li = L[i];
       rotg( m_BD[i], Li, m_C[i], m_S[i] );
       rot( 1, &m_BU[i],  1, &m_BD[i+1], 1, m_C[i], m_S[i] );
       rot( 1, &m_BU2[i], 1, &m_BU[i+1], 1, m_C[i], m_S[i] );
-      valueType sum = std::abs(m_BD[i]) + std::abs(m_BU[i]) + std::abs(m_BU2[i]);
+      real_type sum = std::abs(m_BD[i]) + std::abs(m_BU[i]) + std::abs(m_BU2[i]);
       if ( sum > m_normInfA ) m_normInfA = sum;
     }
-    valueType Li = L[i];
+    real_type Li = L[i];
     rotg( m_BD[i], Li, m_C[i], m_S[i] );
     rot( 1, &m_BU[i], 1, &m_BD[i+1], 1, m_C[i], m_S[i] );
 
-    valueType sum = std::abs(m_BD[i]) + std::abs(m_BU[i]);
+    real_type sum = std::abs(m_BD[i]) + std::abs(m_BU[i]);
     if ( sum > m_normInfA ) m_normInfA = sum;
     sum = std::abs(m_BD[i+1]);
     if ( sum > m_normInfA ) m_normInfA = sum;
@@ -464,9 +464,9 @@ namespace lapack_wrapper {
   TridiagonalQR<T>::factorize(
     char const      who[],
     integer         N,
-    valueType const L[],
-    valueType const D[],
-    valueType const U[]
+    real_type const L[],
+    real_type const D[],
+    real_type const U[]
   ) {
     bool ok = this->factorize( N, L, D, U );
     UTILS_ASSERT( ok, "TridiagonalQR<T>::factorize failed at {}\n", who );
@@ -476,7 +476,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  TridiagonalQR<T>::Rsolve( valueType xb[] ) const {
+  TridiagonalQR<T>::Rsolve( real_type xb[] ) const {
     xb[m_nRC-1] /= m_BD[m_nRC-1];
     xb[m_nRC-2] = (xb[m_nRC-2]-m_BU[m_nRC-2]*xb[m_nRC-1])/m_BD[m_nRC-2];
     for ( integer i = m_nRC-3; i >= 0; --i )
@@ -487,7 +487,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  TridiagonalQR<T>::RsolveTransposed( valueType xb[] ) const {
+  TridiagonalQR<T>::RsolveTransposed( real_type xb[] ) const {
     xb[0] /= m_BD[0];
     xb[1] = (xb[1]-m_BU[0]*xb[0])/m_BD[1];
     for ( integer i = 2; i < m_nRC; ++i )
@@ -498,7 +498,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalQR<T>::solve( valueType xb[] ) const {
+  TridiagonalQR<T>::solve( real_type xb[] ) const {
     // A x = b --> Q A x = Q b --> R x = Q b
     // applico Q b
     for ( integer i = 0; i < m_nRC-1; ++i )
@@ -511,7 +511,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalQR<T>::t_solve( valueType xb[] ) const {
+  TridiagonalQR<T>::t_solve( real_type xb[] ) const {
     // A^T x = b --> A^T Q^T Q x = b --> R^T Q x = b --> R^T y = b  x = Q^T y
     RsolveTransposed( xb );
     // applico Q^T b
@@ -524,7 +524,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalQR<T>::solve( integer nrhs, valueType xb[], integer ldXB ) const {
+  TridiagonalQR<T>::solve( integer nrhs, real_type xb[], integer ldXB ) const {
     // A x = b --> Q A x = Q b --> R x = Q b
     // applico Q b
     for ( integer i = 0; i < m_nRC-1; ++i )
@@ -538,7 +538,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  TridiagonalQR<T>::t_solve( integer nrhs, valueType xb[], integer ldXB ) const {
+  TridiagonalQR<T>::t_solve( integer nrhs, real_type xb[], integer ldXB ) const {
     // A^T x = b --> A^T Q^T Q x = b --> R^T Q x = b --> R^T y = b  x = Q^T y
     for ( integer i = 0; i < nrhs; ++i )
       RsolveTransposed(xb+i*ldXB);
@@ -553,13 +553,13 @@ namespace lapack_wrapper {
   void
   TridiagonalQR<T>::axpy(
     integer         N,
-    valueType       alpha,
-    valueType const L[],
-    valueType const D[],
-    valueType const U[],
-    valueType const x[],
-    valueType       beta,
-    valueType       y[]
+    real_type       alpha,
+    real_type const L[],
+    real_type const D[],
+    real_type const U[],
+    real_type const x[],
+    real_type       beta,
+    real_type       y[]
   ) const {
     tridiag_axpy( N, alpha, L, D, U, x, beta, y );
   }
@@ -595,7 +595,7 @@ namespace lapack_wrapper {
     T       lambda_in
   ) const {
 
-    valueType lambda = m_normInfA * lambda_in;
+    real_type lambda = m_normInfA * lambda_in;
     std::vector<T> D(m_nRC),
                    U(m_nRC-1),
                    U2(m_nRC-2),

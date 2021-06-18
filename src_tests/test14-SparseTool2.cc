@@ -90,10 +90,11 @@ int main() {
   //SORpreconditioner<double>   P(M,1.2);
   //SSORpreconditioner<double>   P(M,1.2);
 
-  double res = bicgstab( M, rhs, X, P, 1E-15, 100u, iter, &cout ); // solve extended linear system
+  double res = bicgstab( M, rhs, X, P, 1E-15, 100, iter, &cout ); // solve extended linear system
   
   bf1 = b1 - (A*x); bf2 = A^bf1; // Chech the projected residual A^T(b-A*x)
-  cout << "solution = " << x
+  cout << "res      = " << res
+       << "\nsolution = " << x
        << "\nresidual = " << bf2.template lpNorm<Eigen::Infinity>() << '\n';
   return 0;
 }

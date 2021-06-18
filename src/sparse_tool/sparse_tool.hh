@@ -14,8 +14,10 @@
   email: enrico.bertolazzi@unitn.it
 */
 
-#ifndef SPARSETOOL_HH
-#define SPARSETOOL_HH
+#pragma once
+
+#ifndef SPARSETOOL_dot_HH
+#define SPARSETOOL_dot_HH
 
 #include <cmath>
 
@@ -35,9 +37,7 @@
 
 #include <cstdint>
 
-#include <Eigen/Core>
-
-#include "Utils.hh"
+#include "../lapack_wrapper/lapack_wrapper_eigen.hh"
 
 // workaround for windows macros
 #ifdef max
@@ -211,9 +211,9 @@ namespace Sparse_tool {
   #endif
 
   //!
-  //! Define `uint32_t` as the type for indexing vector and matrices.
+  //! Use `lapack_wrapper::integer` as the type for indexing vector and matrices.
   //!
-  typedef uint32_t integer;
+  using lapack_wrapper::integer;
 
   //!
   //! Return minimum value between `A` and `b`.
@@ -545,8 +545,8 @@ namespace Sparse_tool {
     typedef Eigen::Matrix<T,Eigen::Dynamic,1> V_base;
     typedef T real_type;
 
-    Vector() : V_base() {}
-    explicit Vector( unsigned dim ) : V_base(dim) {}
+    Vector() : Eigen::Matrix<T,Eigen::Dynamic,1>(0) {}
+    explicit Vector( integer dim ) : Eigen::Matrix<T,Eigen::Dynamic,1>(dim) {}
 
     Vector( Vector<T> const & v ) {
       this->to_eigen() = v.to_eigen();
@@ -1759,7 +1759,7 @@ namespace Sparse_tool {
   public:
     typedef T real_type; //!< type of the element of the matrix
 
-    Sparse(void) { SBASE::setup(0, 0); }
+    Sparse(void) : SparseBase<Matrix>() { SBASE::setup(0, 0); }
     ~Sparse(void) {}
 
     //!
@@ -2378,7 +2378,7 @@ namespace Sparse_tool {
   //! ---------------------------------------
   //!
   //! The sparse pattern internal structure is essentially a sparse
-  //! compressed coordinate ones.  It consists of two big vector of unsigned
+  //! compressed coordinate ones.  It consists of two big vector of
   //! integer which contain the coordinate of nonzero elements.  We call
   //! `I` the vector that store the first coordinate, while we call
   //! `J` the vector that store the second coordinate.  For example the
@@ -2411,7 +2411,7 @@ namespace Sparse_tool {
   //! \code
   //! SparsePatter sp;              // define an empty SparsePattern class
   //! SparsePatter sp(nr, nc, nnz); // define a SparsePattern class on a pattern of nr rows and nc columns.
-  //!                               // The number nnz is an unsigned integer which determine the preallocated
+  //!                               // The number nnz is an integer which determine the preallocated
   //!                               // number of pattern elements stored in the class, in practice is the
   //!                               // initial dimension of vectors I and J.
   //! SparsePatter sp(sp1);         // define a SparsePattern object which is the copy of SparsePattern object sp1.
@@ -2488,7 +2488,7 @@ namespace Sparse_tool {
     //!
     //! Initialize and empty sparse pattern of `0` rows and `0` columns.
     //!
-    SparsePattern(void)
+    SparsePattern(void) : SparseBase<SparsePattern>()
     { }
 
     //! 
@@ -2499,7 +2499,7 @@ namespace Sparse_tool {
       integer nr,
       integer nc,
       integer mnnz = SPARSETOOL_DEFAULT_NNZ
-    )
+    ) : SparsePattern()
     { resize(nr, nc, mnnz); }
 
     //!
@@ -2517,6 +2517,7 @@ namespace Sparse_tool {
     //!
     template <typename Compare>
     SparsePattern( SparsePattern const & sp, Compare cmp )
+    : SparsePattern()
     { convert(sp,cmp); }
 
     //! 
@@ -2524,7 +2525,7 @@ namespace Sparse_tool {
     //!
     //! \param sp sparse pattern to be copied
     //! 
-    SparsePattern(SparsePattern const & sp) : SPARSE()
+    SparsePattern(SparsePattern const & sp) : SparsePattern()
     { convert(sp,all_ok()); }
 
     // convert => SparsePattern
@@ -2536,7 +2537,8 @@ namespace Sparse_tool {
     //! \param cmp comparator struct for the selection of the element in pattern `sp`
     //! 
     template <typename MAT, typename Compare>
-    SparsePattern(SparseBase<MAT> const & M, Compare cmp)
+    SparsePattern( SparseBase<MAT> const & M, Compare cmp )
+    : SparsePattern()
     { convert(M,cmp); }
 
     //! 
@@ -2545,7 +2547,8 @@ namespace Sparse_tool {
     //! \param M object derived from `Sparse`.
     //! 
     template <typename MAT>
-    SparsePattern(SparseBase<MAT> const & M)
+    SparsePattern( SparseBase<MAT> const & M )
+    : SparsePattern()
     { convert(M,all_ok()); }
 
     //! 
@@ -2712,7 +2715,7 @@ namespace Sparse_tool {
   //!
   //! The class `CCoorMatrix<T>` implement a
   //! `Compressed Coordinate` storage sparse scheme.
-  //! It consists of two big vector of unsigned integer which contain
+  //! It consists of two big vector of integer which contain
   //! the coordinate of nonzero elements and a big one of real number
   //! which contain the values.  We call `I` the vector that store the
   //! rows coordinate, `J` the vector that store the columns coordinate
@@ -2748,7 +2751,7 @@ namespace Sparse_tool {
   //! CCoorMatrix<double> ccoor; // define an empty CCoorMatrix<double> class
   //!
   //! // instance a CCoorMatrix<double> class of nr rows and nc columns.
-  //! // The number nnz is an unsigned integer which determine the pre-allocated number of elements
+  //! // The number nnz is an integer which determine the pre-allocated number of elements
   //! // stored in the class, in practice it is the initial dimension of vectors `I`, `J` and `A`.
   //! //  If needed the vectors are enlarged.
   //! CCoorMatrix<double> ccoor(nr, nc, nnz);
@@ -3328,7 +3331,7 @@ namespace Sparse_tool {
   //!
   //!
   //! The class `CRowMatrix<T>` implement a `Compressed Rows`
-  //! storage sparse scheme.  It consists of two big vector of unsigned
+  //! storage sparse scheme.  It consists of two big vector of
   //! integer which contain the coordinate of nonzero elements and a big one
   //! of real number which contain the values.  We call `R` the vector
   //! that store the start position of each row, `J` the vector that
@@ -3724,7 +3727,7 @@ namespace Sparse_tool {
   //! --------------------------------
   //! 
   //! The class `CColMatrix<T>` implement a `Compressed Columns`
-  //! storage sparse scheme.  It consists of two big vector of unsigned
+  //! storage sparse scheme.  It consists of two big vector of
   //! integer which contain the coordinate of nonzero elements and a big one
   //! of real number which contain the values.  We call `I` the vector
   //! that store the row index of each elements, `C` the vector that

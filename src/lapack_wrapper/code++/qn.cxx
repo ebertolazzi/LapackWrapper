@@ -69,16 +69,16 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BFGS<T>::update(
-    valueType const y[],
-    valueType const s[],
-    valueType       epsi
+    real_type const y[],
+    real_type const s[],
+    real_type       epsi
   ) {
-    valueType sy   = dot( m_dim, s, 1, y, 1 );
-    valueType slen = nrm2( m_dim, s, 1 );
-    valueType ylen = nrm2( m_dim, y, 1 );
+    real_type sy   = dot( m_dim, s, 1, y, 1 );
+    real_type slen = nrm2( m_dim, s, 1 );
+    real_type ylen = nrm2( m_dim, y, 1 );
     if ( sy >= epsi*slen*ylen ) {
       mult( y, m_z );
-      valueType yHy = dot( m_dim, m_z, 1, y, 1 );
+      real_type yHy = dot( m_dim, m_z, 1, y, 1 );
       syr( LOWER, m_dim, (1+yHy/sy)/sy, s, 1, m_H, m_dim );
       syr2( LOWER, m_dim, -1/sy, s, 1, m_z, 1, m_H, m_dim );
     }
@@ -95,16 +95,16 @@ namespace lapack_wrapper {
   template <typename T>
   void
   DFP<T>::update(
-    valueType const y[],
-    valueType const s[],
-    valueType       epsi
+    real_type const y[],
+    real_type const s[],
+    real_type       epsi
   ) {
-    valueType sy   = dot( m_dim, s, 1, y, 1 );
-    valueType slen = nrm2( m_dim, s, 1 );
-    valueType ylen = nrm2( m_dim, y, 1 );
+    real_type sy   = dot( m_dim, s, 1, y, 1 );
+    real_type slen = nrm2( m_dim, s, 1 );
+    real_type ylen = nrm2( m_dim, y, 1 );
     if ( sy >= epsi*slen*ylen ) {
       mult( y, m_z );
-      valueType yHy = dot( m_dim, m_z, 1, y, 1 );
+      real_type yHy = dot( m_dim, m_z, 1, y, 1 );
       syr( LOWER, m_dim, -1/yHy, m_z, 1, m_H, m_dim );
       syr( LOWER, m_dim,   1/sy, s,   1, m_H, m_dim );
     }
@@ -121,16 +121,16 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SR1<T>::update(
-    valueType const y[],
-    valueType const s[],
-    valueType       epsi
+    real_type const y[],
+    real_type const s[],
+    real_type       epsi
   ) {
     // z <- y - H * s
     copy( m_dim, y, 1, m_z, 1 );
-    mult( valueType(-1), s, 1, valueType(1), m_z, 1 );
-    valueType sz   = dot( m_dim, s, 1, m_z, 1 );
-    valueType slen = nrm2( m_dim, s, 1 );
-    valueType zlen = nrm2( m_dim, m_z, 1 );
+    mult( real_type(-1), s, 1, real_type(1), m_z, 1 );
+    real_type sz   = dot( m_dim, s, 1, m_z, 1 );
+    real_type slen = nrm2( m_dim, s, 1 );
+    real_type zlen = nrm2( m_dim, m_z, 1 );
     if ( std::abs(sz) >= epsi*slen*zlen )
       syr( LOWER, m_dim, 1/sz, m_z, 1, m_H, m_dim );
   }

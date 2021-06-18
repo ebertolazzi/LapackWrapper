@@ -34,16 +34,16 @@ namespace lapack_wrapper {
   template <typename T>
   class QN {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
   protected:
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
 
     integer     m_dim;
-    valueType * m_H;
-    valueType * m_s;
-    valueType * m_y;
-    valueType * m_z;
+    real_type * m_H;
+    real_type * m_s;
+    real_type * m_y;
+    real_type * m_z;
 
   public:
 
@@ -62,11 +62,11 @@ namespace lapack_wrapper {
     void
     allocate( integer N );
 
-    valueType const &
+    real_type const &
     operator () ( integer i, integer j ) const
     { return m_H[i+j*m_dim]; }
 
-    valueType &
+    real_type &
     operator () ( integer i, integer j )
     { return m_H[i+j*m_dim]; }
 
@@ -81,11 +81,11 @@ namespace lapack_wrapper {
     // r <- beta * r + alpha * H * x
     void
     mult(
-      valueType       alpha,
-      valueType const x[],
+      real_type       alpha,
+      real_type const x[],
       integer         inc_x,
-      valueType       beta,
-      valueType       r[],
+      real_type       beta,
+      real_type       r[],
       integer         inc_r
     ) const {
       symv(
@@ -100,22 +100,22 @@ namespace lapack_wrapper {
 
     // r <- H * x
     void
-    mult( valueType const x[], valueType r[] ) const {
-      mult( valueType(1), x, 1, valueType(0), r, 1 );
+    mult( real_type const x[], real_type r[] ) const {
+      mult( real_type(1), x, 1, real_type(0), r, 1 );
     }
 
     // r <- -H * x
     void
-    minus_mult( valueType const x[], valueType r[] ) const {
-      mult( valueType(-1), x, 1, valueType(0), r, 1 );
+    minus_mult( real_type const x[], real_type r[] ) const {
+      mult( real_type(-1), x, 1, real_type(0), r, 1 );
     }
 
     void
     update(
-      valueType const f0[],
-      valueType const f1[],
-      valueType const ss[],
-      valueType       epsi
+      real_type const f0[],
+      real_type const f1[],
+      real_type const ss[],
+      real_type       epsi
     ) {
       copy( m_dim,     f1, 1, m_y, 1 );
       axpy( m_dim, -1, f0, 1, m_y, 1 );
@@ -124,11 +124,11 @@ namespace lapack_wrapper {
 
     void
     update(
-      valueType const f0[],
-      valueType const f1[],
-      valueType const x0[],
-      valueType const x1[],
-      valueType       epsi
+      real_type const f0[],
+      real_type const f1[],
+      real_type const x0[],
+      real_type const x1[],
+      real_type       epsi
     ) {
       copy( m_dim,     f1, 1, m_y, 1 );
       axpy( m_dim, -1, f0, 1, m_y, 1 );
@@ -151,9 +151,9 @@ namespace lapack_wrapper {
     virtual
     void
     update(
-      valueType const y[],
-      valueType const s[],
-      valueType       epsi
+      real_type const y[],
+      real_type const s[],
+      real_type       epsi
     ) = 0;
 
   };
@@ -169,7 +169,7 @@ namespace lapack_wrapper {
   template <typename T>
   class BFGS : public QN<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
     using QN<T>::allocate;
     using QN<T>::zero;
@@ -193,9 +193,9 @@ namespace lapack_wrapper {
 
     void
     update(
-      valueType const y[],
-      valueType const s[],
-      valueType       epsi
+      real_type const y[],
+      real_type const s[],
+      real_type       epsi
     ) override;
 
   };
@@ -211,7 +211,7 @@ namespace lapack_wrapper {
   template <typename T>
   class DFP : public QN<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
     using QN<T>::allocate;
     using QN<T>::zero;
@@ -235,9 +235,9 @@ namespace lapack_wrapper {
 
     void
     update(
-      valueType const y[],
-      valueType const s[],
-      valueType       epsi
+      real_type const y[],
+      real_type const s[],
+      real_type       epsi
     ) override;
   };
 
@@ -252,7 +252,7 @@ namespace lapack_wrapper {
   template <typename T>
   class SR1 : public QN<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
     using QN<T>::allocate;
     using QN<T>::zero;
@@ -276,9 +276,9 @@ namespace lapack_wrapper {
 
     void
     update(
-      valueType const y[],
-      valueType const s[],
-      valueType       epsi
+      real_type const y[],
+      real_type const s[],
+      real_type       epsi
     ) override;
   };
 

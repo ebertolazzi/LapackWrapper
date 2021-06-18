@@ -194,7 +194,7 @@ namespace lapack_wrapper {
   BlockTridiagonalSymmetic<T>::insert(
     integer   ii,
     integer   jj,
-    valueType v,
+    real_type v,
     bool      sym
   ) {
     integer const * ib = m_row_blocks;
@@ -211,7 +211,7 @@ namespace lapack_wrapper {
     if ( ii < jmax ) {
       integer i  = ii - jmin;
       integer nr = jmax-jmin;
-      valueType * D = m_D_blocks[jBlock];
+      real_type * D = m_D_blocks[jBlock];
       D[i+j*nr] = v;
       if ( sym ) D[j+i*nr] = v;
     } else {
@@ -229,7 +229,7 @@ namespace lapack_wrapper {
   void
   BlockTridiagonalSymmetic<T>::setD(
     integer         n,
-    valueType const data[],
+    real_type const data[],
     integer         ldData,
     bool            transposed
   ) {
@@ -251,7 +251,7 @@ namespace lapack_wrapper {
   void
   BlockTridiagonalSymmetic<T>::setL(
     integer         n,
-    valueType const data[],
+    real_type const data[],
     integer         ldData,
     bool            transposed
   ) {
@@ -274,7 +274,7 @@ namespace lapack_wrapper {
   void
   BlockTridiagonalSymmetic<T>::setD(
     integer           n,
-    valueType const * data,
+    real_type const * data,
     integer           ldData,
     integer           beginRow,
     integer           beginCol,
@@ -283,7 +283,7 @@ namespace lapack_wrapper {
     bool              transposed
   ) {
     integer ldD = this->DnumRows(n);
-    valueType * D = m_D_blocks[n]+beginRow+beginCol*ldD;
+    real_type * D = m_D_blocks[n]+beginRow+beginCol*ldD;
 
     if ( transposed ) {
       getranspose( nrow, ncol, data, ldData, D, ldD );
@@ -302,7 +302,7 @@ namespace lapack_wrapper {
   void
   BlockTridiagonalSymmetic<T>::setL(
     integer           n,
-    valueType const * data,
+    real_type const * data,
     integer           ldData,
     integer           beginRow,
     integer           beginCol,
@@ -311,7 +311,7 @@ namespace lapack_wrapper {
     bool              transposed
   ) {
     integer ldL = this->LnumRows(n);
-    valueType * L = m_L_blocks[n]+beginRow+beginCol*ldL;
+    real_type * L = m_L_blocks[n]+beginRow+beginCol*ldL;
     if ( transposed ) {
       getranspose( nrow, ncol, data, ldData, L, ldL );
     } else {
@@ -347,9 +347,9 @@ namespace lapack_wrapper {
     for ( integer k=1; k < m_nBlocks; ++k ) {
       integer nr0 = this->DnumRows(k-1);
       integer nr1 = this->DnumRows(k);
-      valueType * L0 = m_L_blocks[k-1];
-      valueType * D0 = m_D_blocks[k-1];
-      valueType * D1 = m_D_blocks[k];
+      real_type * L0 = m_L_blocks[k-1];
+      real_type * D0 = m_D_blocks[k-1];
+      real_type * D1 = m_D_blocks[k];
       // Work = L^T nr0 x nr1
       getranspose( nr1, nr0, L0, nr1, m_Work, nr0 );
       // solve
@@ -402,9 +402,9 @@ namespace lapack_wrapper {
     for ( integer k=1; k < m_nBlocks; ++k ) {
       integer nr0 = this->DnumRows(k-1);
       integer nr1 = this->DnumRows(k);
-      valueType * L0 = m_L_blocks[k-1];
-      valueType * D0 = m_D_blocks[k-1];
-      valueType * D1 = m_D_blocks[k];
+      real_type * L0 = m_L_blocks[k-1];
+      real_type * D0 = m_D_blocks[k-1];
+      real_type * D1 = m_D_blocks[k];
       // Work = L^T nr0 x nr1
       getranspose( nr1, nr0, L0, nr1, m_Work, nr0 );
       // solve
@@ -436,16 +436,16 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  BlockTridiagonalSymmetic<T>::solve( valueType xb[] ) const {
+  BlockTridiagonalSymmetic<T>::solve( real_type xb[] ) const {
     if ( !m_is_factorized ) return false;
 
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
     integer k = 0;
     integer nr0 = this->DnumRows(0), nr1;
-    valueType * xkm1 = xb, *xk;
+    real_type * xkm1 = xb, *xk;
     while ( ++k < m_nBlocks ) {
       nr1 = this->DnumRows(k);
-      valueType const * L0 = m_L_blocks[k-1];
+      real_type const * L0 = m_L_blocks[k-1];
       xk = xkm1 + nr0;
       gemv(
         NO_TRANSPOSE, nr1, nr0,
@@ -462,7 +462,7 @@ namespace lapack_wrapper {
     for ( k = 0; k < m_nBlocks; ++k ) {
       nr1 = this->DnumRows(k);
       // solve
-      valueType const * D1 = m_D_blocks[k];
+      real_type const * D1 = m_D_blocks[k];
       integer info = getrs(
         NO_TRANSPOSE, nr1, 1, D1, nr1, m_B_permutation[k], xk, nr1
       );
@@ -474,7 +474,7 @@ namespace lapack_wrapper {
     xk -= nr1;
     while ( --k > 0 ) {
       nr0 = this->DnumRows(k-1);
-      valueType const * L0 = m_L_blocks[k-1];
+      real_type const * L0 = m_L_blocks[k-1];
       xkm1 = xk - nr0;
       gemv(
         TRANSPOSE, nr1, nr0,
@@ -495,7 +495,7 @@ namespace lapack_wrapper {
   bool
   BlockTridiagonalSymmetic<T>::solve(
     integer   nrhs,
-    valueType B[],
+    real_type B[],
     integer   ldB
   ) const {
 
@@ -504,10 +504,10 @@ namespace lapack_wrapper {
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
     integer k = 0;
     integer nr0 = this->DnumRows(0), nr1;
-    valueType * Bkm1 = B, *Bk;
+    real_type * Bkm1 = B, *Bk;
     while ( ++k < m_nBlocks ) {
       nr1 = this->DnumRows(k);
-      valueType const * L0 = m_L_blocks[k-1];
+      real_type const * L0 = m_L_blocks[k-1];
       Bk = Bkm1 + nr0;
       gemm(
         NO_TRANSPOSE, NO_TRANSPOSE, nr1, nrhs, nr0,
@@ -524,7 +524,7 @@ namespace lapack_wrapper {
     for ( k = 0; k < m_nBlocks; ++k ) {
       nr1 = this->DnumRows(k);
       // solve
-      valueType const * D1 = m_D_blocks[k];
+      real_type const * D1 = m_D_blocks[k];
       integer info = getrs(
         NO_TRANSPOSE, nr1, nrhs,
         D1, nr1, m_B_permutation[k],
@@ -538,7 +538,7 @@ namespace lapack_wrapper {
     Bk -= nr1;
     while ( --k > 0 ) {
       nr0 = this->DnumRows(k-1);
-      valueType const * L0 = m_L_blocks[k-1];
+      real_type const * L0 = m_L_blocks[k-1];
       Bkm1 = Bk - nr0;
       gemm(
         TRANSPOSE, NO_TRANSPOSE, nr0, nrhs, nr1,
@@ -557,7 +557,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  BlockTridiagonalSymmetic<T>::t_solve( valueType xb[] ) const
+  BlockTridiagonalSymmetic<T>::t_solve( real_type xb[] ) const
   { return BlockTridiagonalSymmetic<T>::solve( xb ); }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -566,7 +566,7 @@ namespace lapack_wrapper {
   bool
   BlockTridiagonalSymmetic<T>::t_solve(
     integer   nrhs,
-    valueType xb[],
+    real_type xb[],
     integer   ldXB
   ) const {
     return BlockTridiagonalSymmetic<T>::solve( nrhs, xb, ldXB );

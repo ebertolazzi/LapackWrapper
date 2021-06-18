@@ -38,12 +38,12 @@ namespace lapack_wrapper {
   class DiagMatrixWrapper {
 
   public:
-    typedef T                    valueType;
+    typedef T                    real_type;
     typedef DiagMatrixWrapper<T> DMatW;
 
   protected:
     integer     m_dim;
-    valueType * m_data;
+    real_type * m_data;
   public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,7 +64,7 @@ namespace lapack_wrapper {
     //! \param dim  number of elements on the diagonal of the mapped matrix
     //! 
     explicit
-    DiagMatrixWrapper( valueType * data, integer dim ) {
+    DiagMatrixWrapper( real_type * data, integer dim ) {
       m_data = data;
       m_dim  = dim;
     }
@@ -72,8 +72,8 @@ namespace lapack_wrapper {
     integer getDim()   const { return m_dim;}  //!< Number of elements
     integer numElems() const { return m_dim;}  //!< Number of elements
 
-    valueType const * data() const { return m_data; }
-    valueType       * data()       { return m_data; }
+    real_type const * data() const { return m_data; }
+    real_type       * data()       { return m_data; }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //! 
@@ -83,20 +83,20 @@ namespace lapack_wrapper {
     //! \param dim  dimension the mapped diagonal matrix
     //! 
     void
-    setup( valueType * data, integer dim ) {
+    setup( real_type * data, integer dim ) {
       m_data = data;
       m_dim  = dim;
     }
 
-    valueType const &
+    real_type const &
     operator [] ( integer i ) const
     { return m_data[i]; }
 
-    valueType &
+    real_type &
     operator [] ( integer i )
     { return m_data[i]; }
 
-    DMatW const & operator = (valueType v) {
+    DMatW const & operator = (real_type v) {
       fill( m_dim, m_data, v );
       return *this;
     }
@@ -150,7 +150,7 @@ namespace lapack_wrapper {
   template <typename T>
   class MatrixWrapper {
 
-    typedef T                    valueType;
+    typedef T                    real_type;
     typedef MatrixWrapper<T>     MatW;
     typedef DiagMatrixWrapper<T> DiagW;
     typedef SparseMatrixBase<T>  Sparse;
@@ -160,7 +160,7 @@ namespace lapack_wrapper {
     integer     m_nrows;   //!< Number of rows
     integer     m_ncols;   //!< Number of columns
     integer     m_ldData;  //!< Leadind dimension
-    valueType * m_data;    //!< pointer to matrix data
+    real_type * m_data;    //!< pointer to matrix data
 
     #if defined(DEBUG) || defined(_DEBUG)
     integer
@@ -210,7 +210,7 @@ namespace lapack_wrapper {
     //!
     explicit
     MatrixWrapper(
-      valueType * data,
+      real_type * data,
       integer     nr,
       integer     nc,
       integer     ld
@@ -239,8 +239,8 @@ namespace lapack_wrapper {
     integer lDim()     const { return m_ldData; } //!< Leading dimension
     integer numElems() const { return m_nrows*m_ncols; } //!< Number of elements
 
-    valueType const * data() const { return m_data; }
-    valueType       * data()       { return m_data; }
+    real_type const * data() const { return m_data; }
+    real_type       * data()       { return m_data; }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //! 
@@ -253,7 +253,7 @@ namespace lapack_wrapper {
     //! 
     void
     setup(
-      valueType * data,
+      real_type * data,
       integer     nr,
       integer     nc,
       integer     ld
@@ -266,7 +266,7 @@ namespace lapack_wrapper {
     //! \param[in] i row of the element
     //! \param[in] j column of the element
     //! 
-    valueType const &
+    real_type const &
     operator () ( integer i, integer j ) const
     { return m_data[this->iaddr(i,j)]; }
 
@@ -277,7 +277,7 @@ namespace lapack_wrapper {
     //! \param[in] i row of the element
     //! \param[in] j column of the element
     //! 
-    valueType &
+    real_type &
     operator () ( integer i, integer j )
     { return m_data[this->iaddr(i,j)]; }
 
@@ -301,7 +301,7 @@ namespace lapack_wrapper {
     //! \param[in] val value used to fill matrix
     //! 
     void
-    fill( valueType val ) {
+    fill( real_type val ) {
       gefill( m_nrows, m_ncols, m_data, m_ldData, val );
     }
 
@@ -311,7 +311,7 @@ namespace lapack_wrapper {
     //! \param[in] sc value used to scale matrix
     //! 
     void
-    scale_by( valueType sc );
+    scale_by( real_type sc );
 
     //! 
     //! Scale the matrix with value `sc`
@@ -325,7 +325,7 @@ namespace lapack_wrapper {
     //! 
     void
     scale_block(
-      valueType sc,
+      real_type sc,
       integer   nr,
       integer   nc,
       integer   irow,
@@ -355,13 +355,13 @@ namespace lapack_wrapper {
     //! Initialize the matrix as an identity matrix.
     //! 
     void
-    id( valueType dg ) {
+    id( real_type dg ) {
       geid( m_nrows, m_ncols, m_data, m_ldData, dg );
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     void
-    add_to_diag( valueType mu ) {
+    add_to_diag( real_type mu ) {
       axpy(
         std::min(m_nrows,m_ncols),
         1.0, &mu, 0,
@@ -377,7 +377,7 @@ namespace lapack_wrapper {
     //! \param[in] ldData leading dimension of the memory to be copied
     //! 
     //! 
-    void load( valueType const data[], integer ldData );
+    void load( real_type const data[], integer ldData );
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //! 
@@ -387,7 +387,7 @@ namespace lapack_wrapper {
     //! \param[in] ldData leading dimension of the memory to be copied
     //! 
     //! 
-    void load_transposed( valueType const data[], integer ldData );
+    void load_transposed( real_type const data[], integer ldData );
 
     //! 
     //! Initialize matrix using another matrix.
@@ -456,7 +456,7 @@ namespace lapack_wrapper {
     load_block(
       integer         nr,
       integer         nc,
-      valueType const B[],
+      real_type const B[],
       integer         ldB,
       integer         irow = 0,
       integer         icol = 0
@@ -498,7 +498,7 @@ namespace lapack_wrapper {
     load_block_transposed(
       integer         nr,
       integer         nc,
-      valueType const B[],
+      real_type const B[],
       integer         ldB,
       integer         irow = 0,
       integer         icol = 0
@@ -511,8 +511,8 @@ namespace lapack_wrapper {
         "bad parameters\n",
         nr, nc, irow, icol
       );
-      valueType const * pd = B;
-      valueType       * pp = m_data + this->iaddr(irow,icol);
+      real_type const * pd = B;
+      real_type       * pp = m_data + this->iaddr(irow,icol);
       for ( integer i = 0; i < nc; ++i, pd += ldB, ++pp )
         lapack_wrapper::copy( nr, pd, 1, pp, m_ldData );
     }
@@ -529,7 +529,7 @@ namespace lapack_wrapper {
     void
     load_diagonal_block(
       integer         n,
-      valueType const D[],
+      real_type const D[],
       integer         irow = 0,
       integer         icol = 0
     ) {
@@ -570,7 +570,7 @@ namespace lapack_wrapper {
     //! \param[in] icol   the column to be changed
     //!
     void
-    load_column( valueType const column[], integer icol )
+    load_column( real_type const column[], integer icol )
     { copy( m_nrows, column, 1, m_data + icol * m_ldData, 1 ); }
 
     //!
@@ -581,13 +581,13 @@ namespace lapack_wrapper {
     //! \param[in] irow the row to be changed
     //!
     void
-    load_row( valueType const row[], integer irow )
+    load_row( real_type const row[], integer irow )
     { copy( m_ncols, row, 1, m_data + irow, m_ldData ); }
 
     void
     load_sparse_column(
       integer         nnz,
-      valueType const values[],
+      real_type const values[],
       integer   const i_row[],
       integer         j
     );
@@ -595,7 +595,7 @@ namespace lapack_wrapper {
     void
     load_sparse_row(
       integer         nnz,
-      valueType const values[],
+      real_type const values[],
       integer         i,
       integer   const j_col[]
     );
@@ -626,7 +626,7 @@ namespace lapack_wrapper {
     load(
       integer   const rows[],
       integer   const cols[],
-      valueType const vals[],
+      real_type const vals[],
       integer         nnz
     );
 
@@ -634,7 +634,7 @@ namespace lapack_wrapper {
     load0(
       integer   const rows[],
       integer   const cols[],
-      valueType const vals[],
+      real_type const vals[],
       integer         nnz
     ) {
       this->zero_fill();
@@ -653,7 +653,7 @@ namespace lapack_wrapper {
     load_symmetric(
       integer   const rows[],
       integer   const cols[],
-      valueType const vals[],
+      real_type const vals[],
       integer         nnz
     );
 
@@ -661,7 +661,7 @@ namespace lapack_wrapper {
     load0_symmetric(
       integer   const rows[],
       integer   const cols[],
-      valueType const vals[],
+      real_type const vals[],
       integer         nnz
     ) {
       this->zero_fill();
@@ -716,7 +716,7 @@ namespace lapack_wrapper {
       integer         j_offs,
       integer   const rows[],
       integer   const cols[],
-      valueType const vals[],
+      real_type const vals[],
       integer         nnz
     );
 
@@ -726,7 +726,7 @@ namespace lapack_wrapper {
       integer         j_offs,
       integer   const rows[],
       integer   const cols[],
-      valueType const vals[],
+      real_type const vals[],
       integer         nnz
     ) {
       this->zero_fill();
@@ -749,7 +749,7 @@ namespace lapack_wrapper {
       integer         j_offs,
       integer   const rows[],
       integer   const cols[],
-      valueType const vals[],
+      real_type const vals[],
       integer         nnz
     );
 
@@ -759,7 +759,7 @@ namespace lapack_wrapper {
       integer         j_offs,
       integer   const rows[],
       integer   const cols[],
-      valueType const vals[],
+      real_type const vals[],
       integer         nnz
     ) {
       this->zero_fill();
@@ -774,7 +774,7 @@ namespace lapack_wrapper {
     //! \param data   pointer of memory with data to be copied
     //! \param ldData leading dimension of the memory to be copied
     //!
-    void add( valueType alpha, valueType const data[], integer ldData );
+    void add( real_type alpha, real_type const data[], integer ldData );
 
     //! 
     //! Add a block of memory to the matrix.
@@ -782,7 +782,7 @@ namespace lapack_wrapper {
     //! \param data   pointer of memory with data to be copied
     //! \param ldData leading dimension of the memory to be copied
     //!
-    void add( valueType const data[], integer ldData );
+    void add( real_type const data[], integer ldData );
 
     //
     //! Compute `R <- R + alpha * A`
@@ -791,7 +791,7 @@ namespace lapack_wrapper {
     //! \param A     first mapped matrix
     //!
     void
-    add( valueType alpha, MatW const & A ) {
+    add( real_type alpha, MatW const & A ) {
       #if defined(DEBUG) || defined(_DEBUG)
       UTILS_ASSERT0(
         m_nrows == A.m_nrows && m_ncols == A.m_ncols,
@@ -834,7 +834,7 @@ namespace lapack_wrapper {
     //! \param alpha  scalar used to multiply the sparse matrix
     //! \param sp     sparse matrix to be copied
     //!
-    void add( valueType alpha, Sparse const & sp );
+    void add( real_type alpha, Sparse const & sp );
 
     //! 
     //! Add sparse multiplied by `alpha` matrix to the object
@@ -846,7 +846,7 @@ namespace lapack_wrapper {
     //!
     void
     add(
-      valueType      alpha,
+      real_type      alpha,
       Sparse const & sp,
       integer        i_offs,
       integer        j_offs
@@ -865,9 +865,9 @@ namespace lapack_wrapper {
     friend
     void
     add(
-      valueType    alpha,
+      real_type    alpha,
       MatW const & A,
-      valueType    beta,
+      real_type    beta,
       MatW const & B,
       MatW       & C
     ) {
@@ -927,7 +927,7 @@ namespace lapack_wrapper {
         "get_transposed(...) incompatible matrices\n"
       );
       #endif
-      valueType const * pc = m_data;
+      real_type const * pc = m_data;
       for ( integer i = 0; i < m_ncols; ++i, pc += m_ldData )
         lapack_wrapper::copy( m_nrows, pc, 1, out.m_data + i, out.m_ldData );
     }
@@ -985,7 +985,7 @@ namespace lapack_wrapper {
         i_offs, j_offs, m_nrows, m_ncols
       );
       #endif
-      valueType const * pc = m_data+this->iaddr(i_offs,j_offs);
+      real_type const * pc = m_data+this->iaddr(i_offs,j_offs);
       for ( integer i = 0; i < to.m_ncols; ++i, pc += m_ldData )
         lapack_wrapper::copy( to.m_nrows, pc, 1, to.m_data + i, to.m_ldData );
     }
@@ -1000,10 +1000,10 @@ namespace lapack_wrapper {
     }
 
     void
-    print0( ostream_type & stream, valueType eps ) const {
+    print0( ostream_type & stream, real_type eps ) const {
       for ( integer i = 0; i < m_nrows; ++i ) {
         for ( integer j = 0; j < m_ncols; ++j ) {
-          valueType aij = (*this)(i,j);
+          real_type aij = (*this)(i,j);
           stream << std::setw(14);
           if ( std::abs( aij ) < eps ) stream << '.';
           else                         stream << aij;

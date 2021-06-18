@@ -3,7 +3,7 @@ require "fileutils"
 
 desc "install Eigen3"
 task :install do
-  FileUtils.cp_r 'eigen-3.3.9/Eigen', '../../lib3rd/include'
+  FileUtils.cp_r 'eigen-3.3.9/Eigen', '../../src'
 end
 
 task :install_osx => :install do

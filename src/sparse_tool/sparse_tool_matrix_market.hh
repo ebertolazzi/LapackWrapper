@@ -57,7 +57,7 @@ namespace Sparse_tool {
   //!
   //! Type of the element of the sparse matrix.
   //!
-  typedef enum { MM_PATTERN = 0, MM_INTEGER = 1, MM_REAL = 2, MM_COMPLEX = 3 } ValueType;
+  typedef enum { MM_PATTERN = 0, MM_INTEGER = 1, MM_REAL = 2, MM_COMPLEX = 3 } real_type;
 
   //!
   //! The type of the matrix.
@@ -80,13 +80,13 @@ namespace Sparse_tool {
   //!
   class MatrixMarket {
 
-    char     line[128], str[5][128];
-    unsigned nRows, nCols, numNnz, numLine;
+    char    line[128], str[5][128];
+    integer nRows, nCols, numNnz, numLine;
 
     //! the type of matrix data: sparse or full
     CoorType   cType;
     //! the type of the data: ral integer or pattern
-    ValueType  vType;
+    real_type  vType;
     MatrixType mType; //! the matrix type
 
     bool
@@ -219,18 +219,18 @@ namespace Sparse_tool {
 
       sp.resize( nRows, nCols, numNnz );
 
-      for ( unsigned kk = 0; kk < numNnz; ++kk ) {
+      for ( integer kk = 0; kk < numNnz; ++kk ) {
         while ( getLine( stream ) ); // skip comments
-        unsigned i, j;
-        sscanf( line, "%u%u", &i, &j );
-        --i; --j; // zero base index
+        integer i, j;
+        sscanf( line, "%d%d", &i, &j );
 
         UTILS_ASSERT(
-          i <= nRows && j <= nCols,
+          i >= 1 && j >= 1 && i <= nRows && j <= nCols,
           "Sparse_tool: In reading Matrix Market File, bad pattern index on line {}\nRead: <<{}>>\n",
           numLine, line
         );
 
+        --i; --j; // zero base index
         sp.insert( i, j );
         if ( mType != MM_GENERAL ) sp.insert( j, i );
       }
@@ -255,19 +255,18 @@ namespace Sparse_tool {
 
       mat.resize( nRows, nCols, numNnz );
 
-      for ( unsigned kk = 0; kk < numNnz; ++kk ) {
+      for ( integer kk = 0; kk < numNnz; ++kk ) {
         while ( getLine( stream ) ); // skip comments
-        unsigned i, j;
-        int      a;
-        sscanf( line, "%u%u%d", &i, &j, &a );
-        --i; --j; // zero base index
+        integer i, j, a;
+        sscanf( line, "%d%d%d", &i, &j, &a );
 
         UTILS_ASSERT(
-          i <= nRows && j <= nCols,
+          i >= 1 && j >= 1 && i <= nRows && j <= nCols,
           "Sparse_tool: In reading Matrix Market File, bad pattern index on line {}\nRead: <<{}>>\n",
           numLine, line
         );
 
+        --i; --j; // zero base index
         mat.insert(i,j) = a;
         switch ( mType ) {
           case MM_SYMMETRIC:      mat.insert(j,i) =  a; break;
@@ -286,7 +285,7 @@ namespace Sparse_tool {
 
       readHeader( stream );
 
-      static char const *fmts[4] = { "%u%u", "%u%u%d", "%u%u%lf", "%u%u%lf%lf" };
+      static char const *fmts[4] = { "%d%d", "%d%d%d", "%d%d%lf", "%d%d%lf%lf" };
 
       UTILS_ASSERT0(
         cType == MM_COORDINATE,
@@ -300,10 +299,10 @@ namespace Sparse_tool {
 
       mat.resize( nRows, nCols, numNnz );
 
-      for ( unsigned kk = 0; kk < numNnz; ++kk ) {
+      for ( integer kk = 0; kk < numNnz; ++kk ) {
         while ( getLine( stream ) ); // skip comments
-        unsigned i, j;
-        double   re, im = 0;
+        integer i, j;
+        double  re, im = 0;
         sscanf( line, fmts[vType], &i, &j, &re, &im );
         --i; --j; // zero base index
 
@@ -348,15 +347,15 @@ namespace Sparse_tool {
 
       mat.resize( nRows, nCols, numNnz );
 
-      for ( unsigned kk = 0; kk < numNnz; ++kk ) {
+      for ( integer kk = 0; kk < numNnz; ++kk ) {
         while ( getLine( stream ) ); // skip comments
-        unsigned i, j;
-        double   a;
-        sscanf( line, "%u%u%lf", &i, &j, &a );
+        integer i, j;
+        double  a;
+        sscanf( line, "%d%d%lf", &i, &j, &a );
         --i; --j; // zero base index
 
         SPARSETOOL_ASSERT(
-          i <= nRows && j <= nCols,
+          i >= 1 && j >= 1 && i <= nRows && j <= nCols,
           "Sparse_tool: MatrixMarket: In reading Matrix Market File, bad pattern index on line " <<
           numLine << "\nRead<<" << line << ">>, data is " << *this
         );
@@ -387,7 +386,7 @@ namespace Sparse_tool {
         "Sparse_tool: MatrixMarket: try to read an integer matrix into a non integer one!, data is " << *this
       );
       mat.resize( numNnz );
-      for ( unsigned kk = 0; kk < numNnz; ++kk ) {
+      for ( integer kk = 0; kk < numNnz; ++kk ) {
         int a;
         sscanf(line, "%d", &a);
         mat(kk) = a;
@@ -410,7 +409,7 @@ namespace Sparse_tool {
       );
       static char const *fmts[4] = { "", "%lf", "%lf", "%lf%lf" };
       mat.clear(); mat.resize( numNnz );
-      for ( unsigned kk = 0; kk < numNnz; ++kk ) {
+      for ( integer kk = 0; kk < numNnz; ++kk ) {
         double re, im = 0;
         sscanf(line, fmts[mType], &re, &im );
         mat.push_back( std::complex<T>(re,im) );
@@ -437,7 +436,7 @@ namespace Sparse_tool {
       );
       //static char const *fmts[4] = { "", "%lf", "%lf", "%lf%lf" };
       mat.clear(); mat.resize( numNnz );
-      for ( unsigned kk = 0; kk < numNnz; ++kk ) {
+      for ( integer kk = 0; kk < numNnz; ++kk ) {
         double a;
         sscanf(line, "%lf", &a );
         mat.push_back( a );
@@ -490,9 +489,9 @@ namespace Sparse_tool {
 
     ///////////////////////////////////////////////////////////////////
 
-    unsigned numRows() const { return nRows;  } //!< number of rows of loaded matrix
-    unsigned numCols() const { return nCols;  } //!< number of columns of loaded matrix
-    unsigned nnz()     const { return numNnz; } //!< total number of nonzeros
+    integer numRows() const { return nRows;  } //!< number of rows of loaded matrix
+    integer numCols() const { return nCols;  } //!< number of columns of loaded matrix
+    integer nnz()     const { return numNnz; } //!< total number of nonzeros
 
     //!
     //! Type of storage:
@@ -507,7 +506,7 @@ namespace Sparse_tool {
     //! - `2` type `double`
     //! - `3` type `complex<double>`
     //!
-    ValueType value_type() const { return vType; }
+    real_type value_type() const { return vType; }
     //! 
     //! Matrix type:
     //! - `0` general matrix
@@ -539,7 +538,7 @@ namespace Sparse_tool {
   MatrixMarketSaveToFile(
     std::string               const & fname,
     Sparse<std::complex<T>,M> const & A,
-    ValueType                         vType,
+    real_type                         vType,
     MatrixType                        mType
   ) {
 
@@ -595,7 +594,7 @@ namespace Sparse_tool {
   MatrixMarketSaveToFile(
     std::string const & fname,
     Sparse<T,M> const & A,
-    ValueType           vType,
+    real_type           vType,
     MatrixType          mType
   ) {
 

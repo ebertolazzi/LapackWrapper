@@ -80,7 +80,7 @@ namespace lapack_wrapper {
   LSC<T>::factorize(
     integer         NR,
     integer         NC,
-    valueType const M[],
+    real_type const M[],
     integer         ldM,
     bool const      row_select[] // row selected for minimization
   ) {
@@ -132,7 +132,7 @@ namespace lapack_wrapper {
       :|:  \ A   -I  /
       \*/
       integer           NCi = NC + i;
-      valueType const * Mi  = M + m_to_rowA[i];;
+      real_type const * Mi  = M + m_to_rowA[i];;
       lapack_wrapper::copy( NC, Mi, ldM, m_work+NCi,    NN );
       lapack_wrapper::copy( NC, Mi, ldM, m_work+NCi*NN, 1  );
       m_work[ NCi*(NN+1) ] = -1;
@@ -140,7 +140,7 @@ namespace lapack_wrapper {
     // B
     for ( integer i = 0; i < m_NRB; ++i ) {
       integer           NCi = NC + m_NRA + i;
-      valueType const * Mi  = M + m_to_rowB[i];
+      real_type const * Mi  = M + m_to_rowB[i];
       lapack_wrapper::copy( NC, Mi, ldM, m_work+NCi,    NN );
       lapack_wrapper::copy( NC, Mi, ldM, m_work+NCi*NN, 1  );
     }
@@ -151,7 +151,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LSC<T>::solve( valueType xb[] ) const {
+  LSC<T>::solve( real_type xb[] ) const {
 
     m_allocWorks.reallocate( size_t(m_NRA+m_NR+m_NC) );
     m_work = m_allocWorks( size_t(m_NRA) );
@@ -193,7 +193,7 @@ namespace lapack_wrapper {
   bool
   LSC<T>::solve(
     integer   nrhs,
-    valueType B[],
+    real_type B[],
     integer   ldB
   ) const {
 

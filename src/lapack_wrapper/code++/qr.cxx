@@ -35,7 +35,7 @@ namespace lapack_wrapper {
   template <typename T>
   integer
   QR_no_alloc<T>::get_Lwork_QR( integer NR, integer NC ) const {
-    valueType tmp; // get optimal allocation
+    real_type tmp; // get optimal allocation
     integer info = geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 );
     UTILS_ASSERT(
       info == 0,
@@ -52,7 +52,7 @@ namespace lapack_wrapper {
     integer     NR,
     integer     NC,
     integer     Lwork,
-    valueType * Work
+    real_type * Work
   ) {
     m_nrows      = NR;
     m_ncols      = NC;
@@ -64,7 +64,7 @@ namespace lapack_wrapper {
       "Lwork must be >= {}\n",
       NR, NC, Lwork, Lwmin
     );
-    valueType * ptr = Work;
+    real_type * ptr = Work;
     m_Afactorized = ptr; ptr += NR*NC;
     m_Tau         = ptr; ptr += m_nReflector;
     m_LworkQR     = Lwork - NR*NC - m_nReflector;
@@ -77,7 +77,7 @@ namespace lapack_wrapper {
   void
   QR_no_alloc<T>::factorize_nodim(
     char const      who[],
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     integer info = gecopy(
@@ -102,7 +102,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QR_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
+  QR_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
     );
@@ -128,7 +128,7 @@ namespace lapack_wrapper {
     integer       nRefl,
     integer       NR,
     integer       NC,
-    valueType     C[],
+    real_type     C[],
     integer       ldC
   ) const {
     UTILS_ASSERT(
@@ -161,14 +161,14 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::Q_mul( valueType x[] ) const {
+  QR_no_alloc<T>::Q_mul( real_type x[] ) const {
     applyQ( LEFT, NO_TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
   }
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
-  QR_no_alloc<T>::Qt_mul( valueType x[] ) const {
+  QR_no_alloc<T>::Qt_mul( real_type x[] ) const {
     applyQ( LEFT, TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
   }
 
@@ -179,7 +179,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::Q_mul(
     integer   nr,
     integer   nc,
-    valueType C[],
+    real_type C[],
     integer   ldC
   ) const {
     applyQ( LEFT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
@@ -192,7 +192,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::Qt_mul(
     integer   nr,
     integer   nc,
-    valueType C[],
+    real_type C[],
     integer   ldC
   ) const {
     applyQ( LEFT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
@@ -205,7 +205,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::mul_Q(
     integer   nr,
     integer   nc,
-    valueType C[],
+    real_type C[],
     integer   ldC
   ) const {
     applyQ( RIGHT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
@@ -218,7 +218,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::mul_Qt(
     integer   nr,
     integer   nc,
-    valueType C[],
+    real_type C[],
     integer   ldC
   ) const {
     applyQ( RIGHT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
@@ -230,7 +230,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::invR_mul( valueType x[], integer incx ) const {
+  QR_no_alloc<T>::invR_mul( real_type x[], integer incx ) const {
     trsv( // m_nrows = leading dimension
       UPPER, NO_TRANSPOSE, NON_UNIT,
       m_nReflector, m_Afactorized, m_nrows, x, incx
@@ -241,7 +241,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::invR_mul( integer nr, integer nc, valueType C[], integer ldC ) const {
+  QR_no_alloc<T>::invR_mul( integer nr, integer nc, real_type C[], integer ldC ) const {
     trsm(
       LEFT, UPPER, NO_TRANSPOSE, NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
@@ -252,7 +252,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::invRt_mul( valueType x[], integer incx ) const {
+  QR_no_alloc<T>::invRt_mul( real_type x[], integer incx ) const {
     trsv( // m_nrows = leading dimension
       UPPER, TRANSPOSE, NON_UNIT,
       m_nReflector, m_Afactorized, m_nrows, x, incx
@@ -266,7 +266,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::invRt_mul(
     integer   nr,
     integer   nc,
-    valueType C[],
+    real_type C[],
     integer   ldC
   ) const {
     trsm(
@@ -282,7 +282,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::mul_invR(
     integer nr,
     integer nc,
-    valueType C[],
+    real_type C[],
     integer ldC
   ) const {
     trsm(
@@ -295,7 +295,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::mul_invRt( integer nr, integer nc, valueType C[], integer ldC ) const {
+  QR_no_alloc<T>::mul_invRt( integer nr, integer nc, real_type C[], integer ldC ) const {
     trsm(
       RIGHT, UPPER, TRANSPOSE, NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
@@ -306,7 +306,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::getR( valueType R[], integer ldR ) const {
+  QR_no_alloc<T>::getR( real_type R[], integer ldR ) const {
     integer minRC = std::min( m_nrows, m_ncols );
     gezero( minRC, minRC, R, ldR );
     for ( integer i = 0; i < minRC; ++i )
@@ -318,7 +318,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::getRt( valueType R[], integer ldR ) const {
+  QR_no_alloc<T>::getRt( real_type R[], integer ldR ) const {
     integer minRC = std::min( m_nrows, m_ncols );
     gezero( minRC, minRC, R, ldR );
     for ( integer i = 0; i < minRC; ++i )
@@ -356,7 +356,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::getQ( valueType Q[], integer ldQ ) const {
+  QR_no_alloc<T>::getQ( real_type Q[], integer ldQ ) const {
     geid( m_nrows, m_nrows, Q, ldQ );
     Q_mul( m_nrows, m_nrows, Q, ldQ );
   }
@@ -375,7 +375,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::getQreduced( valueType Q[], integer ldQ ) const {
+  QR_no_alloc<T>::getQreduced( real_type Q[], integer ldQ ) const {
     geid( m_nrows, m_ncols, Q, ldQ );
     Q_mul( m_nrows, m_ncols, Q, ldQ );
   }
@@ -394,7 +394,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::getA( valueType A[], integer ldA ) const {
+  QR_no_alloc<T>::getA( real_type A[], integer ldA ) const {
     gecopy(
       m_nrows, m_ncols, m_Afactorized, m_nrows, A, ldA
     );
@@ -416,7 +416,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QR_no_alloc<T>::getTau( valueType tau[] ) const {
+  QR_no_alloc<T>::getTau( real_type tau[] ) const {
     copy( std::min( m_nrows, m_ncols ), m_Tau, 1, tau, 1 );
   }
 
@@ -433,7 +433,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QR_no_alloc<T>::solve( valueType xb[] ) const {
+  QR_no_alloc<T>::solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
     Qt_mul(xb);
     invR_mul(xb);
@@ -444,7 +444,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QR_no_alloc<T>::t_solve( valueType xb[] ) const {
+  QR_no_alloc<T>::t_solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
     invRt_mul(xb);
     Q_mul(xb);
@@ -455,7 +455,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QR_no_alloc<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
+  QR_no_alloc<T>::solve( integer nrhs, real_type XB[], integer ldXB ) const {
     if ( m_nrows != m_ncols ) return false;
     Qt_mul( m_nrows, nrhs, XB, ldXB );
     invR_mul( m_nrows, nrhs, XB, ldXB );
@@ -466,7 +466,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QR_no_alloc<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
+  QR_no_alloc<T>::t_solve( integer nrhs, real_type XB[], integer ldXB ) const {
     if ( m_nrows != m_ncols ) return false;
     invRt_mul( m_nrows, nrhs, XB, ldXB );
     Q_mul( m_nrows, nrhs, XB, ldXB );
@@ -498,7 +498,7 @@ namespace lapack_wrapper {
   template <typename T>
   integer
   QRP_no_alloc<T>::get_Lwork_QRP( integer NR, integer NC ) const {
-    valueType tmp; // get optimal allocation
+    real_type tmp; // get optimal allocation
     integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
     UTILS_ASSERT(
       info == 0,
@@ -518,7 +518,7 @@ namespace lapack_wrapper {
     integer     NR,
     integer     NC,
     integer     Lwork,
-    valueType * Work,
+    real_type * Work,
     integer     Liwork,
     integer   * iWork
   ) {
@@ -541,7 +541,7 @@ namespace lapack_wrapper {
   void
   QRP_no_alloc<T>::factorize_nodim(
     char const      who[],
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     // calcolo fattorizzazione QR della matrice A
@@ -569,7 +569,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QRP_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
+  QRP_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
     // calcolo fattorizzazione QR della matrice A
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
@@ -590,7 +590,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QRP_no_alloc<T>::permute( valueType x[], integer incx ) const {
+  QRP_no_alloc<T>::permute( real_type x[], integer incx ) const {
     // applico permutazione
     for ( integer i = 0; i < m_ncols; ++i )
       m_WorkPermute[m_JPVT[i]-1] = x[i*incx];
@@ -601,7 +601,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  QRP_no_alloc<T>::inv_permute( valueType x[], integer incx ) const {
+  QRP_no_alloc<T>::inv_permute( real_type x[], integer incx ) const {
     // applico permutazione
     for ( integer i = 0; i < m_ncols; ++i )
       m_WorkPermute[i] = x[incx*(m_JPVT[i]-1)];
@@ -613,7 +613,7 @@ namespace lapack_wrapper {
   QRP_no_alloc<T>::permute_rows(
     integer   nr,
     integer   nc,
-    valueType C[],
+    real_type C[],
     integer   ldC
   ) const {
     UTILS_ASSERT(
@@ -629,7 +629,7 @@ namespace lapack_wrapper {
   QRP_no_alloc<T>::inv_permute_rows(
     integer   nr,
     integer   nc,
-    valueType C[],
+    real_type C[],
     integer   ldC
   ) const {
     UTILS_ASSERT(
@@ -647,7 +647,7 @@ namespace lapack_wrapper {
   QRP_no_alloc<T>::permute_cols(
     integer   nr,
     integer   nc,
-    valueType C[],
+    real_type C[],
     integer   ldC
   ) const {
     UTILS_ASSERT(
@@ -665,7 +665,7 @@ namespace lapack_wrapper {
   QRP_no_alloc<T>::inv_permute_cols(
     integer   nr,
     integer   nc,
-    valueType C[],
+    real_type C[],
     integer   ldC
   ) const {
     UTILS_ASSERT(
@@ -680,7 +680,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QRP_no_alloc<T>::solve( valueType xb[] ) const {
+  QRP_no_alloc<T>::solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
     Qt_mul(xb);
     invR_mul(xb);
@@ -692,7 +692,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QRP_no_alloc<T>::t_solve( valueType xb[] ) const {
+  QRP_no_alloc<T>::t_solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
     inv_permute(xb); // da aggiungere!
     invRt_mul(xb);
@@ -704,7 +704,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QRP_no_alloc<T>::solve( integer nrhs, valueType XB[], integer ldXB ) const {
+  QRP_no_alloc<T>::solve( integer nrhs, real_type XB[], integer ldXB ) const {
     if ( m_nrows != m_ncols ) return false;
     Qt_mul( m_nrows, nrhs, XB, ldXB );
     invR_mul( m_nrows, nrhs, XB, ldXB );
@@ -716,7 +716,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  QRP_no_alloc<T>::t_solve( integer nrhs, valueType XB[], integer ldXB ) const {
+  QRP_no_alloc<T>::t_solve( integer nrhs, real_type XB[], integer ldXB ) const {
     if ( m_nrows != m_ncols ) return false;
     inv_permute_rows( m_nrows, nrhs, XB, ldXB ); // da aggiungere!
     invRt_mul( m_nrows, nrhs, XB, ldXB );

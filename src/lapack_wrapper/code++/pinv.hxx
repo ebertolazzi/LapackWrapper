@@ -35,27 +35,27 @@ namespace lapack_wrapper {
   template <typename T>
   class PINV_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::valueType valueType;
+    typedef typename LinearSystemSolver<T>::real_type real_type;
 
   protected:
 
-    mutable Malloc<valueType> m_alloc_work;
+    mutable Malloc<real_type> m_alloc_work;
     mutable integer           L_mm_work;
-    mutable valueType       * mm_work;
+    mutable real_type       * mm_work;
 
     integer     m_nrows;
     integer     m_ncols;
     integer     m_rank;
     integer     m_rcmax;
-    valueType   m_epsi;
-    valueType * m_A_factored;
-    valueType * m_Rt;
+    real_type   m_epsi;
+    real_type * m_A_factored;
+    real_type * m_Rt;
 
     integer     m_LWorkQR2;
-    valueType * m_WorkQR2;
+    real_type * m_WorkQR2;
 
-    QRP_no_alloc<valueType> m_QR1;
-    QR_no_alloc<valueType>  m_QR2;
+    QRP_no_alloc<real_type> m_QR1;
+    QR_no_alloc<real_type>  m_QR2;
 
     void factorize( char const who[] );
     bool factorize();
@@ -74,7 +74,7 @@ namespace lapack_wrapper {
       integer     NR,
       integer     NC,
       integer     Lwork,
-      valueType * Work,
+      real_type * Work,
       integer     Liwork,
       integer   * iWork
     );
@@ -87,42 +87,42 @@ namespace lapack_wrapper {
       integer & Liwork
     ) const;
 
-    void factorize_nodim( char const who[], valueType const A[], integer LDA );
-    bool factorize_nodim( valueType const A[], integer LDA );
-    void t_factorize_nodim( char const who[], valueType const A[], integer LDA );
-    bool t_factorize_nodim( valueType const A[], integer LDA );
+    void factorize_nodim( char const who[], real_type const A[], integer LDA );
+    bool factorize_nodim( real_type const A[], integer LDA );
+    void t_factorize_nodim( char const who[], real_type const A[], integer LDA );
+    bool t_factorize_nodim( real_type const A[], integer LDA );
 
     bool
     mult_inv(
-      valueType const b[],
+      real_type const b[],
       integer         incb,
-      valueType       x[],
+      real_type       x[],
       integer         incx
     ) const;
 
     bool
     t_mult_inv(
-      valueType const b[],
+      real_type const b[],
       integer         incb,
-      valueType       x[],
+      real_type       x[],
       integer         incx
     ) const;
 
     bool
     mult_inv(
       integer         nrhs,
-      valueType const B[],
+      real_type const B[],
       integer         ldB,
-      valueType       X[],
+      real_type       X[],
       integer         ldX
     ) const;
 
     bool
     t_mult_inv(
       integer         nrhs,
-      valueType const B[],
+      real_type const B[],
       integer         ldB,
-      valueType       X[],
+      real_type       X[],
       integer         ldX
     ) const;
 
@@ -141,7 +141,7 @@ namespace lapack_wrapper {
     //! \param xb on input the rhs of linear system on output the solution
     //!
     bool
-    solve( valueType xb[] ) const override {
+    solve( real_type xb[] ) const override {
       if ( m_nrows != m_ncols ) return false;
       return mult_inv( xb, 1, xb, 1 );
     }
@@ -153,7 +153,7 @@ namespace lapack_wrapper {
     //! \param xb on input the rhs of linear system on output the solution
     //!
     bool
-    t_solve( valueType xb[] ) const override {
+    t_solve( real_type xb[] ) const override {
       if ( m_nrows != m_ncols ) return false;
       return t_mult_inv( xb, 1, xb, 1 );
     }
@@ -161,7 +161,7 @@ namespace lapack_wrapper {
     bool
     solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override {
       if ( m_nrows != m_ncols ) return false;
@@ -171,7 +171,7 @@ namespace lapack_wrapper {
     bool
     t_solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override {
       if ( m_nrows != m_ncols ) return false;
@@ -190,11 +190,11 @@ namespace lapack_wrapper {
   template <typename T>
   class PINV : public PINV_no_alloc<T> {
   public:
-    typedef typename PINV_no_alloc<T>::valueType valueType;
+    typedef typename PINV_no_alloc<T>::real_type real_type;
 
   protected:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
   public:
@@ -231,7 +231,7 @@ namespace lapack_wrapper {
       char      const who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -248,7 +248,7 @@ namespace lapack_wrapper {
     factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -267,7 +267,7 @@ namespace lapack_wrapper {
       char      const who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NC, NR );
@@ -284,7 +284,7 @@ namespace lapack_wrapper {
     t_factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NC, NR );

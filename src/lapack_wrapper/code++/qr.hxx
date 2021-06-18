@@ -35,7 +35,7 @@ namespace lapack_wrapper {
   template <typename T>
   class QR_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::valueType valueType;
+    typedef typename LinearSystemSolver<T>::real_type real_type;
 
   protected:
 
@@ -44,9 +44,9 @@ namespace lapack_wrapper {
     integer m_nReflector;
     integer m_LworkQR;
 
-    valueType * m_Afactorized;
-    valueType * m_WorkQR;
-    valueType * m_Tau;
+    real_type * m_Afactorized;
+    real_type * m_WorkQR;
+    real_type * m_Tau;
 
   public:
 
@@ -75,7 +75,7 @@ namespace lapack_wrapper {
       integer     NR,
       integer     NC,
       integer     Lwork,
-      valueType * Work
+      real_type * Work
     );
 
     //! 
@@ -88,12 +88,12 @@ namespace lapack_wrapper {
     void
     factorize_nodim(
       char const      who[],
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     );
 
     bool
-    factorize_nodim( valueType const A[], integer LDA );
+    factorize_nodim( real_type const A[], integer LDA );
 
     /*\
     :|:  overwrites the general real M-by-N matrix C with
@@ -109,18 +109,18 @@ namespace lapack_wrapper {
       integer       nRefl,
       integer       nr,
       integer       nc,
-      valueType     C[],
+      real_type     C[],
       integer       ldC
     ) const;
 
     //! `x <- Q*x`
-    void Q_mul( valueType x[] ) const;
+    void Q_mul( real_type x[] ) const;
 
     //! `x <- Q'*x`
-    void Qt_mul( valueType x[] ) const;
+    void Qt_mul( real_type x[] ) const;
 
     //! `C <- Q*C`
-    void Q_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
+    void Q_mul( integer nr, integer nc, real_type C[], integer ldC ) const;
 
     void
     Q_mul( MatrixWrapper<T> & C ) const {
@@ -128,7 +128,7 @@ namespace lapack_wrapper {
     }
 
     //! `C <- Q'*C`
-    void Qt_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
+    void Qt_mul( integer nr, integer nc, real_type C[], integer ldC ) const;
 
     void
     Qt_mul( MatrixWrapper<T> & C ) const {
@@ -136,7 +136,7 @@ namespace lapack_wrapper {
     }
 
     //! `C <- C*Q`
-    void mul_Q( integer nr, integer nc, valueType C[], integer ldC ) const;
+    void mul_Q( integer nr, integer nc, real_type C[], integer ldC ) const;
 
     void
     mul_Q( MatrixWrapper<T> & C ) const {
@@ -144,7 +144,7 @@ namespace lapack_wrapper {
     }
 
     //! `C <- C*Q'`
-    void mul_Qt( integer nr, integer nc, valueType C[], integer ldC ) const;
+    void mul_Qt( integer nr, integer nc, real_type C[], integer ldC ) const;
 
     void
     mul_Qt( MatrixWrapper<T> & C ) const {
@@ -154,73 +154,73 @@ namespace lapack_wrapper {
     // -------------------------------------------------------------------------
 
     //! `x <- R^(-1) * x`
-    void invR_mul( valueType x[], integer incx = 1 ) const;
+    void invR_mul( real_type x[], integer incx = 1 ) const;
 
     //! `C <- R^(-1) * C`
-    void invR_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
+    void invR_mul( integer nr, integer nc, real_type C[], integer ldC ) const;
 
     void
-    invR_mul( MatrixWrapper<valueType> & C ) const {
+    invR_mul( MatrixWrapper<real_type> & C ) const {
       this->invR_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     // -------------------------------------------------------------------------
 
     //! `x <- R^(-T) * x`
-    void invRt_mul( valueType x[], integer incx = 1 ) const;
+    void invRt_mul( real_type x[], integer incx = 1 ) const;
 
     //! `C <- R^(-T) * C`
-    void invRt_mul( integer nr, integer nc, valueType C[], integer ldC ) const;
+    void invRt_mul( integer nr, integer nc, real_type C[], integer ldC ) const;
 
     void
-    invRt_mul( MatrixWrapper<valueType> & C ) const {
+    invRt_mul( MatrixWrapper<real_type> & C ) const {
       this->invRt_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     // -------------------------------------------------------------------------
 
     //! `C <- C * R^(-1)`
-    void mul_invR( integer nr, integer nc, valueType C[], integer ldC ) const;
+    void mul_invR( integer nr, integer nc, real_type C[], integer ldC ) const;
 
     void
-    mul_invR( MatrixWrapper<valueType> & C ) const {
+    mul_invR( MatrixWrapper<real_type> & C ) const {
       this->mul_invR( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     // -------------------------------------------------------------------------
 
-    void mul_invRt( integer nr, integer nc, valueType C[], integer ldC ) const;
+    void mul_invRt( integer nr, integer nc, real_type C[], integer ldC ) const;
 
     void
-    mul_invRt( MatrixWrapper<valueType> & C ) const {
+    mul_invRt( MatrixWrapper<real_type> & C ) const {
       this->mul_invRt( C.numRows(), C.numCols(), C.data(), C.lDim() );
     }
 
     // -------------------------------------------------------------------------
 
-    void getR( valueType R[], integer ldR ) const;
+    void getR( real_type R[], integer ldR ) const;
     void getR( Matrix<T> & R ) const;
-    void getRt( valueType R[], integer ldR ) const;
+    void getRt( real_type R[], integer ldR ) const;
     void getRt( Matrix<T> & R ) const;
 
     // -------------------------------------------------------------------------
 
-    void getQ( valueType Q[], integer ldQ ) const;
+    void getQ( real_type Q[], integer ldQ ) const;
     void getQ( Matrix<T> & Q ) const;
 
     // -------------------------------------------------------------------------
 
-    void getQreduced( valueType Q[], integer ldQ ) const;
+    void getQreduced( real_type Q[], integer ldQ ) const;
     void getQreduced( Matrix<T> & Q ) const;
 
     // -------------------------------------------------------------------------
 
-    void getA( valueType A[], integer ldA ) const;
+    void getA( real_type A[], integer ldA ) const;
     void getA( Matrix<T> & A ) const;
 
     // -------------------------------------------------------------------------
 
-    void getTau( valueType tau[] ) const;
+    void getTau( real_type tau[] ) const;
     void getTau( Matrix<T> & tau ) const;
 
     /*\
@@ -238,7 +238,7 @@ namespace lapack_wrapper {
     //! \param xb on input the rhs of linear system on output the solution
     //! 
     bool
-    solve( valueType xb[] ) const override;
+    solve( real_type xb[] ) const override;
 
     //!
     //! In case of QR factorization of a square matrix solve the
@@ -247,19 +247,19 @@ namespace lapack_wrapper {
     //! \param xb on input the rhs of linear system on output the solution
     //!
     bool
-    t_solve( valueType xb[] ) const override;
+    t_solve( real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -272,11 +272,11 @@ namespace lapack_wrapper {
   template <typename T>
   class QR : public QR_no_alloc<T> {
   public:
-    typedef typename QR_no_alloc<T>::valueType valueType;
+    typedef typename QR_no_alloc<T>::real_type real_type;
 
   protected:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
 
   public:
 
@@ -330,7 +330,7 @@ namespace lapack_wrapper {
       char const      who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -341,7 +341,7 @@ namespace lapack_wrapper {
     factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -362,11 +362,11 @@ namespace lapack_wrapper {
   template <typename T>
   class QRP_no_alloc : public QR_no_alloc<T> {
   public:
-    typedef typename QR_no_alloc<T>::valueType valueType;
+    typedef typename QR_no_alloc<T>::real_type real_type;
 
   protected:
     integer   * m_JPVT;
-    valueType * m_WorkPermute;
+    real_type * m_WorkPermute;
 
   public:
 
@@ -410,7 +410,7 @@ namespace lapack_wrapper {
       integer     NR,
       integer     NC,
       integer     Lwork,
-      valueType * Work,
+      real_type * Work,
       integer     Liwork,
       integer   * iWork
     );
@@ -425,12 +425,12 @@ namespace lapack_wrapper {
     void
     factorize_nodim(
       char const      who[],
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     );
 
     bool
-    factorize_nodim( valueType const A[], integer LDA );
+    factorize_nodim( real_type const A[], integer LDA );
 
     // -------------------------------------------------------------------------
 
@@ -439,16 +439,16 @@ namespace lapack_wrapper {
 
     // -------------------------------------------------------------------------
     void
-    permute( valueType x[], integer incx = 1 ) const;
+    permute( real_type x[], integer incx = 1 ) const;
 
     void
-    inv_permute( valueType x[], integer incx = 1 ) const;
+    inv_permute( real_type x[], integer incx = 1 ) const;
 
     void
     permute_rows(
       integer   nr,
       integer   nc,
-      valueType C[],
+      real_type C[],
       integer   ldC
     ) const;
 
@@ -460,7 +460,7 @@ namespace lapack_wrapper {
     inv_permute_rows(
       integer   nr,
       integer   nc,
-      valueType C[],
+      real_type C[],
       integer   ldC
     ) const;
 
@@ -472,7 +472,7 @@ namespace lapack_wrapper {
     permute_cols(
       integer   nr,
       integer   nc,
-      valueType C[],
+      real_type C[],
       integer   ldC
     ) const;
 
@@ -484,7 +484,7 @@ namespace lapack_wrapper {
     inv_permute_cols(
       integer   nr,
       integer   nc,
-      valueType C[],
+      real_type C[],
       integer   ldC
     ) const;
 
@@ -493,8 +493,8 @@ namespace lapack_wrapper {
     { inv_permute_cols( M.numRows(), M.numCols(), M.data(), M.lDim() ); }
 
     integer
-    rankEstimate( valueType rcond ) const {
-      valueType SVAL[3];
+    rankEstimate( real_type rcond ) const {
+      real_type SVAL[3];
       return lapack_wrapper::rankEstimate(
         m_nrows, m_ncols, m_Afactorized, m_nrows, rcond, SVAL
       );
@@ -515,7 +515,7 @@ namespace lapack_wrapper {
     //! \param xb on input the rhs of linear system on output the solution
     //!
     bool
-    solve( valueType xb[] ) const override;
+    solve( real_type xb[] ) const override;
 
     //!
     //! In case of QR factorization of a square matrix solve the
@@ -524,19 +524,19 @@ namespace lapack_wrapper {
     //! \param xb on input the rhs of linear system on output the solution
     //!
     bool
-    t_solve( valueType xb[] ) const override;
+    t_solve( real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
   };
@@ -548,10 +548,10 @@ namespace lapack_wrapper {
   template <typename T>
   class QRP : public QRP_no_alloc<T> {
   public:
-    typedef typename QRP_no_alloc<T>::valueType valueType;
+    typedef typename QRP_no_alloc<T>::real_type real_type;
 
   private:
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
   public:
@@ -606,7 +606,7 @@ namespace lapack_wrapper {
       char const      who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -625,7 +625,7 @@ namespace lapack_wrapper {
     factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );

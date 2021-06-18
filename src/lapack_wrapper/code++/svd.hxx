@@ -34,7 +34,7 @@ namespace lapack_wrapper {
   template <typename T>
   class SVD_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::valueType valueType;
+    typedef typename LinearSystemSolver<T>::real_type real_type;
     typedef enum { USE_GESVD = 0, USE_GESDD = 1 } SVD_USED;
 
   protected:
@@ -42,14 +42,14 @@ namespace lapack_wrapper {
     integer     m_nrows;
     integer     m_ncols;
 
-    valueType * m_Afactorized;
-    valueType * m_WorkSVD;
-    valueType * m_Umat;
-    valueType * m_VTmat;
-    valueType * m_Svec;
+    real_type * m_Afactorized;
+    real_type * m_WorkSVD;
+    real_type * m_Umat;
+    real_type * m_VTmat;
+    real_type * m_Svec;
     integer   * m_IWorkSVD;
 
-    valueType   m_rcond;
+    real_type   m_rcond;
 
     integer     m_minRC;
     integer     m_LworkSVD;
@@ -72,7 +72,7 @@ namespace lapack_wrapper {
     , m_VTmat(nullptr)
     , m_Svec(nullptr)
     , m_IWorkSVD(nullptr)
-    , m_rcond(Utils::machineEps<valueType>())
+    , m_rcond(Utils::machineEps<real_type>())
     , m_minRC(0)
     , m_LworkSVD(0)
     , m_svd_used(_svd_used)
@@ -89,7 +89,7 @@ namespace lapack_wrapper {
       integer     NR,
       integer     NC,
       integer     Lwork,
-      valueType * Work,
+      real_type * Work,
       integer     Liwork,
       integer   * iWork
     );
@@ -105,30 +105,30 @@ namespace lapack_wrapper {
     void
     factorize_nodim(
       char const      who[],
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     );
 
     virtual
     bool
-    factorize_nodim( valueType const A[], integer LDA );
+    factorize_nodim( real_type const A[], integer LDA );
 
     void
-    setRcond( valueType r )
+    setRcond( real_type r )
     { m_rcond = r; }
 
-    valueType U    ( integer i, integer j ) const { return m_Umat[i+j*m_nrows]; }
-    valueType V    ( integer i, integer j ) const { return m_VTmat[j+i*m_ncols]; }
-    valueType sigma( integer i )            const { return m_Svec[i]; }
+    real_type U    ( integer i, integer j ) const { return m_Umat[i+j*m_nrows]; }
+    real_type V    ( integer i, integer j ) const { return m_VTmat[j+i*m_ncols]; }
+    real_type sigma( integer i )            const { return m_Svec[i]; }
 
     //! `y <- alpha * U * x + beta * y`
     void
     U_mul(
-      valueType       alpha,
-      valueType const x[],
+      real_type       alpha,
+      real_type const x[],
       integer         incx,
-      valueType       beta,
-      valueType       y[],
+      real_type       beta,
+      real_type       y[],
       integer incy
     ) const {
       gemv(
@@ -143,11 +143,11 @@ namespace lapack_wrapper {
     //! `y <- alpha * U' * x + beta * y`
     void
     Ut_mul(
-      valueType       alpha,
-      valueType const x[],
+      real_type       alpha,
+      real_type const x[],
       integer         incx,
-      valueType       beta,
-      valueType       y[],
+      real_type       beta,
+      real_type       y[],
       integer         incy
     ) const {
       gemv(
@@ -162,11 +162,11 @@ namespace lapack_wrapper {
     //! `y <- alpha * V * x + beta * y`
     void
     V_mul(
-      valueType       alpha,
-      valueType const x[],
+      real_type       alpha,
+      real_type const x[],
       integer         incx,
-      valueType       beta,
-      valueType       y[],
+      real_type       beta,
+      real_type       y[],
       integer         incy
     ) const {
       gemv(
@@ -181,11 +181,11 @@ namespace lapack_wrapper {
     //! `y <- alpha * V' * x + beta * y`
     void
     Vt_mul(
-      valueType       alpha,
-      valueType const x[],
+      real_type       alpha,
+      real_type const x[],
       integer         incx,
-      valueType       beta,
-      valueType       y[],
+      real_type       beta,
+      real_type       y[],
       integer         incy
     ) const {
       gemv(
@@ -205,8 +205,8 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
+    bool solve( real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
 
   };
 
@@ -215,12 +215,12 @@ namespace lapack_wrapper {
   template <typename T>
   class SVD : public SVD_no_alloc<T> {
   public:
-    typedef typename SVD_no_alloc<T>::valueType valueType;
+    typedef typename SVD_no_alloc<T>::real_type real_type;
     typedef typename SVD_no_alloc<T>::SVD_USED  SVD_USED;
 
   protected:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
   public:
@@ -271,7 +271,7 @@ namespace lapack_wrapper {
       char const      who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -282,7 +282,7 @@ namespace lapack_wrapper {
     factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -304,11 +304,11 @@ namespace lapack_wrapper {
   template <typename T>
   class GeneralizedSVD {
 
-    typedef T                valueType;
+    typedef T                real_type;
     typedef MatrixWrapper<T> MatW;
     typedef SparseCCOOR<T>   Sparse;
 
-    Malloc<valueType> m_mem_real;
+    Malloc<real_type> m_mem_real;
     Malloc<integer>   m_mem_int;
 
     integer     m_M;
@@ -317,15 +317,15 @@ namespace lapack_wrapper {
     integer     m_K;
     integer     m_L;
     integer     m_Lwork;
-    valueType * m_Work;
+    real_type * m_Work;
     integer   * m_IWork;
-    valueType * m_alpha_saved;
-    valueType * m_beta_saved;
-    valueType * m_A_saved;
-    valueType * m_B_saved;
-    valueType * m_U_saved;
-    valueType * m_V_saved;
-    valueType * m_Q_saved;
+    real_type * m_alpha_saved;
+    real_type * m_beta_saved;
+    real_type * m_A_saved;
+    real_type * m_B_saved;
+    real_type * m_U_saved;
+    real_type * m_V_saved;
+    real_type * m_Q_saved;
 
     MatrixWrapper<T>     m_U, m_V, m_Q, m_R;
     DiagMatrixWrapper<T> m_Dalpha, m_Dbeta;
@@ -334,11 +334,11 @@ namespace lapack_wrapper {
     void compute( );
 
     // R is stored in A(1:K+L,N-K-L+1:N) on exit.
-    valueType &
+    real_type &
     A( integer i, integer j )
     { return m_A_saved[i+j*m_M]; }
 
-    valueType &
+    real_type &
     B( integer i, integer j )
     { return m_B_saved[i+j*m_P]; }
 
@@ -350,8 +350,8 @@ namespace lapack_wrapper {
       integer         m,
       integer         n,
       integer         p,
-      valueType const A[], integer ldA,
-      valueType const B[], integer ldB
+      real_type const A[], integer ldA,
+      real_type const B[], integer ldB
     );
 
     GeneralizedSVD( MatW const & A, MatW const & B );
@@ -361,11 +361,11 @@ namespace lapack_wrapper {
       integer         n,
       integer         p,
       integer         A_nnz,
-      valueType const A_values[],
+      real_type const A_values[],
       integer   const A_row[],
       integer   const A_col[],
       integer         B_nnz,
-      valueType const B_values[],
+      real_type const B_values[],
       integer   const B_row[],
       integer   const B_col[]
     );
@@ -375,8 +375,8 @@ namespace lapack_wrapper {
       integer         m,
       integer         n,
       integer         p,
-      valueType const A[], integer ldA,
-      valueType const B[], integer ldB
+      real_type const A[], integer ldA,
+      real_type const B[], integer ldB
     );
 
     void setup( MatW const & A, MatW const & B );
@@ -387,11 +387,11 @@ namespace lapack_wrapper {
       integer         n,
       integer         p,
       integer         A_nnz,
-      valueType const A_values[],
+      real_type const A_values[],
       integer   const A_row[],
       integer   const A_col[],
       integer         B_nnz,
-      valueType const B_values[],
+      real_type const B_values[],
       integer   const B_row[],
       integer   const B_col[]
     );
@@ -403,13 +403,13 @@ namespace lapack_wrapper {
     DiagMatrixWrapper<T> const & getC() const { return m_Dalpha; }
     DiagMatrixWrapper<T> const & gerS() const { return m_Dbeta; }
 
-    valueType const & alpha( integer i ) const { return m_alpha_saved[i]; }
-    valueType const & beta( integer i ) const { return m_beta_saved[i]; }
+    real_type const & alpha( integer i ) const { return m_alpha_saved[i]; }
+    real_type const & beta( integer i ) const { return m_beta_saved[i]; }
 
-    valueType const * getAlpha() const { return m_alpha_saved; }
-    valueType const * getBeta()  const { return m_beta_saved; }
+    real_type const * getAlpha() const { return m_alpha_saved; }
+    real_type const * getBeta()  const { return m_beta_saved; }
 
-    void info( ostream_type & stream, valueType eps = 0 ) const;
+    void info( ostream_type & stream, real_type eps = 0 ) const;
 
   };
 

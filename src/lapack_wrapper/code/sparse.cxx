@@ -207,13 +207,13 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseCCOOR<T>::gemv(
-    valueType       alpha,
+    real_type       alpha,
     integer         DimX,
-    valueType const x[],
+    real_type const x[],
     integer         incX,
-    valueType       beta,
+    real_type       beta,
     integer         DimY,
-    valueType       y[],
+    real_type       y[],
     integer         incY
   ) const {
     UTILS_ASSERT(
@@ -256,13 +256,13 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseCCOOR<T>::gemv_Transposed(
-    valueType       alpha,
+    real_type       alpha,
     integer         DimX,
-    valueType const x[],
+    real_type const x[],
     integer         incX,
-    valueType       beta,
+    real_type       beta,
     integer         DimY,
-    valueType       y[],
+    real_type       y[],
     integer         incY
   ) const {
     UTILS_ASSERT(
@@ -305,13 +305,13 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseCCOOR<T>::gemv_Symmetric(
-    valueType       alpha,
+    real_type       alpha,
     integer         DimX,
-    valueType const x[],
+    real_type const x[],
     integer         incX,
-    valueType       beta,
+    real_type       beta,
     integer         DimY,
-    valueType       y[],
+    real_type       y[],
     integer         incY
   ) const {
     UTILS_ASSERT(
@@ -325,7 +325,7 @@ namespace lapack_wrapper {
     for ( integer idx = 0; idx < m_nnz; ++idx ) {
       integer   i   = m_rows[idx] + offs;
       integer   j   = m_cols[idx] + offs;
-      valueType tmp = alpha * m_vals[idx];
+      real_type tmp = alpha * m_vals[idx];
       if ( i == j ) {
         y[ i * incY ] += tmp * x[ j * incX ];
       } else {
@@ -431,7 +431,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  SparseCCOOR<T>::fill( valueType const V[], integer M ) {
+  SparseCCOOR<T>::fill( real_type const V[], integer M ) {
     UTILS_ASSERT0(
       M == m_nnz,
       "SparseCCOOR::fill(...) bad size input vector\n"
@@ -442,7 +442,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  SparseCCOOR<T>::fill( std::vector<valueType> const & V ) {
+  SparseCCOOR<T>::fill( std::vector<real_type> const & V ) {
     UTILS_ASSERT0(
       V.size() == m_vals.size(),
       "SparseCCOOR::fill(...) bad size input vector\n"
@@ -485,7 +485,7 @@ namespace lapack_wrapper {
   SparseCCOOR<T>::push_value_C(
     integer   row,
     integer   col,
-    valueType val
+    real_type val
   ) {
     UTILS_ASSERT(
       row >= 0 && row < m_nrows && col >= 0 && col < m_ncols,
@@ -508,7 +508,7 @@ namespace lapack_wrapper {
   SparseCCOOR<T>::push_value_F(
     integer   row,
     integer   col,
-    valueType val
+    real_type val
   ) {
     UTILS_ASSERT(
       row > 0 && row <= m_nrows && col > 0 && col <= m_ncols,

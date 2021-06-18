@@ -36,15 +36,15 @@ namespace lapack_wrapper {
   template <typename T>
   class TridiagonalSPD : public LinearSystemSolver<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
   private:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
 
-    valueType * m_L;
-    valueType * m_D;
-    valueType * m_WORK;
+    real_type * m_L;
+    real_type * m_D;
+    real_type * m_WORK;
     integer     m_nRC;
 
   public:
@@ -59,21 +59,21 @@ namespace lapack_wrapper {
     ~TridiagonalSPD() override
     { m_allocReals.free(); }
 
-    valueType cond1( valueType norm1 ) const;
+    real_type cond1( real_type norm1 ) const;
 
     void
     factorize(
       char const      who[],
       integer         N,
-      valueType const L[],
-      valueType const D[]
+      real_type const L[],
+      real_type const D[]
     );
 
     bool
     factorize(
       integer         N,
-      valueType const L[],
-      valueType const D[]
+      real_type const L[],
+      real_type const D[]
     );
 
     /*\
@@ -84,20 +84,20 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
+    bool solve( real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType xb[],
+      real_type xb[],
       integer   ldXB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType xb[],
+      real_type xb[],
       integer   ldXB
     ) const override;
 
@@ -113,12 +113,12 @@ namespace lapack_wrapper {
     void
     axpy(
       integer         N,
-      valueType       alpha,
-      valueType const L[],
-      valueType const D[],
-      valueType const x[],
-      valueType       beta,
-      valueType       y[]
+      real_type       alpha,
+      real_type const L[],
+      real_type const D[],
+      real_type const x[],
+      real_type       beta,
+      real_type       y[]
     ) const;
 
   };
@@ -136,18 +136,18 @@ namespace lapack_wrapper {
   template <typename T>
   class TridiagonalLU : public LinearSystemSolver<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
   private:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
-    valueType * m_L;
-    valueType * m_D;
-    valueType * m_U;
-    valueType * m_U2;
-    valueType * m_WORK;
+    real_type * m_L;
+    real_type * m_D;
+    real_type * m_U;
+    real_type * m_U2;
+    real_type * m_WORK;
     integer   * m_IPIV;
     integer   * m_IWORK;
 
@@ -168,24 +168,24 @@ namespace lapack_wrapper {
       m_allocIntegers.free();
     }
 
-    valueType cond1( valueType norm1 ) const;
-    valueType condInf( valueType normInf ) const;
+    real_type cond1( real_type norm1 ) const;
+    real_type condInf( real_type normInf ) const;
 
     void
     factorize(
       char const      who[],
       integer         N,
-      valueType const L[],
-      valueType const D[],
-      valueType const U[]
+      real_type const L[],
+      real_type const D[],
+      real_type const U[]
     );
 
     bool
     factorize(
       integer         N,
-      valueType const L[],
-      valueType const D[],
-      valueType const U[]
+      real_type const L[],
+      real_type const D[],
+      real_type const U[]
     );
 
     /*\
@@ -196,15 +196,15 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    void solve( char const who[], valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
-    void t_solve( char const who[], valueType xb[] ) const override;
+    bool solve( real_type xb[] ) const override;
+    void solve( char const who[], real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
+    void t_solve( char const who[], real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType xb[],
+      real_type xb[],
       integer   ldXB
     ) const override;
 
@@ -212,14 +212,14 @@ namespace lapack_wrapper {
     solve(
       char const who[],
       integer    nrhs,
-      valueType  xb[],
+      real_type  xb[],
       integer    ldXB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType xb[],
+      real_type xb[],
       integer   ldXB
     ) const override;
 
@@ -227,7 +227,7 @@ namespace lapack_wrapper {
     t_solve(
       char const who[],
       integer    nrhs,
-      valueType  xb[],
+      real_type  xb[],
       integer    ldXB
     ) const override;
 
@@ -243,13 +243,13 @@ namespace lapack_wrapper {
     void
     axpy(
       integer         N,
-      valueType       alpha,
-      valueType const L[],
-      valueType const D[],
-      valueType const U[],
-      valueType const x[],
-      valueType       beta,
-      valueType       y[]
+      real_type       alpha,
+      real_type const L[],
+      real_type const D[],
+      real_type const U[],
+      real_type const x[],
+      real_type       beta,
+      real_type       y[]
     ) const;
 
   };
@@ -266,23 +266,23 @@ namespace lapack_wrapper {
   template <typename T>
   class TridiagonalQR : public LinearSystemSolver<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
   private:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
 
-    valueType * m_C;   // rotazioni givens
-    valueType * m_S;
-    valueType * m_BD;  // band triangular matrix
-    valueType * m_BU;  // band triangular matrix
-    valueType * m_BU2; // band triangular matrix
+    real_type * m_C;   // rotazioni givens
+    real_type * m_S;
+    real_type * m_BD;  // band triangular matrix
+    real_type * m_BU;  // band triangular matrix
+    real_type * m_BU2; // band triangular matrix
 
-    valueType   m_normInfA;
+    real_type   m_normInfA;
     integer     m_nRC;
 
-    void Rsolve( valueType xb[] ) const;
-    void RsolveTransposed( valueType xb[] ) const;
+    void Rsolve( real_type xb[] ) const;
+    void RsolveTransposed( real_type xb[] ) const;
 
   public:
 
@@ -301,17 +301,17 @@ namespace lapack_wrapper {
     factorize(
       char const      who[],
       integer         N,
-      valueType const L[],
-      valueType const D[],
-      valueType const U[]
+      real_type const L[],
+      real_type const D[],
+      real_type const U[]
     );
 
     bool
     factorize(
       integer         N,
-      valueType const L[],
-      valueType const D[],
-      valueType const U[]
+      real_type const L[],
+      real_type const D[],
+      real_type const U[]
     );
 
     void
@@ -330,20 +330,20 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
+    bool solve( real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType xb[],
+      real_type xb[],
       integer   ldXB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType xb[],
+      real_type xb[],
       integer   ldXB
     ) const override;
 
@@ -359,13 +359,13 @@ namespace lapack_wrapper {
     void
     axpy(
       integer         N,
-      valueType       alpha,
-      valueType const L[],
-      valueType const D[],
-      valueType const U[],
-      valueType const x[],
-      valueType       beta,
-      valueType       y[]
+      real_type       alpha,
+      real_type const L[],
+      real_type const D[],
+      real_type const U[],
+      real_type const x[],
+      real_type       beta,
+      real_type       y[]
     ) const;
 
   };

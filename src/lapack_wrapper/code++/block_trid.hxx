@@ -40,20 +40,20 @@ namespace lapack_wrapper {
   template <typename T>
   class BlockTridiagonalSymmetic : public LinearSystemSolver<T> {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
   private:
 
-    Malloc<valueType>  m_allocReals;
+    Malloc<real_type>  m_allocReals;
     Malloc<integer>    m_allocIntegers;
-    Malloc<valueType*> m_allocRpointers;
+    Malloc<real_type*> m_allocRpointers;
     Malloc<integer*>   m_allocIpointers;
 
     integer      m_nBlocks;
     integer      m_nnz;
-    valueType ** m_D_blocks;
-    valueType ** m_L_blocks;
-    valueType *  m_Work;
+    real_type ** m_D_blocks;
+    real_type ** m_L_blocks;
+    real_type *  m_Work;
     integer   ** m_B_permutation;
     integer   *  m_row_blocks;
     bool         m_is_factorized;
@@ -99,7 +99,7 @@ namespace lapack_wrapper {
     void
     setD(
       integer         n,
-      valueType const data[],
+      real_type const data[],
       integer         ldData,
       bool            transposed=false
     );
@@ -107,7 +107,7 @@ namespace lapack_wrapper {
     void
     setL(
       integer         n,
-      valueType const data[],
+      real_type const data[],
       integer         ldData,
       bool            transposed=false
     );
@@ -115,7 +115,7 @@ namespace lapack_wrapper {
     void
     setD(
       integer         n,
-      valueType const data[],
+      real_type const data[],
       integer         ldData,
       integer         beginRow,
       integer         beginCol,
@@ -127,7 +127,7 @@ namespace lapack_wrapper {
     void
     setL(
       integer         n,
-      valueType const data[],
+      real_type const data[],
       integer         ldData,
       integer         beginRow,
       integer         beginCol,
@@ -137,10 +137,10 @@ namespace lapack_wrapper {
     );
 
     void
-    insert( integer i, integer j, valueType v, bool sym );
+    insert( integer i, integer j, real_type v, bool sym );
 
-    valueType const & operator () ( integer ii, integer jj ) const;
-    valueType       & operator () ( integer ii, integer jj );
+    real_type const & operator () ( integer ii, integer jj ) const;
+    real_type       & operator () ( integer ii, integer jj );
 
     void factorize( char const who[] );
     bool factorize( );
@@ -153,20 +153,20 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
+    bool solve( real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType xb[],
+      real_type xb[],
       integer   ldXB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType xb[],
+      real_type xb[],
       integer   ldXB
     ) const override;
 

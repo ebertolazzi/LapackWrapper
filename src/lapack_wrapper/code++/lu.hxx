@@ -35,15 +35,15 @@ namespace lapack_wrapper {
   template <typename T>
   class LU_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::valueType valueType;
+    typedef typename LinearSystemSolver<T>::real_type real_type;
 
   protected:
 
     integer     m_nrows;
     integer     m_ncols;
 
-    valueType * m_Afactorized;
-    valueType * m_Work;
+    real_type * m_Afactorized;
+    real_type * m_Work;
     integer   * m_Iwork;
     integer   * m_i_pivot;
 
@@ -62,9 +62,9 @@ namespace lapack_wrapper {
     no_allocate(
       integer     NR,
       integer     NC,
-      valueType * _Afactorized,
+      real_type * _Afactorized,
       integer   * _i_pivot,
-      valueType * _Work  = nullptr,
+      real_type * _Work  = nullptr,
       integer   * _Iwork = nullptr
     ) {
       m_nrows       = NR;
@@ -77,13 +77,13 @@ namespace lapack_wrapper {
     }
 
     void
-    factorize_nodim( char const who[], valueType const A[], integer LDA );
+    factorize_nodim( char const who[], real_type const A[], integer LDA );
 
     bool
-    factorize_nodim( valueType const A[], integer LDA );
+    factorize_nodim( real_type const A[], integer LDA );
 
-    valueType cond1( valueType norm1 ) const;
-    valueType condInf( valueType normInf ) const;
+    real_type cond1( real_type norm1 ) const;
+    real_type condInf( real_type normInf ) const;
 
     /*\
     :|:         _      _               _
@@ -93,15 +93,15 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    void solve( char const who[], valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
-    void t_solve( char const who[], valueType xb[] ) const override;
+    bool solve( real_type xb[] ) const override;
+    void solve( char const who[], real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
+    void t_solve( char const who[], real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -109,14 +109,14 @@ namespace lapack_wrapper {
     solve(
       char const who[],
       integer    nrhs,
-      valueType  B[],
+      real_type  B[],
       integer    ldB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -124,7 +124,7 @@ namespace lapack_wrapper {
     t_solve(
       char const who[],
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -135,11 +135,11 @@ namespace lapack_wrapper {
   template <typename T>
   class LU : public LU_no_alloc<T> {
   public:
-    typedef typename LU_no_alloc<T>::valueType valueType;
+    typedef typename LU_no_alloc<T>::real_type real_type;
 
   private:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
   public:
@@ -167,7 +167,7 @@ namespace lapack_wrapper {
       char const      who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -178,7 +178,7 @@ namespace lapack_wrapper {
     factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -200,12 +200,12 @@ namespace lapack_wrapper {
   template <typename T>
   class LUPQ_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::valueType valueType;
+    typedef typename LinearSystemSolver<T>::real_type real_type;
 
   protected:
 
     integer     m_nRC;
-    valueType * m_Afactorized;
+    real_type * m_Afactorized;
     integer   * m_i_piv;
     integer   * m_j_piv;
 
@@ -222,7 +222,7 @@ namespace lapack_wrapper {
     no_allocate(
       integer     NRC,
       integer     Lwork,
-      valueType * Work,
+      real_type * Work,
       integer     Liwork,
       integer   * iWork
     );
@@ -230,12 +230,12 @@ namespace lapack_wrapper {
     void
     factorize_nodim(
       char const      who[],
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     );
 
     bool
-    factorize_nodim( valueType const A[], integer LDA );
+    factorize_nodim( real_type const A[], integer LDA );
 
     /*\
     :|:         _      _               _
@@ -245,20 +245,20 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
+    bool solve( real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
 
     bool
     solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
     bool
     t_solve(
       integer   nrhs,
-      valueType B[],
+      real_type B[],
       integer   ldB
     ) const override;
 
@@ -269,11 +269,11 @@ namespace lapack_wrapper {
   template <typename T>
   class LUPQ : public LUPQ_no_alloc<T> {
   public:
-    typedef typename LUPQ_no_alloc<T>::valueType valueType;
+    typedef typename LUPQ_no_alloc<T>::real_type real_type;
 
   private:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
   public:
@@ -296,7 +296,7 @@ namespace lapack_wrapper {
     factorize(
       char const      who[],
       integer         NRC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) {
       this->allocate( NRC );
@@ -308,7 +308,7 @@ namespace lapack_wrapper {
       char const      who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       UTILS_ASSERT(
@@ -320,7 +320,7 @@ namespace lapack_wrapper {
     bool
     factorize(
       integer         NRC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) {
       this->allocate( NRC );
@@ -331,7 +331,7 @@ namespace lapack_wrapper {
     factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       if ( NR != NC ) return false;

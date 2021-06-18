@@ -72,7 +72,7 @@ namespace lapack_wrapper {
     integer     NR,
     integer     NC,
     integer     Lwork,
-    valueType * Work,
+    real_type * Work,
     integer     Liwork,
     integer   * iWork
   ) {
@@ -93,7 +93,7 @@ namespace lapack_wrapper {
       "Lwork must be >= {} and Liwork >= {}\n",
       NR, NC, Lwork, Liwork, Ltot, NC
     );
-    valueType * ptr = Work;
+    real_type * ptr = Work;
     m_QR1.no_allocate( NR, NC, L1, ptr, NC, iWork ); ptr += L1;
     m_A_factored = ptr; ptr += NR*NC;
     m_Rt         = ptr; ptr += NC*NC;
@@ -113,7 +113,7 @@ namespace lapack_wrapper {
   void
   PINV_no_alloc<T>::factorize_nodim(
     char      const who[],
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     // copy matrix and scale
@@ -133,7 +133,7 @@ namespace lapack_wrapper {
   void
   PINV_no_alloc<T>::t_factorize_nodim(
     char      const who[],
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     for ( integer i = 0; i < m_nrows; ++i )
@@ -155,7 +155,7 @@ namespace lapack_wrapper {
     m_QR1.getRt( m_Rt, m_ncols );
 
     m_rank = m_ncols;
-    valueType threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
+    real_type threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
     for ( integer i = 1; i < m_rank; ++i ) {
       if ( std::abs(m_Rt[i*(m_ncols+1)]) < threshold )
         { m_rank = i; break; }
@@ -174,7 +174,7 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   PINV_no_alloc<T>::factorize_nodim(
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     // copy matrix and scale
@@ -188,7 +188,7 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   PINV_no_alloc<T>::t_factorize_nodim(
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     for ( integer i = 0; i < m_nrows; ++i )
@@ -211,7 +211,7 @@ namespace lapack_wrapper {
     m_QR1.getRt( m_Rt, m_ncols );
 
     m_rank = m_ncols;
-    valueType threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
+    real_type threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
     for ( integer i = 1; i < m_rank; ++i ) {
       if ( std::abs(m_Rt[i*(m_ncols+1)]) < threshold )
         { m_rank = i; break; }
@@ -233,9 +233,9 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   PINV_no_alloc<T>::mult_inv(
-    valueType const b[],
+    real_type const b[],
     integer         incb,
-    valueType       x[],
+    real_type       x[],
     integer         incx
   ) const {
 
@@ -291,9 +291,9 @@ namespace lapack_wrapper {
   bool
   PINV_no_alloc<T>::mult_inv(
     integer         nrhs,
-    valueType const B[],
+    real_type const B[],
     integer         ldB,
-    valueType       X[],
+    real_type       X[],
     integer         ldX
   ) const {
 
@@ -351,9 +351,9 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   PINV_no_alloc<T>::t_mult_inv(
-    valueType const b[],
+    real_type const b[],
     integer         incb,
-    valueType       x[],
+    real_type       x[],
     integer         incx
   ) const {
 
@@ -388,9 +388,9 @@ namespace lapack_wrapper {
   bool
   PINV_no_alloc<T>::t_mult_inv(
     integer         nrhs,
-    valueType const B[],
+    real_type const B[],
     integer         ldB,
-    valueType       X[],
+    real_type       X[],
     integer         ldX
   ) const {
 
@@ -448,9 +448,9 @@ namespace lapack_wrapper {
     );
 
     if ( m_rank < m_ncols ) {
-      Malloc<valueType> mem("PINV_no_alloc<T>::info");
+      Malloc<real_type> mem("PINV_no_alloc<T>::info");
       size_t dim = size_t( m_rank * m_rank );
-      valueType * R1 = mem.malloc( dim );
+      real_type * R1 = mem.malloc( dim );
       m_QR2.getR( R1, m_rank );
       fmt::print( stream,
         "R1\n{}\n",

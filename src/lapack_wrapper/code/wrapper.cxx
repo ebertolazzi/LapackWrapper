@@ -35,7 +35,7 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   template <typename T>
   MatrixWrapper<T>::MatrixWrapper(
-    valueType * _data,
+    real_type * _data,
     integer     nr,
     integer     nc,
     integer     ld
@@ -57,7 +57,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::setup(
-    valueType * _data,
+    real_type * _data,
     integer     nr,
     integer     nc,
     integer     ld
@@ -91,7 +91,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::scale_block(
-    valueType sc,
+    real_type sc,
     integer   nr,
     integer   nc,
     integer   irow,
@@ -132,7 +132,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  MatrixWrapper<T>::load( valueType const data_in[], integer ldData_in ) {
+  MatrixWrapper<T>::load( real_type const data_in[], integer ldData_in ) {
     integer info = gecopy(
       m_nrows, m_ncols, data_in, ldData_in, m_data, m_ldData
     );
@@ -146,7 +146,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  MatrixWrapper<T>::load_transposed( valueType const data_in[], integer ldData_in ) {
+  MatrixWrapper<T>::load_transposed( real_type const data_in[], integer ldData_in ) {
     for ( integer i = 0; i < m_nrows; ++i )
       for ( integer j = 0; j < m_ncols; ++j )
         m_data[i+j*m_ldData] = data_in[j+i*ldData_in];
@@ -197,7 +197,7 @@ namespace lapack_wrapper {
     #endif
     integer   const * pRows;
     integer   const * pCols;
-    valueType const * pValues;
+    real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx],pCols[idx]) ] = pValues[idx];
@@ -213,7 +213,7 @@ namespace lapack_wrapper {
     #endif
     integer   const * pRows;
     integer   const * pCols;
-    valueType const * pValues;
+    real_type const * pValues;
     sp.get_data( pCols, pRows, pValues ); // read index transposed
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx],pCols[idx]) ] = pValues[idx];
@@ -229,7 +229,7 @@ namespace lapack_wrapper {
     #endif
     integer   const * pRows;
     integer   const * pCols;
-    valueType const * pValues;
+    real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
@@ -245,7 +245,7 @@ namespace lapack_wrapper {
     #endif
     integer   const * pRows;
     integer   const * pCols;
-    valueType const * pValues;
+    real_type const * pValues;
     sp.get_data( pCols, pRows, pValues ); // read index transposed
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
@@ -258,7 +258,7 @@ namespace lapack_wrapper {
   MatrixWrapper<T>::load(
     integer   const rows[],
     integer   const cols[],
-    valueType const vals[],
+    real_type const vals[],
     integer         nnz
   ) {
     for ( integer idx = 0; idx < nnz; ++idx )
@@ -272,13 +272,13 @@ namespace lapack_wrapper {
   MatrixWrapper<T>::load_symmetric(
     integer   const rows[],
     integer   const cols[],
-    valueType const vals[],
+    real_type const vals[],
     integer         nnz
   ) {
     for ( integer idx = 0; idx < nnz; ++idx ) {
       integer   ii = rows[idx];
       integer   jj = cols[idx];
-      valueType rr = vals[idx];
+      real_type rr = vals[idx];
       m_data[ this->iaddr(ii,jj) ] = rr;
       if ( ii != jj ) m_data[ this->iaddr(jj,ii) ] = rr;
     }
@@ -293,7 +293,7 @@ namespace lapack_wrapper {
     integer         j_offs,
     integer   const rows[],
     integer   const cols[],
-    valueType const vals[],
+    real_type const vals[],
     integer         nnz
   ) {
     for ( integer idx = 0; idx < nnz; ++idx )
@@ -309,13 +309,13 @@ namespace lapack_wrapper {
     integer         j_offs,
     integer   const rows[],
     integer   const cols[],
-    valueType const vals[],
+    real_type const vals[],
     integer         nnz
   ) {
     for ( integer idx = 0; idx < nnz; ++idx ) {
       integer   ii = i_offs+rows[idx];
       integer   jj = j_offs+cols[idx];
-      valueType rr = vals[idx];
+      real_type rr = vals[idx];
       m_data[ this->iaddr(ii,jj) ] = rr;
       if ( ii != jj ) m_data[ this->iaddr(jj,ii) ] = rr;
     }
@@ -327,7 +327,7 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::load_sparse_column(
     integer         nnz,
-    valueType const values[],
+    real_type const values[],
     integer   const i_row[],
     integer         j
   ) {
@@ -341,7 +341,7 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::load_sparse_row(
     integer         nnz,
-    valueType const values[],
+    real_type const values[],
     integer         i,
     integer   const j_col[]
   ) {
@@ -353,7 +353,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  MatrixWrapper<T>::add( valueType alpha, valueType const data_in[], integer ldData_in ) {
+  MatrixWrapper<T>::add( real_type alpha, real_type const data_in[], integer ldData_in ) {
     geadd(
       m_nrows, m_ncols,
       alpha, data_in, ldData_in,
@@ -366,7 +366,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  MatrixWrapper<T>::add( valueType const data_in[], integer ldData_in ) {
+  MatrixWrapper<T>::add( real_type const data_in[], integer ldData_in ) {
     geadd(
       m_nrows, m_ncols,
       1.0, data_in, ldData_in,
@@ -385,7 +385,7 @@ namespace lapack_wrapper {
     #endif
     integer   const * pRows;
     integer   const * pCols;
-    valueType const * pValues;
+    real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx],pCols[idx]) ] += pValues[idx];
@@ -395,13 +395,13 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  MatrixWrapper<T>::add( valueType alpha, Sparse const & sp ) {
+  MatrixWrapper<T>::add( real_type alpha, Sparse const & sp ) {
     #ifndef LAPACK_WRAPPER_NO_DEBUG
     check(sp);
     #endif
     integer   const * pRows;
     integer   const * pCols;
-    valueType const * pValues;
+    real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx],pCols[idx]) ] += alpha * pValues[idx];
@@ -418,7 +418,7 @@ namespace lapack_wrapper {
   ) {
     integer   const * pRows;
     integer   const * pCols;
-    valueType const * pValues;
+    real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] += pValues[idx];
@@ -429,14 +429,14 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::add(
-    valueType      alpha,
+    real_type      alpha,
     Sparse const & sp,
     integer        i_offs,
     integer        j_offs
   ) {
     integer   const * pRows;
     integer   const * pCols;
-    valueType const * pValues;
+    real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
     for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] += alpha * pValues[idx];

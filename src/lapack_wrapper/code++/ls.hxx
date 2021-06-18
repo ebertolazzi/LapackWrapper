@@ -35,23 +35,23 @@ namespace lapack_wrapper {
   template <typename T>
   class LSS_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::valueType valueType;
+    typedef typename LinearSystemSolver<T>::real_type real_type;
 
   protected:
 
-    mutable Malloc<valueType> m_allocWork;
-    mutable valueType       * m_Work;
+    mutable Malloc<real_type> m_allocWork;
+    mutable real_type       * m_Work;
     mutable integer           m_Lwork;
 
     integer m_nrows;
     integer m_ncols;
 
-            valueType * m_Amat;
-    mutable valueType * m_sigma;
-    mutable valueType * m_AmatWork;
+            real_type * m_Amat;
+    mutable real_type * m_sigma;
+    mutable real_type * m_AmatWork;
     mutable integer     m_rank;
 
-    valueType m_rcond;
+    real_type m_rcond;
 
   public:
 
@@ -84,7 +84,7 @@ namespace lapack_wrapper {
       integer     NR,
       integer     NC,
       integer     Lwork,
-      valueType * Work
+      real_type * Work
     );
 
     //!
@@ -97,16 +97,16 @@ namespace lapack_wrapper {
     void
     factorize_nodim(
       char const      who[],
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     );
 
     bool
-    factorize_nodim( valueType const A[], integer LDA );
+    factorize_nodim( real_type const A[], integer LDA );
 
-    void      setRcond( valueType r )     { m_rcond = r; }
+    void      setRcond( real_type r )     { m_rcond = r; }
     integer   getRank()             const { return m_rank; }
-    valueType getSigma( integer i ) const { return m_sigma[i]; }
+    real_type getSigma( integer i ) const { return m_sigma[i]; }
 
     /*\
     :|:         _      _               _
@@ -116,10 +116,10 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
-    bool solve( integer nrhs, valueType B[], integer ldB ) const override;
-    bool t_solve( integer nrhs, valueType B[], integer ldB ) const override;
+    bool solve( real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
+    bool solve( integer nrhs, real_type B[], integer ldB ) const override;
+    bool t_solve( integer nrhs, real_type B[], integer ldB ) const override;
 
   };
 
@@ -130,11 +130,11 @@ namespace lapack_wrapper {
   template <typename T>
   class LSS : public LSS_no_alloc<T> {
   public:
-    typedef typename LSS_no_alloc<T>::valueType valueType;
+    typedef typename LSS_no_alloc<T>::real_type real_type;
 
   protected:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
 
   public:
 
@@ -182,7 +182,7 @@ namespace lapack_wrapper {
       char const      who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -193,7 +193,7 @@ namespace lapack_wrapper {
     factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override {
       this->allocate( NR, NC );
@@ -213,24 +213,24 @@ namespace lapack_wrapper {
   template <typename T>
   class LSY_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::valueType valueType;
+    typedef typename LinearSystemSolver<T>::real_type real_type;
 
   protected:
 
-    mutable Malloc<valueType> m_allocWork;
-    mutable valueType       * m_Work;
+    mutable Malloc<real_type> m_allocWork;
+    mutable real_type       * m_Work;
     mutable integer           m_Lwork;
 
     integer m_nrows;
     integer m_ncols;
 
-    valueType * m_Amat;
+    real_type * m_Amat;
 
-    mutable valueType * m_AmatWork;
+    mutable real_type * m_AmatWork;
     mutable integer   * m_jpvt;
     mutable integer     m_rank;
 
-    valueType m_rcond;
+    real_type m_rcond;
 
   public:
 
@@ -263,7 +263,7 @@ namespace lapack_wrapper {
       integer     NR,
       integer     NC,
       integer     Lwork,
-      valueType * Work,
+      real_type * Work,
       integer     Liwork,
       integer   * iWork
     );
@@ -278,15 +278,15 @@ namespace lapack_wrapper {
     void
     factorize_nodim(
       char const      who[],
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     );
 
     bool
-    factorize_nodim( valueType const A[], integer LDA );
+    factorize_nodim( real_type const A[], integer LDA );
 
     void
-    setRcond( valueType r )
+    setRcond( real_type r )
     { m_rcond = r; }
 
     integer
@@ -301,10 +301,10 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    bool solve( valueType xb[] ) const override;
-    bool t_solve( valueType xb[] ) const override;
-    bool solve( integer nrhs, valueType B[], integer ldB ) const override;
-    bool t_solve( integer nrhs, valueType B[], integer ldB ) const override;
+    bool solve( real_type xb[] ) const override;
+    bool t_solve( real_type xb[] ) const override;
+    bool solve( integer nrhs, real_type B[], integer ldB ) const override;
+    bool t_solve( integer nrhs, real_type B[], integer ldB ) const override;
 
   };
 
@@ -315,11 +315,11 @@ namespace lapack_wrapper {
   template <typename T>
   class LSY : public LSY_no_alloc<T> {
   public:
-    typedef typename LSY_no_alloc<T>::valueType valueType;
+    typedef typename LSY_no_alloc<T>::real_type real_type;
 
   protected:
 
-    Malloc<valueType> m_allocReals;
+    Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocInts;
 
   public:
@@ -367,7 +367,7 @@ namespace lapack_wrapper {
       char const      who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override;
 
@@ -375,7 +375,7 @@ namespace lapack_wrapper {
     factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) override;
 

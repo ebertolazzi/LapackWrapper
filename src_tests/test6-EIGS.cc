@@ -202,7 +202,7 @@ test5() {
   for ( it = e.begin(); it != e.end(); ++it )
     cout << *it << "\n";
 
-  vector<vector< lapack_wrapper::Eigenvectors<real_type>::complexType > > vecs;
+  vector<vector< lapack_wrapper::Eigenvectors<real_type>::complex_type > > vecs;
   E.getLeftEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
     cout << "vL[" << n << "] = ";
@@ -243,7 +243,7 @@ test6() {
   for ( it = e.begin(); it != e.end(); ++it )
     cout << *it << "\n";
 
-  vector<vector< lapack_wrapper::GeneralizedEigenvectors<real_type>::complexType > > vecs;
+  vector<vector< lapack_wrapper::GeneralizedEigenvectors<real_type>::complex_type > > vecs;
   E.getLeftEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
     cout << "vL[" << n << "] = ";

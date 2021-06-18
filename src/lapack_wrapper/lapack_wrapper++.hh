@@ -288,7 +288,7 @@ namespace lapack_wrapper {
   template <typename T>
   class LinearSystemSolver {
   public:
-    typedef T valueType;
+    typedef T real_type;
 
   public:
 
@@ -308,15 +308,15 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    solve( valueType xb[] ) const = 0;
+    solve( real_type xb[] ) const = 0;
 
     virtual
     bool
-    t_solve( valueType xb[] ) const = 0;
+    t_solve( real_type xb[] ) const = 0;
 
     virtual
     bool
-    solve( integer nrhs, valueType B[], integer ldB ) const {
+    solve( integer nrhs, real_type B[], integer ldB ) const {
       for ( integer i = 0; i < nrhs; ++i )
         if ( !solve( B + i*ldB ) ) return false;
       return true;
@@ -324,7 +324,7 @@ namespace lapack_wrapper {
 
     virtual
     bool
-    t_solve( integer nrhs, valueType B[], integer ldB ) const {
+    t_solve( integer nrhs, real_type B[], integer ldB ) const {
       for ( integer i = 0; i < nrhs; ++i )
         if ( !t_solve( B + i*ldB ) ) return false;
       return true;
@@ -332,7 +332,7 @@ namespace lapack_wrapper {
 
     virtual
     void
-    solve( char const who[], valueType xb[] ) const {
+    solve( char const who[], real_type xb[] ) const {
       UTILS_ASSERT(
         this->solve( xb ),
         "LinearSystemSolver::solve failed at {}\n", who
@@ -341,7 +341,7 @@ namespace lapack_wrapper {
 
     virtual
     void
-    t_solve( char const who[], valueType xb[] ) const {
+    t_solve( char const who[], real_type xb[] ) const {
       UTILS_ASSERT(
         this->t_solve( xb ),
         "LinearSystemSolver::t_solve failed at {}\n", who
@@ -350,7 +350,7 @@ namespace lapack_wrapper {
 
     virtual
     void
-    solve( char const who[], integer nrhs, valueType B[], integer ldB ) const {
+    solve( char const who[], integer nrhs, real_type B[], integer ldB ) const {
       UTILS_ASSERT(
         this->solve( nrhs, B, ldB ),
         "LinearSystemSolver::solve failed at {}\n", who
@@ -359,7 +359,7 @@ namespace lapack_wrapper {
 
     virtual
     void
-    t_solve( char const who[], integer nrhs, valueType B[], integer ldB ) const {
+    t_solve( char const who[], integer nrhs, real_type B[], integer ldB ) const {
       UTILS_ASSERT(
         this->t_solve( nrhs, B, ldB ),
         "LinearSystemSolver::solve failed at {}\n", who
@@ -372,7 +372,7 @@ namespace lapack_wrapper {
       char const      /* who */ [],
       integer         /* NR  */   ,
       integer         /* NC  */   ,
-      valueType const /* A   */ [],
+      real_type const /* A   */ [],
       integer         /* LDA */
     ) {
       UTILS_ERROR0(
@@ -385,7 +385,7 @@ namespace lapack_wrapper {
     factorize(
       integer         /* NR  */   ,
       integer         /* NC  */   ,
-      valueType const /* A   */ [],
+      real_type const /* A   */ [],
       integer         /* LDA */
     ) {
       return false;
@@ -395,30 +395,30 @@ namespace lapack_wrapper {
     // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
     bool
-    solve( MatrixWrapper<valueType> & M )
+    solve( MatrixWrapper<real_type> & M )
     { return solve( M.numCols(), M.data(), M.lDim() ); }
 
     void
-    solve( char const who[], MatrixWrapper<valueType> & M )
+    solve( char const who[], MatrixWrapper<real_type> & M )
     { this->solve( who, M.numCols(), M.data(), M.lDim() ); }
 
     bool
-    t_solve( MatrixWrapper<valueType> & M )
+    t_solve( MatrixWrapper<real_type> & M )
     { return t_solve( M.numCols(), M.data(), M.lDim() ); }
 
     void
-    t_solve( char const who[], MatrixWrapper<valueType> & M )
+    t_solve( char const who[], MatrixWrapper<real_type> & M )
     { this->t_solve( who, M.numCols(), M.data(), M.lDim() ); }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     void
-    factorize( char const who[], MatrixWrapper<valueType> const & M ) {
+    factorize( char const who[], MatrixWrapper<real_type> const & M ) {
       this->factorize( who, M.numRows(), M.numCols(), M.data(), M.lDim() );
     }
 
     bool
-    factorize( MatrixWrapper<valueType> const & M ) {
+    factorize( MatrixWrapper<real_type> const & M ) {
       return this->factorize( M.numRows(), M.numCols(), M.data(), M.lDim() );
     }
 
@@ -428,10 +428,10 @@ namespace lapack_wrapper {
       char const      who[],
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) {
-      Matrix<valueType> M(NC,NR);
+      Matrix<real_type> M(NC,NR);
       for ( integer i = 0; i < NR; ++i )
         for ( integer j = 0; j < NC; ++j )
           M(j,i) = A[i+j*LDA];
@@ -443,10 +443,10 @@ namespace lapack_wrapper {
     t_factorize(
       integer         NR,
       integer         NC,
-      valueType const A[],
+      real_type const A[],
       integer         LDA
     ) {
-      Matrix<valueType> M(NC,NR);
+      Matrix<real_type> M(NC,NR);
       for ( integer i = 0; i < NR; ++i )
         for ( integer j = 0; j < NC; ++j )
           M(j,i) = A[i+j*LDA];
@@ -454,12 +454,12 @@ namespace lapack_wrapper {
     }
 
     void
-    t_factorize( char const who[], MatrixWrapper<valueType> const & M ) {
+    t_factorize( char const who[], MatrixWrapper<real_type> const & M ) {
       this->t_factorize( who, M.numRows(), M.numCols(), M.data(), M.lDim() );
     }
 
     bool
-    t_factorize( MatrixWrapper<valueType> const & M ) {
+    t_factorize( MatrixWrapper<real_type> const & M ) {
       return this->t_factorize( M.numRows(), M.numCols(), M.data(), M.lDim() );
     }
 

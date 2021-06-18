@@ -35,7 +35,7 @@
 #endif
 
 using namespace std;
-typedef double valueType;
+typedef double real_type;
 using lapack_wrapper::integer;
 
 static Utils::Console msg(&std::cout);
@@ -44,12 +44,12 @@ static
 void
 test1() {
 
-  lapack_wrapper::QR<valueType> qr;
+  lapack_wrapper::QR<real_type> qr;
 
   integer const M   = 3;
   integer const N   = 5;
   integer const LDA = 3;
-  valueType A[] = {
+  real_type A[] = {
     0.001,      2,     3,
     0.001,  0.001,     0,
     0,      0.001,     0,
@@ -57,7 +57,7 @@ test1() {
     0.000001,   5,     3
   };
 
-  lapack_wrapper::MatrixWrapper<valueType> Amat( A, M, N, LDA );
+  lapack_wrapper::MatrixWrapper<real_type> Amat( A, M, N, LDA );
 
   msg.green(
     "\n\n\nTest1:\n\nInitial A\n" +
@@ -67,12 +67,12 @@ test1() {
   msg.green( "\nDo QR factorization of A^T\n" );
   qr.t_factorize( "qr", Amat );
 
-  valueType R[M*M];
+  real_type R[M*M];
   qr.getR( R, M );
   fmt::print( "\nR=\n{}", lapack_wrapper::print_matrix( M, M, R, M ) );
 
-  valueType rhs[M], b[M];
-  valueType x[N] = {1,2,3,4,5};
+  real_type rhs[M], b[M];
+  real_type x[N] = {1,2,3,4,5};
   lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, rhs, 1 );
   lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, b,   1 );
 
@@ -93,7 +93,7 @@ test1() {
   );
 
   lapack_wrapper::gemv( -1.0, Amat, x, 1, 1.0, b, 1 );
-  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print(
@@ -109,11 +109,11 @@ test1() {
 static
 void
 test2() {
-  lapack_wrapper::QRP<valueType> qr;
+  lapack_wrapper::QRP<real_type> qr;
   integer const M   = 3;
   integer const N   = 5;
   integer const LDA = 3;
-  valueType A[] = {
+  real_type A[] = {
     0.001,      2,     3,
     0.001,  0.001,     0,
     0,      0.001,     0,
@@ -121,19 +121,19 @@ test2() {
     0.000001,   5,     3
   };
 
-  lapack_wrapper::MatrixWrapper<valueType> Amat( A, M, N, LDA );
+  lapack_wrapper::MatrixWrapper<real_type> Amat( A, M, N, LDA );
 
   msg.green( "\n\n\nTest2:\n\nInitial A\n"+ lapack_wrapper::print_matrix( Amat ) );
 
   fmt::print("\nDo QR factorization of A^T\n");
   qr.t_factorize( "qrp", Amat );
 
-  valueType R[M*M];
+  real_type R[M*M];
   qr.getR( R, M );
   fmt::print( "\nR=\n{}", lapack_wrapper::print_matrix( M, M, R, M ) );
 
-  valueType rhs[M], b[M];
-  valueType x[N] = {1,2,3,4,5};
+  real_type rhs[M], b[M];
+  real_type x[N] = {1,2,3,4,5};
   lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, rhs, 1 );
   lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, b,   1 );
 
@@ -155,7 +155,7 @@ test2() {
   );
 
   lapack_wrapper::gemv( -1.0, Amat, x, 1, 1.0, b, 1 );
-  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print(
@@ -171,11 +171,11 @@ test2() {
 static
 void
 test3() {
-  lapack_wrapper::QRP<valueType> qr;
+  lapack_wrapper::QRP<real_type> qr;
   integer const M   = 5;
   integer const N   = 5;
   integer const LDA = 5;
-  valueType A[] = {
+  real_type A[] = {
     0.001,      2,     3,     2, 3,
     0.001,  0.001,     0, 0.001, 1e-10,
     0,      0.001,     0, 0.001, 1e-12,
@@ -190,12 +190,12 @@ test3() {
   fmt::print("\nDo QR factorization of A^T\n");
   qr.t_factorize( "qr", M, N, A, LDA );
 
-  valueType R[M*M];
+  real_type R[M*M];
   qr.getR( R, M );
   fmt::print( "\nR=\n{}", lapack_wrapper::print_matrix( M, M, R, M ) );
 
-  valueType rhs[M], b[M];
-  valueType x[N] = {1,2,3,4,5};
+  real_type rhs[M], b[M];
+  real_type x[N] = {1,2,3,4,5};
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, rhs, 1
   );
@@ -224,7 +224,7 @@ test3() {
     lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
 
-  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print(
@@ -257,17 +257,17 @@ test3() {
 static
 void
 test4() {
-  lapack_wrapper::LU<valueType>   lu;
-  lapack_wrapper::LUPQ<valueType> lupq;
-  lapack_wrapper::QR<valueType>   qr;
-  lapack_wrapper::QRP<valueType>  qrp;
-  lapack_wrapper::SVD<valueType>  svd;
-  lapack_wrapper::LSS<valueType>  lss;
-  lapack_wrapper::LSY<valueType>  lsy;
+  lapack_wrapper::LU<real_type>   lu;
+  lapack_wrapper::LUPQ<real_type> lupq;
+  lapack_wrapper::QR<real_type>   qr;
+  lapack_wrapper::QRP<real_type>  qrp;
+  lapack_wrapper::SVD<real_type>  svd;
+  lapack_wrapper::LSS<real_type>  lss;
+  lapack_wrapper::LSY<real_type>  lsy;
 
   integer const M   = 5;
   integer const LDA = 5;
-  valueType A[] = {
+  real_type A[] = {
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
@@ -275,8 +275,8 @@ test4() {
     0.000001,   5,     3,  1e-6+5,    3+1
   };
 
-  valueType rhs[M], b[M], res;
-  valueType x[M] = {1,2,3,4,5};
+  real_type rhs[M], b[M], res;
+  real_type x[M] = {1,2,3,4,5};
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
@@ -324,17 +324,17 @@ test4() {
 static
 void
 test5() {
-  lapack_wrapper::LU<valueType>   lu;
-  lapack_wrapper::LUPQ<valueType> lupq;
-  lapack_wrapper::QR<valueType>   qr;
-  lapack_wrapper::QRP<valueType>  qrp;
-  lapack_wrapper::SVD<valueType>  svd;
-  lapack_wrapper::LSS<valueType>  lss;
-  lapack_wrapper::LSY<valueType>  lsy;
+  lapack_wrapper::LU<real_type>   lu;
+  lapack_wrapper::LUPQ<real_type> lupq;
+  lapack_wrapper::QR<real_type>   qr;
+  lapack_wrapper::QRP<real_type>  qrp;
+  lapack_wrapper::SVD<real_type>  svd;
+  lapack_wrapper::LSS<real_type>  lss;
+  lapack_wrapper::LSY<real_type>  lsy;
 
   integer const M   = 5;
   integer const LDA = 5;
-  valueType A[] = {
+  real_type A[] = {
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
@@ -342,8 +342,8 @@ test5() {
     0.000001,   5,     3,  1e-6+5,     3+1
   };
 
-  valueType rhs[M], b[M], res;
-  valueType x[M] = {1,2,3,4,5};
+  real_type rhs[M], b[M], res;
+  real_type x[M] = {1,2,3,4,5};
   lapack_wrapper::gemv(
     lapack_wrapper::TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
@@ -372,16 +372,16 @@ test5() {
 static
 void
 test6() {
-  lapack_wrapper::TridiagonalLU<valueType> lu;
-  lapack_wrapper::TridiagonalQR<valueType> qr;
+  lapack_wrapper::TridiagonalLU<real_type> lu;
+  lapack_wrapper::TridiagonalQR<real_type> qr;
 
   integer const N = 5;
-  valueType const D[] = { 1, 1, 2, -0.1, 0.1 };
-  valueType const L[] = { -0.1, -1, -2, -0.1 };
-  valueType const U[] = { -1, -10, -2, 0.1 };
+  real_type const D[] = { 1, 1, 2, -0.1, 0.1 };
+  real_type const L[] = { -0.1, -1, -2, -0.1 };
+  real_type const U[] = { -1, -10, -2, 0.1 };
 
-  valueType rhs[N], b[N];
-  valueType x[N] = {1,2,3,4,5};
+  real_type rhs[N], b[N];
+  real_type x[N] = {1,2,3,4,5};
   qr.axpy( N, 1.0, L, D, U, x, 0.0, rhs );
   qr.axpy( N, 1.0, L, D, U, x, 0.0, b   );
 
@@ -418,7 +418,7 @@ test6() {
 
   qr.axpy( N, -1.0, L, D, U, x, 1.0, b );
 
-  valueType res = lapack_wrapper::nrm2( N, b, 1 );
+  real_type res = lapack_wrapper::nrm2( N, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
@@ -434,11 +434,11 @@ test6() {
 static
 void
 test7() {
-  lapack_wrapper::QRP<valueType> qrp;
+  lapack_wrapper::QRP<real_type> qrp;
 
   integer const M   = 5;
   integer const LDA = 5;
-  valueType A[] = {
+  real_type A[] = {
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
@@ -446,8 +446,8 @@ test7() {
     0.000001,   5,     3,  1e-6+5,    3+1
   };
 
-  valueType rhs[M], b[M];
-  valueType x[M] = {1,2,3,4,5};
+  real_type rhs[M], b[M];
+  real_type x[M] = {1,2,3,4,5};
   lapack_wrapper::gemv(
     lapack_wrapper::TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
@@ -476,7 +476,7 @@ test7() {
     lapack_wrapper::TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
 
-  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
@@ -492,11 +492,11 @@ test7() {
 static
 void
 test8() {
-  lapack_wrapper::LSC<valueType> lsc;
+  lapack_wrapper::LSC<real_type> lsc;
 
   integer const M   = 5;
   integer const LDA = 5;
-  valueType A[] = {
+  real_type A[] = {
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
@@ -504,8 +504,8 @@ test8() {
     0.000001,   5,     3,  1e-6+5,    3+1
   };
 
-  valueType rhs[M], b[M];
-  valueType x[M] = {1,2,3,4,5};
+  real_type rhs[M], b[M];
+  real_type x[M] = {1,2,3,4,5};
   //bool      rselect[M] = { true, true, true, true, true };
   //bool      rselect[M] = { false, false, false, false, false };
   bool      rselect[M] = { true, false, true, true, true };
@@ -538,7 +538,7 @@ test8() {
     lapack_wrapper::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
 
-  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
@@ -554,11 +554,11 @@ test8() {
 static
 void
 test9() {
-  lapack_wrapper::PINV<valueType> pinv;
+  lapack_wrapper::PINV<real_type> pinv;
 
   integer const M   = 5;
   integer const LDA = 5;
-  valueType A[] = {
+  real_type A[] = {
     0.001,    1,     0,      2,  1,
     1e-9, -1e+9,  1e-9,  -1e-9,  1,
     1e-9, -1e+9,     1,  -1e-9,  1,
@@ -567,8 +567,8 @@ test9() {
     0, 0, 0, 0, 0
   };
 
-  valueType rhs[M], b[M], x[M];
-  valueType const xe[M] = {1,2,3,4,5};
+  real_type rhs[M], b[M], x[M];
+  real_type const xe[M] = {1,2,3,4,5};
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, M, 1, A, LDA, xe, 1, 0, rhs, 1
   );
@@ -591,7 +591,7 @@ test9() {
     << "x^T      = "
     << lapack_wrapper::print_matrix( 1, M, x, 1 );
 
-  valueType e[M] = { x[0]-xe[0],x[1]-xe[1],x[2]-xe[2],x[3]-xe[3],x[4]-xe[4]};
+  real_type e[M] = { x[0]-xe[0],x[1]-xe[1],x[2]-xe[2],x[3]-xe[3],x[4]-xe[4]};
 
   cout
     << "e^T      = "
@@ -601,7 +601,7 @@ test9() {
     lapack_wrapper::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
 
-  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print(
@@ -636,20 +636,20 @@ test9() {
 static
 void
 test10() {
-  lapack_wrapper::PINV<valueType> pinv;
+  lapack_wrapper::PINV<real_type> pinv;
 
   integer const M   = 6;
   integer const N   = 4;
   integer const LDA = 6;
-  valueType A[] = {
+  real_type A[] = {
     2,   1,  2,  1, 1, 1,
     2,   1,  2,  1, 1, 1,
     20, 10, 20, 10, 1, 1,
      1,  2,  3,  4, 5, 6,
   };
 
-  valueType rhs[M], b[M], b2[2*M], x[N], x2[2*N];
-  valueType const xe[N] = {1,2,3,4};
+  real_type rhs[M], b[M], b2[2*M], x[N], x2[2*N];
+  real_type const xe[N] = {1,2,3,4};
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
   );
@@ -676,7 +676,7 @@ test10() {
     << "x2^T     = "
     << lapack_wrapper::print_matrix( 1, N, x2, 1 );
 
-  valueType e[N] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2] };
+  real_type e[N] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2] };
 
   cout
     << "e^T      = "
@@ -690,7 +690,7 @@ test10() {
     << "res^T    = "
     << lapack_wrapper::print_matrix( 1, M, b, 1 );
 
-  valueType res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
@@ -706,20 +706,20 @@ test10() {
 static
 void
 test11() {
-  lapack_wrapper::PINV<valueType> pinv;
+  lapack_wrapper::PINV<real_type> pinv;
 
   integer const M   = 6;
   integer const N   = 4;
   integer const LDA = 6;
-  valueType A[] = {
+  real_type A[] = {
     2,   1,  2,  1, 1, 1,
     2,   1,  2,  1, 1, 1,
     20, 10, 20, 10, 1, 1,
      1,  2,  3,  4, 5, 6,
   };
 
-  valueType rhs[N], b[N], b2[2*N], x[M], x2[2*M];
-  valueType const xe[M] = {1,2,3,4,5,6};
+  real_type rhs[N], b[N], b2[2*N], x[M], x2[2*M];
+  real_type const xe[M] = {1,2,3,4,5,6};
   lapack_wrapper::gemv(
     lapack_wrapper::TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
   );
@@ -746,7 +746,7 @@ test11() {
     << "x2^T     = "
     << lapack_wrapper::print_matrix( 1, M, x2, 1 );
 
-  valueType e[M] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2], x[3]-xe[3] };
+  real_type e[M] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2], x[3]-xe[3] };
 
   cout
     << "e^T      = "
@@ -760,7 +760,7 @@ test11() {
     << "res^T    = "
     << lapack_wrapper::print_matrix( 1, N, b, 1 );
 
-  valueType res = lapack_wrapper::nrm2( N, b, 1 );
+  real_type res = lapack_wrapper::nrm2( N, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   msg.green(
@@ -777,12 +777,12 @@ test11() {
 static
 void
 test12() {
-  lapack_wrapper::PINV<valueType> pinv;
+  lapack_wrapper::PINV<real_type> pinv;
 
   integer const M   = 8;
   integer const N   = 5;
   integer const LDA = M;
-  valueType A[] = {
+  real_type A[] = {
     0.001, 1e-9,  1e-9,  1e-9, 1, 1, 0, 0,
     1,    -1e+9, -1e+9, -1e+9, 1, 1, 0, 0,
     0,     1e-9,     1,  1e-9, 1, 1, 0, 0,
@@ -821,10 +821,10 @@ R1
 
 */
 
-  valueType MAT[M*M], MAT1[M*M], MM[M*M];
+  real_type MAT[M*M], MAT1[M*M], MM[M*M];
 
-  valueType rhs[N];
-  valueType const xe[M] = {1,2,3,4,5,6,7,8};
+  real_type rhs[N];
+  real_type const xe[M] = {1,2,3,4,5,6,7,8};
   lapack_wrapper::gemv(
     lapack_wrapper::TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
   );

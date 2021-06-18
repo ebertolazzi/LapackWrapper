@@ -74,8 +74,9 @@ public:
 
   ~all_trid_test() { }
   
-  void preco(void) {
-    integer i;
+  void
+  preco(void) {
+    Sparse_tool::integer i;
     for ( i = 0; i < a.size(); ++i ) a[i] = 1.2+i*sqrt(2.0);
     for ( i = 0; i < b.size(); ++i ) b[i] = 1+i*sqrt(3.0);
 
@@ -109,10 +110,10 @@ void
 all_trid_test::test001(void) {
   preco();
   cout << "\ntest(1)\n";
-  integer N(A.numRows());
+  Sparse_tool::integer N(A.numRows());
 
   RES = A * a;
-  for ( integer i = 0; i < N; ++i ) {
+  for ( Sparse_tool::integer i = 0; i < N; ++i ) {
     RRES[i] = A(i,i) * a[i];
     if ( i > 0   ) RRES[i] += A(i,i-1) * a[i-1];
     if ( i < N-1 ) RRES[i] += A(i,i+1) * a[i+1];
@@ -124,9 +125,9 @@ void
 all_trid_test::test002(void) {
   preco();
   cout << "\ntest(2)\n";
-  integer N(A.numRows());
+  Sparse_tool::integer N(A.numRows());
   RES = b + A * a;
-  for ( integer i = 0; i < N; ++i ) {
+  for ( Sparse_tool::integer i = 0; i < N; ++i ) {
     RRES[i] = b[i] + A(i,i) * a[i];
     if ( i > 0   ) RRES[i] += A(i,i-1) * a[i-1];
     if ( i < N-1 ) RRES[i] += A(i,i+1) * a[i+1];
@@ -138,9 +139,9 @@ void
 all_trid_test::test003(void) {
   preco();
   cout << "\ntest(3)\n";
-  integer N(A.numRows());
+  Sparse_tool::integer N(A.numRows());
   RES = b - A * a;
-  for ( integer i = 0; i < N; ++i ) {
+  for ( Sparse_tool::integer i = 0; i < N; ++i ) {
     RRES[i] = b[i] - A(i,i) * a[i];
     if ( i > 0   ) RRES[i] -= A(i,i-1) * a[i-1];
     if ( i < N-1 ) RRES[i] -= A(i,i+1) * a[i+1];

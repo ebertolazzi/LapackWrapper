@@ -67,15 +67,15 @@
 #endif
 
 using namespace std;
-typedef double valueType;
+typedef double real_type;
 
 static unsigned seed1 = 2;
 static std::mt19937 generator(seed1);
 
 static
-valueType
-rand( valueType xmin, valueType xmax ) {
-  valueType random = valueType(generator())/generator.max();
+real_type
+rand( real_type xmin, real_type xmax ) {
+  real_type random = real_type(generator())/generator.max();
   return xmin + (xmax-xmin)*random;
 }
 
@@ -90,15 +90,15 @@ testMM() {
 
   fmt::print("\nSize N = {}\n",N);
 
-  Malloc<valueType> baseValue("real");
+  Malloc<real_type> baseValue("real");
   Malloc<integer>   baseIndex("integer");
 
   baseValue.allocate(N*N*10);
   baseIndex.allocate(N*10);
 
-  valueType * M1 = baseValue(N*N);
-  valueType * M2 = baseValue(N*N);
-  valueType * M3 = baseValue(N*N);
+  real_type * M1 = baseValue(N*N);
+  real_type * M2 = baseValue(N*N);
+  real_type * M3 = baseValue(N*N);
 
   for ( int i = 0; i < N; ++i ) {
     for ( int j = 0; j < N; ++j ) {
@@ -121,7 +121,7 @@ testMM() {
       M2, N,
       1.0, M3, N
     );
-    memcpy( M2, M3, N*N*sizeof(valueType) );
+    memcpy( M2, M3, N*N*sizeof(real_type) );
   }
   tm.toc();
   fmt::print("(MM) MULT = {:8.4} [ps/N^3] (lapack)\n", to_ps*tm.elapsed_ms()/(N*N*N) );
@@ -130,9 +130,9 @@ testMM() {
 
   tm.tic();
   for ( int i = 0; i < N_TIMES; ++i ) {
-    MM<valueType,N,N,N,N,N,N>::subTo(M1,M2,M3);
-    memcpy( M2, M3, N*N*sizeof(valueType) );
-    //Vec2<valueType,N*N,1,1>::copy(M3,M2);
+    MM<real_type,N,N,N,N,N,N>::subTo(M1,M2,M3);
+    memcpy( M2, M3, N*N*sizeof(real_type) );
+    //Vec2<real_type,N*N,1,1>::copy(M3,M2);
   }
   tm.toc();
   fmt::print("(MM) MULT = {:8.4} [ps/N^3] (hand unrolled)\n", to_ps*tm.elapsed_ms()/(N*N*N) );
@@ -152,15 +152,15 @@ testMv() {
 
   fmt::print("\nSize N = {}\n",N);
 
-  Malloc<valueType> baseValue("real");
+  Malloc<real_type> baseValue("real");
   Malloc<integer>   baseIndex("integer");
 
   baseValue.allocate(N*N*10);
   baseIndex.allocate(N*10);
 
-  valueType * M = baseValue(N*N);
-  valueType * V = baseValue(N);
-  valueType * R = baseValue(N);
+  real_type * M = baseValue(N*N);
+  real_type * V = baseValue(N);
+  real_type * R = baseValue(N);
 
   for ( int i = 0; i < N; ++i ) {
     V[i] = rand(-1,1);
@@ -184,7 +184,7 @@ testMv() {
       1.0, R, 1
     );
     //copy( N, R, 1, V, 1);
-    memcpy( V, R, N*sizeof(valueType) );
+    memcpy( V, R, N*sizeof(real_type) );
   }
   tm.toc();
   fmt::print("(MV) MULT = {:8.4} [ps/N^2] (lapack)\n", to_ps*tm.elapsed_ms()/(N*N) );
@@ -193,9 +193,9 @@ testMv() {
 
   tm.tic();
   for ( int i = 0; i < N_TIMES; ++i ) {
-    Mv<valueType,N,N,N,N,N>::subTo(M,V,R);
-    memcpy( V, R, N*sizeof(valueType) );
-    //Vec2<valueType,N*N,1,1>::copy(M3,M2);
+    Mv<real_type,N,N,N,N,N>::subTo(M,V,R);
+    memcpy( V, R, N*sizeof(real_type) );
+    //Vec2<real_type,N*N,1,1>::copy(M3,M2);
   }
   tm.toc();
   fmt::print("(MV) MULT = {:8.4} [ps/N^2] (hand unrolled)\n", to_ps*tm.elapsed_ms()/(N*N) );
@@ -215,15 +215,15 @@ testCopy() {
 
   fmt::print("\nSize N = {}\n",N);
 
-  Malloc<valueType> baseValue("real");
+  Malloc<real_type> baseValue("real");
   Malloc<integer>   baseIndex("integer");
 
   baseValue.allocate(N*N*10);
   baseIndex.allocate(N*10);
 
-  valueType * M1 = baseValue(N*N);
-  valueType * M2 = baseValue(N*N);
-  valueType * M3 = baseValue(N*N);
+  real_type * M1 = baseValue(N*N);
+  real_type * M2 = baseValue(N*N);
+  real_type * M3 = baseValue(N*N);
 
   for ( int i = 0; i < N; ++i ) {
     for ( int j = 0; j < N; ++j ) {

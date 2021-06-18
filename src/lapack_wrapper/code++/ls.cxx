@@ -40,7 +40,7 @@ namespace lapack_wrapper {
     integer     NR,
     integer     NC,
     integer     Lwork,
-    valueType * Work
+    real_type * Work
   ) {
     integer minRC  = std::min(NR,NC);
     integer NRC    = NR*NC;
@@ -63,7 +63,7 @@ namespace lapack_wrapper {
   template <typename T>
   integer
   LSS_no_alloc<T>::getL( integer NR, integer NC, integer nrhs ) const {
-    valueType tmp;
+    real_type tmp;
     integer NRC = NR > NC ? NR : NC;
     integer info = gelss(
       NR, NC, nrhs,
@@ -85,7 +85,7 @@ namespace lapack_wrapper {
   void
   LSS_no_alloc<T>::factorize_nodim(
     char const      who[],
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     integer info = gecopy(
@@ -103,7 +103,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LSS_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
+  LSS_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Amat, m_nrows
     );
@@ -114,7 +114,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LSS_no_alloc<T>::solve( valueType xb[] ) const {
+  LSS_no_alloc<T>::solve( real_type xb[] ) const {
     // check memory
     integer L = getL( m_nrows, m_ncols, 1 );
     if ( L > m_Lwork ) {
@@ -138,7 +138,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LSS_no_alloc<T>::t_solve( valueType xb[] ) const {
+  LSS_no_alloc<T>::t_solve( real_type xb[] ) const {
     // check memory
     integer L = getL( m_ncols, m_nrows, 1 );
     if ( L > m_Lwork ) {
@@ -165,7 +165,7 @@ namespace lapack_wrapper {
   bool
   LSS_no_alloc<T>::solve(
     integer   nrhs,
-    valueType B[],
+    real_type B[],
     integer   ldB
   ) const {
     // check memory
@@ -192,7 +192,7 @@ namespace lapack_wrapper {
   bool
   LSS_no_alloc<T>::t_solve(
     integer   nrhs,
-    valueType B[],
+    real_type B[],
     integer   ldB
   ) const {
     // check memory
@@ -247,7 +247,7 @@ namespace lapack_wrapper {
     integer     NR,
     integer     NC,
     integer     Lwork,
-    valueType * Work,
+    real_type * Work,
     integer     Liwork,
     integer   * iWork
   ) {
@@ -271,7 +271,7 @@ namespace lapack_wrapper {
   template <typename T>
   integer
   LSY_no_alloc<T>::getL( integer NR, integer NC, integer nrhs ) const {
-    valueType tmp;
+    real_type tmp;
     integer NRC = NR > NC ? NR : NC;
     integer info = gelsy(
       NR, NC, nrhs,
@@ -293,7 +293,7 @@ namespace lapack_wrapper {
   void
   LSY_no_alloc<T>::factorize_nodim(
     char const      who[],
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     integer info = gecopy(
@@ -310,7 +310,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LSY_no_alloc<T>::factorize_nodim( valueType const A[], integer LDA ) {
+  LSY_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
     integer info = gecopy(
       m_nrows, m_ncols, A, LDA, m_Amat, m_nrows
     );
@@ -321,7 +321,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LSY_no_alloc<T>::solve( valueType xb[] ) const {
+  LSY_no_alloc<T>::solve( real_type xb[] ) const {
     // check memory
     integer L = getL( m_nrows, m_ncols, 1 );
     if ( L > m_Lwork ) {
@@ -345,7 +345,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   bool
-  LSY_no_alloc<T>::t_solve( valueType xb[] ) const {
+  LSY_no_alloc<T>::t_solve( real_type xb[] ) const {
     // check memory
     integer L = getL( m_ncols, m_nrows, 1 );
     if ( L > m_Lwork ) {
@@ -372,7 +372,7 @@ namespace lapack_wrapper {
   bool
   LSY_no_alloc<T>::solve(
     integer   nrhs,
-    valueType B[],
+    real_type B[],
     integer   ldB
   ) const {
     // check memory
@@ -399,7 +399,7 @@ namespace lapack_wrapper {
   bool
   LSY_no_alloc<T>::t_solve(
     integer   nrhs,
-    valueType B[],
+    real_type B[],
     integer   ldB
   ) const {
     // check memory
@@ -446,7 +446,7 @@ namespace lapack_wrapper {
     char const      who[],
     integer         NR,
     integer         NC,
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     allocate( NR, NC );
@@ -467,7 +467,7 @@ namespace lapack_wrapper {
   LSY<T>::factorize(
     integer         NR,
     integer         NC,
-    valueType const A[],
+    real_type const A[],
     integer         LDA
   ) {
     allocate( NR, NC );
