@@ -24,7 +24,7 @@ task :build_osx => [:download] do
     extract_tgz(FILENAME)
 
     FileUtils.rm_rf 'superlu'
-    FileUtils.mv    'SuperLU-'+VER, 'superlu'
+    FileUtils.mv    'superlu-'+VER, 'superlu'
 
     ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
     ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
@@ -55,7 +55,7 @@ task :build_linux => [:download] do
   else
     extract_tgz(FILENAME)
     FileUtils.rm_rf 'superlu'
-    FileUtils.mv    'SuperLU-'+VER, 'superlu'
+    FileUtils.mv    'superlu-'+VER, 'superlu'
 
     ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
     ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
@@ -89,7 +89,7 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
   else
     extract_tgz(FILENAME)
     FileUtils.rm_rf 'superlu'
-    FileUtils.mv    'SuperLU-'+VER, 'superlu'
+    FileUtils.mv    'superlu-'+VER, 'superlu'
 
     ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
     ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
