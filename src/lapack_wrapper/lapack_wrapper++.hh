@@ -62,7 +62,7 @@ namespace lapack_wrapper {
     integer       nc,
     t_Value const A[],
     integer       ldA,
-    t_Value       epsi=1e-10
+    t_Value       epsi=t_Value(1e-10)
   ) {
     std::string out;
     for ( integer i = 0; i < nr; ++i ) {
@@ -89,7 +89,7 @@ namespace lapack_wrapper {
     integer       nc,
     t_Value const A[],
     integer       ldA,
-    t_Value       epsi=1e-10
+    t_Value       epsi=t_Value(1e-10)
   ) {
     std::string out;
     for ( integer i = 0; i < nr; ++i ) {
@@ -138,7 +138,7 @@ namespace lapack_wrapper {
     integer       nc,
     t_Value const A[],
     integer       ldA,
-    t_Value       epsi=1e-10
+    t_Value       epsi=t_Value(1e-10)
   ) {
     std::string out;
     for ( integer j = 0; j < nc; ++j ) {
@@ -165,7 +165,7 @@ namespace lapack_wrapper {
     integer       nc,
     t_Value const A[],
     integer       ldA,
-    t_Value       epsi=1e-10
+    t_Value       epsi=t_Value(1e-10)
   ) {
     std::string out;
     for ( integer j = 0; j < nc; ++j ) {

@@ -87,7 +87,7 @@
 #define EIGEN_NO_AUTOMATIC_RESIZING
 #define EIGEN_USE_BLAS
 
-#include "../Eigen/Dense"
+#include <Eigen/Dense>
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop

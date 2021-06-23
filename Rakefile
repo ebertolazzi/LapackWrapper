@@ -209,7 +209,7 @@ end
 
 desc 'install third parties for osx'
 task :osx_3rd do
-  FileUtils.cd 'third_parties'
+  FileUtils.cd 'ThirdParties'
   sh "rake install_osx"
   FileUtils.cd '../submodules'
   sh "rake build_osx"
@@ -218,7 +218,7 @@ end
 
 desc 'install third parties for linux'
 task :linux_3rd do
-  FileUtils.cd 'third_parties'
+  FileUtils.cd 'ThirdParties'
   sh "rake install_linux"
   FileUtils.cd '../submodules'
   sh "rake build_linux"
@@ -232,7 +232,7 @@ task :win_3rd, [:year, :bits, :lapack] do |t, args|
     :bits   => "x64",
     :lapack => "LAPACK_WRAPPER_USE_OPENBLAS"
   )
-  FileUtils.cd 'third_parties'
+  FileUtils.cd 'ThirdParties'
   sh "rake install_win[#{args.year},#{args.bits},#{args.lapack}]"
   FileUtils.cd '../submodules'
   sh "rake build_win[#{args.year},#{args.bits}]"
@@ -244,7 +244,7 @@ task :clean_osx do
   FileUtils.rm_rf 'lib'
   FileUtils.rm_rf 'lib3rd'
   sh "make clean"
-  FileUtils.cd 'third_parties'
+  FileUtils.cd 'ThirdParties'
   sh "rake clean_osx"
   FileUtils.cd '..'
 end
@@ -254,7 +254,7 @@ task :clean_linux do
   FileUtils.rm_rf 'lib'
   FileUtils.rm_rf 'lib3rd'
   sh "make clean"
-  FileUtils.cd 'third_parties'
+  FileUtils.cd 'ThirdParties'
   sh "rake clean_linux"
   FileUtils.cd '..'
 end
@@ -264,7 +264,7 @@ task :clean_win do
   FileUtils.rm_rf 'lib'
   FileUtils.rm_rf 'lib3rd'
   FileUtils.rm_rf 'vs_*'
-  FileUtils.cd 'third_parties'
+  FileUtils.cd 'ThirdParties'
   sh "rake clean_win"
   FileUtils.cd '..'
 end
