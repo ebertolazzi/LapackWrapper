@@ -21,7 +21,7 @@
 /// file: lapack_wrapper_eigen.hh
 ///
 
-#include "lapack_wrapper.hh"
+#include "lapack_wrapper/lapack_wrapper.hh"
 
 #ifndef LAPACK_WRAPPER_EIGEN_dot_HH
 #define LAPACK_WRAPPER_EIGEN_dot_HH
@@ -87,7 +87,7 @@
 #define EIGEN_NO_AUTOMATIC_RESIZING
 #define EIGEN_USE_BLAS
 
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop

@@ -37,7 +37,7 @@
 
 #include <cstdint>
 
-#include "../lapack_wrapper/lapack_wrapper_eigen.hh"
+#include "../lapack_wrapper_eigen.hh"
 
 // workaround for windows macros
 #ifdef max
