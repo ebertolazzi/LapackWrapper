@@ -276,4 +276,6 @@ IF( APPLE )
 ENDIF()
 
 MESSAGE( STATUS "lapackblas_libraries        = ${lapackblas_libraries}" )
+MESSAGE( STATUS "ZLIB_LIBRARIES              = ${ZLIB_LIBRARIES}" )
+MESSAGE( STATUS "ZLIB_INCLUDE_DIRS           = ${ZLIB_INCLUDE_DIRS}" )
 MESSAGE( STATUS "Utils                       = ${UTILS}" )

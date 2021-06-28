@@ -174,8 +174,6 @@ src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/chrono.h
 src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/locale.h
 src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/fmt/ostream.h
 src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/izstream.hpp
-src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/zlib.h
-src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/zconf.h
 src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/zstream_common.hpp
 src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
 src/lapack_wrapper/lapack_wrapper++.o: lib3rd/include/Utils/zstream/izstream.hpp
@@ -237,8 +235,6 @@ src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/chrono.h
 src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/locale.h
 src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/fmt/ostream.h
 src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/zlib.h
-src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/zconf.h
 src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/zstream_common.hpp
 src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
 src/lapack_wrapper/lapack_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
@@ -287,7 +283,6 @@ src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/chrono.h
 src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/locale.h
 src/HSL/hsl_solver.o: lib3rd/include/Utils/fmt/ostream.h
 src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/izstream.hpp
-src/HSL/hsl_solver.o: lib3rd/include/zlib.h lib3rd/include/zconf.h
 src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/zstream_common.hpp
 src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
 src/HSL/hsl_solver.o: lib3rd/include/Utils/zstream/izstream.hpp
@@ -315,7 +310,6 @@ src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/chrono.h
 src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/locale.h
 src/HSL/ma48_wrapper.o: lib3rd/include/Utils/fmt/ostream.h
 src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
-src/HSL/ma48_wrapper.o: lib3rd/include/zlib.h lib3rd/include/zconf.h
 src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/zstream_common.hpp
 src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
 src/HSL/ma48_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
@@ -343,7 +337,6 @@ src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/chrono.h
 src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/locale.h
 src/HSL/ma57_wrapper.o: lib3rd/include/Utils/fmt/ostream.h
 src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
-src/HSL/ma57_wrapper.o: lib3rd/include/zlib.h lib3rd/include/zconf.h
 src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/zstream_common.hpp
 src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/izstream_impl.hpp
 src/HSL/ma57_wrapper.o: lib3rd/include/Utils/zstream/izstream.hpp
