@@ -85,6 +85,8 @@
 //#define EIGEN_DONT_PARALLELIZE
 #define EIGEN_DEFAULT_DENSE_INDEX_TYPE lapack_wrapper::integer
 #define EIGEN_NO_AUTOMATIC_RESIZING
+// Workaround for EIGEN with BLAS on windows
+#define BLAS_H
 #define EIGEN_USE_BLAS
 
 #include "Eigen/Dense"

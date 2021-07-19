@@ -63,7 +63,7 @@ namespace Sparse_tool {
 
     // step 0: compute necessary memory
     integer nr = A.numRows();
-    Vector<real_type> Lnnz( nr ), Unnz( nr );
+    Vector<integer> Lnnz( nr ), Unnz( nr );
 
     D.resize( nr );
 

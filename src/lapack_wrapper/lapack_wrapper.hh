@@ -457,12 +457,13 @@ namespace lapack_wrapper {
   inline
   void
   xerbla( character const * WHAT, integer info ) {
+    int len = int(strlen(WHAT));
     #ifdef LAPACK_WRAPPER_USE_ACCELERATE
-    xerbla_( WHAT, &info, strlen(WHAT) );
+    xerbla_( WHAT, &info, len );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    xerbla_( WHAT, &info, strlen(WHAT) );
+    xerbla_( WHAT, &info, len );
     #else
-    LAPACK_F77NAME(xerbla)( WHAT, &info, strlen(WHAT) );
+    LAPACK_F77NAME(xerbla)( WHAT, &info, len );
     #endif
   }
 
