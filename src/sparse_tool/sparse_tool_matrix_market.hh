@@ -18,7 +18,7 @@
 
 #include "sparse_tool.hh"
 
-#include <Utils.hh>
+#include <Utils_zstream.hh>
 #include <string.h>
 
 #if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
