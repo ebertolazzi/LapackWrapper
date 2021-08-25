@@ -105,12 +105,17 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
   FileUtils.mkdir_p "../lib/include"
 
   if COMPILE_DEBUG then
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
-    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+    cmd1 = cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
+    cmd2 = 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
   else
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-    sh 'cmake  --build . --config Release  --target install '+PARALLEL+QUIET
+    cmd1 = cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
+    cmd2 = 'cmake  --build . --config Release  --target install '+PARALLEL+QUIET
   end
+
+  puts "\n\nExecute 1: #{cmd1}\n".green
+  sh cmd1
+  puts "\n\nExecute 2: #{cmd2}\n".green
+  sh cmd2
 
   FileUtils.cd '..'
 end
@@ -150,12 +155,18 @@ task :build_osx, [:lapack] do |t, args|
   cmd_cmake += '-D' + args.lapack + '=true '
 
   if COMPILE_DEBUG then
-    sh cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
-    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+    cmd1 = cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
+    cdm2 = 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
   else
-    sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
+    cmd1 = cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
+    cmd2 = 'cmake --build . --config Release --target install '+PARALLEL+QUIET
   end
+
+  puts "\n\nExecute 1: #{cmd1}\n".green
+  sh cmd1
+  puts "\n\nExecute 2: #{cmd2}\n".green
+  sh cmd2
+
   FileUtils.cd '..'
 end
 
@@ -198,12 +209,18 @@ task :build_linux, [:lapack] do |t, args|
   cmd_cmake += '-D' + args.lapack + '=true '
 
   if COMPILE_DEBUG then
-    sh cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
-    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+    cmd1 = cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
+    cmd2 = 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
   else
-    sh cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
+    cmd1 = cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
+    cmd2 = 'cmake --build . --config Release --target install '+PARALLEL+QUIET
   end
+  
+  puts "\n\nExecute 1: #{cmd1}\n".green
+  sh cmd1
+  puts "\n\nExecute 2: #{cmd2}\n".green
+  sh cmd2
+
   FileUtils.cd '..'
 end
 

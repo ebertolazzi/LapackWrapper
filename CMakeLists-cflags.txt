@@ -34,7 +34,7 @@ SET( CMAKE_C_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} )
 SET( CMAKE_C_FLAGS_DEBUG   ${CMAKE_CXX_FLAGS_DEBUG} )
 
 # select LAPACK library to be used
-SET( PINS_USE_ACCELERATE true )
+SET( PINS_USE_OPENBLAS true )
 
 # check if link against static libgcc
 SET( PINS_USE_STATIC_LIBGCC false )

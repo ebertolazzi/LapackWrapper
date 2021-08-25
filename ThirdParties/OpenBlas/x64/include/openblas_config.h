@@ -4,10 +4,11 @@
 #define OPENBLAS_ARCH_X86_64 1
 #define OPENBLAS_C_GCC 1
 #define OPENBLAS___64BIT__ 1
+#define OPENBLAS_HAVE_C11 1
 #define OPENBLAS_PTHREAD_CREATE_FUNC pthread_create
 #define OPENBLAS_BUNDERSCORE _
 #define OPENBLAS_NEEDBUNDERSCORE 1
-#define OPENBLAS_SKYLAKEX 
+#define OPENBLAS_HASWELL 
 #define OPENBLAS_L1_CODE_SIZE 32768
 #define OPENBLAS_L1_CODE_ASSOCIATIVE 8
 #define OPENBLAS_L1_CODE_LINESIZE 64
@@ -33,19 +34,18 @@
 #define OPENBLAS_HAVE_SSE4_2 
 #define OPENBLAS_HAVE_AVX 
 #define OPENBLAS_HAVE_AVX2 
-#define OPENBLAS_HAVE_AVX512VL 
 #define OPENBLAS_HAVE_FMA3 
 #define OPENBLAS_HAVE_CFLUSH 
 #define OPENBLAS_NUM_SHAREDCACHE 2
-#define OPENBLAS_NUM_CORES 16
-#define OPENBLAS_CORE_SKYLAKEX 
-#define OPENBLAS_CHAR_CORENAME "SKYLAKEX"
+#define OPENBLAS_NUM_CORES 8
+#define OPENBLAS_CORE_HASWELL 
+#define OPENBLAS_CHAR_CORENAME "HASWELL"
 #define OPENBLAS_SLOCAL_BUFFER_SIZE 20480
-#define OPENBLAS_DLOCAL_BUFFER_SIZE 12288
-#define OPENBLAS_CLOCAL_BUFFER_SIZE 12288
-#define OPENBLAS_ZLOCAL_BUFFER_SIZE 8192
+#define OPENBLAS_DLOCAL_BUFFER_SIZE 32768
+#define OPENBLAS_CLOCAL_BUFFER_SIZE 16384
+#define OPENBLAS_ZLOCAL_BUFFER_SIZE 12288
 #define OPENBLAS_GEMM_MULTITHREAD_THRESHOLD 4
-#define OPENBLAS_VERSION " OpenBLAS 0.3.8 "
+#define OPENBLAS_VERSION " OpenBLAS 0.3.17 "
 /*This is only for "make install" target.*/
 
 #if defined(OPENBLAS_OS_WINNT) || defined(OPENBLAS_OS_CYGWIN_NT) || defined(OPENBLAS_OS_INTERIX)
@@ -80,6 +80,11 @@ typedef unsigned long long BLASULONG;
 #else
 typedef long BLASLONG;
 typedef unsigned long BLASULONG;
+#endif
+
+#ifndef BFLOAT16
+#include <stdint.h>
+typedef uint16_t bfloat16;
 #endif
 
 #ifdef OPENBLAS_USE64BITINT
@@ -138,5 +143,13 @@ typedef int blasint;
   #define openblas_complex_double_imag(z)            ((z).imag)
   #define openblas_complex_xdouble_real(z)           ((z).real)
   #define openblas_complex_xdouble_imag(z)           ((z).imag)
+#endif
+
+/* Inclusion of Linux-specific header is needed for definition of cpu_set_t. */
+#ifdef OPENBLAS_OS_LINUX
+#ifndef _GNU_SOURCE
+ #define _GNU_SOURCE
+#endif
+#include <sched.h>
 #endif
 #endif /* OPENBLAS_CONFIG_H */
