@@ -76,7 +76,7 @@ namespace lapack_wrapper {
   char const *BalanceType_name[]  = {
     "NO_BALANCE",
     "PERMUTE_ONLY",
-    "SCALE_ONLY"
+    "SCALE_ONLY",
     "PERMUTE_AND_SCALE"
   };
   char const *JobType_name[] = {

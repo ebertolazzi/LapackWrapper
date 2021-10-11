@@ -11,7 +11,7 @@ task :copy_submodules, [:arg] do |t, args|
   FileUtils.mkdir_p "../lib3rd/bin/"
   tmp = '_' + args.arg
   ["./Utils/"].each do |base|
-    FileUtils.cp_r base + "lib/.", "../lib3rd/"
+    FileUtils.cp_r base + "lib/include/Utils/.", "../lib3rd/include"
   end
 end
 
