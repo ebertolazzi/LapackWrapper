@@ -9,6 +9,27 @@ end
 
 require_relative "./Rakefile_common.rb"
 
+file_base = File.expand_path(File.dirname(__FILE__)).to_s+'/lib'
+
+cmd_cmake_build = ""
+if COMPILE_EXECUTABLE then
+  cmd_cmake_build += ' -DBUILD_EXECUTABLE:VAR=true '
+else
+  cmd_cmake_build += ' -DBUILD_EXECUTABLE:VAR=false '
+end
+if COMPILE_DYNAMIC then
+  cmd_cmake_build += ' -DBUILD_SHARED:VAR=true '
+else
+  cmd_cmake_build += ' -DBUILD_SHARED:VAR=false '
+end
+if COMPILE_DEBUG then
+  cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING '
+else
+  cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING '
+end
+cmd_cmake_build += " -DINSTALL_HERE:VAR=true "
+
+
 task :default => [:build]
 
 task :mkl, [:year, :bits] do |t, args|
@@ -91,31 +112,22 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
-  cmake_cmd = win_vs(args.bits,args.year)
-  if COMPILE_EXECUTABLE then
-    cmake_cmd += ' -DBUILD_EXECUTABLE:VAR=true '
-  else
-    cmake_cmd += ' -DBUILD_EXECUTABLE:VAR=false '
-  end
-
   FileUtils.mkdir_p "../lib/lib"
   FileUtils.mkdir_p "../lib/bin"
   FileUtils.mkdir_p "../lib/bin/"+args.bits
   FileUtils.mkdir_p "../lib/dll"
   FileUtils.mkdir_p "../lib/include"
 
-  if COMPILE_DEBUG then
-    cmd1 = cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
-    cmd2 = 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
-  else
-    cmd1 = cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-    cmd2 = 'cmake  --build . --config Release  --target install '+PARALLEL+QUIET
-  end
+  cmd_cmake = win_vs(args.bits,args.year) + cmd_cmake_build
 
-  puts "\n\nExecute 1: #{cmd1}\n".green
-  sh cmd1
-  puts "\n\nExecute 2: #{cmd2}\n".green
-  sh cmd2
+  puts "run CMAKE for LAPACK WRAPPER".yellow
+
+  sh cmd_cmake + ' ..'
+  if COMPILE_DEBUG then
+    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+  else
+    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
+  end
 
   FileUtils.cd '..'
 end
@@ -146,26 +158,16 @@ task :build_osx, [:lapack] do |t, args|
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
-  cmd_cmake = 'cmake -DBUILD_EXECUTABLE:VAR='
-  if COMPILE_EXECUTABLE then
-    cmd_cmake += 'true '
-  else
-    cmd_cmake += 'false '
-  end
-  cmd_cmake += '-D' + args.lapack + '=true '
+  cmd_cmake = "cmake " + cmd_cmake_build + ' -D' + args.lapack + '=true '
 
+  puts "run CMAKE for LAPACK WRAPPER".yellow
+
+  sh cmd_cmake + ' ..'
   if COMPILE_DEBUG then
-    cmd1 = cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
-    cdm2 = 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
   else
-    cmd1 = cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-    cmd2 = 'cmake --build . --config Release --target install '+PARALLEL+QUIET
+    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
   end
-
-  puts "\n\nExecute 1: #{cmd1}\n".green
-  sh cmd1
-  puts "\n\nExecute 2: #{cmd2}\n".green
-  sh cmd2
 
   FileUtils.cd '..'
 end
@@ -200,26 +202,18 @@ task :build_linux, [:lapack] do |t, args|
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
-  cmd_cmake = 'cmake -DBUILD_EXECUTABLE:VAR='
-  if COMPILE_EXECUTABLE then
-    cmd_cmake += 'true '
-  else
-    cmd_cmake += 'false '
-  end
-  cmd_cmake += '-D' + args.lapack + '=true '
+  cmd_cmake = "cmake " + cmd_cmake_build
+  # non serve
+  # cmd_cmake += ' -D' + args.lapack + '=true '
 
+  puts "run CMAKE for LAPACK WRAPPER".yellow
+
+  sh cmd_cmake + ' ..'
   if COMPILE_DEBUG then
-    cmd1 = cmd_cmake + '-DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
-    cmd2 = 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
   else
-    cmd1 = cmd_cmake + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-    cmd2 = 'cmake --build . --config Release --target install '+PARALLEL+QUIET
+    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
   end
-  
-  puts "\n\nExecute 1: #{cmd1}\n".green
-  sh cmd1
-  puts "\n\nExecute 2: #{cmd2}\n".green
-  sh cmd2
 
   FileUtils.cd '..'
 end
@@ -228,8 +222,6 @@ desc 'install third parties for osx'
 task :osx_3rd do
   FileUtils.cd 'ThirdParties'
   sh "rake install_osx"
-  FileUtils.cd '../submodules'
-  sh "rake build_osx"
   FileUtils.cd '..'
 end
 
@@ -237,8 +229,6 @@ desc 'install third parties for linux'
 task :linux_3rd do
   FileUtils.cd 'ThirdParties'
   sh "rake install_linux"
-  FileUtils.cd '../submodules'
-  sh "rake build_linux"
   FileUtils.cd '..'
 end
 
@@ -251,8 +241,6 @@ task :win_3rd, [:year, :bits, :lapack] do |t, args|
   )
   FileUtils.cd 'ThirdParties'
   sh "rake install_win[#{args.year},#{args.bits},#{args.lapack}]"
-  FileUtils.cd '../submodules'
-  sh "rake build_win[#{args.year},#{args.bits}]"
   FileUtils.cd '..'
 end
 
