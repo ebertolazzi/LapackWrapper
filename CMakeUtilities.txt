@@ -13,3 +13,16 @@ function(ebertolazzi_artifacts_suffix VAR_NAME BUILD_STATIC)
     set(${VAR_NAME} "_win_${BITS}${suffix}" PARENT_SCOPE)
   endif()
 endfunction()
+
+function(ebertolazzi_clothoids_relocate_header_files RELOCATED_HEADERS HEADERS BUILD_DIR INSTALL_DIR)
+  set(hdr_list "")
+  foreach(hdr ${${HEADERS}})
+    set(
+      hdr_list
+      ${hdr_list}
+      "$<BUILD_INTERFACE:${BUILD_DIR}/${hdr}>"
+      "$<INSTALL_INTERFACE:${INSTALL_DIR}/${hdr}>"
+  )
+  endforeach()
+  set(${RELOCATED_HEADERS} ${hdr_list} PARENT_SCOPE)
+endfunction()

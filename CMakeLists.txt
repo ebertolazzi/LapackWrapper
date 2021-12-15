@@ -9,13 +9,68 @@
 #                                                                          #
 ############################################################################
 
-cmake_minimum_required( VERSION 3.0.0 )
-set( CMAKE_VERBOSE_MAKEFILE OFF )
-set( CMAKE_INSTALL_MESSAGE NEVER )
+cmake_minimum_required(VERSION 3.14)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_INSTALL_MESSAGE NEVER)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-# get version from the git tag
-execute_process(COMMAND git describe --tags --abbrev=0 OUTPUT_VARIABLE VERSION)
-string(REGEX REPLACE "\n$" "" VERSION "${VERSION}")
+option(EB_GIT_VERSION "Get version from GIT command" ON)
+option(EB_ENABLE_TESTS "Enable compilation of testing targets" ON)
+option(EB_BUILD_SHARED "Enable shared option compilation" ON)
+option(EB_TWEAK_VERSION_IS_TIMESTAMP "Sets tweak version to timestamp" OFF)
+
+set(
+  EB_NAMESPACE "ebertolazzi"
+  CACHE STRING "Sets the namespace used for exports"
+)
+
+#
+# LIBRARY VERSION
+#
+# If option enabled, get version from latest git tag This command will not work
+# in case of add_subdirectory, fetch content or in general when included from
+# another project
+set(
+  EB_CURRENT_VERSION "1.0"
+  CACHE STRING "Default project version, if not taken from git"
+)
+
+if(EB_GIT_VERSION)
+  # FIXME: Does not work on Windows 10
+  execute_process(
+    COMMAND git describe --tags --abbrev=0
+    OUTPUT_VARIABLE EB_PROJECT_VERSION
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  string(REGEX REPLACE "\n$" "" EB_PROJECT_VERSION "${EB_PROJECT_VERSION}")
+else()
+  set(EB_BUILD_TIMESTAMP "0")
+  if(EB_TWEAK_VERSION_IS_TIMESTAMP)
+    string(TIMESTAMP EB_BUILD_TIMESTAMP "%y%m%d%H")
+  endif()
+  set(EB_PROJECT_VERSION "${EB_CURRENT_VERSION}.${EB_BUILD_TIMESTAMP}")
+endif()
+message("lapack_wrapper current version = v${EB_PROJECT_VERSION}")
+
+#
+# DEFAULT SETTINGS
+#
+# Always include cmath defines globally
+add_compile_definitions(_USE_MATH_DEFINES)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_VERBOSE_MAKEFILE HIGH)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# Fixes RPath Problem for Linux dependencies and sub dependencies (easy fix,
+# works in 99% of cases)
+if(NOT APPLE)
+  set(CMAKE_INSTALL_RPATH $ORIGIN)
+endif()
+# Disable verbose Makefiles on unix
+set(CMAKE_VERBOSE_MAKEFILE ON)
+# Always export compile commands in json file (this is quite useful for tools
+# like Sourcetrail)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(
   lapack_wrapper
@@ -24,12 +79,6 @@ project(
 )
 
 enable_testing()
-
-if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
-  set( DEBUG_SUFFIX "_debug" )
-else()
-  set( DEBUG_SUFFIX )
-endif()
 
 if( APPLE )
 elseif( UNIX OR LINUX )
@@ -60,15 +109,21 @@ if ( BUILD_SHARED )
 endif()
 
 # DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../..)
+set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(DEPEND_TARGETS)
-if( EXISTS "${UPDIR}/Utils/lib" )
+find_library(
+  UTILS Utils${ARTIFACTS_STATIC_SUFFIX}
+  HINTS ${UPDIR}/Utils/lib/lib
+  NO_DEFAULT_PATH
+)
+if( UTILS )
+  message("Found Utils${ARTIFACTS_STATIC_SUFFIX}")
   include_directories(${UPDIR}/Utils/lib/include)
-  find_library( UTILS Utils${ARTIFACTS_STATIC_SUFFIX} HINTS ${UPDIR}/Utils/lib/lib )
 else()
+  message("NOT Found Utils${ARTIFACTS_STATIC_SUFFIX}")
   add_subdirectory(./submodules/Utils)
-  set( UTILS UtilsStatic )
-  set( DEPEND_TARGETS ${DEPEND_TARGETS} UtilsStatic )
+  set( UTILS ebertolazziUtilsStatic )
+  set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
 endif()
 
 set( CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/lib" )
@@ -114,8 +169,10 @@ if ( BUILD_SHARED )
   target_link_libraries( ${TARGET} ${TARGETHSL} ${lapackblas_libraries} ${UTILS} )
 endif()
 
-add_dependencies( ${TARGETS}    ${DEPEND_TARGETS} )
-add_dependencies( ${TARGETHSLS} ${DEPEND_TARGETS} )
+if ( NOT ( "${DEPEND_TARGETS}" STREQUAL "" ) )
+  add_dependencies( ${TARGETS}    ${DEPEND_TARGETS} )
+  add_dependencies( ${TARGETHSLS} ${DEPEND_TARGETS} )
+endif()
 
 set( LLPATH ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd )
 
