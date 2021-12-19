@@ -226,8 +226,9 @@ namespace Sparse_tool {
 
         UTILS_ASSERT(
           i >= 1 && j >= 1 && i <= nRows && j <= nCols,
-          "Sparse_tool: In reading Matrix Market File, bad pattern index on line {}\nRead: <<{}>>\n",
-          numLine, line
+          "Sparse_tool: In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
+          "Read: <<{}>>\n",
+          i, j, numLine, line
         );
 
         --i; --j; // zero base index
@@ -262,8 +263,9 @@ namespace Sparse_tool {
 
         UTILS_ASSERT(
           i >= 1 && j >= 1 && i <= nRows && j <= nCols,
-          "Sparse_tool: In reading Matrix Market File, bad pattern index on line {}\nRead: <<{}>>\n",
-          numLine, line
+          "Sparse_tool: In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
+          "Read: <<{}>>\n",
+          i, j, numLine, line
         );
 
         --i; --j; // zero base index
@@ -304,14 +306,15 @@ namespace Sparse_tool {
         integer i, j;
         double  re, im = 0;
         sscanf( line, fmts[vType], &i, &j, &re, &im );
-        --i; --j; // zero base index
 
         UTILS_ASSERT(
-          i <= nRows && j <= nCols,
+          i >= 1 && j >= 1 && i <= nRows && j <= nCols,
           "Sparse_tool: MatrixMarket\n"
-          "In reading Matrix Market File, bad pattern index on line {}\nRead: <<{}>>\n",
-          numLine, line
+          "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
+          "Read: <<{}>>\n",
+          i, j, numLine, line
         );
+        --i; --j; // zero base index
 
         mat.insert(i,j) = std::complex<T>(re,im);
         switch ( mType ) {
@@ -352,13 +355,15 @@ namespace Sparse_tool {
         integer i, j;
         double  a;
         sscanf( line, "%d%d%lf", &i, &j, &a );
-        --i; --j; // zero base index
 
-        SPARSETOOL_ASSERT(
+        UTILS_ASSERT(
           i >= 1 && j >= 1 && i <= nRows && j <= nCols,
-          "Sparse_tool: MatrixMarket: In reading Matrix Market File, bad pattern index on line " <<
-          numLine << "\nRead<<" << line << ">>, data is " << *this
+          "Sparse_tool: MatrixMarket\n"
+          "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
+          "Read: <<{}>>\n",
+          i, j, numLine, line
         );
+        --i; --j; // zero base index
 
         mat.insert(i,j) = a;
         switch ( mType ) {

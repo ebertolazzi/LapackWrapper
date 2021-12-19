@@ -1173,5 +1173,6 @@ main() {
   all_matrix_test allm;
   allm.do_all_tests();
   test_timing();
+  cout << "\nALL DONE FOLKS!\n\n";
   return 0;
 }

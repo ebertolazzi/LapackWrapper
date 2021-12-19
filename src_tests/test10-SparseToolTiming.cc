@@ -289,12 +289,12 @@ test_timing() {
   }
 
   cout << "\nTEST_TIME ALL DONE\n\n";
-
 }
 
 
 int
 main() {
   test_timing();
+  cout << "\nALL DONE FOLKS!\n\n";
   return 0;
 }

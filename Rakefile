@@ -27,7 +27,7 @@ if COMPILE_DEBUG then
 else
   cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=STATUS '
 end
-cmd_cmake_build += " -DINSTALL_HERE:VAR=true "
+cmd_cmake_build += " -DEB_INSTALL_LOCAL=ON "
 
 
 task :default => [:build]
@@ -37,42 +37,17 @@ task :mkl, [:year, :bits] do |t, args|
   sh "'C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/bin/compilervars.bat' -arch #{args.bits} vs#{args.year}shell"
 end
 
-TESTS = [
-  "test1-small-factorization",
-  "test2-Timing",
-  "test3-BandedMatrix",
-  "test4-BFGS",
-  "test5-BLOCKTRID",
-  "test6-EIGS",
-  #"test7-SparseTool",
-  #"test8-SparseToolComplex"
-]
-
-desc "run tests on linux/osx"
-task :run do
-  TESTS.each do |cmd|
-    sh "./bin/#{cmd}"
-  end
-end
-
-desc "run tests (Release) on windows"
-task :run_win do
-  TESTS.each do |cmd|
-    sh "bin\\Release\\#{cmd}.exe"
-  end
-end
-
-desc "run tests (Debug) on windows"
-task :run_win_debug do
-  TESTS.each do |cmd|
-    sh "bin\\Debug\\#{cmd}.exe"
-  end
-end
-
 desc "build lib"
 task :build do
   sh "make config"
   sh "make --jobs=8 install_local"
+end
+
+desc "run tests"
+task :test do
+  FileUtils.cd "build"
+  sh 'ctest --output-on-failure'
+  FileUtils.cd '..'
 end
 
 def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
@@ -244,11 +219,19 @@ task :win_3rd, [:year, :bits, :lapack] do |t, args|
   FileUtils.cd '..'
 end
 
+desc 'pack for OSX/LINUX/WINDOWS'
+task :cpack do
+  FileUtils.cd "build"
+  puts "run CPACK for LAPACK_WRAPPER".yellow
+  sh 'cpack -C CPackConfig.cmake'
+  sh 'cpack -C CPackSourceConfig.cmake'
+  FileUtils.cd ".."
+end
+
 desc "clean for OSX"
 task :clean_osx do
   FileUtils.rm_rf 'lib'
   FileUtils.rm_rf 'lib3rd'
-  sh "make clean"
   FileUtils.cd 'ThirdParties'
   sh "rake clean_osx"
   FileUtils.cd '..'
@@ -258,7 +241,6 @@ desc "clean for LINUX"
 task :clean_linux do
   FileUtils.rm_rf 'lib'
   FileUtils.rm_rf 'lib3rd'
-  sh "make clean"
   FileUtils.cd 'ThirdParties'
   sh "rake clean_linux"
   FileUtils.cd '..'

@@ -51,20 +51,20 @@ option(enable_complex16 "Enable complex16 precision library" ON)
 
 # setup required compiler defines and options.
 
-INCLUDE( ../../CMakeLists-cflags.txt )
+include( ../../cmake/CMakeLists-cflags.txt )
 ## add_definitions(-DPRNTlevel=0 -DAdd_)
 ## get_directory_property( DirDefs COMPILE_DEFINITIONS )
-ADD_DEFINITIONS( -DPRNTlevel=0 -DAdd_ )
+add_definitions( -DPRNTlevel=0 -DAdd_ )
 # suppress all warnings
-IF ( APPLE )
-  SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything" )
-ELSEIF( UNIX OR LINUX )
-  SET( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w" )
-ELSE()
+if( APPLE )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-everything" )
+elseif( UNIX OR LINUX )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w" )
+else()
   # do not change flags
   #STRING(REPLACE "/W3" "/w" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
   #STRING(REPLACE "/W3" "/w" CMAKE_CXX_FLAGS_DEBUG   ${CMAKE_CXX_FLAGS_DEBUG})
-ENDIF()
+endif()
 
 ######################################################################
 #
