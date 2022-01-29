@@ -294,7 +294,13 @@ test_timing() {
 
 int
 main() {
-  test_timing();
-  cout << "\nALL DONE FOLKS!\n\n";
+  try {
+    test_timing();
+    cout << "\nALL DONE FOLKS!\n\n";
+  } catch ( exception const & exc ) {
+    cout << exc.what() << '\n';
+  } catch ( ... ) {
+    cout << "Errore Sconosciuto!\n";
+  }
   return 0;
 }

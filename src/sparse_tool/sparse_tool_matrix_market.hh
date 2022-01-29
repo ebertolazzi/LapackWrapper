@@ -93,7 +93,7 @@ namespace Sparse_tool {
     getLine( istream_type & stream ) {
       stream.getline( line, 128 );
       ++numLine;
-      return line[0] == '%';
+      return line[0] == '%' || line[0] == '\0';
     }
 
   public:
@@ -220,7 +220,7 @@ namespace Sparse_tool {
       sp.resize( nRows, nCols, numNnz );
 
       for ( integer kk = 0; kk < numNnz; ++kk ) {
-        while ( getLine( stream ) ); // skip comments
+        while ( getLine( stream ) ); // skip comments and empty line
         integer i, j;
         sscanf( line, "%d%d", &i, &j );
 
@@ -257,7 +257,7 @@ namespace Sparse_tool {
       mat.resize( nRows, nCols, numNnz );
 
       for ( integer kk = 0; kk < numNnz; ++kk ) {
-        while ( getLine( stream ) ); // skip comments
+        while ( getLine( stream ) ); // skip comments and empty line
         integer i, j, a;
         sscanf( line, "%d%d%d", &i, &j, &a );
 
@@ -302,7 +302,7 @@ namespace Sparse_tool {
       mat.resize( nRows, nCols, numNnz );
 
       for ( integer kk = 0; kk < numNnz; ++kk ) {
-        while ( getLine( stream ) ); // skip comments
+        while ( getLine( stream ) ); // skip comments and empty line
         integer i, j;
         double  re, im = 0;
         sscanf( line, fmts[vType], &i, &j, &re, &im );
@@ -351,7 +351,7 @@ namespace Sparse_tool {
       mat.resize( nRows, nCols, numNnz );
 
       for ( integer kk = 0; kk < numNnz; ++kk ) {
-        while ( getLine( stream ) ); // skip comments
+        while ( getLine( stream ) ); // skip comments and empty line
         integer i, j;
         double  a;
         sscanf( line, "%d%d%lf", &i, &j, &a );

@@ -44,7 +44,7 @@ using namespace ::std;
 
 inline
 integer
-ipos( integer i, integer j, integer nx, integer ny ) {
+ipos( integer i, integer j, integer nx, integer /* ny */ ) {
   return (i-1)+(j-1)*(nx-1);
 }
 

@@ -205,7 +205,7 @@ test3() {
 
   fmt::print(
     "\nLS solution of A x = b\n\n"
-    "b^T =      {}",
+    "b^T =      {}\n",
     lapack_wrapper::print_matrix( 1, M, b, 1 )
   );
 
@@ -215,43 +215,39 @@ test3() {
   lapack_wrapper::zero( 2, x+3, 1 );
   qr.Q_mul( x );
 
-  fmt::print(
-    "x^T =      {}",
-    lapack_wrapper::print_matrix( 1, M, x, 1 )
-  );
-
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
+  );
+
+  fmt::print(
+    "x^T =      {}\n"
+    "residual = {}\n",
+    lapack_wrapper::print_matrix( 1, M, x, 1 ),
+    lapack_wrapper::print_matrix( 1, M, b, 1 )
   );
 
   real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  fmt::print(
-    "residual = {}\n||res||_2 = {}\ndone test3\n",
-    lapack_wrapper::print_matrix( 1, M, b, 1 ), res
-  );
+  fmt::print( "||res||_2 = {}\n", res );
   msg.green( "\n\ndone test3\n" );
 
 }
 
 #define TEST4(NAME,F) \
-  cout << "\n\nDo " << NAME << " factorization of A\n"; \
+  fmt::print("\n\nDo {} factorization of A\n", NAME ); \
   F.factorize( NAME, M, M, A, LDA ); \
   \
-  cout << NAME << " solution of A x = b\n"; \
+  fmt::print("{} solution of A x = b\n", NAME); \
   lapack_wrapper::copy( M, rhs, 1, x, 1 ); \
   lapack_wrapper::copy( M, rhs, 1, b, 1 ); \
   /* L.solve( x ); */ \
   F.solve( 1, x, M); \
-  cout << "x^T      ="  \
-       << lapack_wrapper::print_matrix( 1, M, x, 1 ); \
-  \
+  fmt::print("x^T      = {}", lapack_wrapper::print_matrix( 1, M, x, 1 ) ); \
   lapack_wrapper::gemv( lapack_wrapper::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1 ); \
-  cout << "residual =" \
-       << lapack_wrapper::print_matrix( 1, M, b, 1 ); \
+  fmt::print("residual = {}", lapack_wrapper::print_matrix( 1, M, b, 1 ) ); \
   res = lapack_wrapper::nrm2( M, b, 1 ); \
-  cout << "||res||_2 = " << res << '\n'; \
+  fmt::print( "||res||_2 = {}\n", res ); \
   UTILS_ASSERT0( res < 1e-6, "test failed!\n" );
 
 static
@@ -412,21 +408,20 @@ test6() {
   lapack_wrapper::copy( N, rhs, 1, b, 1 );
   qr.solve( x );
   //qr.t_solve( 1, x, M);
-  cout
-    << "x^T      = "
-    << lapack_wrapper::print_matrix( 1, N, x, 1 );
 
   qr.axpy( N, -1.0, L, D, U, x, 1.0, b );
+
+  fmt::print(
+    "x^T      = {}\n"
+    "residual = {}\n",
+    lapack_wrapper::print_matrix( 1, N, x, 1 ),
+    lapack_wrapper::print_matrix( 1, N, b, 1 )
+  );
 
   real_type res = lapack_wrapper::nrm2( N, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  msg.green(
-    fmt::format(
-      "residual = {}\n||res||_2 = {}\ndone test6\n",
-      lapack_wrapper::print_matrix( 1, N, b, 1 ), res
-    )
-  );
+  fmt::print( "||res||_2 = {}\n", res );
   msg.green( "\n\ndone test6\n" );
 
 }
@@ -468,23 +463,22 @@ test7() {
   lapack_wrapper::copy( M, rhs, 1, b, 1 );
   qrp.t_solve( x );
   //qrp.t_solve( 1, x, M );
-  cout
-    << "x^T      = "
-    << lapack_wrapper::print_matrix( 1, M, x, 1 );
 
   lapack_wrapper::gemv(
     lapack_wrapper::TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
 
+  fmt::print(
+    "x^T      = {}\n"
+    "residual = {}\n",
+    lapack_wrapper::print_matrix( 1, M, x, 1 ),
+    lapack_wrapper::print_matrix( 1, M, b, 1 )
+  );
+
   real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  msg.green(
-    fmt::format(
-      "residual = {}\n||res||_2 = {}\ndone test7\n",
-      lapack_wrapper::print_matrix( 1, M, b, 1 ), res
-    )
-  );
+  fmt::print( "||res||_2 = {}\n", res );
   msg.green( "\n\ndone test7\n" );
 
 }
@@ -530,23 +524,23 @@ test8() {
   lapack_wrapper::copy( M, rhs, 1, b, 1 );
   lsc.solve( x );
   //qrp.t_solve( 1, x, M );
-  cout
-    << "x^T      = "
-    << lapack_wrapper::print_matrix( 1, M, x, 1 );
 
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
 
+  fmt::print(
+    "x^T      = {}\n"
+    "residual = {}\n",
+    lapack_wrapper::print_matrix( 1, M, x, 1 ),
+    lapack_wrapper::print_matrix( 1, M, b, 1 )
+  );
+
   real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  msg.green(
-    fmt::format(
-      "residual = {}\n||res||_2 = {}\ndone test8\n",
-      lapack_wrapper::print_matrix( 1, M, b, 1 ), res
-    )
-  );
+  fmt::print( "||res||_2 = {}\n", res );
+
   msg.green( "\n\ndone test8\n" );
 }
 
@@ -575,7 +569,9 @@ test9() {
   lapack_wrapper::copy( M, rhs, 1, b, 1 );
 
   msg.green( fmt::format(
-    "\n\n\nTest9:\n\nInitial A\n{}\nb^T\n",
+    "\n\n\nTest9:\n\n"
+    "Initial A = {}\n"
+    "b^T       = {}\n",
     lapack_wrapper::print_matrix( M, M, A, M ),
     lapack_wrapper::print_matrix( 1, M, b, 1 )
   ) );
@@ -587,27 +583,26 @@ test9() {
   lapack_wrapper::copy( M, b, 1, x, 1 );
   pinv.solve( x );
   //pinv.t_solve( 1, x, M );
-  cout
-    << "x^T      = "
-    << lapack_wrapper::print_matrix( 1, M, x, 1 );
 
   real_type e[M] = { x[0]-xe[0],x[1]-xe[1],x[2]-xe[2],x[3]-xe[3],x[4]-xe[4]};
-
-  cout
-    << "e^T      = "
-    << lapack_wrapper::print_matrix( 1, M, e, 1 );
 
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
 
-  real_type res = lapack_wrapper::nrm2( M, b, 1 );
-  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
-
   fmt::print(
-    "residual = {}\n||res||_2 = {}\n",
-    lapack_wrapper::print_matrix( 1, M, b, 1 ), res
+    "x^T      = {}\n"
+    "e^T      = {}\n"
+    "residual = {}\n",
+    lapack_wrapper::print_matrix( 1, M, x, 1 ),
+    lapack_wrapper::print_matrix( 1, M, e, 1 ),
+    lapack_wrapper::print_matrix( 1, M, b, 1 )
   );
+
+  real_type res = lapack_wrapper::nrm2( M, b, 1 );
+  UTILS_WARNING( res < 1e-6, "\n\n\n\ntest failed! res = {}\n\n\n\n", res );
+
+  fmt::print( "||res||_2 = {}\n", res );
 
   cout << "\n\nDo PINV factorization of A\n";
   pinv.factorize( M, M-1, A, LDA );
@@ -622,8 +617,7 @@ test9() {
   fmt::print(
     "x^T       = {}"
     "residual  = {}\n"
-    "||res||_2 = {}\n"
-    "test9\n",
+    "||res||_2 = {}\n",
     lapack_wrapper::print_matrix( 1, M-1, x, 1 ),
     lapack_wrapper::print_matrix( 1, M, b, 1 ),
     res
@@ -669,36 +663,28 @@ test10() {
   pinv.mult_inv( b, 1, x, 1 );
   pinv.mult_inv( 2, b2, M, x2, N );
 
-  //pinv.t_solve( 1, x, M );
-  cout
-    << "x^T      = "
-    << lapack_wrapper::print_matrix( 1, N, x, 1 )
-    << "x2^T     = "
-    << lapack_wrapper::print_matrix( 1, N, x2, 1 );
-
   real_type e[N] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2] };
-
-  cout
-    << "e^T      = "
-    << lapack_wrapper::print_matrix( 1, N, e, 1 );
 
   lapack_wrapper::gemv(
     lapack_wrapper::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
 
-  cout
-    << "res^T    = "
-    << lapack_wrapper::print_matrix( 1, M, b, 1 );
+  //pinv.t_solve( 1, x, M );
+  fmt::print(
+    "x^T      = {}\n"
+    "x2^T     = {}\n"
+    "e^T      = {}\n"
+    "res^T    = {}\n",
+    lapack_wrapper::print_matrix( 1, N, x, 1 ),
+    lapack_wrapper::print_matrix( 1, N, x2, 1 ),
+    lapack_wrapper::print_matrix( 1, N, e, 1 ),
+    lapack_wrapper::print_matrix( 1, M, b, 1 )
+  );
 
   real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  msg.green(
-    fmt::format(
-      "residual = {}\n||res||_2 = {}\ndone test10\n",
-      lapack_wrapper::print_matrix( 1, M, b, 1 ), res
-    )
-  );
+  fmt::print( "||res||_2 = {}\n", res );
 
   msg.green( "\n\ndone test10\n" );
 }
@@ -727,7 +713,9 @@ test11() {
   lapack_wrapper::copy( N, rhs, 1, b2, 1 );
   lapack_wrapper::copy( N, rhs, 1, b2+N, 1 );
   msg.green( fmt::format(
-    "\n\n\nTest11:\n\nInitial A{}\nb2{}\n",
+    "\n\n\nTest11:\n\n"
+    "Initial A = {}\n"
+    "b2        = {}\n",
     lapack_wrapper::print_matrix( M, N, A, M ),
     lapack_wrapper::print_matrix( N, 2, b2, N )
   ) );
@@ -739,39 +727,33 @@ test11() {
   pinv.t_mult_inv( b, 1, x, 1 );
   pinv.t_mult_inv( 2, b2, N, x2, M );
 
-  //pinv.t_solve( 1, x, M );
-  cout
-    << "x^T      = "
-    << lapack_wrapper::print_matrix( 1, M, x, 1 )
-    << "x2^T     = "
-    << lapack_wrapper::print_matrix( 1, M, x2, 1 );
-
   real_type e[M] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2], x[3]-xe[3] };
-
-  cout
-    << "e^T      = "
-    << lapack_wrapper::print_matrix( 1, M, e, 1 );
 
   lapack_wrapper::gemv(
     lapack_wrapper::TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
 
-  cout
-    << "res^T    = "
-    << lapack_wrapper::print_matrix( 1, N, b, 1 );
-
-  real_type res = lapack_wrapper::nrm2( N, b, 1 );
-  UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
-
-  msg.green(
-    fmt::format(
-      "residual = {}\n||res||_2 = {}\ndone test11\n",
-      lapack_wrapper::print_matrix( 1, N, b, 1 ), res
-    )
+  //pinv.t_solve( 1, x, M );
+  fmt::print(
+    "x^T      = {}\n"
+    "x2^T     = {}\n"
+    "e^T      = {}\n"
+    "res^T    = {}\n",
+    lapack_wrapper::print_matrix( 1, M, x, 1 ),
+    lapack_wrapper::print_matrix( 1, M, x2, 1 ),
+    lapack_wrapper::print_matrix( 1, M, e, 1 ),
+    lapack_wrapper::print_matrix( 1, N, b, 1 )
   );
 
-  msg.green( "\n\ndone test11\n" );
+  real_type res = lapack_wrapper::nrm2( N, b, 1 );
+  UTILS_WARNING(
+    res < 1e-6,
+    "\n\n\n\n\ntest failed! res = {}\n\n\n\n", res
+  );
 
+  fmt::print( "||res||_2 = {}\n", res );
+
+  msg.green( "\n\ndone test11\n" );
 }
 
 static
@@ -873,7 +855,6 @@ R1
     "\n\npinv(A)*A\n{}\n\n",
     lapack_wrapper::print_matrix( N, N, MM, N )
   ) );
-
 
   lapack_wrapper::geid( N, N, MAT, N );
 

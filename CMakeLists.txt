@@ -11,26 +11,21 @@
 
 cmake_minimum_required(VERSION 3.14)
 
+project( lapack_wrapper )
 include(./cmake/CMakeLists-common.txt)
 
 project(
-  lapack_wrapper
+  ${PROJECT_NAME}
   VERSION ${EB_PROJECT_VERSION}
-  HOMEPAGE_URL "https://ebertolazzi.github.io/Utils/"
+  HOMEPAGE_URL "https://ebertolazzi.github.io/LapackWrapper/"
 )
-
-if ( EB_INSTALL_LOCAL )
-  set( CMAKE_INSTALL_PREFIX ${CMAKE_HOME_DIRECTORY} )
-endif()
-
-message("LAPACK_WRAPPER current version = v${EB_PROJECT_VERSION}")
 
 include(./cmake/CMakeLists-cflags.txt)
 include(./cmake/CMakeLists-utilities.txt)
 
 # Evaluating the suffix to append to target built by this CMake file
 ebertolazzi_artifacts_suffix(ARTIFACTS_STATIC_SUFFIX TRUE)
-if(BUILD_SHARED)
+if( EB_BUILD_SHARED )
   ebertolazzi_artifacts_suffix(ARTIFACTS_DYNAMIC_SUFFIX FALSE)
 endif()
 
@@ -48,7 +43,7 @@ set( SOURCES )
 file( GLOB S ${SOURCE_DIR}/*.cc ${SOURCE_DIR}/**/*.cc )
 foreach(F ${S})
   # build relative path respect to source directory
-  file( RELATIVE_PATH RF ${SOURCE_DIR} "${F}" )
+  file( RELATIVE_PATH RF ${SOURCE_DIR} ${F} )
   list( APPEND SOURCES ${RF} )
 endforeach(F ${S})
 list(FILTER SOURCES EXCLUDE REGEX ".*hsl_fake.cc$")
@@ -69,15 +64,9 @@ file(
 )
 foreach (F ${S})
   # build relative path respect to source directory
-  file( RELATIVE_PATH RF ${SOURCE_DIR} "${F}" )
+  file( RELATIVE_PATH RF ${SOURCE_DIR} ${F} )
   list( APPEND PUBLIC_HEADERS ${RF} )
 endforeach(F ${S})
-
-set( PRIVATE_HEADERS )
-# no private headers
-
-list(FILTER PUBLIC_HEADERS EXCLUDE REGEX ".*.tmpl$")
-list(FILTER PRIVATE_HEADERS EXCLUDE REGEX ".*.tmpl$")
 
 # extra include directory for compilation
 include_directories( ./lib3rd/include )
@@ -89,6 +78,8 @@ include_directories( ./lib3rd/include )
 #   \__,_|\___| .__/ \___|_| |_|\__,_|\___|_| |_|\___|_|\___||___/
 #             |_|
 #
+set(DEPEND_TARGETS)
+
 find_library(
   SUPERLU superlu${ARTIFACTS_STATIC_SUFFIX}
   HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
@@ -96,7 +87,6 @@ find_library(
 
 # DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
 set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
-set(DEPEND_TARGETS)
 find_library(
   UTILS Utils${ARTIFACTS_STATIC_SUFFIX}
   HINTS ${UPDIR}/Utils/lib/lib
@@ -108,7 +98,11 @@ if( UTILS )
 else()
   message("NOT Found Utils${ARTIFACTS_STATIC_SUFFIX}")
   add_subdirectory(./submodules/Utils)
-  set( UTILS ebertolazziUtilsStatic )
+  include_directories(
+    ./submodules/Utils/src
+    ./submodules/Utils/ThirdParties/zlib/include
+  )
+  set( UTILS ebertolazzi_Utils_Static )
   set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
 endif()
 
@@ -123,40 +117,43 @@ include( ./cmake/CMakeLists-blas-lapack.txt )
 #
 # define target
 ebertolazzi_setup_target(
-  ${PROJECT_NAME}
+  "${PROJECT_NAME}"
   TRUE # build static
   "${SOURCE_DIR}"
   "${SOURCES}"
+  "${SOURCE_DIR}"
   "${PUBLIC_HEADERS}"
-  "${PRIVATE_HEADERS}"
 )
-
 ebertolazzi_setup_target(
   "HSL"
   TRUE # build static
   "${SOURCE_DIR}"
   "HSL/hsl_fake.cc" # must be relative path
+  "${SOURCE_DIR}"
   "${PUBLIC_HEADERS}"
-  "${PRIVATE_HEADERS}"
 )
-
-if ( BUILD_SHARED )
+if ( EB_BUILD_SHARED )
   ebertolazzi_setup_target(
-    ${PROJECT_NAME}
+    "${PROJECT_NAME}"
     FALSE # build dynamic
     "${SOURCE_DIR}"
     "${SOURCES}"
+    "${SOURCE_DIR}"
     "${PUBLIC_HEADERS}"
-    "${PRIVATE_HEADERS}"
   )
   ebertolazzi_setup_target(
     "HSL"
-    FALSE # build static
+    FALSE # build dynamic
     "${SOURCE_DIR}"
     "HSL/hsl_fake.cc" # must be relative path
+    "${SOURCE_DIR}"
     "${PUBLIC_HEADERS}"
-    "${PRIVATE_HEADERS}"
   )
+  target_link_libraries( ${EB_NAMESPACE}_${PROJECT_NAME} ${SUPERLU} ${UTILS} )
+endif()
+
+if ( DEPEND_TARGETS )
+  add_dependencies( ${EB_NAMESPACE}_${PROJECT_NAME}_Static ${DEPEND_TARGETS} )
 endif()
 
 #   _____       _
@@ -164,25 +161,29 @@ endif()
 #    | |/ -_|_-<  _(_-<
 #    |_|\___/__/\__/__/
 #
-if ( BUILD_EXECUTABLE OR ENABLE_CTEST )
+if ( EB_ENABLE_TESTS )
 
   enable_testing()
-
-  set( EXELISTBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin" )
-  set( EXELISTCPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src_tests" )
 
   if(APPLE OR UNIX)
     find_package( ZLIB REQUIRED )
   else()
     if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
-      find_library( ZLIB_LIBRARIES zlibstaticd HINTS ./ThirdParties/zlib/lib )
+      find_library(
+        ZLIB_LIBRARIES zlibstaticd
+        HINTS ./submodules/Utils/ThirdParties/zlib/lib
+      )
     else()
-      find_library( ZLIB_LIBRARIES zlibstatic HINTS ./ThirdParties/zlib/lib )
+      find_library(
+        ZLIB_LIBRARIES zlibstatic
+        HINTS ./submodules/Utils/ThirdParties/zlib/lib
+      )
     endif()
     set( ZLIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParties/zlib/include ")
   endif()
 
-  file( MAKE_DIRECTORY ${EXELISTBIN_DIR} )
+  set( EXELISTBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin" )
+  set( EXELISTCPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src_tests" )
 
   set(
     EXELISTCPP
@@ -202,10 +203,19 @@ if ( BUILD_EXECUTABLE OR ENABLE_CTEST )
     test14-SparseTool2
   )
 
-  add_custom_target( all_tests ALL )
+  add_custom_target( "${PROJECT_NAME}_all_tests" ALL )
 
   set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin )
-  set( LIBS ${EB_NAMESPACE}_${PROJECT_NAME}_Static ${EB_NAMESPACE}_HSL_Static ${lapackblas_libraries} ${UTILS} ${SUPERLU} ${ZLIB_LIBRARIES} ${CMAKE_DL_LIBS} )
+  set(
+    LIBS
+    ${EB_NAMESPACE}_${PROJECT_NAME}_Static
+    ${EB_NAMESPACE}_HSL_Static
+    ${lapackblas_libraries}
+    ${UTILS}
+    ${SUPERLU}
+    ${ZLIB_LIBRARIES}
+    ${CMAKE_DL_LIBS}
+  )
   foreach( S ${EXELISTCPP} )
     add_executable( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc )
     target_link_libraries( ${S} ${LIBS} )
@@ -214,7 +224,7 @@ if ( BUILD_EXECUTABLE OR ENABLE_CTEST )
       COMMAND ./bin/${S}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
-    add_dependencies( all_tests ${S} )
+    add_dependencies( "${PROJECT_NAME}_all_tests" ${S} )
   endforeach()
 
 endif()
@@ -233,16 +243,6 @@ install(
   PUBLIC_HEADER DESTINATION ${PROJECT_PUBLIC_HEADER_DESTINATION}
 )
 
-# copy Eigen header only library
-#install( DIRECTORY "${SOURCE_DIR}/Eigen" DESTINATION ${PROJECT_PUBLIC_HEADER_DESTINATION} )
-
-#if ( WIN32 )
-#  set( DIR3RD ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd )
-#  install( DIRECTORY "${DIR3RD}/include" DESTINATION "${INSTALL_PREFIX}/" )
-#  install( DIRECTORY "${DIR3RD}/dll"     DESTINATION "${INSTALL_PREFIX}/" )
-#  install( DIRECTORY "${DIR3RD}/lib"     DESTINATION "${INSTALL_PREFIX}/" )
-#endif()
-
 #   ___         _
 #  | _ \__ _ __| |____ _ __ _ ___
 #  |  _/ _` / _| / / _` / _` / -_)
@@ -250,6 +250,7 @@ install(
 #                       |___/
 #
 
+# do not work
 include( ./cmake/CMakeLists-cpack.txt )
 
 ebertolazzi_final_messages()

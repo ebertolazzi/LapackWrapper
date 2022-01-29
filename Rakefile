@@ -7,28 +7,38 @@
   end
 end
 
+case RUBY_PLATFORM
+when /darwin/
+  OS = :mac
+when /linux/
+  OS = :linux
+when /cygwin|mswin|mingw|bccwin|wince|emx/
+  OS = :win
+end
+
 require_relative "./Rakefile_common.rb"
 
 file_base = File.expand_path(File.dirname(__FILE__)).to_s+'/lib'
 
 cmd_cmake_build = ""
 if COMPILE_EXECUTABLE then
-  cmd_cmake_build += ' -DBUILD_EXECUTABLE:VAR=true '
+  cmd_cmake_build += ' -DEB_ENABLE_TESTS:VAR=ON '
 else
-  cmd_cmake_build += ' -DBUILD_EXECUTABLE:VAR=false '
+  cmd_cmake_build += ' -DEB_ENABLE_TESTS:VAR=OFF '
 end
 if COMPILE_DYNAMIC then
-  cmd_cmake_build += ' -DBUILD_SHARED:VAR=true '
+  cmd_cmake_build += ' -DEB_BUILD_SHARED:VAR=ON '
 else
-  cmd_cmake_build += ' -DBUILD_SHARED:VAR=false '
+  cmd_cmake_build += ' -DEB_BUILD_SHARED:VAR=OFF '
 end
 if COMPILE_DEBUG then
-  cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=STATUS '
+  cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING '
 else
-  cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=STATUS '
+  cmd_cmake_build += ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING '
 end
 cmd_cmake_build += " -DEB_INSTALL_LOCAL=ON "
 
+FileUtils.cp './cmake/CMakeLists-cflags.txt', 'submodules/Utils/cmake/CMakeLists-cflags.txt'
 
 task :default => [:build]
 
@@ -50,6 +60,43 @@ task :test do
   FileUtils.cd '..'
 end
 
+TESTS = [
+  "test1-small-factorization",
+  "test10-SparseToolTiming",
+  "test11-SparseToolVector",
+  "test12-SparseToolMatrix",
+  "test13-SparseTool1",
+  "test14-SparseTool2",
+  "test2-Timing",
+  "test3-BandedMatrix",
+  "test4-BFGS",
+  "test5-BLOCKTRID",
+  "test6-EIGS",
+  "test7-SparseTool",
+  "test8-SparseToolComplex",
+  "test9-SparseToolTridiagonal"
+];
+
+desc "run tests"
+task :run do
+  puts "UTILS run tests".green
+  case OS
+  when :mac,:linux
+    TESTS.each do |cmd|
+      exe = "./bin/#{cmd}"
+      next unless File.exist?(exe)
+      puts "execute #{exe}".yellow
+      sh exe
+    end
+  when :win
+    TESTS.each do |cmd|
+      exe = "bin\\#{cmd}.exe"
+      next unless File.exist?(exe)
+      puts "execute #{exe}".yellow
+      sh exe
+    end
+  end
+end
 def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
   text = File.read file
   File.open(file, 'w+'){|f| f << text.gsub(text_to_replace, text_to_put_in_place)}
@@ -144,6 +191,12 @@ task :build_osx, [:lapack] do |t, args|
     sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
   end
 
+  if RUN_CPACK then
+    puts "run CPACK for SPLINES".yellow
+    sh 'cpack -C CPackConfig.cmake'
+    sh 'cpack -C CPackSourceConfig.cmake'
+  end
+
   FileUtils.cd '..'
 end
 
@@ -190,6 +243,12 @@ task :build_linux, [:lapack] do |t, args|
     sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
   end
 
+  if RUN_CPACK then
+    puts "run CPACK for SPLINES".yellow
+    sh 'cpack -C CPackConfig.cmake'
+    sh 'cpack -C CPackSourceConfig.cmake'
+  end
+
   FileUtils.cd '..'
 end
 
@@ -217,15 +276,6 @@ task :win_3rd, [:year, :bits, :lapack] do |t, args|
   FileUtils.cd 'ThirdParties'
   sh "rake install_win[#{args.year},#{args.bits},#{args.lapack}]"
   FileUtils.cd '..'
-end
-
-desc 'pack for OSX/LINUX/WINDOWS'
-task :cpack do
-  FileUtils.cd "build"
-  puts "run CPACK for LAPACK_WRAPPER".yellow
-  sh 'cpack -C CPackConfig.cmake'
-  sh 'cpack -C CPackSourceConfig.cmake'
-  FileUtils.cd ".."
 end
 
 desc "clean for OSX"
