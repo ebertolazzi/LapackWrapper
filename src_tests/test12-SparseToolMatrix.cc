@@ -24,6 +24,8 @@
 #include <sparse_tool/sparse_tool_iterative.hh>
 #include <sparse_tool/sparse_tool_matrix_market.hh>
 
+static Utils::Console msg(&std::cout);
+
 using namespace ::Sparse_tool_load;
 using           ::Sparse_tool::integer;
 using namespace ::std;
@@ -1170,9 +1172,15 @@ test_timing() {
 
 int
 main() {
-  all_matrix_test allm;
-  allm.do_all_tests();
-  test_timing();
+  try {
+    all_matrix_test allm;
+    allm.do_all_tests();
+    test_timing();
+  } catch ( exception const & exc ) {
+    msg.error( exc.what() );
+  } catch ( ... ) {
+    msg.error("Errore Sconosciuto!\n");
+  }
   cout << "\nALL DONE FOLKS!\n\n";
   return 0;
 }

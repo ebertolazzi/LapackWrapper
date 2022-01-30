@@ -38,6 +38,8 @@
 #include <sparse_tool/sparse_tool_iterative.hh>
 #include <sparse_tool/sparse_tool_matrix_market.hh>
 
+static Utils::Console msg(&std::cout);
+
 using namespace ::Sparse_tool_load;
 using           ::Sparse_tool::integer;
 using namespace ::std;
@@ -50,37 +52,47 @@ ipos( integer i, integer j, integer nx, integer /* ny */ ) {
 
 int
 main() {
-  integer                    iter, maxiter = 1000, n = 100, neq = (n-1)*(n-1);
-  CCoorMatrix<double>        A(neq,neq,5*neq); // initialize matrix A with reseved rom for 5*neq nonzeros
-  Vector<double>             b(neq), x(neq), r(neq);   // initialize r.h.s. and solution vector
-  //ILDUpreconditioner<double> P; // P will be the incomplete LDU preconditioner
-  //IdPreconditioner<double>   P; // P will be the incomplete LDU preconditioner
-  //Dpreconditioner<double>   P; // P will be the incomplete LDU preconditioner
-  //SORpreconditioner<double>   P; // P will be the incomplete LDU preconditioner
-  SSORpreconditioner<double>   P; // P will be the incomplete LDU preconditioner
-  b = -1.0/(n*n); // h^2
-  for ( integer i=1; i<n; ++i ) {
-    for ( integer j=1; j<n; ++j ) {
-      integer ii = ipos( i, j, n, n );
-      A.insert(ii,ii) = 4;
-      if ( i > 1   ) A.insert(ii,ipos( i-1, j, n, n )) = -1;
-      if ( i < n-1 ) A.insert(ii,ipos( i+1, j, n, n )) = -1;
-      if ( j > 1   ) A.insert(ii,ipos( i, j-1, n, n )) = -1;
-      if ( j < n-1 ) A.insert(ii,ipos( i, j+1, n, n )) = -1;
+  try {
+    integer                    iter, maxiter = 1000, n = 100, neq = (n-1)*(n-1);
+    CCoorMatrix<double>        A(neq,neq,5*neq); // initialize matrix A with reseved rom for 5*neq nonzeros
+    Vector<double>             b(neq), x(neq), r(neq);   // initialize r.h.s. and solution vector
+    //ILDUpreconditioner<double> P; // P will be the incomplete LDU preconditioner
+    //IdPreconditioner<double>   P; // P will be the incomplete LDU preconditioner
+    //Dpreconditioner<double>   P; // P will be the incomplete LDU preconditioner
+    //SORpreconditioner<double>   P; // P will be the incomplete LDU preconditioner
+    SSORpreconditioner<double>   P; // P will be the incomplete LDU preconditioner
+    b = -1.0/(n*n); // h^2
+    for ( integer i=1; i<n; ++i ) {
+      for ( integer j=1; j<n; ++j ) {
+        integer ii = ipos( i, j, n, n );
+        A.insert(ii,ii) = 4;
+        if ( i > 1   ) A.insert(ii,ipos( i-1, j, n, n )) = -1;
+        if ( i < n-1 ) A.insert(ii,ipos( i+1, j, n, n )) = -1;
+        if ( j > 1   ) A.insert(ii,ipos( i, j-1, n, n )) = -1;
+        if ( j < n-1 ) A.insert(ii,ipos( i, j+1, n, n )) = -1;
+      }
     }
-  }
-  A.internalOrder(); // order internal structure of the sparse matrice
-  //P.build(A);        // build incomplete LDU preconditioner
-  P.build(A,1.6);    // build incomplete LDU preconditioner
-  //double res = bicgstab( A, b, x, P, 1E-14, maxiter, iter, &cout );
-  //double res = gmres( A, b, x, P, 1E-14, 50, maxiter, iter, &cout );
-  //double res = cg( A, b, x, P, 1E-14, maxiter, iter, &cout );
-  //double res = cg_poly( A, b, x, 1E-14, maxiter, 10, iter, &cout );
-  double res = cocg( A, b, x, P, 1E-14, maxiter, iter, &cout );
-  //double res = cocr( A, b, x, P, 1E-14, maxiter, iter, &cout );
-  cout << "res = " << res << '\n';
+    A.internalOrder(); // order internal structure of the sparse matrice
+    //P.build(A);        // build incomplete LDU preconditioner
+    P.build(A,1.6);    // build incomplete LDU preconditioner
+    //double res = bicgstab( A, b, x, P, 1E-14, maxiter, iter, &cout );
+    //double res = gmres( A, b, x, P, 1E-14, 50, maxiter, iter, &cout );
+    //double res = cg( A, b, x, P, 1E-14, maxiter, iter, &cout );
+    //double res = cg_poly( A, b, x, 1E-14, maxiter, 10, iter, &cout );
+    double res = cocg( A, b, x, P, 1E-14, maxiter, iter, &cout );
+    //double res = cocr( A, b, x, P, 1E-14, maxiter, iter, &cout );
+    fmt::print( "res = {}\n", res );
 
-  r = b - A*x;
-  cout << "Verify Residual = " << r.template lpNorm<Eigen::Infinity>() << '\n';
+    r = b - A*x;
+    fmt::print(
+      "Verify Residual = {}\n",
+      r.template lpNorm<Eigen::Infinity>()
+    );
+
+  } catch ( exception const & exc ) {
+    msg.error( exc.what() );
+  } catch ( ... ) {
+    msg.error("Errore Sconosciuto!\n");
+  }
   return 0;
 }

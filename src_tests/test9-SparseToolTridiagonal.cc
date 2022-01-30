@@ -27,11 +27,11 @@
 
 using namespace Sparse_tool_load;
 using namespace std;
-using namespace zstream;
 
 typedef double real_type;
 typedef int    integer;
 
+static Utils::Console msg(&std::cout);
 
 class all_trid_test {
 
@@ -165,8 +165,14 @@ all_trid_test::test004(void) {
 
 int
 main() {
-  all_trid_test allm(4);
-  allm.do_all_tests();
+  try {
+    all_trid_test allm(4);
+    allm.do_all_tests();
+  } catch ( exception const & exc ) {
+    msg.error( exc.what() );
+  } catch ( ... ) {
+    msg.error("Errore Sconosciuto!\n");
+  }
   cout << "\nTEST_TRID ALL DONE\n\n";
   return 0;
 }

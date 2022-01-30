@@ -39,6 +39,8 @@ typedef double Real;
 
 #include <Utils.hh>
 
+static Utils::Console msg(&std::cout);
+
 inline
 Real
 power2( Real a )
@@ -820,7 +822,13 @@ all_vector_test::test064(void) {
 
 int
 main() {
-  all_vector_test allv(3);
-  allv.do_all_tests();
+  try {
+    all_vector_test allv(3);
+    allv.do_all_tests();
+  } catch ( exception const & exc ) {
+    msg.error( exc.what() );
+  } catch ( ... ) {
+    msg.error("Errore Sconosciuto!\n");
+  }
   return 0;
 }

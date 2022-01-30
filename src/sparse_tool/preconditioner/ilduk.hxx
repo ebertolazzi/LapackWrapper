@@ -76,10 +76,10 @@ namespace Sparse_tool {
       Unnz   = memi(N);
       L_size = memi(N);
       U_size = memi(N);
-      std::fill_n( Lnnz, N, 0 );
-      std::fill_n( Unnz, N, 0 );
-      std::fill_n( L_size, N, 0 );
-      std::fill_n( U_size, N, 0 );
+      std::fill_n( Lnnz,   N, integer(0) );
+      std::fill_n( Unnz,   N, integer(0) );
+      std::fill_n( L_size, N, integer(0) );
+      std::fill_n( U_size, N, integer(0) );
 
       for ( A.Begin(); A.End(); A.Next() ) {
         integer i = A.row();

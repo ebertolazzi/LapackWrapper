@@ -24,48 +24,56 @@
 
 using namespace std;
 
+static Utils::Console msg(&std::cout);
 
 int
 main() {
 
-  lapack_wrapper::doublereal s1[] = {1,2,3};
-  lapack_wrapper::doublereal y1[] = {11./3.,-6./3.,13./3.};
+  try {
 
-  lapack_wrapper::doublereal s2[] = {1,0,1};
-  lapack_wrapper::doublereal y2[] = {3,-2,3};
+    lapack_wrapper::doublereal s1[] = {1,2,3};
+    lapack_wrapper::doublereal y1[] = {11./3.,-6./3.,13./3.};
 
-  lapack_wrapper::doublereal s3[] = {0,-1,1};
-  lapack_wrapper::doublereal y3[] = {7/3.,-6/3.,8/3.};
+    lapack_wrapper::doublereal s2[] = {1,0,1};
+    lapack_wrapper::doublereal y2[] = {3,-2,3};
 
-  lapack_wrapper::BFGS<lapack_wrapper::doublereal> bfgs;
+    lapack_wrapper::doublereal s3[] = {0,-1,1};
+    lapack_wrapper::doublereal y3[] = {7/3.,-6/3.,8/3.};
 
-  lapack_wrapper::doublereal epsi = 1e-8;
+    lapack_wrapper::BFGS<lapack_wrapper::doublereal> bfgs;
 
-  bfgs.allocate(3);
-  bfgs.init();
-  cout << "\n\n";
-  bfgs.print( cout );
+    lapack_wrapper::doublereal epsi = 1e-8;
 
-  bfgs.update( y1, s1, epsi );
-  cout << "\n\n";
-  bfgs.print( cout );
+    bfgs.allocate(3);
+    bfgs.init();
+    cout << "\n\n";
+    bfgs.print( cout );
 
-  bfgs.update( y2, s2, epsi );
-  cout << "\n\n";
-  bfgs.print( cout );
-
-  bfgs.update( y3, s3, epsi );
-  cout << "\n\n";
-  bfgs.print( cout );
-
-
-  for ( int i = 0; i < 90; ++i ) {
     bfgs.update( y1, s1, epsi );
+    cout << "\n\n";
+    bfgs.print( cout );
+
     bfgs.update( y2, s2, epsi );
+    cout << "\n\n";
+    bfgs.print( cout );
+
     bfgs.update( y3, s3, epsi );
+    cout << "\n\n";
+    bfgs.print( cout );
+
+    for ( int i = 0; i < 90; ++i ) {
+      bfgs.update( y1, s1, epsi );
+      bfgs.update( y2, s2, epsi );
+      bfgs.update( y3, s3, epsi );
+    }
+    cout << "\n\n";
+    bfgs.print( cout );
+  
+  } catch ( exception const & exc ) {
+    msg.error( exc.what() );
+  } catch ( ... ) {
+    msg.error("Errore Sconosciuto!\n");
   }
-  cout << "\n\n";
-  bfgs.print( cout );
 
   cout << "All done!\n";
   return 0;

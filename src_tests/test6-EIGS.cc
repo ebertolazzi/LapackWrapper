@@ -24,6 +24,8 @@
 
 using namespace std;
 
+static Utils::Console msg(&std::cout);
+
 typedef lapack_wrapper::doublereal real_type;
 
 static
@@ -262,18 +264,24 @@ test6() {
 
 int
 main() {
-  cout << "test1\n";
-  test1();
-  cout << "\n\ntest2\n";
-  test2();
-  cout << "\n\ntest3\n";
-  test3();
-  cout << "\n\ntest4\n";
-  test4();
-  cout << "\n\ntest5\n";
-  test5();
-  cout << "\n\ntest6\n";
-  test6();
-  cout << "\nAll done!\n";
+  try {
+    cout << "test1\n";
+    test1();
+    cout << "\n\ntest2\n";
+    test2();
+    cout << "\n\ntest3\n";
+    test3();
+    cout << "\n\ntest4\n";
+    test4();
+    cout << "\n\ntest5\n";
+    test5();
+    cout << "\n\ntest6\n";
+    test6();
+    cout << "\nAll done!\n";
+  } catch ( exception const & exc ) {
+    msg.error( exc.what() );
+  } catch ( ... ) {
+    msg.error("Errore Sconosciuto!\n");
+  }
   return 0;
 }

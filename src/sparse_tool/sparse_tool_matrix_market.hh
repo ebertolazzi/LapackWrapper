@@ -18,7 +18,7 @@
 
 #include "sparse_tool.hh"
 
-#include <Utils_zstream.hh>
+#include <Utils_zstr.hh>
 #include <string.h>
 
 #if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
@@ -80,8 +80,12 @@ namespace Sparse_tool {
   //!
   class MatrixMarket {
 
-    char    line[128], str[5][128];
-    integer nRows, nCols, numNnz, numLine;
+    char    m_line[128];
+    char    m_str[5][128];
+    integer m_nrows;
+    integer m_ncols;
+    integer m_nnz;
+    integer m_num_line;
 
     //! the type of matrix data: sparse or full
     CoorType   cType;
@@ -91,9 +95,9 @@ namespace Sparse_tool {
 
     bool
     getLine( istream_type & stream ) {
-      stream.getline( line, 128 );
-      ++numLine;
-      return line[0] == '%' || line[0] == '\0';
+      stream.getline( m_line, 128 );
+      ++m_num_line;
+      return m_line[0] == '%';
     }
 
   public:
@@ -116,7 +120,7 @@ namespace Sparse_tool {
         "ADDRESSING:  {}\n"
         "DATA:        {}\n"
         "MATRIX TYPE: {}\n",
-        nRows, nCols, numNnz,
+        m_nrows, m_ncols, m_nnz,
         cC[cType], cV[vType], cM[mType]
       );
     }
@@ -130,33 +134,34 @@ namespace Sparse_tool {
 
       UTILS_ASSERT0(
         stream.good(),
-        "Sparse_tool: In reading Matrix Market File, cannot read header!\n"
+        "Sparse_tool::MatrixMarket::readHeader\n"
+        "In reading Matrix Market File, cannot read header!\n"
       );
 
-      numLine = 0;
+      m_num_line = 0;
       cType   = MM_COORDINATE;
       vType   = MM_REAL;
       mType   = MM_GENERAL;
 
       while ( this -> getLine( stream ) ) {
         #if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
-          unsigned nstr = sscanf_s( line,
+          unsigned nstr = sscanf_s( m_line,
                                     "%s%s%s%s%s",
-                                    str[0], unsigned(_countof(str[0])),
-                                    str[1], unsigned(_countof(str[1])),
-                                    str[2], unsigned(_countof(str[2])),
-                                    str[3], unsigned(_countof(str[3])),
-                                    str[4], unsigned(_countof(str[4])) );
+                                    m_str[0], unsigned(_countof(m_str[0])),
+                                    m_str[1], unsigned(_countof(m_str[1])),
+                                    m_str[2], unsigned(_countof(m_str[2])),
+                                    m_str[3], unsigned(_countof(m_str[3])),
+                                    m_str[4], unsigned(_countof(m_str[4])) );
         #else
-          unsigned nstr = sscanf(line, "%s%s%s%s%s", str[0], str[1], str[2], str[3], str[4] );
+          unsigned nstr = sscanf(m_line, "%s%s%s%s%s", m_str[0], m_str[1], m_str[2], m_str[3], m_str[4] );
         #endif
 
-        if ( strcmp( str[0], "%%MatrixMarket" ) != 0 ||
-             strcmp( str[1], "matrix" )         != 0 ) continue;
+        if ( strcmp( m_str[0], "%%MatrixMarket" ) != 0 ||
+             strcmp( m_str[1], "matrix" )         != 0 ) continue;
 
         // coordinate or array ?
         for ( unsigned i = 2; i < nstr; ++i ) {
-          char const * p = str[i];
+          char const * p = m_str[i];
           if      ( strcmp( p, "coordinate")     == 0 ) cType = MM_COORDINATE;
           else if ( strcmp( p, "array")          == 0 ) cType = MM_ARRAY;   
 
@@ -170,16 +175,16 @@ namespace Sparse_tool {
           else if ( strcmp( p, "skew-symmetric") == 0 ) mType = MM_SKEW_SYMMETRIC;
           else if ( strcmp( p, "Hermitian")      == 0 ) mType = MM_HERMITIAN;
           
-          else UTILS_ASSERT0( false, "bad MatrixMarket file format" );
+          else UTILS_ASSERT0( false, "Sparse_tool::MatrixMarket::readHeader\nbad MatrixMarket file format" );
         }
       }
-      
+
       // check consistency of type
       if ( mType == MM_HERMITIAN ) {
         UTILS_ASSERT(
           vType == MM_COMPLEX,
-          "Sparse_tool: inconsistent file data:\n"
-          "a matrix with entries of type: {}\n"
+          "Sparse_tool::MatrixMarket::readHeader\n"
+          "inconsistent file data, a matrix with entries of type: {}\n"
           "can be a matrix of type: {}\n",
           cV[vType], cM[mType]
         );
@@ -187,8 +192,8 @@ namespace Sparse_tool {
       if ( mType == MM_SKEW_SYMMETRIC ) {
         UTILS_ASSERT(
           vType == MM_REAL || vType == MM_COMPLEX,
-          "Sparse_tool: inconsistent file data:\n"
-          "a matrix with entries of type: {}\n"
+          "Sparse_tool::MatrixMarket::readHeader\n"
+          "inconsistent file data, a matrix with entries of type: {}\n"
           "can be a matrix of type: {}\n",
           cV[vType], cM[mType]
         );
@@ -196,11 +201,11 @@ namespace Sparse_tool {
 
       switch ( cType ) {
       case MM_COORDINATE:
-        sscanf( line, "%u%u%u", &nRows, &nCols, &numNnz );
+        sscanf( m_line, "%u%u%u", &m_nrows, &m_ncols, &m_nnz );
         break;
       case MM_ARRAY:
-        sscanf( line, "%u%u", &nRows, &nCols );
-        numNnz = nRows * nCols;
+        sscanf( m_line, "%u%u", &m_nrows, &m_ncols );
+        m_nnz = m_nrows * m_ncols;
         break;
       //default:
       //  break;
@@ -214,30 +219,40 @@ namespace Sparse_tool {
 
       UTILS_ASSERT0(
         cType == MM_COORDINATE,
-        "Sparse_tool: MatrixMarket: file must be a coordinate file!"
+        "Sparse_tool::MatrixMarket::read\n"
+        "file must be a coordinate file!"
       );
 
-      sp.resize( nRows, nCols, numNnz );
+      sp.resize( m_nrows, m_ncols, m_nnz );
 
-      for ( integer kk = 0; kk < numNnz; ++kk ) {
-        while ( getLine( stream ) ); // skip comments and empty line
+      integer kk = 0;
+      while( kk < m_nnz ) {
+        UTILS_ASSERT0(
+          stream.good(), 
+          "Sparse_tool::MatrixMarket::read\n"
+          "Failed in reading Matrix Market File\n"
+        );
+
+        if ( getLine( stream ) ) continue; // skip comments and empty line
+
         integer i, j;
-        sscanf( line, "%d%d", &i, &j );
+        sscanf( m_line, "%d%d", &i, &j );
 
         UTILS_ASSERT(
-          i >= 1 && j >= 1 && i <= nRows && j <= nCols,
-          "Sparse_tool: In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
+          i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
+          "Sparse_tool::MatrixMarket::read\n"
+          "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
           "Read: <<{}>>\n",
-          i, j, numLine, line
+          i, j, m_num_line, m_line
         );
 
         --i; --j; // zero base index
         sp.insert( i, j );
         if ( mType != MM_GENERAL ) sp.insert( j, i );
+        ++kk; // next nnz
       }
 
       sp.internalOrder();
-
     }
 
     void
@@ -247,25 +262,36 @@ namespace Sparse_tool {
 
       UTILS_ASSERT0(
         cType == MM_COORDINATE,
-        "Sparse_tool: MatrixMarket: file must be a coordinate file!\n"
+        "Sparse_tool::MatrixMarket::read\n"
+        "file must be a coordinate file!\n"
       );
       UTILS_ASSERT0(
         vType == MM_INTEGER,
-        "Sparse_tool: MatrixMarket: file must have integer entries!\n"
+        "Sparse_tool::MatrixMarket::read\n"
+        "file must have integer entries!\n"
       );
 
-      mat.resize( nRows, nCols, numNnz );
+      mat.resize( m_nrows, m_ncols, m_nnz );
 
-      for ( integer kk = 0; kk < numNnz; ++kk ) {
-        while ( getLine( stream ) ); // skip comments and empty line
+      integer kk = 0;
+      while ( kk < m_nnz ) {
+        UTILS_ASSERT0(
+          stream.good(), 
+          "Sparse_tool::MatrixMarket::read\n"
+          "Failed in reading Matrix Market File\n"
+        );
+
+        if ( getLine( stream ) ) continue; // skip comments
+
         integer i, j, a;
-        sscanf( line, "%d%d%d", &i, &j, &a );
+        sscanf( m_line, "%d%d%d", &i, &j, &a );
 
         UTILS_ASSERT(
-          i >= 1 && j >= 1 && i <= nRows && j <= nCols,
-          "Sparse_tool: In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
+          i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
+          "Sparse_tool::MatrixMarket::read\n"
+          "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
           "Read: <<{}>>\n",
-          i, j, numLine, line
+          i, j, m_num_line, m_line
         );
 
         --i; --j; // zero base index
@@ -275,10 +301,10 @@ namespace Sparse_tool {
           case MM_SKEW_SYMMETRIC: mat.insert(j,i) = -a; break;
           default: break;
         }
+        ++kk;
       }
-      
-      mat.internalOrder();
 
+      mat.internalOrder();
     }
 
     template <typename T>
@@ -291,28 +317,37 @@ namespace Sparse_tool {
 
       UTILS_ASSERT0(
         cType == MM_COORDINATE,
-        "Sparse_tool: MatrixMarket: file must be a coordinate file!\n"
+        "Sparse_tool::MatrixMarket::read\n"
+        "file must be a coordinate file!\n"
       );
       UTILS_ASSERT0(
         vType != MM_PATTERN,
-        "Sparse_tool: MatrixMarket\n"
+        "Sparse_tool::MatrixMarket::read\n"
         "try to read a matrix from a pattern only file!\n"
       );
 
-      mat.resize( nRows, nCols, numNnz );
+      mat.resize( m_nrows, m_ncols, m_nnz );
 
-      for ( integer kk = 0; kk < numNnz; ++kk ) {
-        while ( getLine( stream ) ); // skip comments and empty line
+      integer kk = 0;
+      while( kk < m_nnz ) {
+        UTILS_ASSERT0(
+          stream.good(), 
+          "Sparse_tool::MatrixMarket::read\n"
+          "Failed in reading Matrix Market File\n"
+        );
+
+        if ( getLine( stream ) ) continue; // skip comments
+
         integer i, j;
         double  re, im = 0;
-        sscanf( line, fmts[vType], &i, &j, &re, &im );
+        sscanf( m_line, fmts[vType], &i, &j, &re, &im );
 
         UTILS_ASSERT(
-          i >= 1 && j >= 1 && i <= nRows && j <= nCols,
-          "Sparse_tool: MatrixMarket\n"
+          i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
+          "Sparse_tool::MatrixMarket::read\n"
           "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
           "Read: <<{}>>\n",
-          i, j, numLine, line
+          i, j, m_num_line, m_line
         );
         --i; --j; // zero base index
 
@@ -323,6 +358,7 @@ namespace Sparse_tool {
           case MM_HERMITIAN:      mat.insert(j,i) = std::complex<T>(re,-im);  break;
           default: break;
         }
+        ++kk;
       }
 
       mat.internalOrder();
@@ -337,31 +373,43 @@ namespace Sparse_tool {
 
       SPARSETOOL_ASSERT(
         cType == MM_COORDINATE,
-        "Sparse_tool: MatrixMarket: file must be a coordinate file!, data is " << *this
+        "Sparse_tool::MatrixMarket::read\n"
+        "file must be a coordinate file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_PATTERN,
-        "Sparse_tool: MatrixMarket: try to read a matrix from a pattern only file!, data is " << *this
+        "Sparse_tool::MatrixMarket::read\n"
+        "try to read a matrix from a pattern only file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_COMPLEX,
-        "Sparse_tool: MatrixMarket: try to read a complex matrix into a non complex one!, data is " << *this
+        "Sparse_tool::MatrixMarket::read\n"
+        "try to read a complex matrix into a non complex one!, data is " << *this
       );
 
-      mat.resize( nRows, nCols, numNnz );
+      mat.resize( m_nrows, m_ncols, m_nnz );
 
-      for ( integer kk = 0; kk < numNnz; ++kk ) {
-        while ( getLine( stream ) ); // skip comments and empty line
+      integer kk = 0;
+      while ( kk < m_nnz ) {
+
+        UTILS_ASSERT0(
+          stream.good(), 
+          "Sparse_tool::MatrixMarket::read\n"
+          "Failed in reading Matrix Market File\n"
+        );
+
+        if ( getLine( stream ) ) continue; // skip comments
+
         integer i, j;
         double  a;
-        sscanf( line, "%d%d%lf", &i, &j, &a );
+        sscanf( m_line, "%d%d%lf", &i, &j, &a );
 
         UTILS_ASSERT(
-          i >= 1 && j >= 1 && i <= nRows && j <= nCols,
-          "Sparse_tool: MatrixMarket\n"
+          i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
+          "Sparse_tool::MatrixMarket::read\n"
           "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
           "Read: <<{}>>\n",
-          i, j, numLine, line
+          i, j, m_num_line, m_line
         );
         --i; --j; // zero base index
 
@@ -371,6 +419,7 @@ namespace Sparse_tool {
           case MM_SKEW_SYMMETRIC: mat.insert(j,i) = -a; break;
           default: break;
         }
+        ++kk;
       }
 
       mat.internalOrder();
@@ -384,16 +433,18 @@ namespace Sparse_tool {
 
       SPARSETOOL_ASSERT(
         cType == MM_ARRAY,
-        "Sparse_tool: MatrixMarket: file must be an array file!, data is " << *this
+        "Sparse_tool::MatrixMarket::readFull\n"
+        "file must be an array file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType == MM_INTEGER,
-        "Sparse_tool: MatrixMarket: try to read an integer matrix into a non integer one!, data is " << *this
+        "Sparse_tool::MatrixMarket::readFull\n"
+        "try to read an integer matrix into a non integer one!, data is " << *this
       );
-      mat.resize( numNnz );
-      for ( integer kk = 0; kk < numNnz; ++kk ) {
+      mat.resize( m_nnz );
+      for ( integer kk = 0; kk < m_nnz; ++kk ) {
         int a;
-        sscanf(line, "%d", &a);
+        sscanf(m_line, "%d", &a);
         mat(kk) = a;
       }
     }
@@ -406,17 +457,19 @@ namespace Sparse_tool {
 
       SPARSETOOL_ASSERT(
         cType == MM_ARRAY,
-        "Sparse_tool: MatrixMarket: file must be an array file!, data is " << *this
+        "Sparse_tool::MatrixMarket::readFull\n"
+        "file must be an array file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_PATTERN,
-        "Sparse_tool: MatrixMarket: try to read a pattern from a full matrix!, data is " << *this
+        "Sparse_tool::MatrixMarket::readFull\n"
+        "try to read a pattern from a full matrix!, data is " << *this
       );
       static char const *fmts[4] = { "", "%lf", "%lf", "%lf%lf" };
-      mat.clear(); mat.resize( numNnz );
-      for ( integer kk = 0; kk < numNnz; ++kk ) {
+      mat.clear(); mat.resize( m_nnz );
+      for ( integer kk = 0; kk < m_nnz; ++kk ) {
         double re, im = 0;
-        sscanf(line, fmts[mType], &re, &im );
+        sscanf(m_line, fmts[mType], &re, &im );
         mat.push_back( std::complex<T>(re,im) );
       }
     }
@@ -429,27 +482,30 @@ namespace Sparse_tool {
 
       SPARSETOOL_ASSERT(
         cType == MM_ARRAY,
-        "Sparse_tool: MatrixMarket: file must be an array file!, data is " << *this
+        "Sparse_tool::MatrixMarket::readFull\n"
+        "file must be an array file!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_PATTERN,
-        "Sparse_tool: MatrixMarket: try to read a pattern from a full matrix!, data is " << *this
+        "Sparse_tool::MatrixMarket::readFull\n"
+        "try to read a pattern from a full matrix!, data is " << *this
       );
       SPARSETOOL_ASSERT(
         vType != MM_COMPLEX,
-        "Sparse_tool: MatrixMarket: try to read a a complex matrix into a non complex one!, data is " << *this
+        "Sparse_tool::MatrixMarket::readFull\n"
+        "try to read a a complex matrix into a non complex one!, data is " << *this
       );
       //static char const *fmts[4] = { "", "%lf", "%lf", "%lf%lf" };
-      mat.clear(); mat.resize( numNnz );
-      for ( integer kk = 0; kk < numNnz; ++kk ) {
+      mat.clear(); mat.resize( m_nnz );
+      for ( integer kk = 0; kk < m_nnz; ++kk ) {
         double a;
-        sscanf(line, "%lf", &a );
+        sscanf(m_line, "%lf", &a );
         mat.push_back( a );
       }
     }
 
     //!
-    //! Read the red matrix in the template `MAT` class.
+    //! Read the matrix in the template `MAT` class.
     //!
     template<typename MAT>
     void
@@ -460,7 +516,7 @@ namespace Sparse_tool {
     }
 
     //!
-    //! Read the red matrix in the template `MAT` class.
+    //! Read the matrix in the template `MAT` class.
     //!
     template<typename MAT>
     void
@@ -468,14 +524,14 @@ namespace Sparse_tool {
       ifstream file(fname);
       UTILS_ASSERT(
         file.is_open(),
-        "Sparse_tool: MatrixMarket\n"
+        "Sparse_tool::MatrixMarket::read\n"
         "In reading Matrix Market File, cannot open {}\n",
         fname
       );
       integer len = strlen(fname);
       if ( len > 4 && strcmp(fname+len-3,".gz") == 0 ) {
         // copmpressed file
-        zstream::igzstream fz(file);
+        zstr::istream fz(file);
         read( fz, M );
       } else {
         read( file, M );
@@ -484,7 +540,7 @@ namespace Sparse_tool {
     }
 
     //!
-    //! Read the red matrix in the template `MAT` class.
+    //! Read the matrix in the template `MAT` class.
     //!
     template<typename MAT>
     void
@@ -494,9 +550,9 @@ namespace Sparse_tool {
 
     ///////////////////////////////////////////////////////////////////
 
-    integer numRows() const { return nRows;  } //!< number of rows of loaded matrix
-    integer numCols() const { return nCols;  } //!< number of columns of loaded matrix
-    integer nnz()     const { return numNnz; } //!< total number of nonzeros
+    integer numRows() const { return m_nrows; } //!< number of rows of loaded matrix
+    integer numCols() const { return m_ncols; } //!< number of columns of loaded matrix
+    integer nnz()     const { return m_nnz;   } //!< total number of nonzeros
 
     //!
     //! Type of storage:
@@ -550,33 +606,29 @@ namespace Sparse_tool {
     std::ofstream file;
     file.open( fname.c_str() );
     file.precision(15);
-    file
-      << "%%MatrixMarket matrix coordinate "
-      << cV[vType]   << ' '
-      << cM[mType]   << '\n'
-      << MM_HEADER
-      << A.numRows() << ' '
-      << A.numCols() << ' '
-      << A.nnz()     << '\n';
+    fmt::print( file,
+      "%%MatrixMarket matrix coordinate {} {}\n"
+      "{}"
+      "{} {} {}\n",
+      cV[vType], cM[mType], MM_HEADER,
+      A.numRows(), A.numCols(), A.nnz()
+    );
 
     switch ( vType ) {
       case MM_PATTERN:
         for ( A.Begin(); A.End(); A.Next() )
-          file
-            << A.row()+1    << '\t'
-            << A.column()+1 << '\n';
+          fmt::print( file, "{}\t{}\n", A.row()+1, A.column()+1 );
         break;
       case MM_INTEGER:
       case MM_REAL:
-        SPARSETOOL_ERR("Sparse_tool: MatrixMarket: Cannot write a complex matrix with non complex type");
+        UTILS_ERROR("Sparse_tool::MatrixMarketSaveToFile: Cannot write a complex matrix with non complex type");
         break;
       case MM_COMPLEX:
         for ( A.Begin(); A.End(); A.Next() )
-          file
-            << A.row()+1        << '\t'
-            << A.column()+1     << '\t'
-            << A.value().real() << '\t'
-            << A.value().imag() << '\n';
+          fmt::print(
+            file, "{}\t{}\t{}\t{}\n",
+            A.row()+1, A.column()+1, A.value().real(), A.value().imag()
+          );
         break;
     //  default:
     //    break;
@@ -607,32 +659,26 @@ namespace Sparse_tool {
     file.open( fname.c_str() );
     file.precision(15);
 
-    file
-      << "%%MatrixMarket matrix coordinate "
-      << cV[vType]   << ' '
-      << cM[mType]   << '\n'
-      << MM_HEADER
-      << A.numRows() << ' '
-      << A.numCols() << ' '
-      << A.nnz()     << '\n';
+    fmt::print( file,
+      "%%MatrixMarket matrix coordinate {} {}\n"
+      "{}"
+      "{} {} {}\n",
+      cV[vType], cM[mType], MM_HEADER,
+      A.numRows(), A.numCols(), A.nnz()
+    );
 
     switch ( vType ) {
       case MM_PATTERN:
         for ( A.Begin(); A.End(); A.Next() )
-          file
-            << A.row()+1    << '\t'
-            << A.column()+1 << '\n';
+          fmt::print( file, "{}\t{}\n", A.row()+1, A.column()+1 );
         break;
       case MM_INTEGER:
       case MM_REAL:
         for ( A.Begin(); A.End(); A.Next() )
-          file
-            << A.row()+1    << '\t'
-            << A.column()+1 << '\t'
-            << A.value()    << '\n';
+          fmt::print( file, "{}\t{}\t{}\n", A.row()+1, A.column()+1, A.value() );
         break;
       case MM_COMPLEX:
-        SPARSETOOL_ERR("Sparse_tool: MatrixMarket: Cannot write a NON complex matrix with a complex type"); 
+        UTILS_ERROR("Sparse_tool::MatrixMarketSaveToFile: Cannot write a NON complex matrix with a complex type"); 
         break;
     //  default:
     //    break;
@@ -659,12 +705,14 @@ namespace Sparse_tool {
     file.open( fname.c_str() );
     file.precision(15);
 
-    file
-      << "%%MatrixMarket matrix array complex general\n"
-      << MM_HEADER
-      << V.size() << " 1\n";
+    fmt::print( file,
+      "%%MatrixMarket matrix array complex general\n"
+      "{}"
+      "{} 1\n",
+      MM_HEADER, V.size()
+    );
     for ( integer i = 0; i < V.size(); ++i )
-      file << V(i).real() << ' ' << V(i).imag() << '\n';
+      fmt::print( file, "{} {}\n", V(i).real(), V(i).imag() );
 
     file.close();
   }
@@ -687,11 +735,14 @@ namespace Sparse_tool {
     file.open( fname.c_str() );
     file.precision(15);
 
-    file << "%%MatrixMarket matrix array real general\n"
-         << MM_HEADER
-         << V.size() << " 1\n";
+    fmt::print( file,
+      "%%MatrixMarket matrix array real general\n"
+      "{}"
+      "{} 1\n",
+      MM_HEADER, V.size()
+    );
     for ( integer i = 0; i < V.size(); ++i )
-      file << V(i) << '\n';
+      fmt::print( file, "{}\n", V(i) );
 
     file.close();
   }
@@ -714,15 +765,15 @@ namespace Sparse_tool {
     std::ofstream file;
     file.open( fname.c_str() );
     file.precision(15);
-    file
-      << "%%MatrixMarket matrix coordinate pattern "
-      << cM[mType]   << '\n'
-      << MM_HEADER
-      << A.numRows() << ' '
-      << A.numCols() << ' '
-      << A.nnz()     << '\n';
+    fmt::print( file,
+      "%%MatrixMarket matrix coordinate pattern {}\n"
+      "{}"
+      "{} {} {}\n",
+      cM[mType], MM_HEADER,
+      A.numRows(), A.numCols(), A.nnz()
+    );
     for ( A.Begin(); A.End(); A.Next() )
-      file << A.row()+1 << '\t' << A.column()+1 << '\n';
+      fmt::print( file, "{}\t{}\n", A.row()+1, A.column()+1 );
     file.close();
   }
 

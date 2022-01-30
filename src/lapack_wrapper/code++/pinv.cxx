@@ -273,7 +273,7 @@ namespace lapack_wrapper {
       //                                            \   0       0 /
       */
       m_QR2.invRt_mul( mm_work );
-      std::fill_n( mm_work+m_rank, m_nrows-m_rank, 0 );
+      std::fill_n( mm_work+m_rank, m_nrows-m_rank, real_type(0) );
       m_QR2.Q_mul( mm_work );
     } else {
       m_QR1.invR_mul( mm_work );
@@ -363,14 +363,14 @@ namespace lapack_wrapper {
     }
 
     copy( m_ncols, b, incb, mm_work, 1 );
-    if ( m_nrows > m_ncols ) std::fill_n( mm_work+m_ncols, m_nrows-m_ncols, 0 );
+    if ( m_nrows > m_ncols ) std::fill_n( mm_work+m_ncols, m_nrows-m_ncols, real_type(0) );
 
     m_QR1.inv_permute( mm_work );
 
     if ( m_rank < m_ncols ) {
       m_QR2.Qt_mul( mm_work );
       m_QR2.invR_mul( mm_work );
-      std::fill_n( mm_work+m_rank, m_nrows-m_rank, 0 );
+      std::fill_n( mm_work+m_rank, m_nrows-m_rank, real_type(0) );
     } else {
       m_QR1.invRt_mul( mm_work );
     }

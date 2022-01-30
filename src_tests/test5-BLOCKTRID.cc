@@ -26,6 +26,8 @@ using namespace std;
 using lapack_wrapper::integer;
 using lapack_wrapper::doublereal;
 
+static Utils::Console msg(&std::cout);
+
 static
 void
 test1() {
@@ -118,10 +120,16 @@ test2() {
 
 int
 main() {
-  fmt::print( "test1\n" );
-  test1();
-  fmt::print( "\n\ntest2\n" );
-  test2();
-  fmt::print( "All done!\n" );
+  try {
+    fmt::print( "test1\n" );
+    test1();
+    fmt::print( "\n\ntest2\n" );
+    test2();
+    fmt::print( "All done!\n" );
+  } catch ( exception const & exc ) {
+    msg.error( exc.what() );
+  } catch ( ... ) {
+    msg.error("Errore Sconosciuto!\n");
+  }
   return 0;
 }

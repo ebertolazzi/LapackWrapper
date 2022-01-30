@@ -43,7 +43,6 @@
 
 using namespace Sparse_tool_load;
 using namespace std;
-using namespace zstream;
 
 using Utils::istream_type;
 using Utils::ostream_type;
@@ -149,7 +148,7 @@ main() {
       cerr << "Cannot open file: " << fname << "\n";
       exit(0);
     }
-    igzstream gz(file);
+    zstr::istream gz(file);
     //ifstream file( fname.c_str() );
     //cout << (file.good()?"OK":"NO") << endl;
     //cout << (file.fail()?"OK":"NO") << endl;

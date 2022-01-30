@@ -94,7 +94,10 @@ find_library(
 )
 if( UTILS )
   message("Found Utils${ARTIFACTS_STATIC_SUFFIX}")
-  include_directories(${UPDIR}/Utils/lib/include)
+  include_directories(
+    ${UPDIR}/Utils/lib/include
+    ${UPDIR}/Utils/lib3rd/include
+  )
 else()
   message("NOT Found Utils${ARTIFACTS_STATIC_SUFFIX}")
   add_subdirectory(./submodules/Utils)

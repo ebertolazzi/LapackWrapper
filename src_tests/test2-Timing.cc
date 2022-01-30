@@ -332,13 +332,21 @@ testCopyAll() {
   testCopy<100>();
 }
 
+static Utils::Console msg(&std::cout);
+
 int
 main() {
-  testMvAll();
-  fmt::print("\n\ndone!\n");
-  testMMall();
-  fmt::print("\n\ndone!\n");
-  testCopyAll();
-  fmt::print("\n\nAll done!\n");
+  try {
+    testMvAll();
+    fmt::print("\n\ndone!\n");
+    testMMall();
+    fmt::print("\n\ndone!\n");
+    testCopyAll();
+    fmt::print("\n\nAll done!\n");
+  } catch ( exception const & exc ) {
+    msg.error( exc.what() );
+  } catch ( ... ) {
+    msg.error("Errore Sconosciuto!\n");
+  }
   return 0;
 }
