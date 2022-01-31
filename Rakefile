@@ -62,11 +62,6 @@ end
 
 TESTS = [
   "test1-small-factorization",
-  "test10-SparseToolTiming",
-  "test11-SparseToolVector",
-  "test12-SparseToolMatrix",
-  "test13-SparseTool1",
-  "test14-SparseTool2",
   "test2-Timing",
   "test3-BandedMatrix",
   "test4-BFGS",
@@ -74,7 +69,12 @@ TESTS = [
   "test6-EIGS",
   "test7-SparseTool",
   "test8-SparseToolComplex",
-  "test9-SparseToolTridiagonal"
+  "test9-SparseToolTridiagonal",
+  "test10-SparseToolTiming",
+  "test11-SparseToolVector",
+  "test12-SparseToolMatrix",
+  "test13-SparseTool1",
+  "test14-SparseTool2"
 ];
 
 desc "run tests"

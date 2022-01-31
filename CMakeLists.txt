@@ -152,7 +152,10 @@ if ( EB_BUILD_SHARED )
     "${SOURCE_DIR}"
     "${PUBLIC_HEADERS}"
   )
-  target_link_libraries( ${EB_NAMESPACE}_${PROJECT_NAME} ${SUPERLU} ${UTILS} )
+  target_link_libraries(
+    ${EB_NAMESPACE}_${PROJECT_NAME}
+    ${SUPERLU} ${lapackblas_libraries} ${EB_NAMESPACE}_HSL_Static ${UTILS}
+  )
 endif()
 
 if ( DEPEND_TARGETS )
