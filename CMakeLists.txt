@@ -103,7 +103,7 @@ else()
   add_subdirectory(./submodules/Utils)
   include_directories(
     ./submodules/Utils/src
-    ./submodules/Utils/ThirdParties/zlib/include
+    ./submodules/Utils/ThirdParties/zlib-ng/include
   )
   set( UTILS ebertolazzi_Utils_Static )
   set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
@@ -174,15 +174,15 @@ if ( EB_ENABLE_TESTS )
     if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
       find_library(
         ZLIB_LIBRARIES zlibstaticd
-        HINTS ./submodules/Utils/ThirdParties/zlib/lib
+        HINTS ./submodules/Utils/ThirdParties/zlib-ng/lib
       )
     else()
       find_library(
         ZLIB_LIBRARIES zlibstatic
-        HINTS ./submodules/Utils/ThirdParties/zlib/lib
+        HINTS ./submodules/Utils/ThirdParties/zlib-ng/lib
       )
     endif()
-    set( ZLIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParties/zlib/include ")
+    set( ZLIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParties/zlib-ng/include ")
   endif()
 
   set( EXELISTBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin" )

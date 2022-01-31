@@ -521,22 +521,24 @@ namespace Sparse_tool {
     template<typename MAT>
     void
     read( char const fname[], MAT & M ) {
-      ifstream file(fname);
-      UTILS_ASSERT(
-        file.is_open(),
+      integer len = strlen(fname);
+      string  msg = fmt::format(
         "Sparse_tool::MatrixMarket::read\n"
         "In reading Matrix Market File, cannot open {}\n",
         fname
       );
-      integer len = strlen(fname);
       if ( len > 4 && strcmp(fname+len-3,".gz") == 0 ) {
-        // copmpressed file
+        ifstream file(fname,std::ios::binary);
+        UTILS_ASSERT( file.is_open(), msg );
         zstr::istream fz(file);
         read( fz, M );
+        file.close();
       } else {
+        ifstream file(fname);
+        UTILS_ASSERT( file.is_open(), msg );
         read( file, M );
+        file.close();
       }
-      file.close();
     }
 
     //!
