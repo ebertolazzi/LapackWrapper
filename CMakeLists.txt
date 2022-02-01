@@ -83,6 +83,8 @@ set(DEPEND_TARGETS)
 find_library(
   SUPERLU superlu${ARTIFACTS_STATIC_SUFFIX}
   HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
+  NO_DEFAULT_PATH
+  REQUIRED
 )
 
 # DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
@@ -94,18 +96,18 @@ find_library(
 )
 if( UTILS )
   message(STATUS "Found Utils${ARTIFACTS_STATIC_SUFFIX}")
-  include_directories(
-    ${UPDIR}/Utils/lib/include
-    ${UPDIR}/Utils/lib3rd/include
+  ebertolazzi_copy_directory(
+    "${UPDIR}/Utils/lib"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lib3rd"
   )
 else()
-  message(STATUS "NOT Found Utils${ARTIFACTS_STATIC_SUFFIX}")
+  message(STATUS "NOT Found Utils${ARTIFACTS_STATIC_SUFFIX} use submodule")
   add_subdirectory(./submodules/Utils)
   include_directories(./submodules/Utils/src)
   set( UTILS ebertolazzi_Utils_Static )
   set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
   add_custom_command(
-    TARGET  ${UTILS}
+    TARGET ${UTILS}
     PRE_BUILD
     COMMAND "rake install"
     WORKING_DIRECTORY "./submodules/Utils/ThirdParties"
