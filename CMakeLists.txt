@@ -86,27 +86,30 @@ find_library(
 )
 
 # DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
+set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
 find_library(
   UTILS Utils${ARTIFACTS_STATIC_SUFFIX}
   HINTS ${UPDIR}/Utils/lib/lib
   NO_DEFAULT_PATH
 )
 if( UTILS )
-  message("Found Utils${ARTIFACTS_STATIC_SUFFIX}")
+  message(STATUS "Found Utils${ARTIFACTS_STATIC_SUFFIX}")
   include_directories(
     ${UPDIR}/Utils/lib/include
     ${UPDIR}/Utils/lib3rd/include
   )
 else()
-  message("NOT Found Utils${ARTIFACTS_STATIC_SUFFIX}")
+  message(STATUS "NOT Found Utils${ARTIFACTS_STATIC_SUFFIX}")
   add_subdirectory(./submodules/Utils)
-  include_directories(
-    ./submodules/Utils/src
-    ./submodules/Utils/ThirdParties/zlib-ng/include
-  )
+  include_directories(./submodules/Utils/src)
   set( UTILS ebertolazzi_Utils_Static )
   set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
+  add_custom_command(
+    TARGET  ${UTILS}
+    PRE_BUILD
+    COMMAND "rake install"
+    WORKING_DIRECTORY "./submodules/Utils/ThirdParties"
+  )
 endif()
 
 # definisce lapackblas_libraries
