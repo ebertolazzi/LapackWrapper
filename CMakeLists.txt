@@ -106,12 +106,12 @@ else()
   include_directories(./submodules/Utils/src)
   set( UTILS ebertolazzi_Utils_Static )
   set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
-  add_custom_command(
-    TARGET ${UTILS}
-    PRE_BUILD
-    COMMAND "rake install"
-    WORKING_DIRECTORY "./submodules/Utils/ThirdParties"
-  )
+  #add_custom_command(
+  #  TARGET ${UTILS}
+  #  PRE_BUILD
+  #  COMMAND "rake install"
+  #  WORKING_DIRECTORY "./submodules/Utils/ThirdParties"
+  #)
 endif()
 
 # definisce lapackblas_libraries
