@@ -5,13 +5,13 @@
 namespace Sparse_tool {
 
   /*
-  //   #####   #####   #####  ####### ######  
-  //  #     # #     # #     # #     # #     # 
-  //  #       #       #       #     # #     # 
-  //  #        #####   #####  #     # ######  
-  //  #             #       # #     # #   #   
-  //  #     # #     # #     # #     # #    #  
-  //   #####   #####   #####  ####### #     # 
+  //   #####   #####   #####  ####### ######
+  //  #     # #     # #     # #     # #     #
+  //  #       #       #       #     # #     #
+  //  #        #####   #####  #     # ######
+  //  #             #       # #     # #   #
+  //  #     # #     # #     # #     # #    #
+  //   #####   #####   #####  ####### #     #
   */
   //! Iterative SSOR preconditioner
   /*
@@ -56,23 +56,23 @@ namespace Sparse_tool {
 
     mutable Vector<real_type> br, bi, x, y;
 
-    //! build incomplete LDU decomposition with specified pattern `P` 
+    //! build incomplete LDU decomposition with specified pattern `P`
     template <typename MAT>
     void
     build_SOR( MAT const & A, real_type const & _omega, integer _maxIter ) {
 
       UTILS_ASSERT0(
-        A.isOrdered(),
+        A.is_ordered(),
         "Sparse_tool: CSSORpreconditioner::build_SOR\n"
         "pattern must be ordered before use\n"
       );
       UTILS_ASSERT0(
-        A.numRows() == A.numCols(),
+        A.nrows() == A.ncols(),
         "Sparse_tool: CSSORpreconditioner::build_SOR\n"
         "only square matrix allowed\n"
       );
       UTILS_ASSERT0(
-        A.numRows() > 0,
+        A.nrows() > 0,
         "Sparse_tool: CSSORpreconditioner::build_SOR\n"
         "empty matrix\n"
       );
@@ -82,7 +82,7 @@ namespace Sparse_tool {
       this -> maxIter = _maxIter;
 
       // step 0: compute necessary memory
-      PRECO::pr_size = A.numRows();
+      PRECO::pr_size = A.nrows();
       Lnnz.resize( PRECO::pr_size );
       Unnz.resize( PRECO::pr_size );
       Bnnz.resize( PRECO::pr_size );
@@ -127,7 +127,7 @@ namespace Sparse_tool {
       L_A.setZero();
       U_A.setZero();
       B_A.setZero();
-      
+
       // step 3: fill structure
       for ( A.Begin(); A.End(); A.Next() ) {
         integer i = A.row();
@@ -205,12 +205,12 @@ namespace Sparse_tool {
   public:
 
     CSSORpreconditioner(void) : Preco<CSSORPRECO>() {}
-    
+
     template <typename MAT>
     CSSORpreconditioner( MAT const & M, real_type _omega, integer _maxIter ) : Preco<CSSORPRECO>()
     { build_SOR( M, _omega, _maxIter ); }
 
-    //! build the preconditioner from matrix `M` with pattern `P` 
+    //! build the preconditioner from matrix `M` with pattern `P`
     template <typename MAT>
     void
     build( MAT const & M, real_type _omega, integer _maxIter )
@@ -222,11 +222,11 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & xc, VECTOR const & bc ) const {
+    ass_preco( VECTOR & xc, VECTOR const & bc ) const {
       integer const * pC;  integer const * pI;  real_type const * pUA;
       integer const * pBR; integer const * pBJ; real_type const * pBA;
       integer const * pR;  integer const * pJ;  real_type const * pLA;
- 
+
       integer k;
 
       // copia dato in ingresso
@@ -402,9 +402,9 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & xx ) const {
+    ass_preco( VECTOR & xx ) const {
       tmp = xx;
-      assPreco( xx, tmp );
+      ass_preco( xx, tmp );
     }
 
   };

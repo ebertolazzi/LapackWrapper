@@ -78,13 +78,13 @@ namespace lapack_wrapper {
       real_type * Work
     );
 
-    //! 
+    //!
     //! Do QR factorization of a rectangular matrix.
     //!
     //! \param who string used in error message
     //! \param A   pointer to the matrix
     //! \param LDA Leading dimension of the matrix
-    //! 
+    //!
     void
     factorize_nodim(
       char const      who[],
@@ -124,7 +124,7 @@ namespace lapack_wrapper {
 
     void
     Q_mul( MatrixWrapper<T> & C ) const {
-      this->Q_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
+      this->Q_mul( C.nrows(), C.ncols(), C.data(), C.ldim() );
     }
 
     //! `C <- Q'*C`
@@ -132,7 +132,7 @@ namespace lapack_wrapper {
 
     void
     Qt_mul( MatrixWrapper<T> & C ) const {
-      this->Qt_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
+      this->Qt_mul( C.nrows(), C.ncols(), C.data(), C.ldim() );
     }
 
     //! `C <- C*Q`
@@ -140,7 +140,7 @@ namespace lapack_wrapper {
 
     void
     mul_Q( MatrixWrapper<T> & C ) const {
-      this->mul_Q( C.numRows(), C.numCols(), C.data(), C.lDim() );
+      this->mul_Q( C.nrows(), C.ncols(), C.data(), C.ldim() );
     }
 
     //! `C <- C*Q'`
@@ -148,7 +148,7 @@ namespace lapack_wrapper {
 
     void
     mul_Qt( MatrixWrapper<T> & C ) const {
-      this->mul_Q( C.numRows(), C.numCols(), C.data(), C.lDim() );
+      this->mul_Q( C.nrows(), C.ncols(), C.data(), C.ldim() );
     }
 
     // -------------------------------------------------------------------------
@@ -161,7 +161,7 @@ namespace lapack_wrapper {
 
     void
     invR_mul( MatrixWrapper<real_type> & C ) const {
-      this->invR_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
+      this->invR_mul( C.nrows(), C.ncols(), C.data(), C.ldim() );
     }
 
     // -------------------------------------------------------------------------
@@ -174,7 +174,7 @@ namespace lapack_wrapper {
 
     void
     invRt_mul( MatrixWrapper<real_type> & C ) const {
-      this->invRt_mul( C.numRows(), C.numCols(), C.data(), C.lDim() );
+      this->invRt_mul( C.nrows(), C.ncols(), C.data(), C.ldim() );
     }
 
     // -------------------------------------------------------------------------
@@ -184,7 +184,7 @@ namespace lapack_wrapper {
 
     void
     mul_invR( MatrixWrapper<real_type> & C ) const {
-      this->mul_invR( C.numRows(), C.numCols(), C.data(), C.lDim() );
+      this->mul_invR( C.nrows(), C.ncols(), C.data(), C.ldim() );
     }
 
     // -------------------------------------------------------------------------
@@ -193,7 +193,7 @@ namespace lapack_wrapper {
 
     void
     mul_invRt( MatrixWrapper<real_type> & C ) const {
-      this->mul_invRt( C.numRows(), C.numCols(), C.data(), C.lDim() );
+      this->mul_invRt( C.nrows(), C.ncols(), C.data(), C.ldim() );
     }
 
     // -------------------------------------------------------------------------
@@ -231,12 +231,12 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    //! 
+    //!
     //! In case of QR factorization of a square matrix solve the
     //! linear system \f$ QR x = b \f$.
     //!
     //! \param xb on input the rhs of linear system on output the solution
-    //! 
+    //!
     bool
     solve( real_type xb[] ) const override;
 
@@ -316,7 +316,7 @@ namespace lapack_wrapper {
     void
     allocate( integer nr, integer nc );
 
-    //! 
+    //!
     //! Do QR factorization of a rectangular matrix.
     //!
     //! \param who string used in error message
@@ -324,7 +324,7 @@ namespace lapack_wrapper {
     //! \param NC  number of columns of the matrix
     //! \param A   pointer to the matrix
     //! \param LDA Leading dimension of the matrix
-    //! 
+    //!
     void
     factorize(
       char const      who[],
@@ -454,7 +454,7 @@ namespace lapack_wrapper {
 
     void
     permute_rows( MatrixWrapper<T> & M ) const
-    { permute_rows( M.numRows(), M.numCols(), M.data(), M.lDim() ); }
+    { permute_rows( M.nrows(), M.ncols(), M.data(), M.ldim() ); }
 
     void
     inv_permute_rows(
@@ -466,7 +466,7 @@ namespace lapack_wrapper {
 
     void
     inv_permute_rows( MatrixWrapper<T> & M ) const
-    { inv_permute_rows( M.numRows(), M.numCols(), M.data(), M.lDim() ); }
+    { inv_permute_rows( M.nrows(), M.ncols(), M.data(), M.ldim() ); }
 
     void
     permute_cols(
@@ -478,7 +478,7 @@ namespace lapack_wrapper {
 
     void
     permute_cols( MatrixWrapper<T> & M ) const
-    { permute_cols( M.numRows(), M.numCols(), M.data(), M.lDim() ); }
+    { permute_cols( M.nrows(), M.ncols(), M.data(), M.ldim() ); }
 
     void
     inv_permute_cols(
@@ -490,7 +490,7 @@ namespace lapack_wrapper {
 
     void
     inv_permute_cols( MatrixWrapper<T> & M ) const
-    { inv_permute_cols( M.numRows(), M.numCols(), M.data(), M.lDim() ); }
+    { inv_permute_cols( M.nrows(), M.ncols(), M.data(), M.ldim() ); }
 
     integer
     rankEstimate( real_type rcond ) const {

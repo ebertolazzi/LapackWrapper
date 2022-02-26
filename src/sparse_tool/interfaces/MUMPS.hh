@@ -29,8 +29,8 @@ namespace Sparse_tool {
 
   extern int myid;
 
-  void initMUMPS( int argc, char *argv[] );
-  void endMUMPS();
+  void init_MUMPS( int argc, char *argv[] );
+  void end_MUMPS();
 
   static int const JOB_END           = -2;
   static int const JOB_INIT          = -1;
@@ -44,7 +44,7 @@ namespace Sparse_tool {
   static int const MATRIX_SYMM = 2;
 
   template <typename T> struct MUMPSType {};
-  
+
   template <> struct MUMPSType<float>                { typedef SMUMPS_STRUC_C stuctType; typedef float                scalarType; };
   template <> struct MUMPSType<double>               { typedef DMUMPS_STRUC_C stuctType; typedef double               scalarType; };
   template <> struct MUMPSType<mumps_complex>        { typedef CMUMPS_STRUC_C stuctType; typedef mumps_complex        scalarType; };
@@ -59,57 +59,60 @@ namespace Sparse_tool {
   template <> inline void mumps_c( MUMPSType<mumps_complex>::stuctType        & m ) { cmumps_c( &m ); }
   template <> inline void mumps_c( MUMPSType<mumps_double_complex>::stuctType & m ) { zmumps_c( &m ); }
 
-  inline void scalarAssign( float                & res, float                const & a ) { res = a; }
-  inline void scalarAssign( double               & res, double               const & a ) { res = a; }
-  inline void scalarAssign( mumps_complex        & res, mumps_complex        const & a ) { res.r = a.r; res.i = a.i; }
-  inline void scalarAssign( mumps_double_complex & res, mumps_double_complex const & a ) { res.r = a.r; res.i = a.i; }
-  inline void scalarAssign( mumps_complex        & res, complex<float>       const & a ) { res.r = a.real(); res.i = a.imag(); }
-  inline void scalarAssign( mumps_double_complex & res, complex<double>      const & a ) { res.r = a.real(); res.i = a.imag(); }
+  inline void scalar_assign( float                & res, float                const & a ) { res = a; }
+  inline void scalar_assign( double               & res, double               const & a ) { res = a; }
+  inline void scalar_assign( mumps_complex        & res, mumps_complex        const & a ) { res.r = a.r; res.i = a.i; }
+  inline void scalar_assign( mumps_double_complex & res, mumps_double_complex const & a ) { res.r = a.r; res.i = a.i; }
+  inline void scalar_assign( mumps_complex        & res, complex<float>       const & a ) { res.r = a.real(); res.i = a.imag(); }
+  inline void scalar_assign( mumps_double_complex & res, complex<double>      const & a ) { res.r = a.real(); res.i = a.imag(); }
 
   template <typename T>
   class MUMPS {
-  public:  
+  public:
     typedef T real_type;
     typedef typename MUMPSType<T>::stuctType  stuctType;
     typedef typename MUMPSType<T>::scalarType scalarType;
 
   private:
-  
-    stuctType mumpsStruct;
 
-    integer  numRows, nnz;
-    Vector<scalarType> Avec;
-    Vector<int>        Ivec;
-    Vector<int>        Jvec;
+    stuctType          m_mumps_struct;
+    integer            m_nrows;
+    integer            m_nnz;
+    Vector<scalarType> m_A_vec;
+    Vector<int>        m_I_vec;
+    Vector<int>        m_J_vec;
 
     void
     check( char const message[] ) {
-      if ( mumpsStruct.info[0] >= 0 ) return;
-      cerr << message
-           << "\ninfo[0] = " << mumpsStruct.info[0]
-           << '\n';
+      if ( m_mumps_struct.info[0] >= 0 ) return;
+      fmt::print( cerr,
+        "{}\n"
+        "info[0] = {}\n",
+        message, m_mumps_struct.info[0]
+      );
       exit(1);
     }
 
     int load();
 
-    void free() {
-      mumpsStruct.job = JOB_END;
-      mumps_c( mumpsStruct );
+    void
+    free() {
+      m_mumps_struct.job = JOB_END;
+      mumps_c( m_mumps_struct );
       check( "MUMPS at free" );
     }
 
   public:
-  
+
     MUMPS() {
-      mumpsStruct.comm_fortran = USE_COMM_WORLD; // for MPI (also required if MPI=disabled)
-      mumpsStruct.par = 1;         // will be used for factorization AND solution
-      mumpsStruct.sym = MATRIX_GE; // matrix is not symmetric 
-      mumpsStruct.job = JOB_INIT;  // initialize solver
-      mumpsStruct.irn = 0; // rows
-      mumpsStruct.jcn = 0; // columns
-      mumpsStruct.a   = 0; // values
-      mumps_c(mumpsStruct); // call MUMPS
+      m_mumps_struct.comm_fortran = USE_COMM_WORLD; // for MPI (also required if MPI=disabled)
+      m_mumps_struct.par          = 1;         // will be used for factorization AND solution
+      m_mumps_struct.sym          = MATRIX_GE; // matrix is not symmetric
+      m_mumps_struct.job          = JOB_INIT;  // initialize solver
+      m_mumps_struct.irn          = 0; // rows
+      m_mumps_struct.jcn          = 0; // columns
+      m_mumps_struct.a            = 0; // values
+      mumps_c(m_mumps_struct); // call MUMPS
     };
 
     ~MUMPS() { free(); }
@@ -118,48 +121,48 @@ namespace Sparse_tool {
     int
     load( Sparse<T,MT> const & Mat ) {
       // prepare
-      numRows = Mat.numRows();
-      nnz     = Mat.nnz();
+      m_nows = Mat.nrows();
+      m_nnz  = Mat.nnz();
 
-      Ivec.resize( nnz );
-      Jvec.resize( nnz );
-      Avec.resize( nnz );
+      m_I_vec.resize( m_nnz );
+      m_J_vec.resize( m_nnz );
+      m_A_vec.resize( m_nnz );
       integer ii = 0;
       for ( Mat.Begin(); Mat.End(); Mat.Next(), ++ii ) {
-        Ivec(ii) = Mat.row()    + 1;
-        Jvec(ii) = Mat.column() + 1;
-        scalarAssign(Avec(ii), Mat.value());
+        m_I_vec(ii) = Mat.row()    + 1;
+        m_J_vec(ii) = Mat.column() + 1;
+        scalar_assign(m_A_vec(ii), Mat.value());
       }
 
-      mumpsStruct.n   = numRows;
-      mumpsStruct.nz  = nnz;
-      mumpsStruct.irn = &Ivec.front(); // row indices
-      mumpsStruct.jcn = &Jvec.front(); // column indices
-      mumpsStruct.a   = &Avec.front(); // values
-      mumpsStruct.rhs = 0; // right hand side will be set later
+      m_mumps_struct.n   = m_nrows;
+      m_mumps_struct.nz  = m_nnz;
+      m_mumps_struct.irn = &m_I_vec.front(); // row indices
+      m_mumps_struct.jcn = &m_J_vec.front(); // column indices
+      m_mumps_struct.a   = &m_A_vec.front(); // values
+      m_mumps_struct.rhs = 0; // right hand side will be set later
       // solver params
-      mumpsStruct.icntl[0] = 0; // output errors
-      mumpsStruct.icntl[1] = 0; // output detailed messages
-      mumpsStruct.icntl[2] = 0; // output info messages
-      mumpsStruct.icntl[3] = 0; // verbose level
-      mumpsStruct.icntl[5] = 7; // automatically find out if to scale or permute
-      // mumpsStruct.icntl[6] = 7; // automatic pivot order for the factorization
-      // mumpsStruct.icntl[7] = 7; // simultaneous row and colum iterative scaling (for not symmetric matrices)
-      // mumpsStruct.icntl[7] = 1; // diagonal scaling (for symmetric matrices)
-  
-      // mumpsStruct.icntl[0] = 6; // output errors
-      // mumpsStruct.icntl[1] = 6; // output detailed messages
-      // mumpsStruct.icntl[2] = 6; // output info messages
-      // mumpsStruct.icntl[3] = 0; // verbose level
+      m_mumps_struct.icntl[0] = 0; // output errors
+      m_mumps_struct.icntl[1] = 0; // output detailed messages
+      m_mumps_struct.icntl[2] = 0; // output info messages
+      m_mumps_struct.icntl[3] = 0; // verbose level
+      m_mumps_struct.icntl[5] = 7; // automatically find out if to scale or permute
+      // m_mumps_struct.icntl[6] = 7; // automatic pivot order for the factorization
+      // m_mumps_struct.icntl[7] = 7; // simultaneous row and colum iterative scaling (for not symmetric matrices)
+      // m_mumps_struct.icntl[7] = 1; // diagonal scaling (for symmetric matrices)
+
+      // m_mumps_struct.icntl[0] = 6; // output errors
+      // m_mumps_struct.icntl[1] = 6; // output detailed messages
+      // m_mumps_struct.icntl[2] = 6; // output info messages
+      // m_mumps_struct.icntl[3] = 0; // verbose level
 
       // analysis phase
-      mumpsStruct.job = JOB_ANALYSIS;
-      mumps_c(mumpsStruct); // call MUMPS
+      m_mumps_struct.job = JOB_ANALYSIS;
+      mumps_c(m_mumps_struct); // call MUMPS
       check( "MUMPS error during analysis and reordering" );
 
       // factorization
-      mumpsStruct.job = JOB_FACTORIZATION;
-      mumps_c(mumpsStruct); // call MUMPS
+      m_mumps_struct.job = JOB_FACTORIZATION;
+      mumps_c(m_mumps_struct); // call MUMPS
       check( "MUMPS error during factorization" );
       return 0;
     }
@@ -171,21 +174,21 @@ namespace Sparse_tool {
       bool transpose = false
     ) {
 
-      if ( x.size() < mumpsStruct.n ) x.resize( mumpsStruct.n );
+      if ( x.size() < m_mumps_struct.n ) x.resize( m_mumps_struct.n );
       x = b;
       // MUMPS solution
-      mumpsStruct.job = JOB_SOLVE;
-      mumpsStruct.rhs = (typename MUMPSType<T>::scalarType *)&x.front();
-      mumps_c(mumpsStruct);
+      m_mumps_struct.job = JOB_SOLVE;
+      m_mumps_struct.rhs = (typename MUMPSType<T>::scalarType *)&x.front();
+      mumps_c(m_mumps_struct);
       check("MUMPS error during solution");
-      mumpsStruct.rhs = 0;
+      m_mumps_struct.rhs = 0;
       return 0;
     }
   };
 
   inline
   void
-  initMUMPS( int argc, char *argv[] ) {
+  init_MUMPS( int argc, char *argv[] ) {
     #ifdef MUMPS_USE_MPI
     static int myid;
     int ierr;
@@ -196,7 +199,7 @@ namespace Sparse_tool {
 
   inline
   void
-  endMUMPS() {
+  end_MUMPS() {
     #ifdef MUMPS_USE_MPI
     int ierr = MPI_Finalize();
     #endif
@@ -207,8 +210,8 @@ namespace Sparse_tool {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace Sparse_tool_load {
   using ::Sparse_tool::MUMPS;
-  using ::Sparse_tool::initMUMPS;
-  using ::Sparse_tool::endMUMPS;
+  using ::Sparse_tool::init_MUMPS;
+  using ::Sparse_tool::end_MUMPS;
 }
 #endif
 

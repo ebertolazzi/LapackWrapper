@@ -5,13 +5,13 @@
 namespace Sparse_tool {
 
   /*
-  //   #####  ####### ######  
-  //  #     # #     # #     # 
-  //  #       #     # #     # 
-  //   #####  #     # ######  
-  //        # #     # #   #   
-  //  #     # #     # #    #  
-  //   #####  ####### #     # 
+  //   #####  ####### ######
+  //  #     # #     # #     #
+  //  #       #     # #     #
+  //   #####  #     # ######
+  //        # #     # #   #
+  //  #     # #     # #    #
+  //   #####  ####### #     #
   */
   //!
   //! Iterative SOR preconditioner.
@@ -47,7 +47,7 @@ namespace Sparse_tool {
     build_SOR( MAT const & A, real_type const & _omega ) {
       this -> omega = _omega;
       // step 0: compute necessary memory
-      PRECO::pr_size = A.numRows();
+      PRECO::pr_size = A.nrows();
       separate_LDU( A, L_A, L_R, L_J, D, U_A, U_I, U_C );
       UTILS_ASSERT0(
         D.array().abs().minCoeff() > 0,
@@ -58,7 +58,7 @@ namespace Sparse_tool {
   public:
 
     SORpreconditioner(void) : Preco<SORPRECO>() {}
-    
+
     template <typename MAT>
     SORpreconditioner( MAT const & M, real_type _omega ) : Preco<SORPRECO>()
     { build_SOR( M, _omega ); }
@@ -87,9 +87,9 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & x, VECTOR const & b ) const {
+    ass_preco( VECTOR & x, VECTOR const & b ) const {
       x = b;
-      assPreco( x );
+      ass_preco( x );
     }
 
     //!
@@ -97,7 +97,7 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & x ) const {
+    ass_preco( VECTOR & x ) const {
       solve_DL( 1/omega, D, L_A, L_R, L_J, x );
       //solve_DU( 1/omega, D, U_A, U_I, U_C, x );
     }

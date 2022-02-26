@@ -117,7 +117,7 @@ namespace Sparse_tool {
   //! The C++ compiler supports partial specialization, so type promotion
   //! can be done the elegant way.
   //! This implementation is after ideas by Jean-Louis Leroy.
-  //! 
+  //!
 
   template<typename T>
   struct precision_trait {
@@ -161,20 +161,20 @@ namespace Sparse_tool {
 
   //! promote `bool` to `int`
   template<> struct autopromote_trait<bool>
-  { typedef int T_numtype; }; 
-  
+  { typedef int T_numtype; };
+
   //! promote `char` to `int`
   template<> struct autopromote_trait<char>
   { typedef int T_numtype; };
-  
+
   //! promote `bool` to `int`
   template<> struct autopromote_trait<unsigned char>
   { typedef int T_numtype; };
-  
+
   //! promote `short` to `int`
   template<> struct autopromote_trait<short>
   { typedef int T_numtype; };
-  
+
   // promote `unsigned` `short` to `unsigned`
   template<> struct autopromote_trait<unsigned short>
   { typedef unsigned T_numtype; };
@@ -228,10 +228,10 @@ namespace Sparse_tool {
   inline integer
   maxIndex(integer a, integer b)
   { return a > b ? a : b; }
-  
+
   //!
-  //! \defgroup Comparator Comparator for Sparse Matrix 
-  //! costructor and conversion 
+  //! \defgroup Comparator Comparator for Sparse Matrix
+  //! costructor and conversion
   //!
   //@{
 
@@ -417,11 +417,11 @@ namespace Sparse_tool {
     )
     : a(_a)
     , M(_M)
-    , b(_b) 
+    , b(_b)
     {}
   };
 
-  //! structure storing the operation `a+M^b` 
+  //! structure storing the operation `a+M^b`
   template <typename VA, typename MATRIX, typename VB>
   struct Vector_V_sum_Mt_mul_V {
     VA     const & a;
@@ -434,7 +434,7 @@ namespace Sparse_tool {
     )
     : a(_a)
     , M(_M)
-    , b(_b) 
+    , b(_b)
     {}
   };
 
@@ -521,7 +521,7 @@ namespace Sparse_tool {
   };
 
   //!
-  //! Structure storing the operation `a/P`, 
+  //! Structure storing the operation `a/P`,
   //! i.e. the application of Preconditioner.
   //!
   template <typename VECTOR, typename PRECO>
@@ -986,7 +986,7 @@ namespace Sparse_tool {
     template <typename VEC, typename PRECO>
     Vector<T> const &
     operator = ( Vector_V_div_P<VEC,PRECO> const & op ) {
-      op.P.assPreco( *this, op.a );
+      op.P.ass_preco( *this, op.a );
       return *this;
     }
 
@@ -996,7 +996,7 @@ namespace Sparse_tool {
     template <typename PRECO>
     Vector<T> const &
     operator /= ( PRECO const & P ) {
-      P.assPreco( *this );
+      P.ass_preco( *this );
       return *this;
     }
 
@@ -1025,7 +1025,7 @@ namespace Sparse_tool {
   static inline
   bool GT( integer i, integer i1 )
   { return i>i1; }
-    
+
   static inline
   bool GT( integer i,  integer j,
            integer i1, integer j1 )
@@ -1033,7 +1033,7 @@ namespace Sparse_tool {
 
   #endif
 
-  //!  
+  //!
   //! Function to sort two vector of indexes and values
   //! ascending respect to index vector `I`.
   //!
@@ -1041,7 +1041,7 @@ namespace Sparse_tool {
   //! \param A           C-array of values
   //! \param total_elems total number of element to sort
   //! \param MAX_THRESH  threshold value to swich to insert sort
-  //! 
+  //!
   template <typename I_type, typename T_type>
   static
   void
@@ -1162,7 +1162,7 @@ namespace Sparse_tool {
     }
   }
 
-  //!  
+  //!
   //! Function to sort two vector of indexes
   //! ascending respect to index vector `I` and `J`.
   //!
@@ -1170,7 +1170,7 @@ namespace Sparse_tool {
   //! \param J           C-array of column index vector
   //! \param total_elems total number of element to sort
   //! \param MAX_THRESH  threshold value to swich to insert sort
-  //! 
+  //!
   template <typename I_type>
   static
   void
@@ -1293,7 +1293,7 @@ namespace Sparse_tool {
     }
   }
 
-  //!  
+  //!
   //! Function to sort three vector of indexes and values
   //! ascending respect to index vector `I` and `J`.
   //!
@@ -1302,7 +1302,7 @@ namespace Sparse_tool {
   //! \param A           C-array of values
   //! \param total_elems total number of element to sort
   //! \param MAX_THRESH  threshold value to swich to insert sort
-  //! 
+  //!
   template <typename I_type, typename T_type>
   static
   void
@@ -1313,7 +1313,7 @@ namespace Sparse_tool {
     integer total_elems,
     integer MAX_THRESH = 4
   ) {
- 
+
     using ::std::swap;
 
     if ( total_elems <= 1 ) return;
@@ -1448,7 +1448,7 @@ namespace Sparse_tool {
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   //!
-  //! Macro to define the operator overloading of 
+  //! Macro to define the operator overloading of
   //! standard matrix-vector expressions.
   //!
   #define SPARSELIB_MUL_STRUCTURES(MATRIX)                                    \
@@ -1538,11 +1538,11 @@ namespace Sparse_tool {
 
   #endif
 
-  //! 
+  //!
   //! This class in the base class for all the
   //! sparse matrix classes of `Sparse_tool`.
   //! This class is incomplete and is used as a pivot for internal operations.
-  //! 
+  //!
   template <typename Matrix>
   class SparseBase {
   protected:
@@ -1555,7 +1555,7 @@ namespace Sparse_tool {
     integer sp_lower_nnz; //!< Total number of nonzeros under the main diagonal
     integer sp_upper_nnz; //!< Total number of nonzeros over the main diagonal
     integer sp_diag_nnz;  //!< Total number of nonzeros on the main diagonal
-    bool      sp_isOrdered;
+    bool      sp_is_ordered;
     /*!< \brief Some sparse matrix can be internally in a state not ordered.
          When in this state the random access to element is unpredictable
          and can result in runtime error.
@@ -1614,15 +1614,15 @@ namespace Sparse_tool {
     //!
     void
     setup( integer nr, integer nc ) {
-      sp_nrows     = nr;
-      sp_ncols     = nc;
-      sp_min_size  = std::min(nr,nc);
-      sp_max_size  = std::max(nr,nc);
-      sp_nnz       = 0;
-      sp_lower_nnz = 0;
-      sp_upper_nnz = 0;
-      sp_diag_nnz  = 0;
-      sp_isOrdered = true;
+      sp_nrows      = nr;
+      sp_ncols      = nc;
+      sp_min_size   = std::min(nr,nc);
+      sp_max_size   = std::max(nr,nc);
+      sp_nnz        = 0;
+      sp_lower_nnz  = 0;
+      sp_upper_nnz  = 0;
+      sp_diag_nnz   = 0;
+      sp_is_ordered = true;
     }
 
     //!
@@ -1641,11 +1641,19 @@ namespace Sparse_tool {
     ~SparseBase(void) {}
 
     // common data
-    integer numRows (void) const { return sp_nrows; }    //!< return the number of rows of the `Sparse` object
-    integer numCols (void) const { return sp_ncols; }    //!< return the number of columns of the `Sparse` object
-    integer minSize (void) const { return sp_min_size; } //!< return the minimum between rows and columns
-    integer maxSize (void) const { return sp_max_size; } //!< return the maximum between rows and columns
-    integer nnz     (void) const { return sp_nnz; }      //!< return the total number of nonzeros
+    integer nrows    (void) const { return sp_nrows; }    //!< return the number of rows of the `Sparse` object
+    integer ncols    (void) const { return sp_ncols; }    //!< return the number of columns of the `Sparse` object
+    integer min_size (void) const { return sp_min_size; } //!< return the minimum between rows and columns
+    integer max_size (void) const { return sp_max_size; } //!< return the maximum between rows and columns
+    integer nnz      (void) const { return sp_nnz; }      //!< return the total number of nonzeros
+
+    // ALIAS
+    #ifdef LAPACK_WRAPPER_USE_ALIAS
+    integer numRows (void) const { return nrows(); }    //!< return the number of rows of the `Sparse` object
+    integer numCols (void) const { return ncols(); }    //!< return the number of columns of the `Sparse` object
+    integer minSize (void) const { return min_size(); } //!< return the minimum between rows and columns
+    integer maxSize (void) const { return max_size(); } //!< return the maximum between rows and columns
+    #endif
 
     //!
     //! Return the number of nonzeros of the derived sparse
@@ -1653,7 +1661,7 @@ namespace Sparse_tool {
     //! over the main diagonal (**upper**) and on the diagonal (**diag**)
     //!
     void
-    nnz ( integer & lower, integer & diag, integer & upper) const {
+    nnz( integer & lower, integer & diag, integer & upper) const {
       lower = sp_lower_nnz;
       diag  = sp_diag_nnz;
       upper = sp_upper_nnz;
@@ -1661,28 +1669,28 @@ namespace Sparse_tool {
     //!
     //! Return `true` if the internal data is ordered.
     //!
-    bool isOrdered (void) const { return sp_isOrdered; }
+    bool is_ordered (void) const { return sp_is_ordered; }
 
     //!
     //! \name Iterators
     //!
     //! These methods are useful for accessing all the nonzero elements
     //! of the derived sparse matrix.  The methods
-    //! 
+    //!
     //! - `void Begin()`
     //! - `void Next()`
     //! - `bool End()`
-    //! 
+    //!
     //! permits to loops on all the elements, while the methods
-    //! 
+    //!
     //! - `integer row()`
     //! - `integer column()`
     //! - `real_type value()`
-    //! 
+    //!
     //! permits to access values of the actual elements
     //! pointed by the iterator. For example to print all the stored
     //! values of the `Sparse` object \c S we can do:
-    //! 
+    //!
     //! \code
     //!   for ( S.Begin(); S.End(); S.Next() ) {
     //!     cout << " row   = " << S.row()
@@ -1696,7 +1704,7 @@ namespace Sparse_tool {
     //!
     //! Set the iterator at the begin of the loop.
     //!
-    void Begin (void) const { static_cast<Matrix const *>(this) -> Begin(); }
+    void Begin(void) const { static_cast<Matrix const *>(this) -> Begin(); }
     //!
     //! Go the next item.
     //!
@@ -1728,7 +1736,7 @@ namespace Sparse_tool {
     //@}
 
     //!
-    //! Return `true` if the element `(i,j)` is 
+    //! Return `true` if the element `(i,j)` is
     //! a nonzeros of the derived matrix.
     //!
     bool
@@ -1746,12 +1754,12 @@ namespace Sparse_tool {
 
   };
 
-  //! 
+  //!
   //! This class in the base class for all the
   //! sparse matrix classes of `Sparse_tool`.
-  //! This class is incomplete and is used 
+  //! This class is incomplete and is used
   //! as a pivot for internal operations.
-  //! 
+  //!
 
   template <typename T, typename Matrix>
   class Sparse : public SparseBase<Matrix> {
@@ -1773,43 +1781,43 @@ namespace Sparse_tool {
     template <typename TS>
     void assign( TS & rhs ) const { rhs = this -> value(); }
 
-    //! 
+    //!
     //! \name Random access to elements.
     //!
     //! The following methods permits random access to
     //! nonzeros elements of the derived class.
-    //! 
+    //!
     //@{
-    //! 
+    //!
     //! Access to the elements of the sparse matrix in
     //! a random way.  For example given a sparse matrix `A`  the code
     //! `A(i,j)` return the **value** of the elements of the
     //! matrix at the `i-th` row and `j`-th column.
     //! If at the `(i,j)` coordinate there are no elements
     //! an error is issued.
-    //! 
+    //!
     real_type const &
     operator () ( integer i, integer j ) const
     { return static_cast<Matrix const *>(this) -> operator () (i,j); }
 
-    //! 
+    //!
     //! Access to the elements of the sparse matrix in
     //! a random way.  For example given a sparse matrix `A`  the code
     //! `A(i,j)` return the **value** of the elements of the
     //! matrix at the `i-th` row and `j`-th column.
     //! If at the `(i,j)` coordinate there are no elements an error is issued.
-    //! 
+    //!
     real_type &
     operator () ( integer i, integer j )
     { return static_cast<Matrix *>(this) -> operator () (i,j); }
 
-    //! 
+    //!
     //! This method permits to access the elements of the sparse matrix in
     //! a random way.  For example given a sparse matrix `A`  the code
     //! `A(i,j)` return the **reference** of the elements of the
     //! matrix at the `i-th` row and `j-th` column.  If at the `(i,j)`
     //! coordinate there are no elements a reference to a value **0** is returned
-    //! 
+    //!
     real_type const &
     value( integer i, integer j ) const
     { return static_cast<Matrix const *>(this) -> value(i,j); }
@@ -1822,11 +1830,11 @@ namespace Sparse_tool {
     exists( integer i, integer j )
     { return static_cast<Matrix const *>(this) -> exists( i, j ); }
 
-    //! 
+    //!
     //! Return the position of the `(i,j)` elements
     //! in the internal structure. If the element `(i,j)` do not
     //! exist it return `nnz()`.
-    //! 
+    //!
     integer
     position( integer i, integer j ) const
     { return static_cast<Matrix const *>(this) -> position( i, j ); }
@@ -1860,8 +1868,8 @@ namespace Sparse_tool {
     //! Multiply all the nonzeros of the sparse matrix by `s`.
     //!
     void
-    scaleValues( real_type const & s )
-    { return static_cast<Matrix const *>(this) -> scaleValues( s ); }
+    scale_values( real_type const & s )
+    { return static_cast<Matrix const *>(this) -> scale_values( s ); }
 
     //!
     //! Multiply all the nonzeros of the row `nr` matrix by `val`.
@@ -1931,7 +1939,7 @@ namespace Sparse_tool {
     //!   &    &    & 4  & 4
     //! \end{pmatrix}
     //! \f]
-    //! 
+    //!
     Matrix &
     operator += ( real_type const & s ) {
       for ( integer k = 0; k < SBASE::sp_min_size; ++k )
@@ -1959,7 +1967,7 @@ namespace Sparse_tool {
     //!   &    &    & 4  & 0
     //! \end{pmatrix}
     //! \f]
-    //! 
+    //!
     Matrix &
     operator -= ( real_type const & s ) {
       for ( integer k = 0; k < SBASE::sp_min_size; ++k )
@@ -1987,10 +1995,10 @@ namespace Sparse_tool {
     //!   &    &    & 8  & 4
     //! \end{pmatrix}
     //! \f]
-    //! 
+    //!
     Matrix &
     operator *= ( real_type const & s )
-    { scaleValues(s); return * this; }
+    { scale_values(s); return * this; }
 
     //!
     //! Divide all the nonzeros of the derived matrix by `s`.
@@ -2012,10 +2020,10 @@ namespace Sparse_tool {
     //!     &      &      & 0.4  & 0.2
     //! \end{pmatrix}
     //! \f]
-    //! 
+    //!
     Matrix &
     operator /= ( real_type const & s)
-    { real_type ss = 1/s; scaleValues(ss); return * this; }
+    { real_type ss = 1/s; scale_values(ss); return * this; }
 
     // ------------------------
     //!
@@ -2056,7 +2064,7 @@ namespace Sparse_tool {
       return *this;
     }
 
-    //! 
+    //!
     //! Add the components of `v`  to the diagonal.
     //! For example:
     //!
@@ -2080,7 +2088,7 @@ namespace Sparse_tool {
     //!       &    &    & 4  & 2
     //!   \end{pmatrix}
     //! \f]
-    //! 
+    //!
     template <typename TV> inline
     Matrix &
     operator += ( Vector<TV> const & v ) {
@@ -2332,12 +2340,12 @@ namespace Sparse_tool {
     //@}
   };
 
-  //! 
+  //!
   //! This class in the base class for all the preconditioner
   //! of sparse matrix classes of `Sparse_tool`.
   //! This class is incomplete and is used as a
   //! pivot for internal operations.
-  //! 
+  //!
   template <typename PRECO>
   class Preco {
   protected:
@@ -2407,7 +2415,7 @@ namespace Sparse_tool {
   //! The class `SparsePattern` try to manage such a structure in a
   //! simple way for the user.  To define a `SparsePattern` class you
   //! can use uno of the following scripture
-  //! 
+  //!
   //! \code
   //! SparsePatter sp;              // define an empty SparsePattern class
   //! SparsePatter sp(nr, nc, nnz); // define a SparsePattern class on a pattern of nr rows and nc columns.
@@ -2419,19 +2427,19 @@ namespace Sparse_tool {
   //!                               // Sparse object sobj. In this way it is possible to obtain the sparse
   //!                               // pattern of any object derived from Sparse.
   //! \endcode
-  //! 
-  //! It is possible in any moment to change the sizes and the maximum 
+  //!
+  //! It is possible in any moment to change the sizes and the maximum
   //! number of nonzero by the `resize` methods:
-  //! 
+  //!
   //! \code
   //! sp.resize(nr, nc, nnz);
   //! sp.resize(sp1);
   //! sp.resize(sobj);
   //! \endcode
-  //! 
+  //!
   //! to complete the basic description of the `SparsePattern` a sintetic
   //! description of the remaining methods of the class are presented
-  //! 
+  //!
   //! - `insert(i,j)` this method permit to insert an item of nonzero.
   //!   For example the first pattern can be constructed as
   //!
@@ -2440,10 +2448,10 @@ namespace Sparse_tool {
   //!   sp.insert(0, 0); sp.insert(0, 1); sp.insert(0, 6); sp.insert(1, 1);
   //!   sp.insert(1, 2); sp.insert(2, 3); sp.insert(2, 4); sp.insert(3, 1);
   //!   sp.insert(3, 4); sp.insert(4, 0); sp.insert(4, 2); sp.insert(4, 5);
-  //!   sp.insert(5, 1); sp.insert(5, 6); sp.internalOrder();
+  //!   sp.insert(5, 1); sp.insert(5, 6); sp.internal_order();
   //! \endcode
   //!
-  //! - `internalOrder`()
+  //! - `internal_order`()
   //!   This methods reorder internally the nonzero elements of the sparse pattern
   //!   and remove all duplicated entries.
   //!   If `k1 <= k2` we have one of the two following cases
@@ -2451,7 +2459,7 @@ namespace Sparse_tool {
   //! - `J(k1) < J(k2)`
   //! - `J(k1) == J(k2)` and `I(k1) <= I(k2)`
   //!
-  //! - `bool isOrdered()`
+  //! - `bool is_ordered()`
   //!   this methods return `true` if the elements inside the sparse
   //!   pattern are ordered, `false` otherwise.
   //!
@@ -2472,14 +2480,14 @@ namespace Sparse_tool {
       for ( M.Begin(); M.End(); M.Next() )
         if ( cmp( M.row(), M.column() ) ) ++nz;
 
-      resize( M.numRows(), M.numCols(), nz );
+      resize( M.nrows(), M.ncols(), nz );
 
       for ( M.Begin(); M.End(); M.Next() ) {
         integer i = M.row();
         integer j = M.column();
         if ( cmp(i,j) ) insert(i,j);
       }
-      internalOrder();
+      internal_order();
     }
     #endif
 
@@ -2491,10 +2499,10 @@ namespace Sparse_tool {
     SparsePattern(void) : SparseBase<SparsePattern>()
     { }
 
-    //! 
+    //!
     //! Initialize and empty sparse pattern of `nr` rows and `nc` columns
     //! with reserved room for `mnnz` nonzeros.
-    //! 
+    //!
     SparsePattern(
       integer nr,
       integer nc,
@@ -2520,72 +2528,72 @@ namespace Sparse_tool {
     : SparsePattern()
     { convert(sp,cmp); }
 
-    //! 
+    //!
     //! Copy the sparse pattern `sp`to `*this`.
     //!
     //! \param sp sparse pattern to be copied
-    //! 
+    //!
     SparsePattern(SparsePattern const & sp) : SparsePattern()
     { convert(sp,all_ok()); }
 
     // convert => SparsePattern
-    //! 
+    //!
     //! Insert the element of the pattern of `M`.
     //! which satify `cmp` to `*this`.
     //!
     //! \param M   object derived from `Sparse`.
     //! \param cmp comparator struct for the selection of the element in pattern `sp`
-    //! 
+    //!
     template <typename MAT, typename Compare>
     SparsePattern( SparseBase<MAT> const & M, Compare cmp )
     : SparsePattern()
     { convert(M,cmp); }
 
-    //! 
+    //!
     //! Copy the sparse pattern of `M` to `*this`.
     //!
     //! \param M object derived from `Sparse`.
-    //! 
+    //!
     template <typename MAT>
     SparsePattern( SparseBase<MAT> const & M )
     : SparsePattern()
     { convert(M,all_ok()); }
 
-    //! 
+    //!
     //! Copy the sparse pattern of `sp`to `*this`.
     //!
     //! \param SP sparse pattern object
-    //! 
+    //!
     SparsePattern &
     operator = ( SparsePattern const & SP ) {
       if ( &SP != this ) { // avoid copy to itself
-        SPARSE::setup( SP.numRows(), SP.numCols() );
-        SPARSE::sp_nnz       = SP.nnz();
-        SPARSE::sp_isOrdered = SP.isOrdered();
+        SPARSE::setup( SP.nrows(), SP.ncols() );
+        SPARSE::sp_nnz        = SP.nnz();
+        SPARSE::sp_is_ordered = SP.is_ordered();
         I.resize( SPARSE::sp_nnz );
         J.resize( SPARSE::sp_nnz );
         I = SP.I.head(SPARSE::sp_nnz);
         J = SP.J.head(SPARSE::sp_nnz);
-        if ( !SPARSE::sp_isOrdered ) internalOrder();
+        if ( !SPARSE::sp_is_ordered ) internal_order();
       }
       return *this;
     }
 
     // convert => SparsePattern
-    //! 
+    //!
     //! Copy the sparse pattern of `M` to `*this`.
     //!
     //! \param M object derived from `Sparse`.
-    //! 
+    //!
     template <typename MAT>
     SparsePattern &
     operator = (SparseBase<MAT> const & M)
     { convert(M,all_ok()); return *this; }
 
-    //! 
+    //!
     //! Initialize and empty sparse pattern of `nr` rows and `nc` columns
     //! with reserved room for `mnnz` nonzeros.
-    //! 
+    //!
     void
     resize( integer nr, integer nc, integer mnnz = SPARSETOOL_DEFAULT_NNZ ) {
       SPARSE::setup( nr, nc );
@@ -2621,7 +2629,7 @@ namespace Sparse_tool {
     //! access to nonzeros.
     //!
     void
-    internalOrder() {
+    internal_order() {
       QuickSortIJ<integer>( I.data(), J.data(), SPARSE::sp_nnz );
       // eliminate duplicate elements
       integer i1 = 0, i = 0;
@@ -2637,8 +2645,8 @@ namespace Sparse_tool {
         for ( ++i1; i1 < SPARSE::sp_nnz && I(i1) == I(i) && J(i1) == J(i); ++i1 ) {};
         ++i;
       }
-      SPARSE::sp_nnz       = i;
-      SPARSE::sp_isOrdered = true;
+      SPARSE::sp_nnz        = i;
+      SPARSE::sp_is_ordered = true;
       I.resize( SPARSE::sp_nnz );
       J.resize( SPARSE::sp_nnz );
     }
@@ -2662,7 +2670,7 @@ namespace Sparse_tool {
       I(SPARSE::sp_nnz) = i;
       J(SPARSE::sp_nnz) = j;
       ++SPARSE::sp_nnz;
-      SPARSE::sp_isOrdered = false;
+      SPARSE::sp_is_ordered = false;
       return *this;
     }
 
@@ -2671,7 +2679,7 @@ namespace Sparse_tool {
     Vector<integer> const & getI(void) const { return I; }
     //! Return the column index vector.
     Vector<integer> const & getJ(void) const { return J; }
-    
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // ITERATORS
     //! Initialize iterator.
@@ -2682,7 +2690,7 @@ namespace Sparse_tool {
 
     //! Check if iterator terminate the loop.
     bool End(void) const { return ipos < SPARSE::sp_nnz; }
-    
+
     //! The row of the element pointed by iterator.
     integer row(void) const { return I(ipos); }
 
@@ -2755,14 +2763,14 @@ namespace Sparse_tool {
   //! // stored in the class, in practice it is the initial dimension of vectors `I`, `J` and `A`.
   //! //  If needed the vectors are enlarged.
   //! CCoorMatrix<double> ccoor(nr, nc, nnz);
-  //! 
+  //!
   //! // instance a CCoorMatrix<double> class with the sparsity pattern defined of the SparsePattern class `sp`.
-  //! // nr will be sp.numRows(), ncol will be sp.numCols().
+  //! // nr will be sp.nrows(), ncol will be sp.ncols().
   //! CCoorMatrix<double> ccoor(sp);
-  //! 
+  //!
   //! // instance a CCoorMatrix<double> class with which is the copy of the CCoorMatrix<double> object ccoor1.
   //! CCoorMatrix<double> ccoor(ccoor1);
-  //! 
+  //!
   //! // instance a CCoorMatrix<double> class with which is the copy of the Sparse object sobj.
   //! CCoorMatrix<double> ccoor(sobj);
   //! \endcode
@@ -2786,10 +2794,10 @@ namespace Sparse_tool {
   //! A.insert(0, 0) = 1;    A.insert(0, 1) = 2; A.insert(0, 6) = 9;  A.insert(1, 1) = -1;
   //! A.insert(1, 2) = 0;    A.insert(2, 3) = 3; A.insert(2, 4) = 4;  A.insert(3, 1) = 2;
   //! A.insert(3, 4) = 5;    A.insert(4, 0) = 2; A.insert(4, 2) = -2; A.insert(4, 5) = 1;
-  //! A.insert(5, 1) = -1.5; A.insert(5, 6) = 1; A.internalOrder();
+  //! A.insert(5, 1) = -1.5; A.insert(5, 6) = 1; A.internal_order();
   //! \endcode
   //!
-  //! - `internalOrder()`
+  //! - `internal_order()`
   //!   This methods reorder internally the nonzero elements of
   //!   `CCoorMatrix<double>` in such a way if
   //!   `k1 < k2` we have one of the two following cases
@@ -2799,7 +2807,7 @@ namespace Sparse_tool {
   //!
   //!   Moreover all duplicated entries are added togheter.
   //!
-  //! - `bool isOrdered()`
+  //! - `bool is_ordered()`
   //!   this methods return `true` if the elements inside the class
   //!   `CCoorMatrix<double>` are ordered, `false` otherwise.
   //!
@@ -2825,14 +2833,14 @@ namespace Sparse_tool {
       for ( M.Begin(); M.End(); M.Next() )
         if ( cmp( M.row(), M.column() ) ) ++nz;
 
-      resize( M.numRows(), M.numCols(), nz );
+      resize( M.nrows(), M.ncols(), nz );
 
       for ( M.Begin(); M.End(); M.Next() ) {
         integer i = M.row();
         integer j = M.column();
         if ( cmp(i,j) ) M.assign( insert(i,j) );
       }
-      internalOrder();
+      internal_order();
     }
 
   public:
@@ -2897,15 +2905,15 @@ namespace Sparse_tool {
     CCoorMatrix<T> &
     operator = (CCoorMatrix<T> const & M) {
       if ( &M == this ) return *this; // avoid copy to itself
-      resize( M.numRows(), M.numCols(), M.nnz() );
-      SPARSE::sp_nnz       = M.nnz();
-      SPARSE::sp_isOrdered = M.isOrdered();
+      resize( M.nrows(), M.ncols(), M.nnz() );
+      SPARSE::sp_nnz        = M.nnz();
+      SPARSE::sp_is_ordered = M.is_ordered();
 
       A.resize(SPARSE::sp_nnz); A = M.A.head(SPARSE::sp_nnz);
       I.resize(SPARSE::sp_nnz); I = M.I.head(SPARSE::sp_nnz);
       J.resize(SPARSE::sp_nnz); J = M.J.head(SPARSE::sp_nnz);
       C.resize(SPARSE::sp_nnz); C = M.C.head(SPARSE::sp_nnz);
-      if ( !SPARSE::sp_isOrdered ) internalOrder();
+      if ( !SPARSE::sp_is_ordered ) internal_order();
       return *this;
     }
 
@@ -2966,7 +2974,7 @@ namespace Sparse_tool {
     //! Order the internal structure to permit random access to nonzeros.
     //!
     void
-    internalOrder() {
+    internal_order() {
       QuickSortIJ2<integer,T>( I.data(), J.data(), A.data(), SPARSE::sp_nnz );
       // eliminate duplicate elements
       integer i1 = 0, i = 0;
@@ -2983,8 +2991,8 @@ namespace Sparse_tool {
           A(i) += A(i1);
         ++i;
       }
-      SPARSE::sp_nnz       = i;
-      SPARSE::sp_isOrdered = true;
+      SPARSE::sp_nnz        = i;
+      SPARSE::sp_is_ordered = true;
       I.conservativeResize(SPARSE::sp_nnz);
       J.conservativeResize(SPARSE::sp_nnz);
       A.conservativeResize(SPARSE::sp_nnz+1);
@@ -2996,7 +3004,7 @@ namespace Sparse_tool {
       for ( integer k = 1; k < SPARSE::sp_nnz; ++k ) {
         UTILS_ASSERT(
           J(k-1) <= J(k),
-          "CCoorMatrix::internalOrderRowMajor() internal error\n"
+          "CCoorMatrix::internal_order() internal error\n"
           "J({}) is not <= J({})\n",
           k-1, k
         );
@@ -3005,7 +3013,7 @@ namespace Sparse_tool {
       }
       UTILS_ASSERT(
         nc < SPARSE::sp_ncols || SPARSE::sp_nnz == 0,
-        "CCoorMatrix::internalOrder()\n"
+        "CCoorMatrix::internal_order()\n"
         "nc = {} is not less of sp_ncols = {}, sp_nnz = {}\n",
         nc, SPARSE::sp_ncols, SPARSE::sp_nnz
       );
@@ -3050,7 +3058,7 @@ namespace Sparse_tool {
       I(SPARSE::sp_nnz) = i;
       J(SPARSE::sp_nnz) = j;
       SPARSE::sp_nnz++;
-      SPARSE::sp_isOrdered = false;
+      SPARSE::sp_is_ordered = false;
       return A(SPARSE::sp_nnz-1);
     }
 
@@ -3068,13 +3076,13 @@ namespace Sparse_tool {
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     void setZero() { A = real_type(0); }
-    void scaleValues( real_type const & s ) { A *= s; }
+    void scale_values( real_type const & s ) { A *= s; }
 
     real_type const &
     value( integer i, integer j ) const
     { return A(position(i,j)); }
 
-    real_type const & 
+    real_type const &
     operator ()( integer i, integer j ) const {
       integer pos = position(i,j);
       UTILS_ASSERT(
@@ -3084,7 +3092,7 @@ namespace Sparse_tool {
       return A(pos);
     }
 
-    real_type & 
+    real_type &
     operator ()( integer i, integer j ) {
       integer pos = position(i,j);
       UTILS_ASSERT(
@@ -3226,23 +3234,23 @@ namespace Sparse_tool {
   //  #     # #     # #          #     #  #       #          #
   //  #     #  #####  #######    #    ### #       #######    #
   */
-  //! 
+  //!
   //! Perform matrix multiplication of a matrix in Compressed Coordinate
   //! with a full vector `x`.
   //!
   //! \code res += s * (A * x) \endcode
-  //! \param numRows numer of rows
-  //! \param RR      vector of row pointers
-  //! \param JJ      vector of column indexes
-  //! \param AA      vector of values
-  //! \param s       scalar
-  //! \param res     vector or the result
-  //! \param x       vector used in multiplication
-  //! 
+  //! \param nrows numer of rows
+  //! \param RR    vector of row pointers
+  //! \param JJ    vector of column indexes
+  //! \param AA    vector of values
+  //! \param s     scalar
+  //! \param res   vector or the result
+  //! \param x     vector used in multiplication
+  //!
   template <typename T, typename VR, typename VX> inline
   void
   S_mul_M_mul_V(
-    integer                 numRows,
+    integer                 nrows,
     Vector<integer> const & RR,
     Vector<integer> const & JJ,
     Vector<T>       const & AA,
@@ -3255,36 +3263,36 @@ namespace Sparse_tool {
       "Sparse_tool: [res += s * (A * x)] S_mul_M_mul_V, `res` and `x` cant be the same"
     );
     UTILS_ASSERT0(
-      res.size() >= numRows,
+      res.size() >= nrows,
       "Sparse_tool: [res += s * (A * x)] result vector too small"
     );
     integer const * R = RR.data();
     integer const * J = JJ.data();
     T       const * A = AA.data();
-    for ( integer ir = 0; ir < numRows; ++ir, ++R ) {
+    for ( integer ir = 0; ir < nrows; ++ir, ++R ) {
       T bf(0);
       SPARSELIB_LOOP( R[1] - R[0], bf += *A++ * x(*J++) );
       res(ir) += s * bf;
     }
   }
 
-  //! 
+  //!
   //! Perform matrix multiplication of a transopose of a matrix in Compressed Coordinate
   //! with a full vector `x`.
   //!
   //! \code res += s * (A^T * x) \endcode
-  //! \param numRows numer of rows
-  //! \param RR      vector of row pointers
-  //! \param JJ      vector of column indexes
-  //! \param AA      vector of values
-  //! \param s       scalar
-  //! \param res     vector or the result
-  //! \param x       vector used in multiplication
-  //! 
+  //! \param nrows numer of rows
+  //! \param RR    vector of row pointers
+  //! \param JJ    vector of column indexes
+  //! \param AA    vector of values
+  //! \param s     scalar
+  //! \param res   vector or the result
+  //! \param x     vector used in multiplication
+  //!
   template <typename T, typename VR, typename VX> inline
   void
   S_mul_Mt_mul_V(
-    integer                 numRows,
+    integer                 nrows,
     Vector<integer> const & RR,
     Vector<integer> const & JJ,
     Vector<T>       const & AA,
@@ -3297,13 +3305,13 @@ namespace Sparse_tool {
       "Sparse_tool: [res += s * (A^T * x)] S_mul_Mt_mul_V, `res` and `x` cant be the same"
     );
     UTILS_ASSERT0(
-      res.size() >= numRows,
+      res.size() >= nrows,
       "Sparse_tool: [res += s * (A^T * x)] result vector too small"
     );
     integer const * R = RR.data();
     integer const * J = JJ.data();
     T       const * A = AA.data();
-    for ( integer ir = 0; ir < numRows; ++ir, ++R ) {
+    for ( integer ir = 0; ir < nrows; ++ir, ++R ) {
       T bf = s*x(ir);
       SPARSELIB_LOOP( R[1] - R[0], res(*J++) += *A++ * bf );
     }
@@ -3397,10 +3405,10 @@ namespace Sparse_tool {
     mutable integer iter_ptr;
 
     void
-    internalOrder() {
+    internal_order() {
       UTILS_ASSERT0(
         R[SPARSE::sp_nrows] == SPARSE::sp_nnz,
-        "Sparse_tool: CRowMatrix::internalOrder() bad data for matrix\n"
+        "Sparse_tool: CRowMatrix::internal_order() bad data for matrix\n"
       );
       integer ii, kk, rk, rk1;
       SPARSE::sp_lower_nnz = 0;
@@ -3416,7 +3424,7 @@ namespace Sparse_tool {
           for ( kk = rk+1; kk < rk1; ++kk )
             UTILS_ASSERT0(
               J(kk-1) < J(kk),
-              "Sparse_tool: CRowMatrix::internalOrder() failed\n"
+              "Sparse_tool: CRowMatrix::internal_order() failed\n"
             );
   #endif
         }
@@ -3428,7 +3436,7 @@ namespace Sparse_tool {
     void
     convert(SparseBase<MAT> const & M, Compare cmp) {
 
-      SPARSE::setup( M.numRows(), M.numCols() );
+      SPARSE::setup( M.nrows(), M.ncols() );
 
       // step 0: Count nonzero
       SPARSE::sp_nnz = 0;
@@ -3464,8 +3472,8 @@ namespace Sparse_tool {
         R(0) == 0 && R(SPARSE::sp_nrows) == SPARSE::sp_nnz,
         "CRowMatrix::resize(Sparse & A) failed\n"
       );
-      // step 3: internalOrder matrix
-      internalOrder();
+      // step 3: internal_order matrix
+      internal_order();
     }
 
   public:
@@ -3523,13 +3531,13 @@ namespace Sparse_tool {
     CRowMatrix<T> &
     operator = (CRowMatrix<T> const & M) {
       if ( &M == this ) return *this; // avoid copy to itself
-      SPARSE::setup( M.numRows(), M.numCols() );
-      SPARSE::sp_nnz       = M.nnz();
-      SPARSE::sp_isOrdered = M.isOrdered();
+      SPARSE::setup( M.nrows(), M.ncols() );
+      SPARSE::sp_nnz        = M.nnz();
+      SPARSE::sp_is_ordered = M.is_ordered();
       A.resize(SPARSE::sp_nnz);     A = M.A.head(SPARSE::sp_nnz);
       R.resize(SPARSE::sp_nrows+1); R = M.R.head(SPARSE::sp_nrows+1);
       J.resize(SPARSE::sp_nnz);     J = M.J.head(SPARSE::sp_nnz);
-      if ( !SPARSE::sp_isOrdered ) internalOrder();
+      if ( !SPARSE::sp_is_ordered ) internal_order();
       return *this;
     }
 
@@ -3610,9 +3618,9 @@ namespace Sparse_tool {
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     void setZero() { A = real_type(0); }
-    void scaleValues( real_type const & s ) { A *= s; }
+    void scale_values( real_type const & s ) { A *= s; }
 
-    real_type const & 
+    real_type const &
     operator ()( integer i, integer j ) const {
       integer pos = position(i,j);
       UTILS_ASSERT(
@@ -3622,7 +3630,7 @@ namespace Sparse_tool {
       return A(pos);
     }
 
-    real_type & 
+    real_type &
     operator ()( integer i, integer j ) {
       integer pos = position(i,j);
       UTILS_ASSERT(
@@ -3725,7 +3733,7 @@ namespace Sparse_tool {
   //!
   //! Compressed Column Matrix Storage
   //! --------------------------------
-  //! 
+  //!
   //! The class `CColMatrix<T>` implement a `Compressed Columns`
   //! storage sparse scheme.  It consists of two big vector of
   //! integer which contain the coordinate of nonzero elements and a big one
@@ -3733,7 +3741,7 @@ namespace Sparse_tool {
   //! that store the row index of each elements, `C` the vector that
   //! store the starting position of the columns and `A`  the vector
   //! that store the nonzero values.  For example the sparse matrix
-  //! 
+  //!
   //! \f[
   //! \mathbf{A} = \begin{pmatrix}
   //!   1 & 2    &    &   &   &   & 9 \\
@@ -3757,7 +3765,7 @@ namespace Sparse_tool {
   //! The class `CColMatrix<T>` try to manage such a structure in a
   //! simple way for the user.  To define a `CColMatrix<T>` class you
   //! can use one of the following scripture
-  //! 
+  //!
   //! \code
   //! CColMatrix<double> ccol;        // instance an empty CColMatrix<double> class.
   //! CColMatrix<double> ccol(sp);    // instance a CColMatrix<double> class with the sparsity
@@ -3767,16 +3775,16 @@ namespace Sparse_tool {
   //! CColMatrix<double> ccol(sobj);  // instance a CColMatrix<double> class which is the copy
   //!                                 // of the Sparse object sobj.
   //! \endcode
-  //! 
+  //!
   //! It is possible in any moment to change the sizes and the maximum
   //! number of nonzero by the `resize` method:
-  //! 
+  //!
   //! \code
   //!   ccol.resize(sp);
   //!   ccol.resize(ccol1);
   //!   ccol.resize(sobj);
   //! \endcode
-  //! 
+  //!
   //!
   template <typename T>
   class CColMatrix : public Sparse<T,CColMatrix<T> > {
@@ -3793,7 +3801,7 @@ namespace Sparse_tool {
     mutable integer iter_ptr;
 
     void
-    internalOrder() {
+    internal_order() {
       integer jj, kk, ck, ck1;
       SPARSE::sp_lower_nnz = 0;
       SPARSE::sp_diag_nnz  = 0;
@@ -3808,7 +3816,7 @@ namespace Sparse_tool {
           for ( kk = ck+1; kk < ck1; ++kk )
             UTILS_ASSERT0(
               I(kk-1) < I(kk),
-              "Sparse_tool: CColMatrix::internalOrder() failed\n"
+              "Sparse_tool: CColMatrix::internal_order() failed\n"
             );
   #endif
         }
@@ -3819,7 +3827,7 @@ namespace Sparse_tool {
     template <typename MAT, typename Compare>
     void
     convert(SparseBase<MAT> const & M, Compare cmp) {
-      SPARSE::setup( M.numRows(), M.numCols() );
+      SPARSE::setup( M.nrows(), M.ncols() );
 
       // step 0: Count nonzero
       SPARSE::sp_nnz = 0;
@@ -3854,8 +3862,8 @@ namespace Sparse_tool {
         C(0) == 0 && C(SPARSE::sp_ncols) == SPARSE::sp_nnz,
         "CColMatrix::resize(Sparse & A) failed\n"
       );
-      // step 3: internalOrder matrix
-      internalOrder();
+      // step 3: internal_order matrix
+      internal_order();
     }
 
   public:
@@ -3913,13 +3921,13 @@ namespace Sparse_tool {
     CColMatrix<T> &
     operator = (CColMatrix<T> const & M) {
       if ( &M == this ) return *this; // avoid copy to itself
-      resize( M.numRows(), M.numCols(), M.nnz() );
-      SPARSE::sp_nnz       = M.nnz();
-      SPARSE::sp_isOrdered = M.isOrdered();
+      resize( M.nrows(), M.ncols(), M.nnz() );
+      SPARSE::sp_nnz        = M.nnz();
+      SPARSE::sp_is_ordered = M.is_ordered();
       A.resize( SPARSE::sp_nnz );     A = M.A.head( SPARSE::sp_nnz );
       C.resize( SPARSE::sp_ncols+1 ); C = M.C.head( SPARSE::sp_ncols+1 );
       I.resize( SPARSE::sp_nnz );     I = M.I.head( SPARSE::sp_nnz );
-      if ( !SPARSE::sp_isOrdered ) internalOrder();
+      if ( !SPARSE::sp_is_ordered ) internal_order();
       return *this;
     }
 
@@ -4001,7 +4009,7 @@ namespace Sparse_tool {
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     void setZero() { A = real_type(0); }
-    void scaleValues( real_type const & s ) { A *= s; }
+    void scale_values( real_type const & s ) { A *= s; }
 
     real_type const &
     operator () (integer i, integer j) const {
@@ -4114,7 +4122,7 @@ namespace Sparse_tool {
   //!
   //! Tridiagonal Matrix
   //! ------------------
-  //! 
+  //!
   //! The class `TridMatrix<T>` implement a sparse band matrix.
   //! It consists of a big matrix of `real_type` which contain the values
   //! of nonzero elements.  We call `M` this big matrix which
@@ -4145,26 +4153,26 @@ namespace Sparse_tool {
   //!      \hline
   //!    \end{array}
   //! \f]
-  //! 
+  //!
   //! where `*` means unused elements.  Notice that the index follows
   //! the C convention, starting from `0`.
   //! The class `TridMatrix<T>` manage such a structure in a simple
   //! way for the user.  To define a `TridMatrix<T>` class you can
   //! use one of the following scripture
-  //! 
+  //!
   //! \code
   //! TridMatrix<double> tm;      // instance an empty TridMatrix<double> class
   //! TridMatrix<double> tm(100); // instance a 100 x 100 TridMatrix<double> class
   //! TridMatrix<double> tm(tm1); // instance a TridMatrix<double> class which is the copy
   //!                             // of the TridMatrix<double> class tm1.
   //! \endcode
-  //! 
+  //!
   //! It is possible in any moment to change the sizes and the maximum
   //! number of nonzero by the `resize` method:
   //! \code
   //! tm.resize(n);
   //! \endcode
-  //! 
+  //!
   //!
   template <typename T>
   class TridMatrix : public Sparse<T,TridMatrix<T> > {
@@ -4238,7 +4246,7 @@ namespace Sparse_tool {
     TridMatrix<T> const &
     operator = ( TridMatrix<T> const & TM ) {
       if ( &TM == this ) return *this; // avoid copy to itself
-      resize( A.numRows() );
+      resize( A.nrows() );
       A = TM.A;
       return *this;
     }
@@ -4308,7 +4316,7 @@ namespace Sparse_tool {
     //!           &      & 0    & 2.1 \\
     //!    \end{pmatrix}\right]
     //! \f]
-    //! 
+    //!
     TridMatrix<T> &
     operator = ( real_type const & s )
     { A.setZero(); D = s; return *this; }
@@ -4592,7 +4600,7 @@ namespace Sparse_tool {
     real_type const &
     operator () ( integer i, integer j ) const {
       SPARSE::test_index(i,j);
-      integer kk = ((j+1)-i); 
+      integer kk = ((j+1)-i);
       UTILS_ASSERT(
         kk < 3,
         "TridMatrix({},{}) index out of range\n", i, j
@@ -4603,7 +4611,7 @@ namespace Sparse_tool {
     real_type &
     operator () ( integer i, integer j ) {
       SPARSE::test_index(i,j);
-      integer kk = ((j+1)-i); 
+      integer kk = ((j+1)-i);
       UTILS_ASSERT(
         kk < 3,
         "TridMatrix({},{}) index out of range\n", i, j
@@ -4839,30 +4847,32 @@ namespace Sparse_tool {
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
   //!
-  //! Print the contents of the `Sparse<T,MAT>` 
+  //! Print the contents of the `Sparse<T,MAT>`
   //! object `N` to the stream `s`.
   //!
   template <typename T, typename MAT> inline
   ostream_type &
   operator << ( ostream_type & s, Sparse<T,MAT> const & M ) {
-    s << "\nsize    = " << M.numRows() << " x " << M.numCols()
-      << "\nnnz     = " << M.nnz();
-    if ( M.isOrdered() ) {
+    fmt::print( s,
+      "size    = {} x {}\n"
+      "nnz     = {}\n",
+      M.nrows(), M.ncols(), M.nnz()
+    );
+    if ( M.is_ordered() ) {
       integer l,d,u;
       M.nnz( l, d, u );
-      s << "  (diag=" << d << ", lower=" << l << ", upper=" << u << ")\nordered = YES\n";
+      fmt::print( s,
+        "  (diag={}, lower={}, upper={}) ordered = YES\n",
+        d, l, u
+       );
     } else {
-      s << "\nordered = NO\n";
+      s << "ordered = NO\n";
     }
     integer N = 1;
     integer n = M.maxSize();
-    while ( (n/=10) > 0 ) ++N; 
-    for ( M.Begin(); M.End(); M.Next() ) {
-      s << "("    << setw(N) << M.row()
-        << ","    << setw(N) << M.column()
-        << ") = " << setw(N) << M.value()
-        << "\n";
-    }
+    while ( (n/=10) > 0 ) ++N;
+    for ( M.Begin(); M.End(); M.Next() )
+      fmt::print( s, "({},{}) = {}\n", M.row(), M.column(), M.value() );
     return s;
   }
   #endif

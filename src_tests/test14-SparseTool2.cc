@@ -60,11 +60,11 @@ main() {
   try {
     CCoorMatrix<double> A(nr,nc),   M(nr+nc,nr+nc);
     Vector<double>      rhs(nr+nc), X(nr+nc), bf1(nr), bf2(nc);
-  
+
     // build matrix A
     for ( integer i = 0; i < nnz; ++i ) A.insert(I[i],J[i]) = V[i];
-    A.internalOrder();
-  
+    A.internal_order();
+
     // build block matrix
     //   /           \
     //   |  I     A  |
@@ -77,8 +77,8 @@ main() {
       M.insert(j+nr,i) = A.value();
     }
     for ( integer i = 0; i < nr; ++i ) M.insert(i,i) = 1;
-    M.internalOrder();
-  
+    M.internal_order();
+
     Eigen::Map<VBASE> b1(NULL,0), b2(NULL,0), r(NULL,0), x(NULL,0);
     new (&b1) Eigen::Map<VBASE>(rhs.data(), nr);    b1.array() = 1;
     new (&b2) Eigen::Map<VBASE>(rhs.data()+nr, nc); b2.array() = 0;
@@ -95,7 +95,7 @@ main() {
     //SSORpreconditioner<double> P(M,1.2);
 
     double res = bicgstab( M, rhs, X, P, 1E-15, 100, iter, &cout ); // solve extended linear system
-  
+
     bf1 = b1 - (A*x); bf2 = A^bf1; // Chech the projected residual A^T(b-A*x)
     fmt::print(
       "res      = {}\n"

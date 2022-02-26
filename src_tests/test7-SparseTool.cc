@@ -81,15 +81,15 @@ testSparseTool( istream_type & mm_file ) {
   fmt::print("read matrix...");
   mm.read( mm_file, A );
   fmt::print("done\n{}",mm);
-  
+
   SP.resize( A );
   B.resize( SP );
   //Spy( mm_file + ".eps" , A, 15.0 );
-  
-  exact.resize( A.numRows() );
-  x.resize( A.numRows() );
-  rhs.resize( A.numRows() );
-  resid.resize( A.numRows() );
+
+  exact.resize( A.nrows() );
+  x.resize( A.nrows() );
+  rhs.resize( A.nrows() );
+  resid.resize( A.nrows() );
 
   exact.fill(1);
   rhs = A * exact;
@@ -117,7 +117,7 @@ testSparseTool( istream_type & mm_file ) {
   tm.toc();
   fmt::print(" {} [ms] done\n",tm.elapsed_ms());
   fmt::print("res = {}\n",res);
-  
+
   resid = rhs - A*x;
 
   fmt::print("error    (bicgstab) = {}\n", (x-exact).norm() );
@@ -223,9 +223,9 @@ main() {
     //"dwg961b.mtx.gz",             // 961 (ok) 14
     //"ecology2.mtx.gz",            // 999999 (ok) 53 iter
     //"fidapm05.mtx.gz",            // 42 (no)
-    //"memchip.mtx.gz",             // 2707524 (ok) 200 iter 
+    //"memchip.mtx.gz",             // 2707524 (ok) 200 iter
     //"hor__131.mtx.gz",            // 434 (ok) 200 iter
-    //"ldoor.mtx.gz",               // 952203 (ok) 11 iter 
+    //"ldoor.mtx.gz",               // 952203 (ok) 11 iter
     //"para-9.mtx.gz",              // 155924 (no)
     //"parabolic_fem.mtx.gz",       // 525825 (ok) 54 iter
     //"plat1919.mtx.gz",            // 1919 (ok) 200 iter
@@ -243,7 +243,7 @@ main() {
     zstr::istream gz(file);
     //ifstream file( fname.c_str() );
     //cout << (file.good()?"OK":"NO") << endl;
-    //cout << (file.fail()?"OK":"NO") << endl; 
+    //cout << (file.fail()?"OK":"NO") << endl;
     testSparseTool( gz );
     file.close();
   }

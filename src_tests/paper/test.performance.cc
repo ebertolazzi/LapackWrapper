@@ -38,7 +38,7 @@ extern "C" {
 using namespace ::SparseToolLoad ;
 using namespace ::std;
 
-#define LOOP(N)   for ( integer i = 0 ; i < N ; ++i ) 
+#define LOOP(N)   for ( integer i = 0 ; i < N ; ++i )
 #define REPEAT(N) for ( integer iii = 0 ; iii < N ; ++iii )
 
 typedef double Real ;
@@ -63,7 +63,7 @@ out(
        << setw(10) << ta << ":"
        << setw(10) << tb << ":"
        << setw(10) << tc << " ) FP("
-       << setw(10) << 1e-3*nnz/ta 
+       << setw(10) << 1e-3*nnz/ta
        << ":"
        << setw(10) << 1e-3*nnz/tb
        << ":"
@@ -74,10 +74,10 @@ out(
 // test CRow  ********************************************************
 
 static
-void 
+void
 test_CRow(
   integer                  N,
-  blas_sparse_matrix       mHandle, 
+  blas_sparse_matrix       mHandle,
   CRowMatrix<Real> const & crow,
   Vector<Real>     const & v
 ) {
@@ -90,7 +90,7 @@ test_CRow(
   REPEAT(N) res = crow * v ;
   tm . stop() ;
   Real timea = tm . milliseconds() ;
-  
+
   int n = v.size() ;
   double const * pv = &v(0) ;
   double       * pr = &res(0) ;
@@ -103,7 +103,7 @@ test_CRow(
   REPEAT(N) BLAS_dusmv( blas_no_trans, 1.0, mHandle, pv, 1, pr, 1 );
   tm . stop() ;
   Real timeb = tm . milliseconds() ;
-  
+
   sleep(1) ;
   tm . start() ;
   REPEAT(N) F77NAME(amux)( &n, pv, pr, pA, pJ, pR ) ;
@@ -121,7 +121,7 @@ static
 void
 test_CCol(
   integer                  N,
-  blas_sparse_matrix       mHandle, 
+  blas_sparse_matrix       mHandle,
   CColMatrix<Real> const & ccol,
   Vector<Real>     const & v
 ) {
@@ -148,7 +148,7 @@ test_CCol(
   tm . stop() ;
   Real timeb = tm . milliseconds() ;
 
-  sleep(1) ;  
+  sleep(1) ;
   tm . start() ;
   REPEAT(N) F77NAME(amux)( &n, pv, pr, pA, pJ, pR ) ;
   tm . stop() ;
@@ -163,14 +163,14 @@ static
 void
 test_CCoor(
   integer N,
-  blas_sparse_matrix        mHandle, 
+  blas_sparse_matrix        mHandle,
   CCoorMatrix<Real> const & ccoor,
   Vector<Real>      const & v
 ) {
 
   Timing tm;
   Vector<Real> res( v.size() );
-  
+
   sleep(1);
   tm.start();
   REPEAT(N) { res = ccoor * v; }
@@ -191,7 +191,7 @@ test_CCoor(
   Real timeb = tm.milliseconds();
 
   sleep(1);
-  tm.start();  
+  tm.start();
   REPEAT(N) F77NAME(amux)( &n, pv, pr, pA, pJ, pR );
   tm.stop();
   Real timec = tm . milliseconds();
@@ -203,16 +203,16 @@ test_CCoor(
 int
 main() {
   Timing tm ;
- 
+
   cout << "\nMATRIX TESTS\n";
-       
+
   char const *rMatrix[] = { "hor__131.mtx", "af23560.mtx", "plat1919.mtx", NULL };
   char const **p = rMatrix;
-  
+
   Vector<Real> v, res;
-  
+
   for (; *p != NULL; ++p ) {
-  
+
     cout << "TEST matrix = " << *p << '\n';
     CCoorMatrix<Real> ccoor;
     CRowMatrix<Real>  crow;
@@ -225,7 +225,7 @@ main() {
     cout << "load matrix..." << flush;
     mm . load( ccoor );
     cout << "done\n";
-    
+
     Spy( string("mm/") + *p + ".eps", ccoor, 15.0 );
 
     tm.start();
@@ -234,14 +234,14 @@ main() {
     Real timea = tm.milliseconds();
 
     tm.start();
-    ccol = ccoor;  
+    ccol = ccoor;
     tm.stop();
     Real timeb = tm.milliseconds();
 
     tm.start();
-    blas_sparse_matrix mHandle = BLAS_duscr_begin( ccoor.numRows(), ccoor.numCols() );
+    blas_sparse_matrix mHandle = BLAS_duscr_begin( ccoor.nrows(), ccoor.ncols() );
     BLAS_duscr_insert_entries(
-      mHandle,  ccoor.nnz(),
+      mHandle, ccoor.nnz(),
       ccoor.getA().data(),
       (int*)ccoor.getI().data(),
       (int*)ccoor.getJ().data()
@@ -249,13 +249,13 @@ main() {
     BLAS_suscr_end( mHandle );
     tm.stop();
     Real timec = tm.milliseconds();
-  
+
     cout << "TO CROW  " << timea << "[ms]" << '\n';
     cout << "TO CCOL  " << timeb << "[ms]" << '\n';
     cout << "TO SBLAS " << timec << "[ms]" << '\n';
 
     A.resize(ccoor.nnz());
-    R.resize(ccoor.numRows()+1);
+    R.resize(ccoor.nrows()+1);
     J.resize(ccoor.nnz());
     std::copy( crow.getA().begin(), crow.getA().end(), A.begin() );
     std::copy( crow.getR().begin(), crow.getR().end(), R.begin() );
@@ -263,7 +263,7 @@ main() {
     for ( integer i = 0; i < R.size(); ++i ) ++R[i];
     for ( integer i = 0; i < J.size(); ++i ) ++J[i];
 
-    integer const nr = ccoor.numRows();
+    integer const nr = ccoor.nrows();
 
     v.resize(n);
     res.resize(n);
@@ -280,7 +280,7 @@ main() {
     res = ccoor * v;
     res -= ccol * v;
     cout << "CCoor - CCol = " << normi(res) << '\n';
-    
+
     res = ccoor * v;
     BLAS_dusmv( blas_no_trans, -1.0, mHandle, &v(0), 1, &res(0), 1 );
     cout << "CCoor - SBLAS = " << normi(res) << '\n';

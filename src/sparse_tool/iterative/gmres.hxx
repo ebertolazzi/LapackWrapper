@@ -93,14 +93,14 @@ namespace Sparse_tool {
     using std::abs;
 
     UTILS_ASSERT(
-      A.numRows() == b.size() &&
-      A.numCols() == x.size() &&
-      A.numRows() == A.numCols(),
+      A.nrows() == b.size() &&
+      A.ncols() == x.size() &&
+      A.nrows() == A.ncols(),
       "Sparse_tool::gmres, bad system:\n"
       "dim matrix  = {} x {}\n"
       "dim r.h.s.  = {}\n"
       "dim unknown = {}\n",
-      A.numRows(), A.numCols(), b.size(), x.size()
+      A.nrows(), A.ncols(), b.size(), x.size()
     );
 
     real_type resid = 0;
@@ -129,7 +129,7 @@ namespace Sparse_tool {
 
       real_type beta = r.norm();
       if ( beta <= epsi ) goto fine;
- 
+
       typename vector_type::real_type betax = beta;
       v.col(0) = r / betax;
       s(0)     = beta;
@@ -156,7 +156,7 @@ namespace Sparse_tool {
         GeneratePlaneRotation(H(i*m1+i), H((i+1)*m1+i), cs(i), sn(i));
         ApplyPlaneRotation(H(i*m1+i), H((i+1)*m1+i), cs(i), sn(i));
         ApplyPlaneRotation(s(i), s(i+1), cs(i), sn(i));
-      
+
         ++i; ++iter;
         resid = abs(s(i));
         if ( pStream != nullptr )

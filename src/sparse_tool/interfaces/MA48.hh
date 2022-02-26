@@ -273,8 +273,8 @@ namespace Sparse_tool {
       IRN.reserve( Mat.nnz() );
       JCN.reserve( Mat.nnz() );
       A.reserve( Mat.nnz() );
-      this->nRow = Mat.numRows();
-      this->nCol = Mat.numCols();
+      this->nRow = Mat.nrows();
+      this->nCol = Mat.ncols();
       this->nnz  = Mat.nnz();
       for ( Mat.Begin(); Mat.End(); Mat.Next() )
         this->insert( Mat.row(), Mat.column(), Mat.value() );

@@ -21,7 +21,7 @@
 
 #include <complex>
 
-/* 
+/*
  * SUPERLU interface http://crd.lbl.gov/~xiaoye/SuperLU/
  */
 
@@ -168,15 +168,15 @@ namespace Sparse_tool {
 
     int
     load( CColMatrix<T> const & A ) {
-      this->nRow = A.numRows();
-      this->nCol = A.numCols();
+      this->nRow = A.nrows();
+      this->nCol = A.ncols();
       this->nnz  = A.nnz();
       // Create matrix A in the format expected by SuperLU.
       T const   * AA = static_cast<T const *>(A.getA().data());
       int const * II = reinterpret_cast<int const *>(A.getI().data());
       int const * CC = reinterpret_cast<int const *>(A.getC().data());
       Create_CompCol_Matrix(
-        slu_A, A.numRows(), A.numCols(), A.nnz(),
+        slu_A, A.nrows(), A.ncols(), A.nnz(),
         const_cast<double *>(AA),
         const_cast<int *>(II),
         const_cast<int *>(CC),
@@ -343,7 +343,7 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & res, VECTOR const & v ) const
+    ass_preco( VECTOR & res, VECTOR const & v ) const
     { ILU.solve( v, res, false ); }
 
   };

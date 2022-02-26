@@ -108,9 +108,9 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::check( MatW const & A ) const {
     UTILS_ASSERT(
-      A.numRows() == m_nrows && A.numCols() == m_ncols,
+      A.nrows() == m_nrows && A.ncols() == m_ncols,
       "MatrixWrapper::check(A) size(A) = {} x {} expected {} x {}\n",
-      A.numRows(), A.numCols(), m_nrows, m_ncols
+      A.nrows(), A.ncols(), m_nrows, m_ncols
     );
   }
 
@@ -161,7 +161,7 @@ namespace lapack_wrapper {
     check(A);
     #endif
     integer info = gecopy(
-      A.numRows(), A.numCols(), A.data(), A.lDim(),
+      A.nrows(), A.ncols(), A.data(), A.ldim(),
       m_data, m_ldData
     );
     UTILS_ASSERT(
@@ -177,9 +177,9 @@ namespace lapack_wrapper {
   MatrixWrapper<T>::load_transposed( MatW const & A ) {
     #ifndef LAPACK_WRAPPER_NO_DEBUG
     UTILS_ASSERT(
-      A.numCols() == m_nrows && A.numRows() == m_ncols,
+      A.ncols() == m_nrows && A.nrows() == m_ncols,
       "MatrixWrapper::load_transposed(A) size(A) = {} x {} expected {} x {}\n",
-      A.numRows(), A.numCols(), m_ncols, m_nrows
+      A.nrows(), A.ncols(), m_ncols, m_nrows
     );
     #endif
     for ( integer i=0; i < m_nrows; ++i )

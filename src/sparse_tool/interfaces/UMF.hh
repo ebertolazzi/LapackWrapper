@@ -78,7 +78,7 @@ namespace Sparse_tool {
       A_stored = Mat;
 
       int status = umfpack_di_symbolic(
-        A_stored.numRows(), A_stored.numCols(),
+        A_stored.nrows(), A_stored.ncols(),
         (int const *)A_stored.getC().data(),
         (int const *)A_stored.getI().data(),
         A_stored.getA().data(),
@@ -169,9 +169,9 @@ namespace Sparse_tool {
   public:
 
     UMFpreconditioner(void) : Preco<UMFPRECO>() {}
-    
+
     template <typename MAT>
-    UMFpreconditioner( MAT const & M, realType const dropTolerance ) : Preco<UMFPRECO>() 
+    UMFpreconditioner( MAT const & M, realType const dropTolerance ) : Preco<UMFPRECO>()
     { ILU.load( M, dropTolerance ); }
 
     //! build the preconditioner from matrix `M`.
@@ -186,7 +186,7 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & res, VECTOR const & v ) const
+    ass_preco( VECTOR & res, VECTOR const & v ) const
     { ILU.solve( v, res, false ); }
 
   };

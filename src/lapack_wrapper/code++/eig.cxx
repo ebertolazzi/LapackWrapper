@@ -154,8 +154,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvalues<T>::setup( MatW const & M ) {
-    this->allocate( M.numRows() );
-    integer info = gecopy( m_N, m_N, M.data(), M.lDim(), m_A_saved, m_N );
+    this->allocate( M.nrows() );
+    integer info = gecopy( m_N, m_N, M.data(), M.ldim(), m_A_saved, m_N );
     UTILS_ASSERT(
       info == 0, "Eigenvalues<T>::setup, call gecopy return info = {}\n", info
     );
@@ -379,8 +379,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvectors<T>::setup( MatW const & A ) {
-    this->allocate( A.numRows() );
-    integer info = gecopy( m_N, m_N, A.data(), A.lDim(),  m_A_saved, m_N );
+    this->allocate( A.nrows() );
+    integer info = gecopy( m_N, m_N, A.data(), A.ldim(),  m_A_saved, m_N );
     UTILS_ASSERT(
       info == 0,
       "Eigenvectors::setup, call gecopy return info = {}\n", info
@@ -671,9 +671,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvalues<T>::setup( MatW const & A, MatW const & B ) {
-    this->allocate( A.numRows() );
-    integer info1 = gecopy( m_N, m_N, A.data(), A.lDim(), m_A_saved, m_N );
-    integer info2 = gecopy( m_N, m_N, B.data(), B.lDim(), m_B_saved, m_N );
+    this->allocate( A.nrows() );
+    integer info1 = gecopy( m_N, m_N, A.data(), A.ldim(), m_A_saved, m_N );
+    integer info2 = gecopy( m_N, m_N, B.data(), B.ldim(), m_B_saved, m_N );
     UTILS_ASSERT(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvalues::setup, call gecopy return info1 = {}, info2 = {}\n",
@@ -982,9 +982,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvectors<T>::setup( MatW const & A, MatW const & B ) {
-    this->allocate( A.numRows() );
-    integer info1 = gecopy( m_N, m_N, A.data(), A.lDim(), m_A_saved, m_N );
-    integer info2 = gecopy( m_N, m_N, B.data(), B.lDim(), m_B_saved, m_N );
+    this->allocate( A.nrows() );
+    integer info1 = gecopy( m_N, m_N, A.data(), A.ldim(), m_A_saved, m_N );
+    integer info2 = gecopy( m_N, m_N, B.data(), B.ldim(), m_B_saved, m_N );
     UTILS_ASSERT(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvectors::setup, call gecopy return info1 = {}, info2 = {}\n",

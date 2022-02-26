@@ -77,12 +77,12 @@ namespace Sparse_tool {
     // based on:
     //
     // PSPLTM - PostScript PLoTer of a (sparse) Matrix
-    // By Loris Renggli (renggli@masg1.epfl.ch) and Youcef Saad 
+    // By Loris Renggli (renggli@masg1.epfl.ch) and Youcef Saad
     */
 
     // ----------------------------------------------------------------------
-    integer nc = sp.numCols() + 1;
-    integer nr = sp.numRows() + 1;
+    integer nc = sp.ncols() + 1;
+    integer nr = sp.nrows() + 1;
 
     double ysize = (xsize*nr) / nc;
 
@@ -118,57 +118,63 @@ namespace Sparse_tool {
     yt = yt * u2dot + delt;
 
     // begin of output
-    stream
-      << "%!PS-Adobe-3.0 EPSF-3.0\n"
-      << "%%Creator: Sparse_tool by Enrico Bertolazzi\n"
-      << "%%BoundingBox: " << round(xl) << ' '
-                           << round(yb) << ' '
-                           << round(xr) << ' '
-                           << round(yt) << '\n'
-      << "%%EndComments\n"
-      << "/cm {72 mul 2.54 div} def\n"
-      << "gsave\n"
-      << leftRightMargin << " cm " << bottomTopMargin << " cm translate\n"
-      << xsize << " cm " << nc << " div dup scale\n"
+    fmt::print( stream,
+      "%!PS-Adobe-3.0 EPSF-3.0\n"
+      "%%Creator: Sparse_tool by Enrico Bertolazzi\n"
+      "%%BoundingBox: {} {} {} {}\n"
+      "%%EndComments\n"
+      "/cm {{72 mul 2.54 div}} def\n"
+      "gsave\n"
+      "{} cm {} cm translate\n"
+      "{} cm {} div dup scale\n"
       // draw a frame around the matrix
-      << frameLaneWidth << " setlinewidth\n"
-      << "newpath\n"
-      << 0.5-frameLaneWidth    << ' ' << 0.5-frameLaneWidth    << " moveto\n"
-      << nc-0.5+frameLaneWidth << ' ' << 0.5-frameLaneWidth    << " lineto\n"
-      << nc-0.5+frameLaneWidth << ' ' << nr-0.5+frameLaneWidth << " lineto\n"
-      << 0.5-frameLaneWidth    << ' ' << nr-0.5+frameLaneWidth << " lineto\n"
-      << "closepath stroke\n";
+      "{} setlinewidth\n"
+      "newpath\n"
+      "{} {} moveto\n"
+      "{} {} lineto\n"
+      "{} {} lineto\n"
+      "{} {} lineto\n"
+      "closepath stroke\n",
+      round(xl), round(yb), round(xr), round(yt),
+      leftRightMargin, bottomTopMargin,
+      xsize, nc,
+      frameLaneWidth,
+      0.5-frameLaneWidth,    0.5-frameLaneWidth,
+      nc-0.5+frameLaneWidth, 0.5-frameLaneWidth,
+      nc-0.5+frameLaneWidth, nr-0.5+frameLaneWidth,
+      0.5-frameLaneWidth,    nr-0.5+frameLaneWidth
+    );
 
     // drawing the separation lines (if required)
     vector<integer>::const_iterator it;
     if ( rowLines != nullptr ) {
-      stream << sepLaneWidth << " setlinewidth\n";
+      fmt::print( stream, "{} setlinewidth\n", sepLaneWidth );
       for ( it = rowLines -> begin(); it != rowLines -> end(); ++it ) {
-        double y = sp.numRows() - (*it) + 0.5;
-        stream << "0.5 " << y << " moveto " << nc-0.5 << ' ' << y << " lineto stroke\n";
+        double y = sp.nrows() - (*it) + 0.5;
+        fmt::print( stream, "0.5 {} moveto {} {} lineto stroke\n", y, nc-0.5, y );
       }
     }
     if ( colLines != nullptr ) {
-      stream << sepLaneWidth << " setlinewidth\n";
+      fmt::print( stream, "{} setlinewidth\n", sepLaneWidth );
       for ( it = colLines -> begin(); it != colLines -> end(); ++it ) {
         double x = (*it)+0.5;
-        stream << x << " 0.5 moveto " << x << ' ' << nr-0.5 << " lineto stroke\n";
+        fmt::print( stream, "{} 0.5 moveto {} {} lineto stroke\n", x, x, nr-0.5 );
       }
     }
 
     // ----------- plotting loop
-    stream
-      << "1 1 translate\n"
-      << "0.8 setlinewidth\n"
-      << "/p { moveto 0 -.40 rmoveto 0 .80 rlineto stroke } def\n";
+    fmt::print( stream,
+      "1 1 translate\n"
+      "0.8 setlinewidth\n"
+      "/p {{ moveto 0 -.40 rmoveto 0 .80 rlineto stroke }} def\n"
+    );
 
     for ( sp.Begin(); sp.End(); sp.Next() )
-      stream << sp.column() << ' ' << (sp.numRows()-sp.row()-1) << " p\n";
+      fmt::print( stream, "{} {} p\n", sp.column(), (sp.nrows()-sp.row()-1) );
 
     // -----------------------------------------------------------------------
     stream << "showpage\n";
   }
-
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

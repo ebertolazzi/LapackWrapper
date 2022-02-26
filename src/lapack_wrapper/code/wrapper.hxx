@@ -57,12 +57,12 @@ namespace lapack_wrapper {
     {}
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Map a piece of memory into a matrix object.
     //!
     //! \param data pointer of the memory to be mapped as a matrix
     //! \param dim  number of elements on the diagonal of the mapped matrix
-    //! 
+    //!
     explicit
     DiagMatrixWrapper( real_type * data, integer dim ) {
       m_data = data;
@@ -76,12 +76,12 @@ namespace lapack_wrapper {
     real_type       * data()       { return m_data; }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Map a piece of memory into a matrix object.
-    //! 
+    //!
     //! \param data pointer of the memory to be mapped as a matrix
     //! \param dim  dimension the mapped diagonal matrix
-    //! 
+    //!
     void
     setup( real_type * data, integer dim ) {
       m_data = data;
@@ -187,7 +187,7 @@ namespace lapack_wrapper {
   public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Build an empty wrapper.
     //!
     explicit
@@ -234,23 +234,31 @@ namespace lapack_wrapper {
       return *this;
     }
 
-    integer numRows()  const { return m_nrows; }  //!< Number of rows
-    integer numCols()  const { return m_ncols; }  //!< Number of columns
-    integer lDim()     const { return m_ldData; } //!< Leading dimension
-    integer numElems() const { return m_nrows*m_ncols; } //!< Number of elements
+    integer nrows()     const { return m_nrows; }  //!< Number of rows
+    integer ncols()     const { return m_ncols; }  //!< Number of columns
+    integer ldim()      const { return m_ldData; } //!< Leading dimension
+    integer num_elems() const { return m_nrows*m_ncols; } //!< Number of elements
+
+    // ALIAS
+    #ifdef LAPACK_WRAPPER_USE_ALIAS
+    integer numRows()  const { return nrows(); }  //!< Number of rows
+    integer numCols()  const { return ncols(); }  //!< Number of columns
+    integer ldim()     const { return lDim(); } //!< Leading dimension
+    integer numElems() const { return num_elems(); } //!< Number of elements
+    #endif
 
     real_type const * data() const { return m_data; }
     real_type       * data()       { return m_data; }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Map a piece of memory into a matrix object.
-    //! 
+    //!
     //! \param data  pointer of the memory to be mapped as a matrix
     //! \param nr    number of rows of the mapped matrix
     //! \param nc    number of columns of the mapped matrix
     //! \param ld    leading dimension of the matrix (Fortran addressing 0 based)
-    //! 
+    //!
     void
     setup(
       real_type * data,
@@ -260,60 +268,60 @@ namespace lapack_wrapper {
     );
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Access element (i,j) of the matrix.
-    //! 
+    //!
     //! \param[in] i row of the element
     //! \param[in] j column of the element
-    //! 
+    //!
     real_type const &
     operator () ( integer i, integer j ) const
     { return m_data[this->iaddr(i,j)]; }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Access element (i,j) of the matrix.
-    //! 
+    //!
     //! \param[in] i row of the element
     //! \param[in] j column of the element
-    //! 
+    //!
     real_type &
     operator () ( integer i, integer j )
     { return m_data[this->iaddr(i,j)]; }
 
-    //! 
+    //!
     //! Fill the matrix with zeros.
-    //! 
+    //!
     void
     zero_fill() {
       gezero( m_nrows, m_ncols, m_data, m_ldData );
     }
 
-    //! 
+    //!
     //! Fill the matrix with zeros.
-    //! 
+    //!
     void
     setZero() { zero_fill(); }
 
-    //! 
+    //!
     //! Fill the matrix with value `val`.
     //!
     //! \param[in] val value used to fill matrix
-    //! 
+    //!
     void
     fill( real_type val ) {
       gefill( m_nrows, m_ncols, m_data, m_ldData, val );
     }
 
-    //! 
+    //!
     //! Scale the matrix with value `sc` (multiply all elements by `sc`).
     //!
     //! \param[in] sc value used to scale matrix
-    //! 
+    //!
     void
     scale_by( real_type sc );
 
-    //! 
+    //!
     //! Scale the matrix with value `sc`
     //! (multiply all elements of the block by `sc`).
     //!
@@ -322,7 +330,7 @@ namespace lapack_wrapper {
     //! \param[in] nc    number of columns of the block to be zeroed
     //! \param[in] irow  starting row
     //! \param[in] icol  stating column
-    //! 
+    //!
     void
     scale_block(
       real_type sc,
@@ -332,15 +340,15 @@ namespace lapack_wrapper {
       integer   icol
     );
 
-    //! 
+    //!
     //! Zeroes a rectangular block of the stored matrix
     //! staring at `(irow,icol)` position.
-    //! 
+    //!
     //! \param[in] nr    number of rows of the block to be zeroed
     //! \param[in] nc    number of columns of the block to be zeroed
     //! \param[in] irow  starting row
     //! \param[in] icol  stating column
-    //! 
+    //!
     void
     zero_block(
       integer nr,
@@ -351,9 +359,9 @@ namespace lapack_wrapper {
       gezero( nr, nc, m_data + this->iaddr(irow,icol), m_ldData );
     }
 
-    //! 
+    //!
     //! Initialize the matrix as an identity matrix.
-    //! 
+    //!
     void
     id( real_type dg ) {
       geid( m_nrows, m_ncols, m_data, m_ldData, dg );
@@ -370,35 +378,35 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Initialize matrix.
-    //! 
+    //!
     //! \param[in] data   pointer of memory with data to be copied
     //! \param[in] ldData leading dimension of the memory to be copied
-    //! 
-    //! 
+    //!
+    //!
     void load( real_type const data[], integer ldData );
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Initialize matrix.
-    //! 
+    //!
     //! \param[in] data   pointer of memory with data to be copied
     //! \param[in] ldData leading dimension of the memory to be copied
-    //! 
-    //! 
+    //!
+    //!
     void load_transposed( real_type const data[], integer ldData );
 
-    //! 
+    //!
     //! Initialize matrix using another matrix.
-    //! 
+    //!
     //! \param[in] A initialize matrix with the matrix of the object A
-    //! 
+    //!
     void load( MatW const & A );
 
-    //! 
+    //!
     //! Initialize matrix using another matrix (transposed).
-    //! 
+    //!
     //! \param[in] A initialize matrix with the matrix of the object A
     //!
     void load_transposed( MatW const & A );
@@ -600,18 +608,18 @@ namespace lapack_wrapper {
       integer   const j_col[]
     );
 
-    //! 
+    //!
     //! Copy sparse matrix into the object.
-    //! 
+    //!
     //! \param[in] sp sparse matrix to be copied
     //!
     void load( Sparse const & sp );
 
-    //! 
+    //!
     //! Copy sparse matrix into the object transposing it.
-    //! 
+    //!
     //! \param[in] sp sparse matrix to be copied
-    //! 
+    //!
     void load_transposed( Sparse const & sp );
 
     //!
@@ -643,7 +651,7 @@ namespace lapack_wrapper {
 
     //!
     //! Copy sparse matrix into the object.
-    //! 
+    //!
     //! \param[in] rows row indices of the sparse matrix
     //! \param[in] cols column indices of the sparse matrix
     //! \param[in] vals values of the sparse matrix
@@ -668,9 +676,9 @@ namespace lapack_wrapper {
       this->load_symmetric( rows, cols, vals, nnz );
     }
 
-    //! 
+    //!
     //! Copy sparse matrix into the object.
-    //! 
+    //!
     //! \param sp     sparse matrix to be copied
     //! \param i_offs offset added to to the row indices
     //! \param j_offs offset added to to the column indices
@@ -776,9 +784,9 @@ namespace lapack_wrapper {
     //!
     void add( real_type alpha, real_type const data[], integer ldData );
 
-    //! 
+    //!
     //! Add a block of memory to the matrix.
-    //! 
+    //!
     //! \param data   pointer of memory with data to be copied
     //! \param ldData leading dimension of the memory to be copied
     //!
@@ -786,7 +794,7 @@ namespace lapack_wrapper {
 
     //
     //! Compute `R <- R + alpha * A`
-    //! 
+    //!
     //! \param alpha scale used in multiplication
     //! \param A     first mapped matrix
     //!
@@ -812,33 +820,33 @@ namespace lapack_wrapper {
       this->add( A.m_data, A.m_ldData );
     }
 
-    //! 
+    //!
     //! Add sparse matrix to the object
-    //! 
+    //!
     //! \param sp sparse matrix to be copied
     //!
     void add( Sparse const & sp );
 
-    //! 
+    //!
     //! Add sparse matrix to the object
-    //! 
+    //!
     //! \param sp     sparse matrix to be copied
     //! \param i_offs offset added to to the row indices
     //! \param j_offs offset added to to the column indices
     //!
     void add( Sparse const & sp, integer i_offs, integer j_offs );
 
-    //! 
+    //!
     //! Add sparse multiplied by `alpha` matrix to the object
-    //! 
+    //!
     //! \param alpha  scalar used to multiply the sparse matrix
     //! \param sp     sparse matrix to be copied
     //!
     void add( real_type alpha, Sparse const & sp );
 
-    //! 
+    //!
     //! Add sparse multiplied by `alpha` matrix to the object
-    //! 
+    //!
     //! \param alpha  scalar used to multiply the sparse matrix
     //! \param sp     sparse matrix to be copied
     //! \param i_offs offset added to to the row indices
@@ -853,9 +861,9 @@ namespace lapack_wrapper {
     );
 
     // alpha*A + beta*B -> C
-    //! 
+    //!
     //! Add a linear combination of two matrix and assign to a third one.
-    //! 
+    //!
     //! \param alpha scalar used to multiply the matrix `A`
     //! \param A     first mapped matrix
     //! \param beta  scalar used to multiply the matrix `B`
@@ -880,9 +888,9 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Make a view of a block.
-    //! 
+    //!
     //! \param i_offs initial row of the block to be extracted
     //! \param j_offs initial column of the block to be extracted
     //! \param nrow   number of rows of the block to be extracted
@@ -914,9 +922,9 @@ namespace lapack_wrapper {
       }
     }
 
-    //! 
+    //!
     //! Extract a matrix in transposed form
-    //! 
+    //!
     //! \param out mapped matrix which store the result
     //!
     void
@@ -933,9 +941,9 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Extract a block
-    //! 
+    //!
     //! \param i_offs initial row of the block to be extracted
     //! \param j_offs initial column of the block to be extracted
     //! \param to     mapped matrix which store the result
@@ -963,13 +971,13 @@ namespace lapack_wrapper {
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //! 
+    //!
     //! Extract a block.
-    //! 
+    //!
     //! \param i_offs initial row of the block to be extracted
     //! \param j_offs initial column of the block to be extracted
     //! \param to     mapped matrix which store the result
-    //! 
+    //!
     void
     get_block_transposed(
       MatW &  to,
@@ -1025,9 +1033,9 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // c = beta*c + alpha*A*v
-  //! 
+  //!
   //! Perform matrix vector multiplication `c = beta*c + alpha*A*v`.
-  //! 
+  //!
   //! \param alpha  matrix `A` is multiplied by `alpha`
   //! \param TRANSA choose if multiply with the transpose of `A`
   //! \param A      matrix used in the multiplication
@@ -1052,9 +1060,9 @@ namespace lapack_wrapper {
   ) {
     lapack_wrapper::gemv(
       TRANSA,
-      A.numRows(), A.numCols(),
+      A.nrows(), A.ncols(),
       alpha,
-      A.data(), A.lDim(),
+      A.data(), A.ldim(),
       v, incv,
       beta,
       c, incc
@@ -1063,9 +1071,9 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // c = beta*c + alpha*A*v
-  //! 
+  //!
   //! Perform matrix vector multiplication `c = beta*c + alpha*A*v`.
-  //! 
+  //!
   //! \param alpha  matrix `A` is multiplied by `alpha`
   //! \param A      matrix used in the multiplication
   //! \param v      vector to be multiplied
@@ -1088,9 +1096,9 @@ namespace lapack_wrapper {
   ) {
     lapack_wrapper::gemv(
       NO_TRANSPOSE,
-      A.numRows(), A.numCols(),
+      A.nrows(), A.ncols(),
       alpha,
-      A.data(), A.lDim(),
+      A.data(), A.ldim(),
       v, incv,
       beta,
       c, incc
@@ -1098,9 +1106,9 @@ namespace lapack_wrapper {
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //! 
+  //!
   //! Perform matrix matrix multiplication `C = beta*C + alpha*A*B`.
-  //! 
+  //!
   //! \param where  message added in case of error
   //! \param alpha  matrix `A` is multiplied by `alpha`
   //! \param A      matrix used in the multiplication
@@ -1121,32 +1129,32 @@ namespace lapack_wrapper {
     MatrixWrapper<T>       & C
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numCols() == B.numRows() &&
-      A.numRows() == C.numRows() &&
-      B.numCols() == C.numCols(),
+      A.ncols() == B.nrows() &&
+      A.nrows() == C.nrows() &&
+      B.ncols() == C.ncols(),
       "gemm, at `{}' inconsistent dimensions:\n"
       "A = {} x {}\nB = {} x {}\nC = {} x {}\n",
       where,
-      A.numRows(), A.numCols(),
-      B.numRows(), B.numCols(),
-      C.numRows(), C.numCols()
+      A.nrows(), A.ncols(),
+      B.nrows(), B.ncols(),
+      C.nrows(), C.ncols()
     );
     lapack_wrapper::gemm(
       NO_TRANSPOSE,
       NO_TRANSPOSE,
-      A.numRows(), B.numCols(), A.numCols(),
+      A.nrows(), B.ncols(), A.ncols(),
       alpha,
-      A.data(), A.lDim(),
-      B.data(), B.lDim(),
+      A.data(), A.ldim(),
+      B.data(), B.ldim(),
       beta,
-      C.data(), C.lDim()
+      C.data(), C.ldim()
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //! 
+  //!
   //! Perform matrix matrix multiplication `C = beta*C + alpha*A*B`.
-  //! 
+  //!
   //! \param alpha  matrix `A` is multiplied by `alpha`
   //! \param A      matrix used in the multiplication
   //! \param B      matrix used in the multiplication
@@ -1165,29 +1173,29 @@ namespace lapack_wrapper {
     MatrixWrapper<T>       & C
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numCols() == B.numRows() &&
-      A.numRows() == C.numRows() &&
-      B.numCols() == C.numCols(),
+      A.ncols() == B.nrows() &&
+      A.nrows() == C.nrows() &&
+      B.ncols() == C.ncols(),
       "gemm, inconsistent dimensions:\n"
       "A = {} x {}\nB = {} x {}\nC = {} x {}\n",
-      A.numRows(), A.numCols(), B.numRows(), B.numCols(), C.numRows(), C.numCols()
+      A.nrows(), A.ncols(), B.nrows(), B.ncols(), C.nrows(), C.numConcolsls()
     );
     lapack_wrapper::gemm(
       NO_TRANSPOSE,
       NO_TRANSPOSE,
-      A.numRows(), B.numCols(), A.numCols(),
+      A.nrows(), B.ncols(), A.ncols(),
       alpha,
-      A.data(), A.lDim(),
-      B.data(), B.lDim(),
+      A.data(), A.ldim(),
+      B.data(), B.ldim(),
       beta,
-      C.data(), C.lDim()
+      C.data(), C.ldim()
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //! 
+  //!
   //! Perform matrix matrix multiplication `C = beta*C + alpha*A*B`.
-  //! 
+  //!
   //! \param where  message added in case of error
   //! \param alpha  matrix `A` is multiplied by `alpha`
   //! \param TRANSA choose `A` transposed or not
@@ -1211,39 +1219,39 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    integer Ar = TRANSA == NO_TRANSPOSE ? A.numRows() : A.numCols();
-    integer Ac = TRANSA == NO_TRANSPOSE ? A.numCols() : A.numRows();
-    integer Br = TRANSB == NO_TRANSPOSE ? B.numRows() : B.numCols();
-    integer Bc = TRANSB == NO_TRANSPOSE ? B.numCols() : B.numRows();
+    integer Ar = TRANSA == NO_TRANSPOSE ? A.nrows() : A.ncols();
+    integer Ac = TRANSA == NO_TRANSPOSE ? A.ncols() : A.nrows();
+    integer Br = TRANSB == NO_TRANSPOSE ? B.nrows() : B.ncols();
+    integer Bc = TRANSB == NO_TRANSPOSE ? B.ncols() : B.nrows();
     UTILS_ASSERT_DEBUG(
-      C.numRows() == Ar && C.numCols() == Bc && Ac == Br,
+      C.nrows() == Ar && C.ncols() == Bc && Ac == Br,
       "gemm, at `{}' inconsistent dimensions:"
       "\nA = {} x {}\nB = {} x {}\nC = {} x {}"
       "\nA {} transposed\nB {} transposed\n",
       where,
-      A.numRows(), A.numCols(),
-      B.numRows(), B.numCols(),
-      C.numRows(), C.numCols(),
+      A.nrows(), A.ncols(),
+      B.nrows(), B.ncols(),
+      C.nrows(), C.ncols(),
       (NO_TRANSPOSE?"NO":""),
       (NO_TRANSPOSE?"NO":"")
     );
     lapack_wrapper::gemm(
       TRANSA,
       TRANSB,
-      C.numRows(), C.numCols(), Ac,
+      C.nrows(), C.ncols(), Ac,
       alpha,
-      A.data(), A.lDim(),
-      B.data(), B.lDim(),
+      A.data(), A.ldim(),
+      B.data(), B.ldim(),
       beta,
-      C.data(), C.lDim()
+      C.data(), C.ldim()
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // C = beta*C + alpha*A*B (NO DEBUG)
-  //! 
+  //!
   //! Perform matrix matrix multiplication `C = beta*C + alpha*A*B`.
-  //! 
+  //!
   //! \param alpha  matrix `A` is multiplied by `alpha`
   //! \param TRANSA choose `A` transposed or not
   //! \param A      matrix used in the multiplication
@@ -1264,38 +1272,38 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    integer Ar = TRANSA == NO_TRANSPOSE ? A.numRows() : A.numCols();
-    integer Ac = TRANSA == NO_TRANSPOSE ? A.numCols() : A.numRows();
-    integer Br = TRANSB == NO_TRANSPOSE ? B.numRows() : B.numCols();
-    integer Bc = TRANSB == NO_TRANSPOSE ? B.numCols() : B.numRows();
+    integer Ar = TRANSA == NO_TRANSPOSE ? A.nrows() : A.ncols();
+    integer Ac = TRANSA == NO_TRANSPOSE ? A.ncols() : A.nrows();
+    integer Br = TRANSB == NO_TRANSPOSE ? B.nrows() : B.ncols();
+    integer Bc = TRANSB == NO_TRANSPOSE ? B.ncols() : B.nrows();
     UTILS_ASSERT_DEBUG(
-      C.numRows() == Ar && C.numCols() == Bc && Ac == Br,
+      C.nrows() == Ar && C.ncols() == Bc && Ac == Br,
       "gemm, inconsistent dimensions:"
       "\nA = {} x {}\nB = {} x {}\nC = {} x {}"
       "\nA {} transposed\nB {} transposed\n",
-      A.numRows(), A.numCols(),
-      B.numRows(), B.numCols(),
-      C.numRows(), C.numCols(),
+      A.nrows(), A.ncols(),
+      B.nrows(), B.ncols(),
+      C.nrows(), C.ncols(),
       (NO_TRANSPOSE?"NO":""),
       (NO_TRANSPOSE?"NO":"")
     );
     lapack_wrapper::gemm(
       TRANSA,
       TRANSB,
-      C.numRows(), C.numCols(), Ac,
+      C.nrows(), C.ncols(), Ac,
       alpha,
-      A.data(), A.lDim(),
-      B.data(), B.lDim(),
+      A.data(), A.ldim(),
+      B.data(), B.ldim(),
       beta,
-      C.data(), C.lDim()
+      C.data(), C.ldim()
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // x = A * x or x = A^T * x
-  //! 
+  //!
   //! Perform matrix vector multiplication `x = A * x` or `x = A^T * x`.
-  //! 
+  //!
   //! \param[in]     UPLO   choose upper or lower part
   //! \param[in]     TRANS  choose `A` transposed or not
   //! \param[in]     DIAG   use or not diagonal elements to 1
@@ -1315,20 +1323,20 @@ namespace lapack_wrapper {
     integer                  incx
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numRows() == A.numCols(),
+      A.nrows() == A.ncols(),
       "trmv, matrix is {} x {} expected square\n",
-      A.numRows(), A.numCols()
+      A.nrows(), A.ncols()
     );
     lapack_wrapper::trmv(
-      UPLO, TRANS, DIAG, A.numRows(), A.data(), A.lDim(), x, incx
+      UPLO, TRANS, DIAG, A.nrows(), A.data(), A.ldim(), x, incx
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // x = A * x or x = A^T * x
-  //! 
+  //!
   //! Perform matrix vector multiplication `x = A * x` or `x = A^T * x`.
-  //! 
+  //!
   //! \param where  message added in case of error
   //! \param UPLO   choose upper or lower part
   //! \param TRANS  choose `A` transposed or not
@@ -1350,20 +1358,20 @@ namespace lapack_wrapper {
     integer                  incx
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numRows() == A.numCols(),
+      A.nrows() == A.ncols(),
       "trmv at `{}` matrix is {} x {} expected square\n",
-      where, A.numRows(), A.numRows()
+      where, A.nrows(), A.ncols()
     );
     lapack_wrapper::trmv(
-      UPLO, TRANS, DIAG, A.numRows(), A.data(), A.lDim(), x, incx
+      UPLO, TRANS, DIAG, A.nrows(), A.data(), A.ldim(), x, incx
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // x = A^(-1) * x or x = A^(-T) * x
-  //! 
+  //!
   //! Perform matrix vector multiplication `x = A * x` or `x = A^T * x`.
-  //! 
+  //!
   //! \param UPLO   choose upper or lower part
   //! \param TRANS  choose `A` transposed or not
   //! \param DIAG   use or not diagonal elements to 1
@@ -1383,21 +1391,21 @@ namespace lapack_wrapper {
     integer                  incx
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numRows() == A.numCols(),
+      A.nrows() == A.ncols(),
       "trsv, matrix is {} x {} expected square\n",
-      A.numRows(), A.numCols()
+      A.nrows(), A.ncols()
     );
     lapack_wrapper::trsv(
-      UPLO, TRANS, DIAG, A.numRows(), A.data(), A.lDim(), x, incx
+      UPLO, TRANS, DIAG, A.nrows(), A.data(), A.ldim(), x, incx
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // x = A^(-1) * x or x = A^(-T) * x
-  //! 
-  //! Perform matrix vector multiplication 
+  //!
+  //! Perform matrix vector multiplication
   //! `x = A^(-1) * x` or `x = A^(-T) * x`.
-  //! 
+  //!
   //! \param where  message added in case of error
   //! \param UPLO   choose upper or lower part
   //! \param TRANS  choose `A` transposed or not
@@ -1419,24 +1427,24 @@ namespace lapack_wrapper {
     integer                  incx
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numRows() == A.numCols(),
+      A.nrows() == A.ncols(),
       "trsv at `{}` matrix is {} x {} expected square\n",
-      where, A.numRows(), A.numRows()
+      where, A.nrows(), A.ncols()
     );
     lapack_wrapper::trsv(
-      UPLO, TRANS, DIAG, A.numRows(), A.data(), A.lDim(), x, incx
+      UPLO, TRANS, DIAG, A.nrows(), A.data(), A.ldim(), x, incx
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //! 
+  //!
   //! Perform matrix matrix multiplication
   //!
-  //! \code{.unparsed} 
+  //! \code{.unparsed}
   //!    B := alpha*op( A )*B,   or   B := alpha*B*op( A ),
   //!    op( A ) = A   or   op( A ) = A**T.
   //! \endcode
-  //! 
+  //!
   //! \param SIDE   multiply on left or right
   //! \param UPLO   choose upper or lower part
   //! \param TRANS  choose `A` transposed or not
@@ -1458,27 +1466,27 @@ namespace lapack_wrapper {
     MatrixWrapper<T>       & B
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numRows() == A.numCols(),
+      A.nrows() == A.ncols(),
       "trmm, matrix is {} x {} expected square\n",
-      A.numRows(), A.numCols()
+      A.nrows(), A.ncols()
     );
     lapack_wrapper::trmm(
       SIDE, UPLO, TRANS, DIAG,
-      B.numRows(), B.numCols(), alpha,
-      A.data(), A.lDim(),
-      B.data(), B.lDim()
+      B.nrows(), B.ncols(), alpha,
+      A.data(), A.ldim(),
+      B.data(), B.ldim()
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //! 
+  //!
   //! Perform matrix matrix multiplication
   //!
-  //! \code{.unparsed} 
+  //! \code{.unparsed}
   //!    B := alpha*op( A )*B,   or   B := alpha*B*op( A ),
   //!    op( A ) = A   or   op( A ) = A**T.
   //! \endcode
-  //! 
+  //!
   //! \param where  message added in case of error
   //! \param SIDE   multiply on left or right
   //! \param UPLO   choose upper or lower part
@@ -1502,27 +1510,27 @@ namespace lapack_wrapper {
     MatrixWrapper<T>       & B
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numRows() == A.numCols(),
+      A.nrows() == A.ncols(),
       "trmm, at `{}` matrix is {} x {} expected square\n",
-      where, A.numRows(), A.numRows()
+      where, A.nrows(), A.ncols()
     );
     lapack_wrapper::trmm(
       SIDE, UPLO, TRANS, DIAG,
-      B.numRows(), B.numCols(), alpha,
-      A.data(), A.lDim(),
-      B.data(), B.lDim()
+      B.nrows(), B.ncols(), alpha,
+      A.data(), A.ldim(),
+      B.data(), B.ldim()
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //! 
+  //!
   //! Perform matrix matrix multiplication
-  //! 
+  //!
   //! \code{.unparsed}
   //!    B := alpha*op( A^(-1) )*B,   or   B := alpha*B*op( A^(-1) ),
   //!    op( A ) = A   or   op( A ) = A**T.
   //! \endcode
-  //! 
+  //!
   //! \param SIDE   multiply on left or right
   //! \param UPLO   choose upper or lower part
   //! \param TRANS  choose `A` transposed or not
@@ -1544,27 +1552,27 @@ namespace lapack_wrapper {
     MatrixWrapper<T>       & B
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numRows() == A.numCols(),
+      A.nrows() == A.ncols(),
       "trsm, matrix is {} x {} expected square\n",
-      A.numRows(), A.numCols()
+      A.nrows(), A.ncols()
     );
     lapack_wrapper::trsm(
       SIDE, UPLO, TRANS, DIAG,
-      B.numRows(), B.numCols(), alpha,
-      A.data(), A.lDim(),
-      B.data(), B.lDim()
+      B.nrows(), B.ncols(), alpha,
+      A.data(), A.ldim(),
+      B.data(), B.ldim()
     );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //! 
+  //!
   //! Perform matrix matrix multiplication.
   //!
   //! \code{.unparsed}
   //!    B := alpha*op( A^(-1) )*B,   or   B := alpha*B*op( A^(-1) ),
   //!    op( A ) = A   or   op( A ) = A**T.
   //! \endcode
-  //! 
+  //!
   //! \param where  message added in case of error
   //! \param SIDE   multiply on left or right
   //! \param UPLO   choose upper or lower part
@@ -1573,8 +1581,8 @@ namespace lapack_wrapper {
   //! \param alpha  scalar used in the multiplication
   //! \param A      matrix to be multiplied
   //! \param B      matrix to be multiplied
-  //! 
-  //! 
+  //!
+  //!
   template <typename T>
   inline
   void
@@ -1589,15 +1597,15 @@ namespace lapack_wrapper {
     MatrixWrapper<T>       & B
   ) {
     UTILS_ASSERT_DEBUG(
-      A.numRows() == A.numCols(),
+      A.nrows() == A.ncols(),
       "trmm, at `{}` matrix is {} x {} expected square\n",
-      where, A.numRows(), A.numRows()
+      where, A.nrows(), A.ncols()
     );
     lapack_wrapper::trsm(
       SIDE, UPLO, TRANS, DIAG,
-      B.numRows(), B.numCols(), alpha,
-      A.data(), A.lDim(),
-      B.data(), B.lDim()
+      B.nrows(), B.ncols(), alpha,
+      A.data(), A.ldim(),
+      B.data(), B.ldim()
     );
   }
 
@@ -1607,7 +1615,7 @@ namespace lapack_wrapper {
   inline
   T
   normInf( MatrixWrapper<T> const & A ) {
-    return lapack_wrapper::normInf( A.numRows(), A.numCols(), A.data(), A.lDim() );
+    return lapack_wrapper::normInf( A.nrows(), A.ncols(), A.data(), A.ldim() );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1616,7 +1624,7 @@ namespace lapack_wrapper {
   inline
   T
   norm1( MatrixWrapper<T> const & A ) {
-    return lapack_wrapper::norm1( A.numRows(), A.numCols(), A.data(), A.lDim() );
+    return lapack_wrapper::norm1( A.nrows(), A.ncols(), A.data(), A.ldim() );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1625,7 +1633,7 @@ namespace lapack_wrapper {
   inline
   T
   normF( MatrixWrapper<T> const & A ) {
-    return lapack_wrapper::normF( A.numRows(), A.numCols(), A.data(), A.lDim() );
+    return lapack_wrapper::normF( A.nrows(), A.ncols(), A.data(), A.ldim() );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1634,7 +1642,7 @@ namespace lapack_wrapper {
   inline
   T
   maxabs( MatrixWrapper<T> const & A ) {
-    return lapack_wrapper::maxabs( A.numRows(), A.numCols(), A.data(), A.lDim() );
+    return lapack_wrapper::maxabs( A.nrows(), A.ncols(), A.data(), A.ldim() );
   }
 
   // explicit instantiation declaration to suppress warnings

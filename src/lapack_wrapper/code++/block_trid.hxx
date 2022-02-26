@@ -88,13 +88,24 @@ namespace lapack_wrapper {
     void
     zero();
 
+    integer num_blocks() const { return m_nBlocks; }
+
+    integer D_nrows( integer n ) const { return m_row_blocks[n+1] - m_row_blocks[n]; }
+    integer D_ncols( integer n ) const { return m_row_blocks[n+1] - m_row_blocks[n]; }
+
+    integer L_nrows( integer n ) const { return D_nrows(n+1); }
+    integer L_ncols( integer n ) const { return D_ncols(n); }
+
+    // ALIAS
+    #ifdef LAPACK_WRAPPER_USE_ALIAS
     integer numBlocks() const { return m_nBlocks; }
 
-    integer DnumRows( integer n ) const { return m_row_blocks[n+1] - m_row_blocks[n]; }
-    integer DnumCols( integer n ) const { return m_row_blocks[n+1] - m_row_blocks[n]; }
+    integer DnumRows( integer n ) const { return D_nrows(n); }
+    integer DnumCols( integer n ) const { return D_ncols(n); }
 
-    integer LnumRows( integer n ) const { return DnumRows(n+1); }
-    integer LnumCols( integer n ) const { return DnumCols(n); }
+    integer LnumRows( integer n ) const { return L_nrows(n); }
+    integer LnumCols( integer n ) const { return L_ncols(n); }
+    #endif
 
     void
     setD(

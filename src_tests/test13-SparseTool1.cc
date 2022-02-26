@@ -72,9 +72,9 @@ main() {
         if ( j < n-1 ) A.insert(ii,ipos( i, j+1, n, n )) = -1;
       }
     }
-    A.internalOrder(); // order internal structure of the sparse matrice
-    //P.build(A);        // build incomplete LDU preconditioner
-    P.build(A,1.6);    // build incomplete LDU preconditioner
+    A.internal_order(); // order internal structure of the sparse matrice
+    //P.build(A);       // build incomplete LDU preconditioner
+    P.build(A,1.6);     // build incomplete LDU preconditioner
     //double res = bicgstab( A, b, x, P, 1E-14, maxiter, iter, &cout );
     //double res = gmres( A, b, x, P, 1E-14, 50, maxiter, iter, &cout );
     //double res = cg( A, b, x, P, 1E-14, maxiter, iter, &cout );

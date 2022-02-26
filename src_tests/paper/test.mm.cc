@@ -32,38 +32,40 @@ testMM( string const & mm_file ) {
   CCoorMatrix<double>           Ar ;
   CCoorMatrix<complex<double> > Ac ;
 
-  cout << "Reading: " << mm_file << "..." << flush ;
-  mm . read( mm_file ) ;
-  cout << "done\n" << mm << flush ;
-  
-  cout << "\nLoading Matrix..." << flush ;
-  switch ( mm . value_type() ) {
-    case MM_PATTERN: mm . load(sp) ; break ;
-    case MM_INTEGER: mm . load(Ai) ; break ;
-    case MM_REAL:    mm . load(Ar) ; break ;
-    case MM_COMPLEX: mm . load(Ac) ; break ;
-  }
+  fmt::print( "Reading: {}...", mm_file );
+  mm.read( mm_file ) ;
+  fmt::print( "done\n" );
 
-  cout << "done\nWriting Matrix..." << flush ;
+  fmt::print( "Loading Matrix..." );
+  switch ( mm . value_type() ) {
+    case MM_PATTERN: mm.load(sp); break;
+    case MM_INTEGER: mm.load(Ai); break;
+    case MM_REAL:    mm.load(Ar); break;
+    case MM_COMPLEX: mm.load(Ac); break;
+  }
+  fmt::print( "\ndone\n" );
+  fmt::print( "Writing Matrix..." );
   switch ( mm . value_type() ) {
     case MM_PATTERN:
-      MatrixMarketSaveToFile( mm_file + ".txt", sp, mm . matrix_type() ) ;
+      MatrixMarket_save_to_file( mm_file + ".txt", sp, mm.matrix_type() );
     break ;
     case MM_INTEGER:
-      MatrixMarketSaveToFile( mm_file + ".txt",
-                              Ai, mm . value_type(), mm . matrix_type() ) ;
+      MatrixMarket_save_to_file(
+        mm_file + ".txt", Ai, mm.value_type(), mm.matrix_type()
+      );
     break ;
     case MM_REAL:
-      MatrixMarketSaveToFile( mm_file + ".txt",
-                              Ar, mm . value_type(), mm . matrix_type() ) ;
+      MatrixMarket_save_to_file(
+        mm_file + ".txt", Ar, mm.value_type(), mm.matrix_type()
+      );
     break ;
     case MM_COMPLEX:
-      MatrixMarketSaveToFile( mm_file + ".txt",
-                              Ac, mm . value_type(), mm . matrix_type() ) ;
-    break ;
+      MatrixMarket_save_to_file(
+        mm_file + ".txt", Ac, mm.value_type(), mm.matrix_type()
+      );
+    break;
   }
   cout << "done\n" ;
-
 }
 
 int
@@ -76,6 +78,6 @@ main() {
                      "bcsstk30.mtx",             // pattern
                      NULL } ;
 
-  for ( char **p = Matrix ; *p != NULL ; ++p ) testMM( string("mm/")+*p) ;  
+  for ( char **p = Matrix ; *p != NULL ; ++p ) testMM( string("mm/")+*p) ;
   return 0 ;
 }

@@ -203,7 +203,7 @@ namespace Sparse_tool {
     }
 
   public:
-  
+
     MA41() {}
     ~MA41() {}
 
@@ -243,10 +243,10 @@ namespace Sparse_tool {
       this->IRN.reserve( Mat.nnz() );
       this->JCN.reserve( Mat.nnz() );
       this->A.reserve( Mat.nnz() );
-      this->N = Mat.numRows();
+      this->N = Mat.nrows();
       for ( Mat.Begin(); Mat.End(); Mat.Next() )
         this->insert( Mat.row(), Mat.column(), Mat.value() );
-      this->setup( Mat.numRows() );
+      this->setup( Mat.nrows() );
       return 0;
     }
 

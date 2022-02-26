@@ -5,13 +5,13 @@
 namespace Sparse_tool {
 
   /*
-  //  ######  ### #       ######  #     # 
-  //  #     #  #  #       #     # #     # 
-  //  #     #  #  #       #     # #     # 
-  //  ######   #  #       #     # #     # 
-  //  #   #    #  #       #     # #     # 
-  //  #    #   #  #       #     # #     # 
-  //  #     # ### ####### ######   #####  
+  //  ######  ### #       ######  #     #
+  //  #     #  #  #       #     # #     #
+  //  #     #  #  #       #     # #     #
+  //  ######   #  #       #     # #     #
+  //  #   #    #  #       #     # #     #
+  //  #    #   #  #       #     # #     #
+  //  #     # ### ####### ######   #####
   */
   //! Incomplete \c LDU preconditioner for the real part only of a complex matrix
   template <typename T>
@@ -40,34 +40,34 @@ namespace Sparse_tool {
 
     Vector<integer>   Lnnz, Unnz;
 
-    //! build incomplete LDU decomposition with specified pattern `P` 
+    //! build incomplete LDU decomposition with specified pattern `P`
     template <typename MAT, typename PAT>
     void
     build_RILDU( MAT const & A, PAT const & P ) {
 
       UTILS_ASSERT0(
-        P.isOrdered(),
+        P.is_ordered(),
         "Sparse_tool: RILDUpreconditioner::build_RILDU\n"
         "pattern must be ordered before use\n"
       );
       UTILS_ASSERT0(
-        P.numRows() == A.numRows() && P.numCols() == A.numCols(),
+        P.nrows() == A.nrows() && P.ncols() == A.ncols(),
         "Sparse_tool: RILDUpreconditioner::build_RILDU\n"
         "pattern do not match matrix size\n"
       );
       UTILS_ASSERT0(
-        P.numRows() == P.numCols(),
+        P.nrows() == P.ncols(),
         "Sparse_tool: RILDUpreconditioner::build_RILDU\n"
         "only square matrix allowed\n"
       );
       UTILS_ASSERT0(
-        P.numRows() > 0,
+        P.nrows() > 0,
         "Sparse_tool: RILDUpreconditioner::build_RILDU\n"
         "empty matrix\n"
       );
 
       // step 0: compute necessary memory
-      PRECO::pr_size = A.numRows();
+      PRECO::pr_size = A.nrows();
       Lnnz.resize( PRECO::pr_size );
       Unnz.resize( PRECO::pr_size );
 
@@ -105,7 +105,7 @@ namespace Sparse_tool {
       W.setZero();
       L_A.setZero();
       U_A.setZero();
-      
+
       // step 3: fill structure
       for ( P.Begin(); P.End(); P.Next() ) {
         integer i = P.row();
@@ -206,7 +206,7 @@ namespace Sparse_tool {
         for ( kk = LRk; kk < LRk1; ++kk ) L_A(kk) = W(L_J(kk)) / D(L_J(kk));
         W = 0;
         #endif
-        
+
         //  W = M12  ---- u   = D^(-1)L^(-1) M12
         for ( kk = UCk; kk < UCk1; ++kk ) W(U_I(kk)) = U_A(kk);
 
@@ -245,13 +245,13 @@ namespace Sparse_tool {
   public:
 
     RILDUpreconditioner(void) : Preco<RILDUPRECO>() {}
-    
+
     template <typename MAT>
-    RILDUpreconditioner( MAT const & M ) : Preco<RILDUPRECO>() 
+    RILDUpreconditioner( MAT const & M ) : Preco<RILDUPRECO>()
     { build_RILDU( M, M ); }
 
     template <typename MAT, typename PRE>
-    RILDUpreconditioner( MAT const & M, PRE const & P ) : Preco<RILDUPRECO>() 
+    RILDUpreconditioner( MAT const & M, PRE const & P ) : Preco<RILDUPRECO>()
     { build_RILDU(M,P); }
 
     //! build the preconditioner from matrix `M`.
@@ -260,7 +260,7 @@ namespace Sparse_tool {
     build( MAT const & M )
     { build_RILDU(M,M); }
 
-    //! build the preconditioner from matrix `M` with pattern `P` 
+    //! build the preconditioner from matrix `M` with pattern `P`
     template <typename MAT, typename PRE>
     void
     build( MAT const & M, PRE const & P )
@@ -271,7 +271,7 @@ namespace Sparse_tool {
     //! and store result to vector `res`.
     template <typename VECTOR>
     void
-    assPreco( VECTOR & res, VECTOR const & v ) const {
+    ass_preco( VECTOR & res, VECTOR const & v ) const {
       res = v;
 
       // solve L

@@ -483,16 +483,16 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedSVD<T>::setup( MatW const & A, MatW const & B ) {
-    integer m = A.numRows();
-    integer n = A.numCols();
-    integer p = B.numRows();
+    integer m = A.nrows();
+    integer n = A.ncols();
+    integer p = B.nrows();
     UTILS_ASSERT(
-      n == B.numCols(),
+      n == B.ncols(),
       "GeneralizedSVD<T>::setup( A, B ) incompatible matrices\n"
       "A is {} x {} and B is {} x {}\n",
-      A.numRows(), A.numCols(), B.numRows(), B.numCols()
+      A.nrows(), A.ncols(), B.nrows(), B.ncols()
     );
-    this->setup( m, n, p, A.data(), A.lDim(), B.data(), B.lDim() );
+    this->setup( m, n, p, A.data(), A.ldim(), B.data(), B.ldim() );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

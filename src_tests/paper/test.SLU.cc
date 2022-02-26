@@ -37,17 +37,17 @@ testSLU( string const & mm_file ) {
 
   mm . read( mm_file ) ;
   cout << mm ;
-  
+
   cout << "load matrix..." << flush ;
   mm . load( A ) ;
   cout << "done\n" ;
 
   Spy( mm_file + ".eps" , A, 15.0 ) ;
 
-  exact . resize( A . numRows() ) ;
-  x     . resize( A . numRows() ) ;
-  rhs   . resize( A . numRows() ) ;
-  resid . resize( A . numRows() ) ;
+  exact . resize( A.nrows() ) ;
+  x     . resize( A.nrows() ) ;
+  rhs   . resize( A.nrows() ) ;
+  resid . resize( A.nrows() ) ;
 
   cout << "factorize (SLU) ..." << flush ;
   tm . start() ;
@@ -63,13 +63,13 @@ testSLU( string const & mm_file ) {
   cout << slu . solve(rhs,x) << " " ;
   tm . stop() ;
   cout << tm . milliseconds()  << "[ms] done\n" ;
-  
+
   resid = rhs - A*x ;
 
   cout << "\nerror    (SLU) = " << dist2( x, exact )
        << "\nresidual (SLU) = " << normi( resid )
        << "\n" ;
-  
+
 }
 
 int

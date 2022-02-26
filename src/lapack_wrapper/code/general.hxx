@@ -159,7 +159,7 @@ namespace lapack_wrapper {
     CBLASNAME(sger)( CblasColMajor, M, N, ALPHA, X, INCX, Y, INCY, A, LDA );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     sger_(
-      &M, &N, &ALPHA, 
+      &M, &N, &ALPHA,
       const_cast<real*>(X), &INCX,
       const_cast<real*>(Y), &INCY,
       A, &LDA
@@ -950,7 +950,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     sgetrs_(
       const_cast<character*>(trans_blas[TRANS]),
-      &N, &NRHS, 
+      &N, &NRHS,
       const_cast<real*>(A), &LDA,
       const_cast<integer*>(IPIV),
       B, &LDB, &INFO
@@ -1004,7 +1004,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dgetrs_(
       const_cast<character*>(trans_blas[TRANS]),
-      &N, &NRHS, 
+      &N, &NRHS,
       const_cast<doublereal*>(A), &LDA,
       const_cast<integer*>(IPIV),
       B, &LDB, &INFO

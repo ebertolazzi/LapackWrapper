@@ -131,7 +131,7 @@ namespace Sparse_tool {
     // mtype = -4 complex and hermitian indefinite, diagonal or Bunch-Kaufman pivoting
     // mtype =  6 complex and symmetric
     // mtype = 13 complex and nonsymmetric, supernode pivoting
-    
+
     //  phase = 11  Analysis
     //  phase = 12  Analysis, Numerical Factorization
     //  phase = 13  Analysis, Numerical Factorization, Solve, Iterative Refinement
@@ -148,7 +148,7 @@ namespace Sparse_tool {
 
     /* Internal solver memory pointer pt,                  */
     /* 32-bit: int pt[64]; 64-bit: long int pt[64]         */
-    /* or void *pt[64] should be OK on both architectures  */ 
+    /* or void *pt[64] should be OK on both architectures  */
     void *pt[64];
 
     /* Pardiso control parameters. */
@@ -159,7 +159,7 @@ namespace Sparse_tool {
     Vector<real_or_complex> A;
     Vector<integer>         R;
     Vector<integer>         J;
-    
+
     char const *
     error_to_string( integer error ) const {
       switch ( error ) {
@@ -204,7 +204,7 @@ namespace Sparse_tool {
     ~Pardiso() {
       free();
     }
-    
+
     template <typename MT>
     void
     load( Sparse<real,MT> const & M ) {
@@ -215,20 +215,20 @@ namespace Sparse_tool {
     void
     load( Sparse<real,MT> const & M, Compare cmp ) {
       UTILS_ASSERT(
-        M.numRows() == M.numCols(),
+        M.nrows() == M.ncols(),
         "Pardiso interface, matrix must be square {} x {}\n",
-        M.numRows(), M.numCols()
+        M.nrows(), M.ncols()
       );
 
       // step 0: Count nonzero
-      n = M.numRows();
+      n = M.nrows();
       integer nnz = 0;
       for ( M.Begin(); M.End(); M.Next() )
         if ( cmp(M.row(), M.column() ) ) ++nnz;
 
       A.resize( nnz + 1 );
       J.resize( nnz );
-      R.resize( M.numRows() + 1 );
+      R.resize( M.nrows() + 1 );
       R = 0;
 
       // step 1: Evaluate not zero pattern
@@ -254,7 +254,7 @@ namespace Sparse_tool {
         R(0) == 0 && R(n) == nnz,
         "Pardiso interface, load failed\n"
       )
-      // step 3: internalOrder matrix
+      // step 3: internal_order matrix
       Vector<int> index;
       integer ii, rk, rk1;
       for ( ii = 0, rk = R(0); ii < n; ++ii, rk = rk1 ) {
@@ -322,7 +322,7 @@ namespace Sparse_tool {
         error, error_to_string(error)
       );
     }
- 
+
     /* -------------------------------------------------------------------- */
     /* ..  Reordering and Symbolic Factorization.  This step also allocates */
     /*     all memory that is necessary for the factorization.              */
@@ -403,14 +403,14 @@ namespace Sparse_tool {
         error, error_to_string(error)
       );
     }
-    
+
     void
     solve( Vector<real_or_complex> const & b, Vector<real_or_complex> & x ) {
       x.resize( b.size() );
       solve( 1, &b.front(), &x.front() );
     }
 
-    /* -------------------------------------------------------------------- */    
+    /* -------------------------------------------------------------------- */
     /* ..  Termination and release of memory.                               */
     /* -------------------------------------------------------------------- */
     void
@@ -484,7 +484,7 @@ namespace Sparse_tool {
 
   class PardisoComplexU : public Pardiso<std::complex<real> > {
   public:
-  
+
     typedef Pardiso<std::complex<real> > PARDISO;
 
     using PARDISO::check_matrix;
@@ -500,7 +500,7 @@ namespace Sparse_tool {
     void
     solve( integer nrhs, std::complex<real> const b[], std::complex<real> x[] )
     { PARDISO::solve( nrhs, b, x ); }
-    
+
     void
     solve(
       Vector<std::complex<real> > const & b,
@@ -513,7 +513,7 @@ namespace Sparse_tool {
   // symmetric but not positive definite
   class PardisoComplexS : public Pardiso<std::complex<real> > {
   public:
-  
+
     typedef Pardiso<std::complex<real> > PARDISO;
 
     using PARDISO::check_matrix;
@@ -529,7 +529,7 @@ namespace Sparse_tool {
     void
     solve( integer nrhs, std::complex<real> const b[], std::complex<real> x[] )
     { PARDISO::solve( nrhs, b, x ); }
-    
+
     void
     solve(
       Vector<std::complex<real> > const & b,
@@ -542,7 +542,7 @@ namespace Sparse_tool {
   // hermitian but not positive definite
   class PardisoComplexH : public Pardiso<std::complex<real> > {
   public:
-  
+
     typedef Pardiso<std::complex<real> > PARDISO;
 
     using PARDISO::check_matrix;
@@ -558,7 +558,7 @@ namespace Sparse_tool {
     void
     solve( integer nrhs, std::complex<real> const b[], std::complex<real> x[] )
     { PARDISO::solve( nrhs, b, x ); }
-    
+
     void
     solve(
       Vector<std::complex<real> > const & b,
@@ -571,7 +571,7 @@ namespace Sparse_tool {
   // hermitian AND positive definite
   class PardisoComplexSPD : public Pardiso<std::complex<real> > {
   public:
-  
+
     typedef Pardiso<std::complex<real> > PARDISO;
 
     using PARDISO::check_matrix;
@@ -587,7 +587,7 @@ namespace Sparse_tool {
     void
     solve( integer nrhs, std::complex<real> const b[], std::complex<real> x[] )
     { PARDISO::solve( nrhs, b, x ); }
-    
+
     void
     solve(
       Vector<std::complex<real> > const & b,

@@ -113,7 +113,7 @@ namespace lapack_wrapper {
   std::string
   print_matrix( MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10 ) {
     return print_matrix(
-      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim(), epsi
+      Amat.nrows(), Amat.ncols(), Amat.data(), Amat.ldim(), epsi
     );
   }
 
@@ -124,7 +124,7 @@ namespace lapack_wrapper {
   std::string
   print_matrix2( MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10 ) {
     return print_matrix2(
-      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim(), epsi
+      Amat.nrows(), Amat.ncols(), Amat.data(), Amat.ldim(), epsi
     );
   }
 
@@ -191,7 +191,7 @@ namespace lapack_wrapper {
     MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10
   ) {
     return print_matrix_transpose(
-      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim(), epsi
+      Amat.nrows(), Amat.ncols(), Amat.data(), Amat.ldim(), epsi
     );
   }
 
@@ -204,7 +204,7 @@ namespace lapack_wrapper {
     MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10
   ) {
     return print_matrix_transpose2(
-      Amat.numRows(), Amat.numCols(), Amat.data(), Amat.lDim(), epsi
+      Amat.nrows(), Amat.ncols(), Amat.data(), Amat.ldim(), epsi
     );
   }
 
@@ -396,30 +396,30 @@ namespace lapack_wrapper {
 
     bool
     solve( MatrixWrapper<real_type> & M )
-    { return solve( M.numCols(), M.data(), M.lDim() ); }
+    { return solve( M.ncols(), M.data(), M.ldim() ); }
 
     void
     solve( char const who[], MatrixWrapper<real_type> & M )
-    { this->solve( who, M.numCols(), M.data(), M.lDim() ); }
+    { this->solve( who, M.ncols(), M.data(), M.ldim() ); }
 
     bool
     t_solve( MatrixWrapper<real_type> & M )
-    { return t_solve( M.numCols(), M.data(), M.lDim() ); }
+    { return t_solve( M.ncols(), M.data(), M.ldim() ); }
 
     void
     t_solve( char const who[], MatrixWrapper<real_type> & M )
-    { this->t_solve( who, M.numCols(), M.data(), M.lDim() ); }
+    { this->t_solve( who, M.ncols(), M.data(), M.ldim() ); }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     void
     factorize( char const who[], MatrixWrapper<real_type> const & M ) {
-      this->factorize( who, M.numRows(), M.numCols(), M.data(), M.lDim() );
+      this->factorize( who, M.nrows(), M.ncols(), M.data(), M.ldim() );
     }
 
     bool
     factorize( MatrixWrapper<real_type> const & M ) {
-      return this->factorize( M.numRows(), M.numCols(), M.data(), M.lDim() );
+      return this->factorize( M.nrows(), M.ncols(), M.data(), M.ldim() );
     }
 
     virtual
@@ -455,12 +455,12 @@ namespace lapack_wrapper {
 
     void
     t_factorize( char const who[], MatrixWrapper<real_type> const & M ) {
-      this->t_factorize( who, M.numRows(), M.numCols(), M.data(), M.lDim() );
+      this->t_factorize( who, M.nrows(), M.ncols(), M.data(), M.ldim() );
     }
 
     bool
     t_factorize( MatrixWrapper<real_type> const & M ) {
-      return this->t_factorize( M.numRows(), M.numCols(), M.data(), M.lDim() );
+      return this->t_factorize( M.nrows(), M.ncols(), M.data(), M.ldim() );
     }
 
   };

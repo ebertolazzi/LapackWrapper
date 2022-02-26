@@ -233,7 +233,7 @@ namespace lapack_wrapper {
     integer         ldData,
     bool            transposed
   ) {
-    integer nr = this->DnumRows(n);
+    integer nr = this->D_nrows(n);
     if ( transposed ) {
       getranspose( nr, nr, data, ldData, m_D_blocks[n], nr );
     } else {
@@ -255,8 +255,8 @@ namespace lapack_wrapper {
     integer         ldData,
     bool            transposed
   ) {
-    integer nr = this->LnumRows(n);
-    integer nc = this->LnumCols(n);
+    integer nr = this->L_nrows(n);
+    integer nc = this->L_ncols(n);
     if ( transposed ) {
       getranspose( nr, nc, data, ldData, m_L_blocks[n], nr );
     } else {
@@ -282,7 +282,7 @@ namespace lapack_wrapper {
     integer           ncol,
     bool              transposed
   ) {
-    integer ldD = this->DnumRows(n);
+    integer ldD = this->D_nrows(n);
     real_type * D = m_D_blocks[n]+beginRow+beginCol*ldD;
 
     if ( transposed ) {
@@ -310,7 +310,7 @@ namespace lapack_wrapper {
     integer           ncol,
     bool              transposed
   ) {
-    integer ldL = this->LnumRows(n);
+    integer ldL = this->L_nrows(n);
     real_type * L = m_L_blocks[n]+beginRow+beginCol*ldL;
     if ( transposed ) {
       getranspose( nrow, ncol, data, ldData, L, ldL );
@@ -334,8 +334,8 @@ namespace lapack_wrapper {
     );
 
     integer info = lapack_wrapper::getrf(
-      this->DnumRows(0), this->DnumCols(0),
-      m_D_blocks[0], this->DnumRows(0),
+      this->D_nrows(0), this->D_ncols(0),
+      m_D_blocks[0], this->D_nrows(0),
       m_B_permutation[0]
     );
 
@@ -345,8 +345,8 @@ namespace lapack_wrapper {
     );
 
     for ( integer k=1; k < m_nBlocks; ++k ) {
-      integer nr0 = this->DnumRows(k-1);
-      integer nr1 = this->DnumRows(k);
+      integer nr0 = this->D_nrows(k-1);
+      integer nr1 = this->D_nrows(k);
       real_type * L0 = m_L_blocks[k-1];
       real_type * D0 = m_D_blocks[k-1];
       real_type * D1 = m_D_blocks[k];
@@ -392,16 +392,16 @@ namespace lapack_wrapper {
     if ( m_is_factorized ) return true;
 
     integer info = lapack_wrapper::getrf(
-      this->DnumRows(0), this->DnumCols(0),
-      m_D_blocks[0], this->DnumRows(0),
+      this->D_nrows(0), this->D_ncols(0),
+      m_D_blocks[0], this->D_nrows(0),
       m_B_permutation[0]
     );
 
     if ( info != 0 ) return false;
 
     for ( integer k=1; k < m_nBlocks; ++k ) {
-      integer nr0 = this->DnumRows(k-1);
-      integer nr1 = this->DnumRows(k);
+      integer nr0 = this->D_nrows(k-1);
+      integer nr1 = this->D_nrows(k);
       real_type * L0 = m_L_blocks[k-1];
       real_type * D0 = m_D_blocks[k-1];
       real_type * D1 = m_D_blocks[k];
@@ -441,10 +441,10 @@ namespace lapack_wrapper {
 
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
     integer k = 0;
-    integer nr0 = this->DnumRows(0), nr1;
+    integer nr0 = this->D_nrows(0), nr1;
     real_type * xkm1 = xb, *xk;
     while ( ++k < m_nBlocks ) {
-      nr1 = this->DnumRows(k);
+      nr1 = this->D_nrows(k);
       real_type const * L0 = m_L_blocks[k-1];
       xk = xkm1 + nr0;
       gemv(
@@ -460,7 +460,7 @@ namespace lapack_wrapper {
     // RR{k} = DD{k}\RR{k};
     xk = xb;
     for ( k = 0; k < m_nBlocks; ++k ) {
-      nr1 = this->DnumRows(k);
+      nr1 = this->D_nrows(k);
       // solve
       real_type const * D1 = m_D_blocks[k];
       integer info = getrs(
@@ -470,10 +470,10 @@ namespace lapack_wrapper {
       xk += nr1;
     }
     // RR{k} = RR{k}-LL{k}.'*RR{k+1};
-    nr1 = this->DnumRows(k-1);
+    nr1 = this->D_nrows(k-1);
     xk -= nr1;
     while ( --k > 0 ) {
-      nr0 = this->DnumRows(k-1);
+      nr0 = this->D_nrows(k-1);
       real_type const * L0 = m_L_blocks[k-1];
       xkm1 = xk - nr0;
       gemv(
@@ -503,10 +503,10 @@ namespace lapack_wrapper {
 
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
     integer k = 0;
-    integer nr0 = this->DnumRows(0), nr1;
+    integer nr0 = this->D_nrows(0), nr1;
     real_type * Bkm1 = B, *Bk;
     while ( ++k < m_nBlocks ) {
-      nr1 = this->DnumRows(k);
+      nr1 = this->D_nrows(k);
       real_type const * L0 = m_L_blocks[k-1];
       Bk = Bkm1 + nr0;
       gemm(
@@ -522,7 +522,7 @@ namespace lapack_wrapper {
     // RR{k} = DD{k}\RR{k};
     Bk = B;
     for ( k = 0; k < m_nBlocks; ++k ) {
-      nr1 = this->DnumRows(k);
+      nr1 = this->D_nrows(k);
       // solve
       real_type const * D1 = m_D_blocks[k];
       integer info = getrs(
@@ -534,10 +534,10 @@ namespace lapack_wrapper {
       Bk += nr1;
     }
     // RR{k} = RR{k}-LL{k}.'*RR{k+1};
-    nr1 = this->DnumRows(k-1);
+    nr1 = this->D_nrows(k-1);
     Bk -= nr1;
     while ( --k > 0 ) {
-      nr0 = this->DnumRows(k-1);
+      nr0 = this->D_nrows(k-1);
       real_type const * L0 = m_L_blocks[k-1];
       Bkm1 = Bk - nr0;
       gemm(

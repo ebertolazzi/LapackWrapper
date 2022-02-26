@@ -6,7 +6,7 @@ namespace Sparse_tool {
 
   template <typename real_type, typename integer>
   void
-  mulPoly(
+  multiply_by_poly(
     integer                       mdegree,
     CRowMatrix<real_type> const & A,
     Vector<real_type>           & s0,
@@ -37,13 +37,13 @@ namespace Sparse_tool {
   }
 
   /*
-  //  ####   ####          #####   ####  #      #   # 
-  // #    # #    #         #    # #    # #       # #  
-  // #      #              #    # #    # #        #   
-  // #      #  ###         #####  #    # #        #   
-  // #    # #    #         #      #    # #        #   
-  //  ####   ####          #       ####  ######   #   
-  //               #######                            
+  //  ####   ####          #####   ####  #      #   #
+  // #    # #    #         #    # #    # #       # #
+  // #      #              #    # #    # #        #
+  // #      #  ###         #####  #    # #        #
+  // #    # #    #         #      #    # #        #
+  //  ####   ####          #       ####  ######   #
+  //               #######
   */
   //!
   //! Preconditioned Conjugate Gradient Iterative Solver.
@@ -78,14 +78,14 @@ namespace Sparse_tool {
   ) {
 
     UTILS_ASSERT(
-      A.numRows() == b.size() &&
-      A.numCols() == x.size() &&
-      A.numRows() == A.numCols(),
+      A.nrows() == b.size() &&
+      A.ncols() == x.size() &&
+      A.nrows() == A.ncols(),
       "Sparse_tool::cg_poly, bad system:\n"
       "dim matrix  = {} x {}\n"
       "dim r.h.s.  = {}\n"
       "dim unknown = {}\n",
-      A.numRows(), A.numCols(), b.size(), x.size()
+      A.nrows(), A.ncols(), b.size(), x.size()
     );
 
     integer neq = b.size();
@@ -125,7 +125,7 @@ namespace Sparse_tool {
     r -= Ascaled * x;
 
     // applico precondizionatore p = r / P
-    Sparse_tool::mulPoly<real_type,integer>( mdegree, Ascaled, s0, s1, p, r );
+    Sparse_tool::multiply_by_poly<real_type,integer>( mdegree, Ascaled, s0, s1, p, r );
     rho = p.dot(r);
 
     iter = 1;
@@ -147,7 +147,7 @@ namespace Sparse_tool {
       r -= alpha * Ap;
 
       // applico precondizionatore q = r / P
-      Sparse_tool::mulPoly<real_type,integer>( mdegree, Ascaled, s0, s1, q, r );
+      Sparse_tool::multiply_by_poly<real_type,integer>( mdegree, Ascaled, s0, s1, q, r );
 
       rho_1 = rho;
       rho   = q.dot(r);

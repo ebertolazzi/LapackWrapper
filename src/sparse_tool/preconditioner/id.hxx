@@ -45,13 +45,13 @@ namespace Sparse_tool {
     //! and store result to vector `res`.
     //!
     template <typename VECTOR>
-    void assPreco( VECTOR & res, VECTOR const & v ) const { res = v; }
+    void ass_preco( VECTOR & res, VECTOR const & v ) const { res = v; }
 
     //!
     //! Apply preconditioner to vector `v`
     //!
     template <typename VECTOR>
-    void assPreco( VECTOR & ) const { /* Nothing to do */ }
+    void ass_preco( VECTOR & ) const { /* Nothing to do */ }
   };
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS

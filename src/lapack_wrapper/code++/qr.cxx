@@ -408,7 +408,7 @@ namespace lapack_wrapper {
     A.setup( m_nrows, m_ncols );
     gecopy(
       m_nrows, m_ncols, m_Afactorized, m_nrows,
-      A.data(), A.lDim()
+      A.data(), A.ldim()
     );
   }
 

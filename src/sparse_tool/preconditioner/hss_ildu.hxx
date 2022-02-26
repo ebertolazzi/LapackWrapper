@@ -31,28 +31,28 @@ namespace Sparse_tool {
     integer neq;
     ILDUpreconditioner<rreal_type> preco;
 
-    //! build incomplete LDU decomposition with specified pattern `P` 
+    //! build incomplete LDU decomposition with specified pattern `P`
     template <typename MAT>
     void
     build_HSS_ILDU( MAT const & A ) {
 
       UTILS_ASSERT0(
-        A.isOrdered(),
+        A.is_ordered(),
         "Sparse_tool: HSS_ILDU_Preconditioner::build_LDU\n"
         "pattern must be ordered before use\n"
       );
       UTILS_ASSERT0(
-        A.numRows() == A.numCols(),
+        A.nrows() == A.ncols(),
         "Sparse_tool: HSS_ILDU_Preconditioner::build_LDU\n"
         "only square matrix allowed\n"
       );
       UTILS_ASSERT0(
-        A.numRows() > 0,
+        A.nrows() > 0,
         "Sparse_tool: HSS_ILDU_Preconditioner::build_LDU\n"
         "empty matrix\n"
       );
-    
-      neq = A.numRows();
+
+      neq = A.nrows();
       CCoorMatrix<rreal_type> Amat(neq,neq,A.nnz());
 
       // insert values
@@ -61,15 +61,15 @@ namespace Sparse_tool {
         integer j = A.column();
         Amat.insert(i,j) = A.value().real() + A.value().imag();
       }
-      
-      Amat.internalOrder();
+
+      Amat.internal_order();
       preco.build(Amat);
     }
 
   public:
 
     HSS_ILDU_Preconditioner(void) : Preco<HSS_ILDU_PRECO>() {}
-    
+
     template <typename MAT>
     HSS_ILDU_Preconditioner( MAT const & M ) : Preco<HSS_ILDU_PRECO>()
     { build_HSS_ILDU( M ); }
@@ -86,8 +86,8 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & _y, VECTOR const & v ) const {
-      preco.assPreco(_y,v);
+    ass_preco( VECTOR & _y, VECTOR const & v ) const {
+      preco.ass_preco(_y,v);
       real_type cst = real_type(0.5,-0.5);
       for ( integer k=0; k < neq; ++k ) _y(k) *= cst;
     }

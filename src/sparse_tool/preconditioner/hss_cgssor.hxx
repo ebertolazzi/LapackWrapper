@@ -5,13 +5,13 @@
 namespace Sparse_tool {
 
   /*
-  //  #     #  #####   #####   #####   #####   #####   #####  ####### ######  
-  //  #     # #     # #     # #     # #     # #     # #     # #     # #     # 
-  //  #     # #       #       #       #       #       #       #     # #     # 
-  //  #######  #####   #####  #       #  ####  #####   #####  #     # ######  
-  //  #     #       #       # #       #     #       #       # #     # #   #   
-  //  #     # #     # #     # #     # #     # #     # #     # #     # #    #  
-  //  #     #  #####   #####   #####   #####   #####   #####  ####### #     # 
+  //  #     #  #####   #####   #####   #####   #####   #####  ####### ######
+  //  #     # #     # #     # #     # #     # #     # #     # #     # #     #
+  //  #     # #       #       #       #       #       #       #     # #     #
+  //  #######  #####   #####  #       #  ####  #####   #####  #     # ######
+  //  #     #       #       # #       #     #       #       # #     # #   #
+  //  #     # #     # #     # #     # #     # #     # #     # #     # #    #
+  //  #     #  #####   #####   #####   #####   #####   #####  ####### #     #
   */
   //! Incomplete \c LDU preconditioner
   template <typename T>
@@ -37,7 +37,7 @@ namespace Sparse_tool {
     SSORpreconditioner<rreal_type> preco;
     //ILDUpreconditioner<rreal_type> preco;
 
-    //! build incomplete LDU decomposition with specified pattern `P` 
+    //! build incomplete LDU decomposition with specified pattern `P`
     template <typename MAT>
     void
     build_HSS_CGSSOR(
@@ -49,24 +49,24 @@ namespace Sparse_tool {
     ) {
 
       UTILS_ASSERT0(
-        A.isOrdered(),
+        A.is_ordered(),
         "Sparse_tool: HSS_CGSSOR_Preconditioner::build_LDU\n"
         "pattern must be ordered before use\n"
       );
       UTILS_ASSERT0(
-        A.numRows() == A.numCols(),
+        A.nrows() == A.ncols(),
         "Sparse_tool: HSS_CGSSOR_Preconditioner::build_LDU\n"
         "only square matrix allowed\n"
       );
       UTILS_ASSERT0(
-        A.numRows() > 0,
+        A.nrows() > 0,
         "Sparse_tool: HSS_CGSSOR_Preconditioner::build_LDU\n"
         "empty matrix\n"
       );
 
       maxIter = mIter;
       epsi    = rtol;
-      neq     = A.numRows();
+      neq     = A.nrows();
       Amat.resize(neq,neq,A.nnz());
       p.resize(neq);
       q.resize(neq);
@@ -82,25 +82,25 @@ namespace Sparse_tool {
         Amat.insert(i,j) = A.value().real() + A.value().imag();
       }
 
-      Amat.internalOrder();
+      Amat.internal_order();
       preco.build( Amat, omega, m );
     }
 
     //! apply preconditioner to vector `v`  and store result to vector `res`    void
     void
-    assPrecoR( Vector<rreal_type> & x, Vector<rreal_type> const & b ) const {
+    ass_preco_R( Vector<rreal_type> & x, Vector<rreal_type> const & b ) const {
       rreal_type rho, rho_1, normr0;
       r = b; // parto con x = 0
-      preco.assPreco(p,r);
+      preco.ass_preco(p,r);
       normr0 = p.template lpNorm<Eigen::Infinity>();
       rho    = p.dot(r);
 
-      for ( integer iter = 0; iter < maxIter; ++iter ) { 
+      for ( integer iter = 0; iter < maxIter; ++iter ) {
         Ap = Amat * p;
         rreal_type alpha = rho/Ap.dot(p);
         x += alpha * p;
         r -= alpha * Ap;
-        preco.assPreco(q,r);
+        preco.ass_preco(q,r);
         rreal_type resid = q.template lpNorm<Eigen::Infinity>()/normr0;
         //cout << "       SUB  iter = " << iter << " residual = " << resid << '\n';
         if ( resid <= epsi ) break;
@@ -133,14 +133,14 @@ namespace Sparse_tool {
     //! apply preconditioner to vector `v`  and store result to vector \c y
     template <typename VECTOR>
     void
-    assPreco( VECTOR & _y, VECTOR const & v ) const {
+    ass_preco( VECTOR & _y, VECTOR const & v ) const {
 
       for ( integer k=0; k < neq; ++k ) tmp1(k) = v(k).real();
-      assPrecoR(tmp2,tmp1);
+      ass_preco_R(tmp2,tmp1);
       for ( integer k=0; k < neq; ++k ) _y(k) = real_type(tmp2(k), _y(k).imag());
 
       for ( integer k=0; k < neq; ++k ) tmp1(k) = v(k).imag();
-      assPrecoR(tmp2,tmp1);
+      ass_preco_R(tmp2,tmp1);
       for ( integer k=0; k < neq; ++k ) _y(k) = real_type(_y(k).real(),tmp2(k));
 
       real_type cst = real_type(0.5,-0.5);

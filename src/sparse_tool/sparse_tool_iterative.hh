@@ -46,23 +46,23 @@ namespace Sparse_tool {
     Vector<integer>   & U_C
   ) {
     UTILS_ASSERT0(
-      A.isOrdered(),
+      A.is_ordered(),
       "Sparse_Tool: separate_LDU\n"
       "pattern must be ordered before use\n"
     );
     UTILS_ASSERT0(
-      A.numRows() == A.numCols(),
+      A.nrows() == A.ncols(),
       "Sparse_Tool: separate_LDU\n"
       "only square matrix allowed\n"
     );
     UTILS_ASSERT0(
-      A.numRows() > 0,
+      A.nrows() > 0,
       "Sparse_Tool: separate_LDU\n"
       "empty matrix\n"
     );
 
     // step 0: compute necessary memory
-    integer nr = A.numRows();
+    integer nr = A.nrows();
     Vector<integer> Lnnz( nr ), Unnz( nr );
 
     D.resize( nr );
@@ -184,13 +184,13 @@ namespace Sparse_tool {
   }
 
   /*
-  //  ### #       ######  #     #                       
-  //   #  #       #     # #     # # ##### ###### #####  
-  //   #  #       #     # #     # #   #   #      #    # 
-  //   #  #       #     # #     # #   #   #####  #    # 
-  //   #  #       #     # #     # #   #   #      #####  
-  //   #  #       #     # #     # #   #   #      #   #  
-  //  ### ####### ######   #####  #   #   ###### #    # 
+  //  ### #       ######  #     #
+  //   #  #       #     # #     # # ##### ###### #####
+  //   #  #       #     # #     # #   #   #      #    #
+  //   #  #       #     # #     # #   #   #####  #    #
+  //   #  #       #     # #     # #   #   #      #####
+  //   #  #       #     # #     # #   #   #      #   #
+  //  ### ####### ######   #####  #   #   ###### #    #
   */
   //!
   //! Incomplete `LDU` preconditioner.
@@ -222,19 +222,19 @@ namespace Sparse_tool {
       maxIter = iter;
       P.build(A,PT);
       Mat = A;
-      tmp.resize(A.numRows());
+      tmp.resize(A.nrows());
     }
 
   public:
 
     ILDUiterPreconditioner(void) : Preco<ILDUITERPRECO>() {}
-    
+
     template <typename MAT>
-    ILDUiterPreconditioner( MAT const & _M, integer _iter ) : Preco<ILDUITERPRECO>() 
+    ILDUiterPreconditioner( MAT const & _M, integer _iter ) : Preco<ILDUITERPRECO>()
     { build_ILDUiter( _M, _M, _iter ); }
 
     template <typename MAT, typename PRE>
-    ILDUiterPreconditioner( MAT const & _M, PRE const & _P, integer _iter ) : Preco<ILDUITERPRECO>() 
+    ILDUiterPreconditioner( MAT const & _M, PRE const & _P, integer _iter ) : Preco<ILDUITERPRECO>()
     { build_ILDUiter(_M,_P,_iter); }
 
     //!
@@ -259,7 +259,7 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & x, VECTOR const & b ) const {
+    ass_preco( VECTOR & x, VECTOR const & b ) const {
       VECTOR q(b.size()), r(x.size());
       x = b;
       for ( integer i = 0; i < maxIter; ++i ) {
@@ -276,9 +276,9 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & x ) const {
+    ass_preco( VECTOR & x ) const {
       tmp = x;
-      assPreco( x, tmp );
+      ass_preco( x, tmp );
     }
 
   };

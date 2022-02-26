@@ -67,11 +67,11 @@ testSparseTool( istream_type & mm_file ) {
   fmt::print(" {} [ms] done\n", tm.elapsed_ms());
 
   //Spy( mm_file + ".eps" , A, 15.0 );
-  
-  exact.resize( A.numRows() );
-  x.resize( A.numRows() );
-  rhs.resize( A.numRows() );
-  resid.resize( A.numRows() );
+
+  exact.resize( A.nrows() );
+  x.resize( A.nrows() );
+  rhs.resize( A.nrows() );
+  resid.resize( A.nrows() );
 
   fmt::print("factorize (ildu) ...");
   tm.tic();

@@ -96,13 +96,13 @@ public:
       ccoor.insert(i,(i+7)%10) = -2;
       ccoor.insert((i+7)%10,i) = -2.3;
     }
-    ccoor.internalOrder();
+    ccoor.internal_order();
     crow = ccoor;
     ccol = ccoor;
   }
-  
+
   ~all_matrix_test() {}
-  
+
   void preco(void) {
     integer i;
     for ( i = 0; i < a.size(); ++i ) a[i] = 1.2+i*sqrt(2.0);
@@ -110,9 +110,9 @@ public:
     c = a;
     scalar = sqrt(2.0);
   }
-  
+
   void do_all_tests(void) {
-    cout << "*******************************\n" 
+    cout << "*******************************\n"
          << "*******************************\n"
          << "MATRIX TESTS\n";
 
@@ -122,7 +122,7 @@ public:
     cout << "MATRIX TESTS: ALL DONE\n\n\n";
 
   }
-  
+
   void test001();
   void test002();
   void test003();
@@ -133,7 +133,7 @@ public:
   void test008();
   void test009();
   void test010();
-    
+
   void test011();
   void test012();
   void test013();
@@ -144,7 +144,7 @@ public:
   void test018();
   void test019();
   void test020();
-    
+
   void test021();
   void test022();
   void test023();
@@ -155,7 +155,7 @@ public:
   void test028();
   void test029();
   void test030();
-    
+
   void test031();
   void test032();
   void test033();
@@ -166,7 +166,7 @@ public:
   void test038();
   void test039();
   void test040();
-    
+
   void test041();
   void test042();
   void test043();
@@ -177,7 +177,7 @@ public:
   void test048();
   void test049();
   void test050();
- 
+
   void test051();
   void test052();
   void test053();
@@ -191,7 +191,7 @@ public:
 
   void test061();
   void test062();
-   
+
 };
 
 void all_matrix_test::test001(void) {
@@ -942,7 +942,7 @@ out(
 // test CRow  ********************************************************
 
 static
-void 
+void
 test_CRow(
   integer                  N,
   CRowMatrix<Real> const & crow,
@@ -963,7 +963,7 @@ test_CRow(
     integer const * J = crow.getJ().data();
     Real    const * A = crow.getA().data();
 
-    for ( integer i = 0; i < crow.numRows(); ++i, ++R ) {
+    for ( integer i = 0; i < crow.nrows(); ++i, ++R ) {
       integer n = R[1]-R[0];
       Real tmp = 0;
       while ( n-- > 0 ) tmp += *A++ * v(*J++);
@@ -1003,7 +1003,7 @@ test_CCol(
     Real    const * A = ccol.getA().data();
 
     res = 0;
-    for ( integer i = 0; i < ccol.numCols(); ++i, ++C ) {
+    for ( integer i = 0; i < ccol.ncols(); ++i, ++C ) {
       Real tmp = v(i);
       integer n = C[1]-C[0];
       while ( n-- > 0 ) res(*I++) += *A++ * tmp;
@@ -1027,12 +1027,12 @@ test_CCoor(
 
   Utils::TicToc tm;
   Vector<Real> res( v.size() );
-  
+
   tm.tic();
   REPEAT(N) { res = ccoor * v; }
   tm.toc();
   Real timea = tm.elapsed_ms();
-  
+
   tm.tic();
   REPEAT(N) {
     integer const * I = ccoor.getI().data();
@@ -1087,7 +1087,7 @@ test_timing() {
   res = scal - a.array();
   LOOP(n) res1[i] = scal - a[i];
   cout << "test scal - vector " << (res-res1).norm() << '\n';
-  
+
   res = scal * a;
   LOOP(n) res1[i] = scal * a[i];
   cout << "test scal * vector " << (res-res1).norm() << '\n';
@@ -1099,31 +1099,31 @@ test_timing() {
   res = a - scal * b;
   LOOP(n) res1[i] = a[i] - scal * b[i];
   cout << "test vector + scal * vector " << (res-res1).norm() << '\n';
- 
+
   cout << "\nMATRIX TESTS\n";
-       
+
   char const *rMatrix[] = {
     "hor__131.mtx.gz",
     "af23560.mtx.gz",
      "plat1919.mtx.gz", NULL };
   char const **p = rMatrix;
-  
+
   Vector<Real> v;
-  
+
   for (; *p != NULL; ++p ) {
-  
-    cout << "TEST matrix = " << *p << '\n';
+
+    fmt::print( "TEST matrix = {}\n", *p );
     CCoorMatrix<Real> ccoor;
     CRowMatrix<Real>  crow;
     CColMatrix<Real>  ccol;
 
     MatrixMarket mm;
     cout << "load matrix..." << flush;
-    mm.read( string("mm/") + *p, ccoor );
+    mm.read( fmt::format( "mm/{}", *p ), ccoor );
     cout << "done\n";
     mm.info(cout);
 
-    Spy( string("mm/") + *p + ".eps", ccoor, 15.0 );
+    Spy( fmt::format("mm/{}.eps", *p), ccoor, 15.0 );
 
     tm.tic();
     crow = ccoor;
@@ -1134,11 +1134,11 @@ test_timing() {
     ccol = ccoor;
     tm.toc();
     Real timeb = tm.elapsed_ms();
-  
+
     fmt::print( "TO CROW {}[ms]\n", timea );
     fmt::print( "TO CCOL {}[ms]\n", timeb );
 
-    integer const nr = ccoor.numRows();
+    integer const nr = ccoor.nrows();
 
     v.resize(nr);
     res.resize(nr);
@@ -1155,7 +1155,7 @@ test_timing() {
     res = ccoor * v;
     res = res - ccol * v;
     fmt::print( "CCoor - CCol = {}\n", res.template lpNorm<Eigen::Infinity>() );
-  
+
     integer cicle_repeat = 1 + 400000 / nr;
     test_CRow (cicle_repeat, crow,  v);
     test_CCol (cicle_repeat, ccol,  v);

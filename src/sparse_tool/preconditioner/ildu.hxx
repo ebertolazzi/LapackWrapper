@@ -46,28 +46,28 @@ namespace Sparse_tool {
     build_ILDU( MAT const & A, PAT const & P ) {
 
       UTILS_ASSERT0(
-        P.isOrdered(),
+        P.is_ordered(),
         "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "pattern must be ordered before use\n"
       );
       UTILS_ASSERT0(
-        P.numRows() == A.numRows() && P.numCols() == A.numCols(),
+        P.nrows() == A.nrows() && P.ncols() == A.ncols(),
         "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "pattern do not match matrix size\n"
       );
       UTILS_ASSERT0(
-        P.numRows() == P.numCols(),
+        P.nrows() == P.ncols(),
         "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "only square matrix allowed\n"
       );
       UTILS_ASSERT0(
-        P.numRows() > 0,
+        P.nrows() > 0,
         "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "empty matrix\n"
       );
 
       // step 0: compute necessary memory
-      PRECO::pr_size = A.numRows();
+      PRECO::pr_size = A.nrows();
 
       separate_LDU( A, L_A, L_R, L_J, D, U_A, U_I, U_C );
       W.resize(PRECO::pr_size);
@@ -127,7 +127,7 @@ namespace Sparse_tool {
         for ( kk = LRk; kk < LRk1; ++kk ) L_A(kk) = W(L_J(kk)) / D(L_J(kk));
         W = 0;
         #endif
-        
+
         //  W = M12  ---- u   = D^(-1)L^(-1) M12
         for ( kk = UCk; kk < UCk1; ++kk ) W(U_I(kk)) = U_A(kk);
 
@@ -166,13 +166,13 @@ namespace Sparse_tool {
   public:
 
     ILDUpreconditioner(void) : Preco<ILDUPRECO>() {}
-    
+
     template <typename MAT>
-    ILDUpreconditioner( MAT const & M ) : Preco<ILDUPRECO>() 
+    ILDUpreconditioner( MAT const & M ) : Preco<ILDUPRECO>()
     { build_ILDU( M, M ); }
 
     template <typename MAT, typename PRE>
-    ILDUpreconditioner( MAT const & M, PRE const & P ) : Preco<ILDUPRECO>() 
+    ILDUpreconditioner( MAT const & M, PRE const & P ) : Preco<ILDUPRECO>()
     { build_ILDU(M,P); }
 
     //!
@@ -185,7 +185,7 @@ namespace Sparse_tool {
 
     //!
     //! Build the preconditioner from matrix `M` with pattern `P`.
-    //! 
+    //!
     template <typename MAT, typename PRE>
     void
     build( MAT const & M, PRE const & P )
@@ -197,7 +197,7 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & v ) const {
+    ass_preco( VECTOR & v ) const {
       // solve L
       integer   const * pR  = L_R.data();
       integer   const * pJ  = L_J.data();
@@ -235,9 +235,9 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & res, VECTOR const & v ) const {
+    ass_preco( VECTOR & res, VECTOR const & v ) const {
       res = v;
-      this->assPreco( res );
+      this->ass_preco( res );
     }
 
   };

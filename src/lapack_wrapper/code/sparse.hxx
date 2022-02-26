@@ -118,30 +118,30 @@ namespace lapack_wrapper {
     integer get_number_of_cols() const { return m_ncols; }
     integer get_nnz()            const { return m_nnz; }
 
-    //! 
+    //!
     //! Returns the number of nonzeroes and dimension of the sparse matrix.
     //!
-    //! \param[out] numRows Row dimension of the matrix
-    //! \param[out] numCols Column dimension of the matrix
+    //! \param[out] nrows Row dimension of the matrix
+    //! \param[out] ncols Column dimension of the matrix
     //! \param[out] nnz     the number of nonzeroes
     //!
     virtual
     void
     get_info(
-      integer & numRows,
-      integer & numCols,
+      integer & nrows,
+      integer & ncols,
       integer & nnz
     ) const {
-      numRows = m_nrows;
-      numCols = m_ncols;
-      nnz     = m_nnz;
+      nrows = m_nrows;
+      ncols = m_ncols;
+      nnz   = m_nnz;
     }
 
-    //! 
+    //!
     //! Returns the sparse matrix.
-    //! 
+    //!
     //! **Example of usage**
-    //! 
+    //!
     //! \code
     //! int_type nnz;
     //! int_type const * rows;
@@ -149,7 +149,7 @@ namespace lapack_wrapper {
     //! real     const * values;
     //! ptr->get_data( nnz, &rows, &cols, &values );
     //! \endcode
-    //! 
+    //!
     //! \param[out] pRows   vector of pointers of row indices where to data will be copied.
     //! \param[out] pCols   vector of pointers where to store column indices.
     //! \param[out] pValues vector of pointers where to store values.
@@ -185,7 +185,7 @@ namespace lapack_wrapper {
 
     //!
     //! Insert a value into matrix using 0-based index.
-    //!    
+    //!
     //! \param[in] row the row index
     //! \param[in] col the column index
     //! \param[in] val the inserted value
@@ -297,9 +297,9 @@ namespace lapack_wrapper {
     bool
     foundNaN() const = 0;
 
-    //! 
+    //!
     //! Calls the blas-Routine (\f$y = \beta y + \alpha A x + y\f$).
-    //! 
+    //!
     //! \param[in]     alpha Scalar \f$\alpha \f$.
     //! \param[in]     DimX  Dimension of the vector x.
     //! \param[in]     x     Vector x.
@@ -308,8 +308,8 @@ namespace lapack_wrapper {
     //! \param[in]     beta  Scalar \f$\beta \f$.
     //! \param[in,out] y     In-/Output vector y.
     //! \param[in]     incY  Stride of vector y.
-    //! 
-    //! 
+    //!
+    //!
     virtual
     void
     gemv(
@@ -323,9 +323,9 @@ namespace lapack_wrapper {
       integer         incY
     ) const = 0;
 
-    //! 
+    //!
     //! Calls the blas-Routine (\f$y = \beta y + \alpha A^T x + y\f$).
-    //! 
+    //!
     //! \param[in]     alpha Scalar \f$\alpha \f$.
     //! \param[in]     DimX  Dimension of the vector x.
     //! \param[in]     x     Vector x.
@@ -348,9 +348,9 @@ namespace lapack_wrapper {
       integer         incY
     ) const = 0;
 
-    //! 
+    //!
     //! Calls the blas-Routine (\f$y = \beta y + \alpha (A+A^T-\textrm{diag}(A)) x + y\f$).
-    //! 
+    //!
     //! \param[in]     alpha Scalar \f$\alpha \f$.
     //! \param[in]     DimX  Dimension of the vector x.
     //! \param[in]     x     Vector x.
@@ -379,13 +379,13 @@ namespace lapack_wrapper {
       UTILS_ERROR0( "get_full_view not defined\n");
     }
 
-    //! 
+    //!
     //! Print the sparse matrix to a stream element by element:
     //!
     //! row, col, value
-    //! 
+    //!
     //! \param[in] stream  Stream where to write elements.
-    //! 
+    //!
     void print( ostream_type & stream ) const;
 
   };

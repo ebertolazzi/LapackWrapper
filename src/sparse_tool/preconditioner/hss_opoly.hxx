@@ -5,12 +5,12 @@
 namespace Sparse_tool {
 
   /*
-  //                     _       
-  //    ___  _ __   ___ | |_   _ 
+  //                     _
+  //    ___  _ __   ___ | |_   _
   //   / _ \| '_ \ / _ \| | | | |
   //  | (_) | |_) | (_) | | |_| |
   //   \___/| .__/ \___/|_|\__, |
-  //        |_|            |___/ 
+  //        |_|            |___/
   */
   //! Incomplete \c LDU preconditioner
   template <typename T>
@@ -36,54 +36,54 @@ namespace Sparse_tool {
 
     mutable Vector<real_type> s0, s1, y;
 
-    //! build incomplete LDU decomposition with specified pattern `P` 
+    //! build incomplete LDU decomposition with specified pattern `P`
     template <typename MAT>
     void
     build_HSS_OPOLY( MAT const & A, integer m ) {
 
       UTILS_ASSERT0(
-        A.isOrdered(),
+        A.is_ordered(),
         "Sparse_tool: HSS_OPOLY_Preconditioner::build_LDU\n"
         "pattern must be ordered before use\n"
       );
       UTILS_ASSERT0(
-        A.numRows() == A.numCols(),
+        A.nrows() == A.ncols(),
         "Sparse_tool: HSS_OPOLY_Preconditioner::build_LDU\n"
         "only square matrix allowed\n"
       );
       UTILS_ASSERT0(
-        A.numRows() > 0,
+        A.nrows() > 0,
         "Sparse_tool: HSS_OPOLY_Preconditioner::build_LDU\n"
         "empty matrix\n"
       );
 
       mdegree = m;
-      neq     = A.numRows();
+      neq     = A.nrows();
       s0.resize(neq);
       s1.resize(neq);
       y.resize(neq);
 
       // step 0: compute necessary memory
-      PRECO::pr_size = A.numRows();
+      PRECO::pr_size = A.nrows();
       Annz.resize( PRECO::pr_size );
       Annz.setZero();
-        
+
       for ( A.Begin(); A.End(); A.Next() ) {
         integer i = A.row();
         //integer j = A.column();
         ++Annz(i);
       }
-        
+
       // step 1: initialize structure
       A_R.resize( PRECO::pr_size + 1 );
       A_R(0) = 0;
       for ( integer i = 0; i < PRECO::pr_size; ++i ) A_R(i+1) = A_R(i) + Annz(i);
-        
+
       // step 2: allocate memory
       A_A.resize( A_R(PRECO::pr_size) );
       A_J.resize( A_R(PRECO::pr_size) );
       A_A.setZero();
-        
+
       // step 3: fill structure
       for ( A.Begin(); A.End(); A.Next() ) {
         integer i = A.row();
@@ -93,7 +93,7 @@ namespace Sparse_tool {
 
       // step 4: sort structure
       for ( integer i = 0; i < PRECO::pr_size; ++i ) std::sort( &A_J(A_R(i)), &A_J(A_R(i+1)) );
-        
+
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
         integer i   = A.row();
@@ -113,7 +113,7 @@ namespace Sparse_tool {
 
     //! apply preconditioner to vector `v`  and store result in vector \c y
     void
-    mulPoly( Vector<real_type> & _y, Vector<real_type> const & v ) const {
+    multiply_by_poly( Vector<real_type> & _y, Vector<real_type> const & v ) const {
       // s0 = 1.5*v; s1 = 4*v - 10/3 * A*v
       integer  const *   pR = A_R.data();
       integer  const *   pJ = A_J.data();
@@ -148,7 +148,7 @@ namespace Sparse_tool {
   public:
 
     HSS_OPOLY_Preconditioner(void) : Preco<HSS_OPOLY_PRECO>() {}
-    
+
     template <typename MAT>
     HSS_OPOLY_Preconditioner( MAT const & M, integer m ) : Preco<HSS_OPOLY_PRECO>()
     { build_HSS_OPOLY( M, m ); }
@@ -162,8 +162,8 @@ namespace Sparse_tool {
     //! apply preconditioner to vector `v`  and store result to vector \c y
     template <typename VECTOR>
     void
-    assPreco( VECTOR & _y, VECTOR const & v ) const {
-      mulPoly( _y, v );
+    ass_preco( VECTOR & _y, VECTOR const & v ) const {
+      multiply_by_poly( _y, v );
       _y *= real_type(0.5,-0.5);
     }
 

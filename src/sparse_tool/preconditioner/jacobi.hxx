@@ -5,13 +5,13 @@
 namespace Sparse_tool {
 
   /*
-  //        #                               
-  //        #   ##    ####   ####  #####  # 
-  //        #  #  #  #    # #    # #    # # 
-  //        # #    # #      #    # #####  # 
-  //  #     # ###### #      #    # #    # # 
-  //  #     # #    # #    # #    # #    # # 
-  //   #####  #    #  ####   ####  #####  # 
+  //        #
+  //        #   ##    ####   ####  #####  #
+  //        #  #  #  #    # #    # #    # #
+  //        # #    # #      #    # #####  #
+  //  #     # ###### #      #    # #    # #
+  //  #     # #    # #    # #    # #    # #
+  //   #####  #    #  ####   ####  #####  #
   */
   //! Iterative JACOBI preconditioner
   template <typename T>
@@ -40,7 +40,7 @@ namespace Sparse_tool {
 
     Vector<integer> LUnnz;
 
-    //! build incomplete LDU decomposition with specified pattern `P` 
+    //! build incomplete LDU decomposition with specified pattern `P`
     template <typename MAT>
     void
     build_JACOBI(
@@ -50,17 +50,17 @@ namespace Sparse_tool {
     ) {
 
       UTILS_ASSERT0(
-        A.isOrdered(),
+        A.is_ordered(),
         "Sparse_tool: JACOBIpreconditioner::build_JACOBI\n"
         "pattern must be ordered before use\n"
       );
       UTILS_ASSERT0(
-        A.numRows() == A.numCols(),
+        A.nrows() == A.ncols(),
         "Sparse_tool: ACOBIpreconditioner::build_JACOBI\n"
         "only square matrix allowed\n"
       );
       UTILS_ASSERT0(
-        A.numRows() > 0,
+        A.nrows() > 0,
         "Sparse_tool: JACOBIpreconditioner::build_JACOBI\n"
         "empty matrix\n"
       );
@@ -70,7 +70,7 @@ namespace Sparse_tool {
       this -> maxIter = _maxIter;
 
       // step 0: compute necessary memory
-      PRECO::pr_size = A.numRows();
+      PRECO::pr_size = A.nrows();
       LUnnz.resize( PRECO::pr_size );
       D.resize( PRECO::pr_size );
       TMP.resize( PRECO::pr_size );
@@ -137,12 +137,12 @@ namespace Sparse_tool {
   public:
 
     JACOBIpreconditioner(void) : Preco<JACOBIPRECO>() {}
-    
+
     template <typename MAT>
     JACOBIpreconditioner( MAT const & M, real_type _omega, integer _maxIter ) : Preco<JACOBIPRECO>()
     { build_JACOBI( M, _omega, _maxIter ); }
 
-    //! build the preconditioner from matrix `M` with pattern `P` 
+    //! build the preconditioner from matrix `M` with pattern `P`
     template <typename MAT>
     void
     build( MAT const & M, real_type _omega, integer _maxIter )
@@ -154,10 +154,10 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & x, VECTOR const & b ) const {
+    ass_preco( VECTOR & x, VECTOR const & b ) const {
       UTILS_ASSERT0(
         std::addressof(x) != std::addressof(b),
-        "Sparse_tool: JACOBIpreconditioner::assPreco(x,b)\n"
+        "Sparse_tool: JACOBIpreconditioner::ass_preco(x,b)\n"
         "`x` and `b` cant be the same\n"
       );
       x = omega*(b.array()/D.array());
@@ -184,9 +184,9 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & x ) const {
+    ass_preco( VECTOR & x ) const {
       TMP1 = x;
-      assPreco( x, TMP1 );
+      ass_preco( x, TMP1 );
     }
 
   };

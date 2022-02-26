@@ -6,12 +6,12 @@
   \note     based on SparseLib 11.0 (C 1999 -- 2008)
 
   \author Enrico Bertolazzi
- 
+
   \par Affiliations:
        Dipartimento di Ingegneria Industriale<br>
        Universita` degli Studi di Trento<br>
        enrico.bertolazzi\@unitn.it
- 
+
 */
 
 #pragma once

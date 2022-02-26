@@ -41,7 +41,7 @@ namespace Sparse_tool {
     template <typename MAT>
     void
     build(Sparse<T,MAT> const & A) {
-      D.resize( A.numRows() );
+      D.resize( A.nrows() );
       D.fill(1);
       for ( A.Begin(); A.End(); A.Next() ) {
         integer i = A.row();
@@ -59,7 +59,7 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & res, VECTOR const & v ) const {
+    ass_preco( VECTOR & res, VECTOR const & v ) const {
       res = v.array()/D.array();
     }
 
@@ -69,7 +69,7 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & inout ) const {
+    ass_preco( VECTOR & inout ) const {
       inout.array() /= D.array();
     }
 

@@ -5,12 +5,12 @@
 namespace Sparse_tool {
 
   /*
-  //  ### #       ######  #     # #    # 
-  //   #  #       #     # #     # #   #  
-  //   #  #       #     # #     # #  #   
-  //   #  #       #     # #     # ###    
-  //   #  #       #     # #     # #  #   
-  //   #  #       #     # #     # #   #  
+  //  ### #       ######  #     # #    #
+  //   #  #       #     # #     # #   #
+  //   #  #       #     # #     # #  #
+  //   #  #       #     # #     # ###
+  //   #  #       #     # #     # #  #
+  //   #  #       #     # #     # #   #
   //  ### ####### ######   #####  #    #
   */
   //! Incomplete \c LDU preconditioner
@@ -52,23 +52,23 @@ namespace Sparse_tool {
     build_ILDU( MAT const & A ) {
 
       UTILS_ASSERT0(
-        A.isOrdered(),
+        A.is_ordered(),
         "Sparse_tool: ILDUKpreconditioner::build_LDU\n"
         "pattern must be ordered before use\n"
       );
       UTILS_ASSERT0(
-        A.numRows() == A.numCols(),
+        A.nrows() == A.ncols(),
         "Sparse_tool: ILDUKpreconditioner::build_LDU\n"
         "only square matrix allowed\n"
       );
       UTILS_ASSERT0(
-        A.numRows() > 0,
+        A.nrows() > 0,
         "Sparse_tool: ILDUKpreconditioner::build_LDU\n"
         "empty matrix\n"
       );
 
       // step 0: count necessary memory
-      integer N = PRECO::pr_size = A.numRows();
+      integer N = PRECO::pr_size = A.nrows();
 
       memi.allocate( 4 * N + 2*A.nnz() );
       mem.allocate( 2*A.nnz() );
@@ -200,9 +200,9 @@ namespace Sparse_tool {
     , mem("ILDUKpreconditioner_real")
     , memi("ILDUKpreconditioner_int")
     {}
-    
+
     template <typename MAT>
-    ILDUKpreconditioner( MAT const & M ) : Preco<ILDUKPRECO>() 
+    ILDUKpreconditioner( MAT const & M ) : Preco<ILDUKPRECO>()
     { build_ILDU( M ); }
 
     //!
@@ -218,7 +218,7 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & v ) const {
+    ass_preco( VECTOR & v ) const {
       integer k = 0;
       // solve L
       while ( ++k < PRECO::pr_size ) {
@@ -250,9 +250,9 @@ namespace Sparse_tool {
     //!
     template <typename VECTOR>
     void
-    assPreco( VECTOR & res, VECTOR const & v ) const {
+    ass_preco( VECTOR & res, VECTOR const & v ) const {
       res = v;
-      assPreco( res );
+      ass_preco( res );
     }
 
   };

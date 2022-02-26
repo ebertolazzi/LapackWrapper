@@ -47,14 +47,14 @@ namespace Sparse_tool {
   ) {
 
     UTILS_ASSERT(
-      A.numRows() == b.size() &&
-      A.numCols() == x.size() &&
-      A.numRows() == A.numCols(),
+      A.nrows() == b.size() &&
+      A.ncols() == x.size() &&
+      A.nrows() == A.ncols(),
       "Sparse_tool::cocg, bad system:\n"
       "dim matrix  = {} x {}\n"
       "dim r.h.s.  = {}\n"
       "dim unknown = {}\n",
-      A.numRows(), A.numCols(), b.size(), x.size()
+      A.nrows(), A.ncols(), b.size(), x.size()
     );
 
     typedef typename vector_type::real_type vType;

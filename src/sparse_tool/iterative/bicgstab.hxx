@@ -49,14 +49,14 @@ namespace Sparse_tool {
     using std::abs;
 
     UTILS_ASSERT(
-      A.numRows() == b.size() &&
-      A.numCols() == x.size() &&
-      A.numRows() == A.numCols(),
+      A.nrows() == b.size() &&
+      A.ncols() == x.size() &&
+      A.nrows() == A.ncols(),
       "Sparse_tool::bicgstab, bad system:\n"
       "dim matrix  = {} x {}\n"
       "dim r.h.s.  = {}\n"
       "dim unknown = {}\n",
-      A.numRows(), A.numCols(), b.size(), x.size()
+      A.nrows(), A.ncols(), b.size(), x.size()
     );
 
     using std::abs;
@@ -102,8 +102,8 @@ namespace Sparse_tool {
       );
 
       vType beta = (rho/rhom1) * (alpha/omega);
- 
-      p = r + beta * (p - omega * v); 
+
+      p = r + beta * (p - omega * v);
       v = A * p;
       v /= P;
       alpha = rtilde.dot(v);

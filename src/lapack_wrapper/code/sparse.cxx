@@ -58,8 +58,8 @@ namespace lapack_wrapper {
     case 2:
     case -1:
     case -2:
-      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
-        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+      for ( integer j = 0; j < Matrix.ncols(); ++j ) {
+        for ( integer i = 0; i < Matrix.nrows(); ++i ) {
           integer ii = i;
           integer jj = j;
           if ( transpose ) std::swap( ii, jj );
@@ -79,8 +79,8 @@ namespace lapack_wrapper {
       }
       break;
     case 3:
-      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
-        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+      for ( integer j = 0; j < Matrix.ncols(); ++j ) {
+        for ( integer i = 0; i < Matrix.nrows(); ++i ) {
           integer ii = i;
           integer jj = j;
           if ( transpose ) std::swap( ii, jj );
@@ -91,8 +91,8 @@ namespace lapack_wrapper {
       }
       break;
     case -3:
-      for ( integer j = 0; j < Matrix.numCols(); ++j ) {
-        for ( integer i = 0; i < Matrix.numRows(); ++i ) {
+      for ( integer j = 0; j < Matrix.ncols(); ++j ) {
+        for ( integer i = 0; i < Matrix.nrows(); ++i ) {
           integer ii = i;
           integer jj = j;
           if ( transpose ) std::swap( ii, jj );
