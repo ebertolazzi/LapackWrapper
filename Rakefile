@@ -140,7 +140,7 @@ task :build_win, [:year, :bits, :lapack] do |t, args|
   FileUtils.mkdir_p "../lib/dll"
   FileUtils.mkdir_p "../lib/include"
 
-  cmd_cmake = win_vs(args.bits,args.year) + cmd_cmake_build
+  cmd_cmake = win_vs(args.bits,args.year) + cmd_cmake_build + ' -D' + args.lapack + ':VAR=ON '
 
   puts "run CMAKE for LAPACK WRAPPER".yellow
 
@@ -180,7 +180,7 @@ task :build_osx, [:lapack] do |t, args|
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
-  cmd_cmake = "cmake " + cmd_cmake_build + ' -D' + args.lapack + '=true '
+  cmd_cmake = "cmake " + cmd_cmake_build + ' -D' + args.lapack + ':VAR=ON '
 
   puts "run CMAKE for LAPACK WRAPPER".yellow
 
@@ -230,9 +230,7 @@ task :build_linux, [:lapack] do |t, args|
   FileUtils.mkdir_p dir
   FileUtils.cd      dir
 
-  cmd_cmake = "cmake " + cmd_cmake_build
-  # non serve
-  # cmd_cmake += ' -D' + args.lapack + '=true '
+  cmd_cmake = "cmake " + cmd_cmake_build + ' -D' + args.lapack + ':VAR=ON '
 
   puts "run CMAKE for LAPACK WRAPPER".yellow
 

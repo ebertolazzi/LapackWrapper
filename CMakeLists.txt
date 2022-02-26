@@ -221,10 +221,10 @@ if ( EB_ENABLE_TESTS )
     LIBS
     ${EB_NAMESPACE}_${PROJECT_NAME}_Static
     ${EB_NAMESPACE}_HSL_Static
-    ${lapackblas_libraries}
     ${UTILS}
     ${SUPERLU}
     ${ZLIB_LIBRARIES}
+    ${lapackblas_libraries}
     ${CMAKE_DL_LIBS}
   )
   foreach( S ${EXELISTCPP} )

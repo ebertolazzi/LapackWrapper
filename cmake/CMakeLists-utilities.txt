@@ -121,4 +121,6 @@ function(ebertolazzi_final_messages)
   message(STATUS "EB_BUILD_SHARED  = ${EB_BUILD_SHARED}")
   message(STATUS "EB_INSTALL_LOCAL = ${EB_INSTALL_LOCAL}")
 
+  message(STATUS "lapackblas_libraries = ${lapackblas_libraries}")
+
 endfunction()
