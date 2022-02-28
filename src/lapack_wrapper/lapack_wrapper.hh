@@ -434,6 +434,8 @@ namespace lapack_wrapper {
   extern std::string openblas_info();
   #endif
 
+  void set_num_threads( integer nt );
+
   //============================================================================
 
   static
@@ -797,7 +799,7 @@ namespace lapack_wrapper {
   #endif
 
   #if defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
-      defined(LAPACK_WRAPPER_USE_BLASFEO) 
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
   extern "C" {
     void
     BLASFUNC(slaic1)(

@@ -4,7 +4,7 @@
  |                                                                          |
  |         , __                 , __                                        |
  |        /|/  \               /|/  \                                       |
- |         | __/ _   ,_         | __/ _   ,_                                | 
+ |         | __/ _   ,_         | __/ _   ,_                                |
  |         |   \|/  /  |  |   | |   \|/  /  |  |   |                        |
  |         |(__/|__/   |_/ \_/|/|(__/|__/   |_/ \_/|/                       |
  |                           /|                   /|                        |
@@ -17,7 +17,7 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-#ifdef __GNUC__ 
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
 #ifdef __clang__
@@ -30,6 +30,10 @@
 #include <vector>
 #include <limits>
 #include <string>
+
+#ifdef LAPACK_WRAPPER_USE_OPENBLAS
+  #include <omp.h>
+#endif
 
 // workaround for windows
 #ifdef _MSC_VER
@@ -46,6 +50,15 @@
 #include <sstream>
 
 namespace lapack_wrapper {
+
+  void
+  set_num_threads( integer num_threads ) {
+    #ifdef LAPACK_WRAPPER_USE_OPENBLAS
+    ::openblas_set_num_threads( num_threads );
+    ::goto_set_num_threads( num_threads );
+    ::omp_set_num_threads( num_threads );
+    #endif
+  }
 
   #ifdef LAPACK_WRAPPER_USE_OPENBLAS
   std::string
@@ -358,7 +371,7 @@ namespace lapack_wrapper {
 
     std::vector<T> Tmat(N*N), line(N), r(nrhs);
     T C, S;
-    
+
     gecopy( N, N, Amat, ldA, &Tmat.front(), N );
 
     for ( integer i = 0; i < N; ++i ) {
