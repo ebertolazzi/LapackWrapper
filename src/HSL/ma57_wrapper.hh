@@ -6,8 +6,10 @@
  * \since  13.11.2018
  */
 
-#ifndef MA57_WRAPPER_HH
-#define MA57_WRAPPER_HH
+#pragma once
+
+#ifndef MA57_WRAPPER_dot_HH
+#define MA57_WRAPPER_dot_HH
 
 #include "hsl_solver.hh"
 #include <cmath>
@@ -19,11 +21,11 @@ namespace lapack_wrapper {
   class MA57 : public HSLsolver<real> {
   private:
     // Memory vectors for int.
-    std::vector<int> m_i_Row;
-    std::vector<int> m_j_Col;
-    std::vector<int> m_iKeep;
-    std::vector<int> m_ifact;
-    mutable std::vector<int> m_iPivotSeq;
+    std::vector<integer> m_i_Row;
+    std::vector<integer> m_j_Col;
+    std::vector<integer> m_iKeep;
+    std::vector<integer> m_ifact;
+    mutable std::vector<integer> m_iPivotSeq;
 
     // Memory vectors for real.
     std::vector<real> m_a_stored;
@@ -36,9 +38,9 @@ namespace lapack_wrapper {
     /// Array of length 5 with real control parameters.
     real m_cntl[5];
     /// Array of length 20 with int control parameters.
-    int m_icntl[20];
+    integer m_icntl[20];
     /// Integer Info variables.
-    mutable int m_iinfo[40];
+    mutable integer m_iinfo[40];
     /// Real Info variables.
     mutable real m_rinfo[20];
 
@@ -46,7 +48,7 @@ namespace lapack_wrapper {
     // Workspace MA57:
 
     /// Integer specifying task (1 for solve AX = B).
-    int m_job;
+    integer m_job;
 
     /// Specifies whether to refine iteratively.
     bool m_doRefinement;
@@ -54,7 +56,7 @@ namespace lapack_wrapper {
     /// Residuum tolerance.
     real m_tolRes;
     /// Maximum number of refinements.
-    int m_MaxRefinements;
+    integer m_MaxRefinements;
 
     /**
      * \brief getResidual:
@@ -124,12 +126,13 @@ namespace lapack_wrapper {
      */
     bool
     init(
-      int       Nnz,
-      int       N_Row,
-      int       N_Col,
-      int const i_Row[],
-      int const j_Col[],
-      bool      isFortranIndexing
+      integer       Nnz,
+      integer       N_Row,
+      integer       N_Col,
+      integer const i_Row[],
+      integer const j_Col[],
+      bool          isFortranIndexing,
+      bool          isStoredSymmetric
     ) override;
 
     /**
@@ -146,20 +149,20 @@ namespace lapack_wrapper {
 
     bool
     solve(
-      int        nrhs,
+      integer    nrhs,
       real const RHS[],
-      int        ldRHS,
+      integer    ldRHS,
       real       X[],
-      int        ldX
+      integer    ldX
     ) const override;
 
     bool
     solve_transposed(
-      int        nrhs,
+      integer    nrhs,
       real const RHS[],
-      int        ldRHS,
+      integer    ldRHS,
       real       X[],
-      int        ldX
+      integer    ldX
     ) const override {
       // Symmetric matrix:
       return this->solve(nrhs, RHS, ldRHS, X, ldX);
@@ -176,9 +179,9 @@ namespace lapack_wrapper {
      */
     void
     setSolverMode(
-      bool DoRefinement,
-      real TolRes         = real(1e-11),
-      int  maxRefinements = 100
+      bool    DoRefinement,
+      real    TolRes         = real(1e-11),
+      integer maxRefinements = 100
     ) {
       m_doRefinement   = DoRefinement;
       m_tolRes         = TolRes;

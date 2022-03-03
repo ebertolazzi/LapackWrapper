@@ -6,27 +6,20 @@
  * \since 13.11.2018
  */
 
-#ifndef HSL_H
-#define HSL_H
+#ifndef HSL_dot_HH
+#define HSL_dot_HH
+
+#include "../lapack_wrapper/lapack_wrapper.hh"
 
 #ifndef HSL_F77NAME
 #define HSL_F77NAME(A) A##_
 #endif
 
-#ifdef __cplusplus
-  #define HSL_extern extern "C"
-#else
-  #define HSL_extern extern
-#endif
+#define HSL_extern extern "C"
 
-#ifdef __cplusplus
-namespace HSL {
-#endif
+namespace lapack_wrapper {
 
-  typedef int    integer;
-  typedef float  single;
-  typedef double real;
-  typedef bool   logical;
+  typedef bool logical;
 
   /*\
    |   __  __    _   _  _   _
@@ -51,7 +44,7 @@ namespace HSL {
   HSL_extern
   void
   HSL_F77NAME(ma41i)(
-    single  CNTL[10],
+    float   CNTL[10],
     integer ICNTL[20],
     integer KEEP[50]
   );
@@ -64,25 +57,25 @@ namespace HSL {
     integer const * NZ,
     integer         IRN[],
     integer         JCN[],
-    single          ASPK[],
-    single          RHS[],
-    single          COLSCA[],
-    single          ROWSCA[],
+    float           ASPK[],
+    float           RHS[],
+    float           COLSCA[],
+    float           ROWSCA[],
     integer         KEEP[50],
     integer         IS[],
     integer const * MAXIS,
-    single          S[],
+    float           S[],
     integer const * MAXS,
-    single          CNTL[10],
+    float           CNTL[10],
     integer         ICNTL[20],
     integer         INFO[20],
-    single          RINFO[20]
+    float           RINFO[20]
   );
 
   HSL_extern
   void
   HSL_F77NAME(ma41id)(
-    real    CNTL[10],
+    double  CNTL[10],
     integer ICNTL[20],
     integer KEEP[50]
   );
@@ -95,22 +88,21 @@ namespace HSL {
     integer const * NZ,
     integer         IRN[],
     integer         JCN[],
-    real            ASPK[],
-    real            RHS[],
-    real            COLSCA[],
-    real            ROWSCA[],
+    double          ASPK[],
+    double          RHS[],
+    double          COLSCA[],
+    double          ROWSCA[],
     integer         KEEP[50],
     integer         IS[],
     integer const * MAXIS,
-    real            S[],
+    double          S[],
     integer const * MAXS,
-    real            CNTL[10],
+    double          CNTL[10],
     integer         ICNTL[20],
     integer         INFO[20],
-    real            RINFO[20]
+    double          RINFO[20]
   );
 
-  #ifdef __cplusplus
   template <typename T>
   void
   ma41i( T CNTL[10], integer ICNTL[20], integer KEEP[50] );
@@ -118,8 +110,8 @@ namespace HSL {
   template <>
   inline
   void
-  ma41i<single>(
-    single  CNTL[10],
+  ma41i<float>(
+    float   CNTL[10],
     integer ICNTL[20],
     integer KEEP[50]
   ) {
@@ -132,8 +124,8 @@ namespace HSL {
   template <>
   inline
   void
-  ma41i<real>(
-    real    CNTL[10],
+  ma41i<double>(
+    double  CNTL[10],
     integer ICNTL[20],
     integer KEEP[50]
   ) {
@@ -169,25 +161,25 @@ namespace HSL {
   template <>
   inline
   void
-  ma41a<single>(
+  ma41a<float>(
     integer JOB,
     integer N,
     integer NZ,
     integer IRN[],
     integer JCN[],
-    single  ASPK[],
-    single  RHS[],
-    single  COLSCA[],
-    single  ROWSCA[],
+    float   ASPK[],
+    float   RHS[],
+    float   COLSCA[],
+    float   ROWSCA[],
     integer KEEP[50],
     integer IS[],
     integer MAXIS,
-    single  S[],
+    float   S[],
     integer MAXS,
-    single  CNTL[10],
+    float   CNTL[10],
     integer ICNTL[20],
     integer INFO[20],
-    single  RINFO[20]
+    float   RINFO[20]
   ) {
     HSL_F77NAME(ma41a)(
       &JOB, &N, &NZ, IRN, JCN, ASPK,
@@ -199,25 +191,25 @@ namespace HSL {
   template <>
   inline
   void
-  ma41a<real>(
+  ma41a<double>(
     integer JOB,
     integer N,
     integer NZ,
     integer IRN[],
     integer JCN[],
-    real    ASPK[],
-    real    RHS[],
-    real    COLSCA[],
-    real    ROWSCA[],
+    double  ASPK[],
+    double  RHS[],
+    double  COLSCA[],
+    double  ROWSCA[],
     integer KEEP[50],
     integer IS[],
     integer MAXIS,
-    real    S[],
+    double  S[],
     integer MAXS,
-    real    CNTL[10],
+    double  CNTL[10],
     integer ICNTL[20],
     integer INFO[20],
-    real    RINFO[20]
+    double  RINFO[20]
   ) {
     HSL_F77NAME(ma41ad)(
       &JOB, &N, &NZ, IRN, JCN, ASPK,
@@ -225,8 +217,6 @@ namespace HSL {
       CNTL, ICNTL, INFO, RINFO
     );
   }
-
-  #endif
 
   /*\
    |   __  __    _   _  _    ___
@@ -245,7 +235,7 @@ namespace HSL {
    */
   HSL_extern
   void
-  HSL_F77NAME(ma48id)( real cntl[5], integer icntl[20] );
+  HSL_F77NAME(ma48id)( double cntl[5], integer icntl[20] );
 
   /**
    * \brief ma48ad_:
@@ -275,15 +265,15 @@ namespace HSL {
     integer const * nz,
     integer const * job,
     integer const * la,
-    real    const   a[],
+    double  const   a[],
     integer         irn[],
     integer         jcn[],
     integer         keep[],
-    real    const   cntl[10],
+    double  const   cntl[10],
     integer const   icntl[20],
     integer         iw[],
     integer         info[20],
-    real            rinfo[10]
+    double          rinfo[10]
   );
 
   /**
@@ -315,16 +305,16 @@ namespace HSL {
     integer const * nz,
     integer const * job,
     integer const * la,
-    real            a[],
+    double          a[],
     integer         irn[],
     integer         jcn[],
     integer const   keep[],
-    real    const   cntl[10],
+    double  const   cntl[10],
     integer const   icntl[20],
-    real            w[],
+    double          w[],
     integer         iw[],
     integer         info[20],
-    real            rinfo[10]
+    double          rinfo[10]
   );
 
   /**
@@ -357,15 +347,15 @@ namespace HSL {
     integer const * itrans,
     integer const * job,
     integer const * la,
-    real    const   a[],
+    double  const   a[],
     integer const   irn[],
     integer const   keep[],
-    real    const   cntl[10],
+    double  const   cntl[10],
     integer const   icntl[20],
-    real    const   rhs[],
-    real            x[],
-    real            errors[3],
-    real    const   w[],
+    double  const   rhs[],
+    double          x[],
+    double          errors[3],
+    double  const   w[],
     integer const   iw[],
     integer         info[20]
   );
@@ -380,7 +370,7 @@ namespace HSL {
    */
   HSL_extern
   void
-  HSL_F77NAME(ma48i)( single cntl[5], integer icntl[20] );
+  HSL_F77NAME(ma48i)( float cntl[5], integer icntl[20] );
 
   /**
    * \brief ma48a_:
@@ -410,15 +400,15 @@ namespace HSL {
     integer const * nz,
     integer const * job,
     integer const * la,
-    single          a[],
+    float           a[],
     integer         irn[],
     integer         jcn[],
     integer         keep[],
-    single  const   cntl[10],
+    float   const   cntl[10],
     integer const   icntl[20],
     integer         iw[],
     integer         info[20],
-    single          rinfo[10]
+    float           rinfo[10]
   );
 
   /**
@@ -450,16 +440,16 @@ namespace HSL {
     integer const * nz,
     integer const * job,
     integer const * la,
-    single          a[],
+    float           a[],
     integer         irn[],
     integer         jcn[],
     integer const   keep[],
-    single  const   cntl[10],
+    float   const   cntl[10],
     integer const   icntl[20],
-    single          w[],
+    float           w[],
     integer         iw[],
     integer         info[20],
-    single          rinfo[10]
+    float           rinfo[10]
   );
 
   /**
@@ -492,20 +482,19 @@ namespace HSL {
     integer const * itrans,
     integer const * job,
     integer const * la,
-    single  const   a[],
+    float   const   a[],
     integer const   irn[],
     integer const   keep[],
-    single  const   cntl[10],
+    float   const   cntl[10],
     integer const   icntl[20],
-    single  const   rhs[],
-    single          x[],
-    single          errors[3],
-    single  const   w[],
+    float   const   rhs[],
+    float           x[],
+    float           errors[3],
+    float   const   w[],
     integer const   iw[],
     integer         info[20]
   );
 
-  #ifdef __cplusplus
   template <typename T>
   void
   ma48i( T cntl[5], integer icntl[20] );
@@ -513,14 +502,14 @@ namespace HSL {
   template <>
   inline
   void
-  ma48i<single>( single cntl[5], integer icntl[20] ) {
+  ma48i<float>( float cntl[5], integer icntl[20] ) {
     HSL_F77NAME(ma48i)( cntl, icntl );
   }
 
   template <>
   inline
   void
-  ma48i<real>( real cntl[5], integer icntl[20] ) {
+  ma48i<double>( double cntl[5], integer icntl[20] ) {
     HSL_F77NAME(ma48id)( cntl, icntl );
   }
 
@@ -546,21 +535,21 @@ namespace HSL {
   template <>
   inline
   void
-  ma48a<single>(
+  ma48a<float>(
     integer       nrow,
     integer       ncol,
     integer       nz,
     integer       job,
     integer       la,
-    single        a[],
+    float         a[],
     integer       irn[],
     integer       jcn[],
     integer       keep[],
-    single  const cntl[10],
+    float   const cntl[10],
     integer const icntl[20],
     integer       iw[],
     integer       info[20],
-    single        rinfo[10]
+    float         rinfo[10]
   ) {
     HSL_F77NAME(ma48a)(
       &nrow, &ncol, &nz, &job, &la,
@@ -571,21 +560,21 @@ namespace HSL {
   template <>
   inline
   void
-  ma48a<real>(
+  ma48a<double>(
     integer       nrow,
     integer       ncol,
     integer       nz,
     integer       job,
     integer       la,
-    real          a[],
+    double        a[],
     integer       irn[],
     integer       jcn[],
     integer       keep[],
-    real    const cntl[10],
+    double  const cntl[10],
     integer const icntl[20],
     integer       iw[],
     integer       info[20],
-    real          rinfo[10]
+    double        rinfo[10]
   ) {
     HSL_F77NAME(ma48ad)(
       &nrow, &ncol, &nz, &job, &la,
@@ -616,22 +605,22 @@ namespace HSL {
   template <>
   inline
   void
-  ma48b<single>(
+  ma48b<float>(
     integer       nrow,
     integer       ncol,
     integer       nz,
     integer       job,
     integer       la,
-    single        a[],
+    float         a[],
     integer       irn[],
     integer       jcn[],
     integer const keep[],
-    single  const cntl[10],
+    float   const cntl[10],
     integer const icntl[20],
-    single        w[],
+    float         w[],
     integer       iw[],
     integer       info[20],
-    single        rinfo[10]
+    float         rinfo[10]
   ) {
     HSL_F77NAME(ma48b)(
       &nrow, &ncol, &nz, &job, &la,
@@ -642,22 +631,22 @@ namespace HSL {
   template <>
   inline
   void
-  ma48b<real>(
+  ma48b<double>(
     integer       nrow,
     integer       ncol,
     integer       nz,
     integer       job,
     integer       la,
-    real          a[],
+    double        a[],
     integer       irn[],
     integer       jcn[],
     integer const keep[],
-    real    const cntl[10],
+    double  const cntl[10],
     integer const icntl[20],
-    real          w[],
+    double        w[],
     integer       iw[],
     integer       info[20],
-    real          rinfo[10]
+    double        rinfo[10]
   ) {
     HSL_F77NAME(ma48bd)(
       &nrow, &ncol, &nz, &job, &la,
@@ -689,21 +678,21 @@ namespace HSL {
   template <>
   inline
   void
-  ma48c<single>(
+  ma48c<float>(
     integer       nrow,
     integer       ncol,
     integer       itrans,
     integer       job,
     integer       la,
-    single  const a[],
+    float   const a[],
     integer const irn[],
     integer const keep[],
-    single  const cntl[10],
+    float   const cntl[10],
     integer const icntl[20],
-    single  const rhs[],
-    single        x[],
-    single        errors[3],
-    single  const w[],
+    float   const rhs[],
+    float         x[],
+    float         errors[3],
+    float   const w[],
     integer const iw[],
     integer       info[20]
   ) {
@@ -717,21 +706,21 @@ namespace HSL {
   template <>
   inline
   void
-  ma48c<real>(
+  ma48c<double>(
     integer       nrow,
     integer       ncol,
     integer       itrans,
     integer       job,
     integer       la,
-    real    const a[],
+    double  const a[],
     integer const irn[],
     integer const keep[],
-    real    const cntl[10],
+    double  const cntl[10],
     integer const icntl[20],
-    real    const rhs[],
-    real          x[],
-    real          errors[3],
-    real    const w[],
+    double  const rhs[],
+    double        x[],
+    double        errors[3],
+    double  const w[],
     integer const iw[],
     integer       info[20]
   ) {
@@ -741,8 +730,6 @@ namespace HSL {
       w, iw, info
     );
   }
-
-  #endif
 
   /*\
    |   __  __    _    ____ _____
@@ -762,7 +749,7 @@ namespace HSL {
    */
   HSL_extern
   void
-  HSL_F77NAME(ma57id)( real cntl[5], integer icntl[20] );
+  HSL_F77NAME(ma57id)( double cntl[5], integer icntl[20] );
 
   /**
    * \brief ma57ad_:
@@ -792,7 +779,7 @@ namespace HSL {
     integer         iw[],
     integer const   icntl[20],
     integer         info[40],
-    real            rinfo[20]
+    double          rinfo[20]
   );
 
   /**
@@ -820,8 +807,8 @@ namespace HSL {
   HSL_F77NAME(ma57bd)(
     integer const * n,
     integer const * nz,
-    real    const   a[],
-    real            fact[],
+    double  const   a[],
+    double          fact[],
     integer const * lfact,
     integer         ifact[],
     integer const * lifact,
@@ -829,9 +816,9 @@ namespace HSL {
     integer const   keep[],
     integer         iw[],
     integer const   icntl[20],
-    real    const   cntl[5],
+    double  const   cntl[5],
     integer         info[40],
-    real            rinfo[20]
+    double          rinfo[20]
   );
 
   /**
@@ -859,14 +846,14 @@ namespace HSL {
   HSL_F77NAME(ma57cd)(
     integer const * job,
     integer const * n,
-    real    const   fact[],
+    double  const   fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
     integer const * nrhs,
-    real            rhs[],
+    double          rhs[],
     integer const * lrhs,
-    real            w[],
+    double          w[],
     integer const * lw,
     integer         iw[],
     integer const   icntl[20],
@@ -905,22 +892,22 @@ namespace HSL {
     integer const * job,
     integer const * n,
     integer const * ne,
-    real    const   a[],
+    double  const   a[],
     integer const   irn[],
     integer const   jcn[],
-    real    const   fact[],
+    double  const   fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
-    real    const   rhs[],
-    real            x[],
-    real            resid[],
-    real            w[],
+    double  const   rhs[],
+    double          x[],
+    double          resid[],
+    double          w[],
     integer         iw[],
     integer const   icntl[20],
-    real    const   cntl[5],
+    double  const   cntl[5],
     integer         info[40],
-    real            rinfo[20]
+    double          rinfo[20]
   );
 
   /**
@@ -933,7 +920,7 @@ namespace HSL {
    */
   HSL_extern
   void
-  HSL_F77NAME(ma57i)( single cntl[5], integer icntl[20] );
+  HSL_F77NAME(ma57i)( float cntl[5], integer icntl[20] );
 
   /**
    * \brief ma57a_:
@@ -963,7 +950,7 @@ namespace HSL {
     integer         iw[],
     integer const   icntl[20],
     integer         info[40],
-    single          rinfo[20]
+    float           rinfo[20]
   );
 
   /**
@@ -991,8 +978,8 @@ namespace HSL {
   HSL_F77NAME(ma57b)(
     integer const * n,
     integer const * nz,
-    single  const   a[],
-    single          fact[],
+    float   const   a[],
+    float           fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
@@ -1000,9 +987,9 @@ namespace HSL {
     integer const   keep[],
     integer         iw[],
     integer const   icntl[20],
-    single  const   cntl[5],
+    float   const   cntl[5],
     integer         info[40],
-    single          rinfo[20]
+    float           rinfo[20]
   );
 
   /**
@@ -1030,14 +1017,14 @@ namespace HSL {
   HSL_F77NAME(ma57c)(
     integer const * job,
     integer const * n,
-    single  const   fact[],
+    float   const   fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
     integer const * nrhs,
-    single          rhs[],
+    float           rhs[],
     integer const * ldRhs,
-    single          w[],
+    float           w[],
     integer const * lw,
     integer         iw[],
     integer const   icntl[20],
@@ -1076,25 +1063,23 @@ namespace HSL {
     integer const * job,
     integer const * n,
     integer const * ne,
-    single  const   a[],
+    float   const   a[],
     integer const   irn[],
     integer const   jcn[],
-    single  const   fact[],
+    float   const   fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
-    single  const   rhs[],
-    single          x[],
-    single        * resid,
-    single          w[],
+    float   const   rhs[],
+    float           x[],
+    float         * resid,
+    float           w[],
     integer         iw[],
     integer const   icntl[20],
-    single  const   cntl[5],
+    float   const   cntl[5],
     integer         info[40],
-    single          rinfo[20]
+    float           rinfo[20]
   );
-
-  #ifdef __cplusplus
 
   template <typename T>
   void
@@ -1103,15 +1088,15 @@ namespace HSL {
   template <>
   inline
   void
-  ma57i<single>( single _cntl[], integer _icntl[] ) {
-    HSL::HSL_F77NAME(ma57i)(_cntl, _icntl);
+  ma57i<float>( float _cntl[], integer _icntl[] ) {
+    HSL_F77NAME(ma57i)(_cntl, _icntl);
   }
 
   template <>
   inline
   void
-  ma57i<real>( real _cntl[], integer _icntl[] ) {
-    HSL::HSL_F77NAME(ma57id)(_cntl, _icntl);
+  ma57i<double>( double _cntl[], integer _icntl[] ) {
+    HSL_F77NAME(ma57id)(_cntl, _icntl);
   }
 
   template <typename T>
@@ -1132,7 +1117,7 @@ namespace HSL {
   template <>
   inline
   void
-  ma57a<single>(
+  ma57a<float>(
     integer       _n,
     integer       _nz,
     integer const _irn[],
@@ -1142,9 +1127,9 @@ namespace HSL {
     integer       _iw[],
     integer const _icntl[20],
     integer       _info[40],
-    single       _rinfo[20]
+    float        _rinfo[20]
   ) {
-    HSL::HSL_F77NAME(ma57a)(
+    HSL_F77NAME(ma57a)(
       &_n, &_nz, _irn, _jcn, &_lkeep, _keep, _iw, _icntl, _info, _rinfo
     );
   }
@@ -1152,7 +1137,7 @@ namespace HSL {
   template <>
   inline
   void
-  ma57a<real>(
+  ma57a<double>(
     integer       _n,
     integer       _nz,
     integer const _irn[],
@@ -1162,9 +1147,9 @@ namespace HSL {
     integer       _iw[],
     integer const _icntl[20],
     integer       _info[40],
-    real          _rinfo[20]
+    double        _rinfo[20]
   ) {
-    HSL::HSL_F77NAME(ma57ad)(
+    HSL_F77NAME(ma57ad)(
       &_n, &_nz, _irn, _jcn, &_lkeep, _keep, _iw, _icntl, _info, _rinfo
     );
   }
@@ -1191,11 +1176,11 @@ namespace HSL {
   template <>
   inline
   void
-  ma57b<single>(
+  ma57b<float>(
     integer       _n,
     integer       _nz,
-    single  const _a[],
-    single        _fact[],
+    float   const _a[],
+    float         _fact[],
     integer       _lfact,
     integer       _ifact[],
     integer       _lifact,
@@ -1203,11 +1188,11 @@ namespace HSL {
     integer const _keep[],
     integer       _iw[],
     integer const _icntl[20],
-    single  const _cntl[5],
+    float   const _cntl[5],
     integer       _info[40],
-    single        _rinfo[20]
+    float         _rinfo[20]
   ) {
-    HSL::HSL_F77NAME(ma57b)(
+    HSL_F77NAME(ma57b)(
       &_n, &_nz, _a, _fact, &_lfact, _ifact, &_lifact, &_lkeep, _keep,
       _iw, _icntl, _cntl, _info, _rinfo
     );
@@ -1216,11 +1201,11 @@ namespace HSL {
   template <>
   inline
   void
-  ma57b<real>(
+  ma57b<double>(
     integer       _n,
     integer       _nz,
-    real    const _a[],
-    real          _fact[],
+    double  const _a[],
+    double        _fact[],
     integer       _lfact,
     integer       _ifact[],
     integer       _lifact,
@@ -1228,11 +1213,11 @@ namespace HSL {
     integer const _keep[],
     integer       _iw[],
     integer const _icntl[20],
-    real    const _cntl[5],
+    double  const _cntl[5],
     integer       _info[40],
-    real          _rinfo[20]
+    double        _rinfo[20]
   ) {
-    HSL::HSL_F77NAME(ma57bd)(
+    HSL_F77NAME(ma57bd)(
       &_n, &_nz, _a, _fact, &_lfact, _ifact, &_lifact, &_lkeep, _keep,
       _iw, _icntl, _cntl, _info, _rinfo
     );
@@ -1260,23 +1245,23 @@ namespace HSL {
   template <>
   inline
   void
-  ma57c<single>(
+  ma57c<float>(
     integer       _job,
     integer       _n,
-    single  const _fact[],
+    float   const _fact[],
     integer       _lfact,
     integer const _ifact[],
     integer       _lifact,
     integer       _nrhs,
-    single        _rhs[],
+    float         _rhs[],
     integer       _lrhs,
-    single        _w[],
+    float         _w[],
     integer       _lw,
     integer       _iw[],
     integer const _icntl[20],
     integer       _info[40]
   ) {
-    HSL::HSL_F77NAME(ma57c)(
+    HSL_F77NAME(ma57c)(
       &_job, &_n, _fact, &_lfact, _ifact, &_lifact,
       &_nrhs, _rhs, &_lrhs, _w, &_lw, _iw, _icntl, _info
     );
@@ -1285,23 +1270,23 @@ namespace HSL {
   template <>
   inline
   void
-  ma57c<real>(
+  ma57c<double>(
     integer       _job,
     integer       _n,
-    real    const _fact[],
+    double  const _fact[],
     integer       _lfact,
     integer const _ifact[],
     integer       _lifact,
     integer       _nrhs,
-    real          _rhs[],
+    double        _rhs[],
     integer       _lrhs,
-    real          _w[],
+    double        _w[],
     integer       _lw,
     integer       _iw[],
     integer const _icntl[20],
     integer       _info[40]
   ) {
-    HSL::HSL_F77NAME(ma57cd)(
+    HSL_F77NAME(ma57cd)(
       &_job, &_n, _fact, &_lfact, _ifact, &_lifact, &_nrhs, _rhs, &_lrhs,
       _w, &_lw, _iw, _icntl, _info
     );
@@ -1334,28 +1319,28 @@ namespace HSL {
   template <>
   inline
   void
-  ma57d<single>(
+  ma57d<float>(
     integer       _job,
     integer       _n,
     integer       _ne,
-    single  const _a[],
+    float   const _a[],
     integer const _irn[],
     integer const _jcn[],
-    single  const _fact[],
+    float   const _fact[],
     integer       _lfact,
     integer const _ifact[],
     integer       _lifact,
-    single  const _rhs[],
-    single        _x[],
-    single        _resid[],
-    single        _w[],
+    float   const _rhs[],
+    float         _x[],
+    float         _resid[],
+    float         _w[],
     integer       _iw[],
     integer const _icntl[20],
-    single  const _cntl[5],
+    float   const _cntl[5],
     integer       _info[40],
-    single        _rinfo[20]
+    float         _rinfo[20]
   ) {
-    HSL::HSL_F77NAME(ma57d)(
+    HSL_F77NAME(ma57d)(
       &_job, &_n, &_ne, _a, _irn, _jcn, _fact, &_lfact, _ifact, &_lifact,
       _rhs, _x, _resid, _w, _iw, _icntl, _cntl, _info, _rinfo
     );
@@ -1364,38 +1349,34 @@ namespace HSL {
   template <>
   inline
   void
-  ma57d<real>(
+  ma57d<double>(
     integer       _job,
     integer       _n,
     integer       _ne,
-    real    const _a[],
+    double  const _a[],
     integer const _irn[],
     integer const _jcn[],
-    real    const _fact[],
+    double  const _fact[],
     integer       _lfact,
     integer const _ifact[],
     integer       _lifact,
-    real    const _rhs[],
-    real          _x[],
-    real          _resid[],
-    real          _w[],
+    double  const _rhs[],
+    double        _x[],
+    double        _resid[],
+    double        _w[],
     integer       _iw[],
     integer const _icntl[20],
-    real    const _cntl[5],
+    double  const _cntl[5],
     integer       _info[40],
-    real          _rinfo[20]
+    double        _rinfo[20]
   ) {
-    HSL::HSL_F77NAME(ma57dd)(
+    HSL_F77NAME(ma57dd)(
       &_job, &_n, &_ne, _a, _irn, _jcn, _fact, &_lfact, _ifact, &_lifact,
       _rhs, _x, _resid, _w, _iw, _icntl, _cntl, _info, _rinfo
     );
   }
 
-  #endif
-
-#ifdef __cplusplus
 } // end namesapace
-#endif
 
 
-#endif // HSL_H
+#endif // HSL_dot_HH

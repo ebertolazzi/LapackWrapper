@@ -6,7 +6,7 @@
  * \since  13.11.2018
  */
 
-#include "hsl.h"
+#include "hsl.hh"
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -28,9 +28,10 @@
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 #endif
 
-namespace HSL {
+extern "C" {
 
-  HSL_extern
+  typedef lapack_wrapper::integer integer;
+
   void
   HSL_F77NAME(mc47a)(
     integer const * N,
@@ -44,17 +45,15 @@ namespace HSL {
     HSL_ERROR("mc47a not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma41i)(
-    single  CNTL[10],
+    float   CNTL[10],
     integer ICNTL[20],
     integer KEEP[50]
   ) {
     HSL_ERROR("ma41i not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma41a)(
     integer const * JOB,
@@ -62,34 +61,32 @@ namespace HSL {
     integer const * NZ,
     integer         IRN[],
     integer         JCN[],
-    single          ASPK[],
-    single          RHS[],
-    single          COLSCA[],
-    single          ROWSCA[],
+    float           ASPK[],
+    float           RHS[],
+    float           COLSCA[],
+    float           ROWSCA[],
     integer         KEEP[50],
     integer         IS[],
     integer const * MAXIS,
-    single          S[],
+    float           S[],
     integer const * MAXS,
-    single          CNTL[10],
+    float           CNTL[10],
     integer         ICNTL[20],
     integer         INFO[20],
-    single          RINFO[20]
+    float           RINFO[20]
   ) {
     HSL_ERROR("ma41a not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma41id)(
-    real    CNTL[10],
+    double  CNTL[10],
     integer ICNTL[20],
     integer KEEP[50]
   ) {
     HSL_ERROR("ma41id not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma41ad)(
     integer const * JOB,
@@ -97,30 +94,28 @@ namespace HSL {
     integer const * NZ,
     integer         IRN[],
     integer         JCN[],
-    real            ASPK[],
-    real            RHS[],
-    real            COLSCA[],
-    real            ROWSCA[],
+    double          ASPK[],
+    double          RHS[],
+    double          COLSCA[],
+    double          ROWSCA[],
     integer         KEEP[50],
     integer         IS[],
     integer const * MAXIS,
-    real            S[],
+    double          S[],
     integer const * MAXS,
-    real            CNTL[10],
+    double          CNTL[10],
     integer         ICNTL[20],
     integer         INFO[20],
-    real            RINFO[20]
+    double          RINFO[20]
   ) {
     HSL_ERROR("ma41ad not defined");
   }
 
-  HSL_extern
   void
-  HSL_F77NAME(ma48id)( real cntl[5], integer icntl[20] ) {
+  HSL_F77NAME(ma48id)( double cntl[5], integer icntl[20] ) {
     HSL_ERROR("ma48id not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma48ad)(
     integer const * nrow,
@@ -128,20 +123,19 @@ namespace HSL {
     integer const * nz,
     integer const * job,
     integer const * la,
-    real    const   a[],
+    double  const   a[],
     integer         irn[],
     integer         jcn[],
     integer         keep[],
-    real    const   cntl[10],
+    double  const   cntl[10],
     integer const   icntl[20],
     integer         iw[],
     integer         info[20],
-    real            rinfo[10]
+    double          rinfo[10]
   ) {
     HSL_ERROR("ma48ad not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma48bd)(
     integer const * nrow,
@@ -149,21 +143,20 @@ namespace HSL {
     integer const * nz,
     integer const * job,
     integer const * la,
-    real            a[],
+    double          a[],
     integer         irn[],
     integer         jcn[],
     integer const   keep[],
-    real    const   cntl[10],
+    double  const   cntl[10],
     integer const   icntl[20],
-    real            w[],
+    double          w[],
     integer         iw[],
     integer         info[20],
-    real            rinfo[10]
+    double          rinfo[10]
   ) {
     HSL_ERROR("ma48bd not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma48cd)(
     integer const * nrow,
@@ -171,28 +164,26 @@ namespace HSL {
     integer const * itrans,
     integer const * job,
     integer const * la,
-    real    const   a[],
+    double  const   a[],
     integer const   irn[],
     integer const   keep[],
-    real    const   cntl[10],
+    double  const   cntl[10],
     integer const   icntl[20],
-    real    const   rhs[],
-    real            x[],
-    real            errors[3],
-    real    const   w[],
+    double  const   rhs[],
+    double          x[],
+    double          errors[3],
+    double  const   w[],
     integer const   iw[],
     integer         info[20]
   ) {
     HSL_ERROR("ma48cd not defined");
   }
 
-  HSL_extern
   void
-  HSL_F77NAME(ma48i)( single cntl[5], integer icntl[20] ) {
+  HSL_F77NAME(ma48i)( float cntl[5], integer icntl[20] ) {
     HSL_ERROR("ma48i not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma48a)(
     integer const * nrow,
@@ -200,20 +191,19 @@ namespace HSL {
     integer const * nz,
     integer const * job,
     integer const * la,
-    single          a[],
+    float           a[],
     integer         irn[],
     integer         jcn[],
     integer         keep[],
-    single  const   cntl[10],
+    float   const   cntl[10],
     integer const   icntl[20],
     integer         iw[],
     integer         info[20],
-    single          rinfo[10]
+    float           rinfo[10]
   ) {
     HSL_ERROR("ma48a not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma48b)(
     integer const * nrow,
@@ -221,21 +211,20 @@ namespace HSL {
     integer const * nz,
     integer const * job,
     integer const * la,
-    single          a[],
+    float           a[],
     integer         irn[],
     integer         jcn[],
     integer const   keep[],
-    single  const   cntl[10],
+    float   const   cntl[10],
     integer const   icntl[20],
-    single          w[],
+    float           w[],
     integer         iw[],
     integer         info[20],
-    single          rinfo[10]
+    float           rinfo[10]
   ) {
     HSL_ERROR("ma48b not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma48c)(
     integer const * nrow,
@@ -243,28 +232,26 @@ namespace HSL {
     integer const * itrans,
     integer const * job,
     integer const * la,
-    single  const   a[],
+    float   const   a[],
     integer const   irn[],
     integer const   keep[],
-    single  const   cntl[10],
+    float   const   cntl[10],
     integer const   icntl[20],
-    single  const   rhs[],
-    single          x[],
-    single          errors[3],
-    single  const   w[],
+    float   const   rhs[],
+    float           x[],
+    float           errors[3],
+    float   const   w[],
     integer const   iw[],
     integer         info[20]
   ) {
     HSL_ERROR("ma48c not defined");
   }
 
-  HSL_extern
   void
-  HSL_F77NAME(ma57id)( real cntl[5], integer icntl[20] ) {
+  HSL_F77NAME(ma57id)( double cntl[5], integer icntl[20] ) {
     HSL_ERROR("ma57id not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma57ad)(
     integer const * n,
@@ -276,18 +263,17 @@ namespace HSL {
     integer         iw[],
     integer const   icntl[20],
     integer         info[40],
-    real            rinfo[20]
+    double          rinfo[20]
   ) {
     HSL_ERROR("ma57ad not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma57bd)(
     integer const * n,
     integer const * nz,
-    real    const   a[],
-    real            fact[],
+    double  const   a[],
+    double          fact[],
     integer const * lfact,
     integer         ifact[],
     integer const * lifact,
@@ -295,26 +281,25 @@ namespace HSL {
     integer const   keep[],
     integer         iw[],
     integer const   icntl[20],
-    real    const   cntl[5],
+    double  const   cntl[5],
     integer         info[40],
-    real            rinfo[20]
+    double          rinfo[20]
   ) {
     HSL_ERROR("ma57bd not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma57cd)(
     integer const * job,
     integer const * n,
-    real    const   fact[],
+    double  const   fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
     integer const * nrhs,
-    real            rhs[],
+    double          rhs[],
     integer const * lrhs,
-    real            w[],
+    double          w[],
     integer const * lw,
     integer         iw[],
     integer const   icntl[20],
@@ -323,39 +308,36 @@ namespace HSL {
     HSL_ERROR("ma57cd not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma57dd)(
     integer const * job,
     integer const * n,
     integer const * ne,
-    real    const   a[],
+    double  const   a[],
     integer const   irn[],
     integer const   jcn[],
-    real    const   fact[],
+    double  const   fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
-    real    const   rhs[],
-    real            x[],
-    real            resid[],
-    real            w[],
+    double  const   rhs[],
+    double          x[],
+    double          resid[],
+    double          w[],
     integer         iw[],
     integer const   icntl[20],
-    real    const   cntl[5],
+    double  const   cntl[5],
     integer         info[40],
-    real            rinfo[20]
+    double          rinfo[20]
   ) {
     HSL_ERROR("ma57dd not defined");
   }
 
-  HSL_extern
   void
-  HSL_F77NAME(ma57i)( single cntl[5], integer icntl[20] ) {
+  HSL_F77NAME(ma57i)( float cntl[5], integer icntl[20] ) {
     HSL_ERROR("ma57i not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma57a)(
     integer const * n,
@@ -367,18 +349,17 @@ namespace HSL {
     integer         iw[],
     integer const   icntl[20],
     integer         info[40],
-    single          rinfo[20]
+    float           rinfo[20]
   ) {
     HSL_ERROR("ma57a not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma57b)(
     integer const * n,
     integer const * nz,
-    single  const   a[],
-    single          fact[],
+    float   const   a[],
+    float           fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
@@ -386,26 +367,25 @@ namespace HSL {
     integer const   keep[],
     integer         iw[],
     integer const   icntl[20],
-    single  const   cntl[5],
+    float   const   cntl[5],
     integer         info[40],
-    single          rinfo[20]
+    float           rinfo[20]
   ) {
     HSL_ERROR("ma57b not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma57c)(
     integer const * job,
     integer const * n,
-    single  const   fact[],
+    float   const   fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
     integer const * nrhs,
-    single          rhs[],
+    float           rhs[],
     integer const * ldRhs,
-    single          w[],
+    float           w[],
     integer const * lw,
     integer         iw[],
     integer const   icntl[20],
@@ -414,34 +394,33 @@ namespace HSL {
     HSL_ERROR("ma57c not defined");
   }
 
-  HSL_extern
   void
   HSL_F77NAME(ma57d)(
     integer const * job,
     integer const * n,
     integer const * ne,
-    single  const   a[],
+    float   const   a[],
     integer const   irn[],
     integer const   jcn[],
-    single  const   fact[],
+    float   const   fact[],
     integer const * lfact,
     integer const   ifact[],
     integer const * lifact,
-    single  const   rhs[],
-    single          x[],
-    single        * resid,
-    single          w[],
+    float   const   rhs[],
+    float           x[],
+    float         * resid,
+    float           w[],
     integer         iw[],
     integer const   icntl[20],
-    single  const   cntl[5],
+    float   const   cntl[5],
     integer         info[40],
-    single          rinfo[20]
+    float           rinfo[20]
   ) {
     HSL_ERROR("ma57d not defined");
   }
 
-} // namespace HSL
+}
 
 //
-// EOF: hsl_solver.cc
+// EOF: hsl_fake.cc
 //

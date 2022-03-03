@@ -6,11 +6,10 @@
  * \since  13.11.2018
  */
 
-#ifndef HSLSOLVER_H
-#define HSLSOLVER_H
+#ifndef HSL_SOLVER_dot_HH
+#define HSL_SOLVER_dot_HH
 
-#include "hsl.h"
-#include "../lapack_wrapper_config.hh"
+#include "hsl.hh"
 #include <string>
 #include <algorithm>
 
@@ -19,9 +18,9 @@ namespace lapack_wrapper {
   template <typename real>
   class HSLsolver {
   protected:
-    int m_nrows;
-    int m_ncols;
-    int m_nnz;
+    integer m_nrows;
+    integer m_ncols;
+    integer m_nnz;
 
     /// True if the HSL solver is initialized.
     bool m_isInitialized;
@@ -68,12 +67,13 @@ namespace lapack_wrapper {
     virtual
     bool
     init(
-      int       nnz,
-      int       N_Row,
-      int       N_Col,
-      int const i_Row[],
-      int const j_Col[],
-      bool      isFortranIndexing
+      integer       nnz,
+      integer       N_Row,
+      integer       N_Col,
+      integer const i_Row[],
+      integer const j_Col[],
+      bool          isFortranIndexing,
+      bool          isStoredSymmetric
     ) = 0;
 
     /**
@@ -105,11 +105,11 @@ namespace lapack_wrapper {
     virtual
     bool
     solve(
-      int        nrhs,
+      integer    nrhs,
       real const RHS[],
-      int        ldRHS,
+      integer    ldRHS,
       real       X[],
-      int        ldX
+      integer    ldX
     ) const = 0;
 
     /**
@@ -143,11 +143,11 @@ namespace lapack_wrapper {
     virtual
     bool
     solve_transposed(
-      int        nrhs,
+      integer    nrhs,
       real const RHS[],
-      int        ldRHS,
+      integer    ldRHS,
       real       X[],
-      int        ldX
+      integer    ldX
     ) const = 0;
 
     /**
@@ -167,25 +167,23 @@ namespace lapack_wrapper {
     }
 
     /**
-     * \brief checkInitialized:
-     *        Checks the flag isInitialized.
+     * \brief Checks if matrix stored is initialized
      *
-     * \return Returns the flag isInitialized.
+     * \return Return true if matrix stored is initialized
      *
      */
     bool
-    checkInitialized()
+    is_initialized()
     { return m_isInitialized; }
 
     /**
-     * \brief checkFactorized:
-     *        Checks the flag isFactorized.
+     * \brief Checks if matrix stored is facorized
      *
-     * \return Returns the flag isFactorized.
+     * \return Return true if matrix stored is factorized
      *
      */
     bool
-    checkFactorized()
+    is_factorized()
     { return m_isFactorized; }
   };
 

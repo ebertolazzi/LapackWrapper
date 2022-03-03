@@ -16,7 +16,7 @@ namespace lapack_wrapper {
   :|:  | _ \_  _| |__| (_)__  |  \/  |___ _ __ | |__  ___ _ _ ___
   :|:  |  _/ || | '_ \ | / _| | |\/| / -_) '  \| '_ \/ -_) '_(_-<
   :|:  |_|  \_,_|_.__/_|_\__| |_|  |_\___|_|_|_|_.__/\___|_| /__/
-  \*/  
+  \*/
   template <typename real>
   bool
   MA57<real>::init(
@@ -25,7 +25,8 @@ namespace lapack_wrapper {
     int       N_Col,
     int const iRow[],
     int const jCol[],
-    bool      isFortranIndexing
+    bool      isFortranIndexing,
+    bool      isStoredSymmetric
   ) {
     // Set dimension:
     m_nnz = Nnz;
@@ -56,10 +57,10 @@ namespace lapack_wrapper {
 
     m_job = 1;
     // Initialize MA57:
-    HSL::ma57i<real>( m_cntl, m_icntl );
+    lapack_wrapper::ma57i<real>( m_cntl, m_icntl );
     // Analyse the structure of the linear system:
     int NiKeep = int(m_iKeep.size());
-    HSL::ma57a<real>(
+    lapack_wrapper::ma57a<real>(
       m_nrows,
       m_nnz,
       &m_i_Row.front(),
@@ -100,7 +101,7 @@ namespace lapack_wrapper {
     int NiKeep = int(m_iKeep.size());
     int lifact = int(m_ifact.size());
     int lfact  = int(m_fact.size());
-    HSL::ma57b<real>(
+    lapack_wrapper::ma57b<real>(
       m_nrows,
       m_nnz,
       &m_a_stored.front(),
@@ -151,7 +152,7 @@ namespace lapack_wrapper {
         // Löse mit rechter Seite: (iterative reinfinement)
         int lifact = int(m_ifact.size());
         int lfact  = int(m_fact.size());
-        HSL::ma57d<real>(
+        lapack_wrapper::ma57d<real>(
           localjob,
           m_nrows,
           int(m_a_stored.size()),
@@ -189,7 +190,7 @@ namespace lapack_wrapper {
       int lfact  = int(m_fact.size());
       int lifact = int(m_ifact.size());
       int NWork  = int(m_Work.size());
-      HSL::ma57c<real>(
+      lapack_wrapper::ma57c<real>(
         m_job,
         m_nrows,
         &m_fact.front(),

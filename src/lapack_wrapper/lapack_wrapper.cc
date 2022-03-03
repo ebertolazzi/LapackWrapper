@@ -51,15 +51,6 @@
 
 namespace lapack_wrapper {
 
-  void
-  set_num_threads( integer num_threads ) {
-    #ifdef LAPACK_WRAPPER_USE_OPENBLAS
-    ::openblas_set_num_threads( num_threads );
-    ::goto_set_num_threads( num_threads );
-    ::omp_set_num_threads( num_threads );
-    #endif
-  }
-
   #ifdef LAPACK_WRAPPER_USE_OPENBLAS
   std::string
   openblas_info() {

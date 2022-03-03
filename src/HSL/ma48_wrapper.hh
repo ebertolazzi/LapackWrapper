@@ -6,6 +6,8 @@
  * \since 15.11.2018
  */
 
+#pragma once
+
 #ifndef MA48_WRAPPER_HH
 #define MA48_WRAPPER_HH
 
@@ -18,12 +20,12 @@ namespace lapack_wrapper {
   class MA48 : public HSLsolver<real> {
   private:
     // Memory vectors for int.
-    std::vector<int> m_i_Row_stored;
-    std::vector<int> m_j_Col_stored;
-    std::vector<int> m_irn;
-    std::vector<int> m_jcn;
-    std::vector<int> m_iw;
-    std::vector<int> m_keep;
+    std::vector<integer> m_i_Row_stored;
+    std::vector<integer> m_j_Col_stored;
+    std::vector<integer> m_irn;
+    std::vector<integer> m_jcn;
+    std::vector<integer> m_iw;
+    std::vector<integer> m_keep;
 
     // Memory vectors for real.
     std::vector<real> m_a;
@@ -101,7 +103,8 @@ namespace lapack_wrapper {
       int       N_Col,
       int const i_Row[],
       int const j_Col[],
-      bool      isFortranIndexing
+      bool      isFortranIndexing,
+      bool      isStroredSymmetric
     ) override;
 
     /**

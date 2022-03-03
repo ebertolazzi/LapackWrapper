@@ -434,8 +434,6 @@ namespace lapack_wrapper {
   extern std::string openblas_info();
   #endif
 
-  void set_num_threads( integer nt );
-
   //============================================================================
 
   static

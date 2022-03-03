@@ -7,7 +7,7 @@
  */
 
 #include "ma48_wrapper.hh"
-#include "hsl.h"
+#include "hsl.hh"
 #include <iostream>
 
 // windows workaround
@@ -88,7 +88,8 @@ namespace lapack_wrapper {
     int       N_Col,
     int const i_Row[],
     int const j_Col[],
-    bool      isFortranIndexing
+    bool      isFortranIndexing,
+    bool      isStoredSymmetric
   ) {
     m_isFactorized = false;
     m_nnz          = Nnz;
@@ -117,7 +118,7 @@ namespace lapack_wrapper {
     std::copy( m_j_Col_stored.begin(), m_j_Col_stored.end(), m_jcn.begin() );
 
     // Initialize MA48:
-    HSL::ma48i<real>( m_cntl, m_icntl );
+    lapack_wrapper::ma48i<real>( m_cntl, m_icntl );
 
     int ihlp = m_icntl[5];
     if ( ihlp <= 0 ) {
@@ -152,7 +153,7 @@ namespace lapack_wrapper {
     // Copy Memory:
     std::copy_n( ArrayA, m_nnz, m_a.begin() );
     // Pivoting:
-    HSL::ma48a<real>(
+    lapack_wrapper::ma48a<real>(
       m_nrows,
       m_ncols,
       m_nnz,
@@ -187,7 +188,7 @@ namespace lapack_wrapper {
         m_jcn.begin()
       );
 
-      HSL::ma48a<real>(
+      lapack_wrapper::ma48a<real>(
         m_nrows,
         m_ncols,
         m_nnz,
@@ -212,7 +213,7 @@ namespace lapack_wrapper {
     if ( m_info[0] != 0 ) return false;
 
     // Factorize:
-    HSL::ma48b<real>(
+    lapack_wrapper::ma48b<real>(
       m_nrows,
       m_ncols,
       m_nnz,
@@ -252,7 +253,7 @@ namespace lapack_wrapper {
     }
 
     // Solve with right hand side:
-    HSL::ma48c<real>(
+    lapack_wrapper::ma48c<real>(
       m_nrows,
       m_ncols,
       transposed ? 1 : 0,

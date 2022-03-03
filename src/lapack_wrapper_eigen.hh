@@ -82,7 +82,8 @@
 #pragma warning( disable : 4200 )
 #endif
 
-//#define EIGEN_DONT_PARALLELIZE
+// DO NOT PARALLELIZE EIGEN CODE
+#define EIGEN_DONT_PARALLELIZE
 #define EIGEN_DEFAULT_DENSE_INDEX_TYPE lapack_wrapper::integer
 #define EIGEN_NO_AUTOMATIC_RESIZING
 // EIGEN cant use BLAS on windows
