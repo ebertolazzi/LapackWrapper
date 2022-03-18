@@ -42,10 +42,10 @@ namespace lapack_wrapper {
 
     Malloc<real_type> m_allocReals;
 
-    real_type * m_L;
-    real_type * m_D;
-    real_type * m_WORK;
-    integer     m_nRC;
+    real_type * m_L    = nullptr;
+    real_type * m_D    = nullptr;
+    real_type * m_WORK = nullptr;
+    integer     m_nRC  = 0;
 
   public:
 
@@ -53,7 +53,6 @@ namespace lapack_wrapper {
 
     TridiagonalSPD()
     : m_allocReals("allocReals")
-    , m_nRC(0)
     {}
 
     ~TridiagonalSPD() override
@@ -143,15 +142,15 @@ namespace lapack_wrapper {
     Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
-    real_type * m_L;
-    real_type * m_D;
-    real_type * m_U;
-    real_type * m_U2;
-    real_type * m_WORK;
-    integer   * m_IPIV;
-    integer   * m_IWORK;
+    real_type * m_L     = nullptr;
+    real_type * m_D     = nullptr;
+    real_type * m_U     = nullptr;
+    real_type * m_U2    = nullptr;
+    real_type * m_WORK  = nullptr;
+    integer   * m_IPIV  = nullptr;
+    integer   * m_IWORK = nullptr;
 
-    integer     m_nRC;
+    integer m_nRC = 0;
 
   public:
 
@@ -160,7 +159,6 @@ namespace lapack_wrapper {
     TridiagonalLU()
     : m_allocReals("TridiagonalLU-allocReals")
     , m_allocIntegers("TridiagonalLU-allocIntegers")
-    , m_nRC(0)
     {}
 
     ~TridiagonalLU() override {
@@ -272,14 +270,14 @@ namespace lapack_wrapper {
 
     Malloc<real_type> m_allocReals;
 
-    real_type * m_C;   // rotazioni givens
-    real_type * m_S;
-    real_type * m_BD;  // band triangular matrix
-    real_type * m_BU;  // band triangular matrix
-    real_type * m_BU2; // band triangular matrix
+    real_type * m_C   = nullptr; // rotazioni givens
+    real_type * m_S   = nullptr;
+    real_type * m_BD  = nullptr; // band triangular matrix
+    real_type * m_BU  = nullptr; // band triangular matrix
+    real_type * m_BU2 = nullptr; // band triangular matrix
 
-    real_type   m_normInfA;
-    integer     m_nRC;
+    real_type   m_normInfA = 0;
+    integer     m_nRC      = 0;
 
     void Rsolve( real_type xb[] ) const;
     void RsolveTransposed( real_type xb[] ) const;
@@ -290,7 +288,6 @@ namespace lapack_wrapper {
 
     TridiagonalQR()
     : m_allocReals("allocReals")
-    , m_nRC(0)
     {}
 
     ~TridiagonalQR() override {

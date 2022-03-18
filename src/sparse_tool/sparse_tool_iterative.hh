@@ -230,28 +230,28 @@ namespace Sparse_tool {
     ILDUiterPreconditioner(void) : Preco<ILDUITERPRECO>() {}
 
     template <typename MAT>
-    ILDUiterPreconditioner( MAT const & _M, integer _iter ) : Preco<ILDUITERPRECO>()
-    { build_ILDUiter( _M, _M, _iter ); }
+    ILDUiterPreconditioner( MAT const & m_M, integer m_iter ) : Preco<ILDUITERPRECO>()
+    { build_ILDUiter( m_M, m_M, m_iter ); }
 
     template <typename MAT, typename PRE>
-    ILDUiterPreconditioner( MAT const & _M, PRE const & _P, integer _iter ) : Preco<ILDUITERPRECO>()
-    { build_ILDUiter(_M,_P,_iter); }
+    ILDUiterPreconditioner( MAT const & m_M, PRE const & m_P, integer m_iter ) : Preco<ILDUITERPRECO>()
+    { build_ILDUiter(m_M,m_P,m_iter); }
 
     //!
     //! Build the preconditioner from matrix `M`.
     //!
     template <typename MAT>
     void
-    build( MAT const & _M, integer _iter )
-    { build_ILDUiter(_M,_M,_iter); }
+    build( MAT const & m_M, integer m_iter )
+    { build_ILDUiter(m_M,m_M,m_iter); }
 
     //!
     //! Build the preconditioner from matrix `M` with pattern `P`.
     //!
     template <typename MAT, typename PRE>
     void
-    build( MAT const & _M, PRE const & _P, integer _iter )
-    { build_ILDUiter(_M,_P,_iter); }
+    build( MAT const & m_M, PRE const & m_P, integer m_iter )
+    { build_ILDUiter(m_M,m_P,m_iter); }
 
     //!
     //! Apply preconditioner to vector `b`

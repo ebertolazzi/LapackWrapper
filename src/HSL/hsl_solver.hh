@@ -202,4 +202,4 @@ namespace lapack_wrapper {
 
 } // namespace lapack_wrapper
 
-#endif // HSLSOLVER_H
+#endif

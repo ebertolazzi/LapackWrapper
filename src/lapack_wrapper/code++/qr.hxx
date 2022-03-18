@@ -365,8 +365,8 @@ namespace lapack_wrapper {
     typedef typename QR_no_alloc<T>::real_type real_type;
 
   protected:
-    integer   * m_JPVT;
-    real_type * m_WorkPermute;
+    integer   * m_JPVT = nullptr;
+    real_type * m_WorkPermute = nullptr;
 
   public:
 

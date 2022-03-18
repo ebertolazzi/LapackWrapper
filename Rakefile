@@ -303,3 +303,13 @@ task :clean_win do
   sh "rake clean_win"
   FileUtils.cd '..'
 end
+
+task :cppcheck do
+  FileUtils.rm_rf   'lib'
+  FileUtils.rm_rf   'build'
+  FileUtils.mkdir_p 'build'
+  FileUtils.cd      'build'
+  sh 'cmake -DCMAKE_EXPORT_COMPILE_COMMAND=ON ..'
+  sh 'cppcheck --project=compile_commands.json'
+end
+

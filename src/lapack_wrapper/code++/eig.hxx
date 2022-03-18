@@ -58,6 +58,7 @@ namespace lapack_wrapper {
 
     Eigenvalues();
     Eigenvalues( integer NRC, real_type const data[], integer ldData );
+    explicit
     Eigenvalues( MatW const & M );
     Eigenvalues(
       integer         NRC,
@@ -118,6 +119,7 @@ namespace lapack_wrapper {
 
     Eigenvectors( integer NRC, real_type const A[], integer ldA );
 
+    explicit
     Eigenvectors( MatW const & A );
 
     Eigenvectors(

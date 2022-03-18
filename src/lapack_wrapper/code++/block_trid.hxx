@@ -49,14 +49,14 @@ namespace lapack_wrapper {
     Malloc<real_type*> m_allocRpointers;
     Malloc<integer*>   m_allocIpointers;
 
-    integer      m_nBlocks;
-    integer      m_nnz;
-    real_type ** m_D_blocks;
-    real_type ** m_L_blocks;
-    real_type *  m_Work;
-    integer   ** m_B_permutation;
-    integer   *  m_row_blocks;
-    bool         m_is_factorized;
+    integer      m_nBlocks       = 0;
+    integer      m_nnz           = 0;
+    real_type ** m_D_blocks      = nullptr;
+    real_type ** m_L_blocks      = nullptr;
+    real_type *  m_Work          = nullptr;
+    integer   ** m_B_permutation = nullptr;
+    integer   *  m_row_blocks    = nullptr;
+    bool         m_is_factorized = false;
 
   public:
 
@@ -67,9 +67,6 @@ namespace lapack_wrapper {
     , m_allocIntegers("BlockTridiagonalSymmetic-allocIntegers")
     , m_allocRpointers("BlockTridiagonalSymmetic-allocRpointers")
     , m_allocIpointers("BlockTridiagonalSymmetic-allocIpointers")
-    , m_nBlocks(0)
-    , m_nnz(0)
-    , m_is_factorized(false)
     {}
 
     ~BlockTridiagonalSymmetic() override {

@@ -316,9 +316,9 @@ namespace Sparse_tool {
   struct Vector_V_div_M {
     VA     const & a;
     MATRIX const & M;
-    Vector_V_div_M( VA const & _a, MATRIX const & _M )
-    : a(_a)
-    , M(_M)
+    Vector_V_div_M( VA const & m_a, MATRIX const & m_M )
+    : a(m_a)
+    , M(m_M)
     {}
   };
 
@@ -329,9 +329,9 @@ namespace Sparse_tool {
   struct Vector_M_mul_V {
     MATRIX const & M;
     VA     const & a;
-    Vector_M_mul_V( MATRIX const & _M, VA const & _a )
-    : M(_M)
-    , a(_a)
+    Vector_M_mul_V( MATRIX const & m_M, VA const & m_a )
+    : M(m_M)
+    , a(m_a)
     {}
   };
 
@@ -342,9 +342,9 @@ namespace Sparse_tool {
   struct Vector_S_mul_M {
     S      const & s;
     MATRIX const & M;
-    Vector_S_mul_M( S const & _s, MATRIX const & _M )
-    : s(_s)
-    , M(_M)
+    Vector_S_mul_M( S const & m_s, MATRIX const & m_M )
+    : s(m_s)
+    , M(m_M)
     {}
   };
 
@@ -356,9 +356,9 @@ namespace Sparse_tool {
   struct Vector_Mt_mul_V {
     MATRIX const & M;
     VA     const & a;
-    Vector_Mt_mul_V( MATRIX const & _M, VA const & _a )
-    : M(_M)
-    , a(_a)
+    Vector_Mt_mul_V( MATRIX const & m_M, VA const & m_a )
+    : M(m_M)
+    , a(m_a)
     {}
   };
 
@@ -372,13 +372,13 @@ namespace Sparse_tool {
     MATRIX const & M;
     VA     const & a;
     Vector_S_mul_M_mul_V(
-      SCALAR const & _s,
-      MATRIX const & _M,
-      VA     const & _a
+      SCALAR const & m_s,
+      MATRIX const & m_M,
+      VA     const & m_a
     )
-    : s(_s)
-    , M(_M)
-    , a(_a)
+    : s(m_s)
+    , M(m_M)
+    , a(m_a)
     {}
   };
 
@@ -392,13 +392,13 @@ namespace Sparse_tool {
     MATRIX const & M;
     VA     const & a;
     Vector_S_mul_Mt_mul_V(
-      SCALAR const & _s,
-      MATRIX const & _M,
-      VA     const & _a
+      SCALAR const & m_s,
+      MATRIX const & m_M,
+      VA     const & m_a
     )
-    : s(_s)
-    , M(_M)
-    , a(_a)
+    : s(m_s)
+    , M(m_M)
+    , a(m_a)
     {}
   };
 
@@ -411,13 +411,13 @@ namespace Sparse_tool {
     MATRIX const & M;
     VB     const & b;
     Vector_V_sum_M_mul_V(
-      VA     const & _a,
-      MATRIX const & _M,
-      VB     const & _b
+      VA     const & m_a,
+      MATRIX const & m_M,
+      VB     const & m_b
     )
-    : a(_a)
-    , M(_M)
-    , b(_b)
+    : a(m_a)
+    , M(m_M)
+    , b(m_b)
     {}
   };
 
@@ -428,13 +428,13 @@ namespace Sparse_tool {
     MATRIX const & M;
     VB     const & b;
     Vector_V_sum_Mt_mul_V(
-      VA     const & _a,
-      MATRIX const & _M,
-      VB     const & _b
+      VA     const & m_a,
+      MATRIX const & m_M,
+      VB     const & m_b
     )
-    : a(_a)
-    , M(_M)
-    , b(_b)
+    : a(m_a)
+    , M(m_M)
+    , b(m_b)
     {}
   };
 
@@ -447,13 +447,13 @@ namespace Sparse_tool {
     MATRIX const & M;
     VB     const & b;
     Vector_V_sub_M_mul_V(
-      VA     const & _a,
-      MATRIX const & _M,
-      VB     const & _b
+      VA     const & m_a,
+      MATRIX const & m_M,
+      VB     const & m_b
     )
-    : a(_a)
-    , M(_M)
-    , b(_b)
+    : a(m_a)
+    , M(m_M)
+    , b(m_b)
     {}
   };
 
@@ -466,13 +466,13 @@ namespace Sparse_tool {
     MATRIX const & M;
     VB     const & b;
     Vector_V_sub_Mt_mul_V(
-      VA     const & _a,
-      MATRIX const & _M,
-      VB     const & _b
+      VA     const & m_a,
+      MATRIX const & m_M,
+      VB     const & m_b
     )
-    : a(_a)
-    , M(_M)
-    , b(_b)
+    : a(m_a)
+    , M(m_M)
+    , b(m_b)
     {}
   };
 
@@ -486,15 +486,15 @@ namespace Sparse_tool {
     MATRIX const & M;
     VB     const & b;
     Vector_V_sum_S_mul_M_mul_V(
-      VA     const & _a,
-      SCALAR const & _s,
-      MATRIX const & _M,
-      VB     const & _b
+      VA     const & m_a,
+      SCALAR const & m_s,
+      MATRIX const & m_M,
+      VB     const & m_b
     )
-    : a(_a)
-    , s(_s)
-    , M(_M)
-    , b(_b)
+    : a(m_a)
+    , s(m_s)
+    , M(m_M)
+    , b(m_b)
     {}
   };
 
@@ -508,15 +508,15 @@ namespace Sparse_tool {
     MATRIX const & M;
     VB     const & b;
     Vector_V_sum_S_mul_Mt_mul_V(
-      VA     const & _a,
-      SCALAR const & _s,
-      MATRIX const & _M,
-      VB     const & _b
+      VA     const & m_a,
+      SCALAR const & m_s,
+      MATRIX const & m_M,
+      VB     const & m_b
     )
-    : a(_a)
-    , s(_s)
-    , M(_M)
-    , b(_b)
+    : a(m_a)
+    , s(m_s)
+    , M(m_M)
+    , b(m_b)
     {}
   };
 
@@ -528,9 +528,9 @@ namespace Sparse_tool {
   struct Vector_V_div_P {
     VECTOR const & a;
     PRECO  const & P;
-    Vector_V_div_P( VECTOR const & _a, PRECO const & _P )
-    : a(_a)
-    , P(_P)
+    Vector_V_div_P( VECTOR const & m_a, PRECO const & m_P )
+    : a(m_a)
+    , P(m_P)
     {}
   };
 
@@ -2642,7 +2642,7 @@ namespace Sparse_tool {
         // setup statistic
         SPARSE::ldu_count(I(i),J(i));
         // find i1 != i
-        for ( ++i1; i1 < SPARSE::sp_nnz && I(i1) == I(i) && J(i1) == J(i); ++i1 ) {};
+        for ( ++i1; i1 < SPARSE::sp_nnz && I(i1) == I(i) && J(i1) == J(i); ++i1 ) {}
         ++i;
       }
       SPARSE::sp_nnz        = i;
