@@ -430,10 +430,6 @@ namespace lapack_wrapper {
   extern character const *mtype_blas[5];
   extern character const *equilibrate_blas[4];
 
-  #ifdef LAPACK_WRAPPER_USE_OPENBLAS
-  extern std::string openblas_info();
-  #endif
-
   //============================================================================
 
   static

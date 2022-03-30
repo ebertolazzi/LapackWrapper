@@ -51,23 +51,6 @@
 
 namespace lapack_wrapper {
 
-  #ifdef LAPACK_WRAPPER_USE_OPENBLAS
-  std::string
-  openblas_info() {
-    return fmt::format(
-      "OPENBLAS INFO\n"
-      "number of threads at runtime          {}\n"
-      "number of physical processors (cores) {}\n"
-      "build configure on runtime            {}\n"
-      "CPU corename on runtime               {}\n",
-      openblas_get_num_threads(),
-      openblas_get_num_procs(),
-      openblas_get_config(),
-      openblas_get_corename()
-    );
-  }
-  #endif
-
   char const *Transposition_name[] = {
     "NO_TRANSPOSE",
     "TRANSPOSE",
