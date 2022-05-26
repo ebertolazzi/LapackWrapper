@@ -145,19 +145,19 @@ namespace lapack_wrapper {
   MA41<real>::load_matrix( integer nr ) {
     if ( verbose ) fmt::print( "MA41::load_matrix(...)\n");
     N  = nr ;
-    NE = A . size() ;
+    NE = integer(A.size());
 
-    COLSCA . resize(N) ;
-    ROWSCA . resize(N) ;
-    IS     . resize(2 * NE + 11 * N + 1) ;
-    S      . resize(2 * NE + 11 * N + 1) ;
+    COLSCA . resize(N);
+    ROWSCA . resize(N);
+    IS     . resize(2 * NE + 11 * N + 1);
+    S      . resize(2 * NE + 11 * N + 1);
 
-    fill(COLSCA . begin(), COLSCA . end(), 0 ) ;
-    fill(ROWSCA . begin(), ROWSCA . end(), 0 ) ;
-    fill(IS     . begin(), IS     . end(), 0 ) ;
-    fill(S      . begin(), S      . end(), 0 ) ;
+    fill(COLSCA . begin(), COLSCA . end(), integer(0) );
+    fill(ROWSCA . begin(), ROWSCA . end(), integer(0) );
+    fill(IS     . begin(), IS     . end(), integer(0) );
+    fill(S      . begin(), S      . end(), real(0) );
      // set pars
-    lapack_wrapper::ma41i<real>(CNTL, ICNTL, KEEP) ;
+    lapack_wrapper::ma41i<real>(CNTL, ICNTL, KEEP);
     if ( verbose ) fmt::print( "done\n" );
   }
 
@@ -178,8 +178,8 @@ namespace lapack_wrapper {
       COLSCA.data(),
       ROWSCA.data(),
       KEEP,
-      tmpIS.data(), tmpIS.size(),
-      S.data(),     S.size(),
+      tmpIS.data(),  integer(tmpIS.size()),
+      S.data(),      integer(S.size()),
       CNTL, ICNTL, INFO, RINFO
     );
 
@@ -188,7 +188,7 @@ namespace lapack_wrapper {
     IS . resize(10*INFO[6]);
     S  . resize(10*INFO[7]);
 
-    copy( tmpIS.begin(), tmpIS.end(), IS.begin() ) ;
+    copy( tmpIS.begin(), tmpIS.end(), IS.begin() );
 
     if ( verbose ) fmt::print( "MA41::symbfac() do factorization\n" );
 
@@ -204,8 +204,8 @@ namespace lapack_wrapper {
       COLSCA.data(),
       ROWSCA.data(),
       KEEP,
-      IS.data(), IS.size(),
-      S.data(),  S.size(),
+      IS.data(), integer(IS.size()),
+      S.data(),  integer(S.size()),
       CNTL, ICNTL, INFO, RINFO
     );
 
@@ -229,14 +229,14 @@ namespace lapack_wrapper {
       COLSCA.data(),
       ROWSCA.data(),
       KEEP,
-      IS.data(), IS.size(),
-      S.data(),  S.size(),
+      IS.data(), integer(IS.size()),
+      S.data(),  integer(S.size()),
       CNTL, ICNTL, INFO, RINFO
     );
 
     if ( verbose ) {
-      msg_infor( std::cout ) ;
-      msg_error( std::cout ) ;
+      msg_infor( std::cout );
+      msg_error( std::cout );
     }
   };
 
