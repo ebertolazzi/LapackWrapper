@@ -22,8 +22,8 @@ set( TARGETS_TO_BE_INSTALLED )
 # DEFAULT SETTINGS
 #
 set( CMAKE_INSTALL_MESSAGE         NEVER )
-set( CMAKE_EXPORT_COMPILE_COMMANDS TRUE )
-set( CMAKE_VERBOSE_MAKEFILE        HIGH )
+set( CMAKE_EXPORT_COMPILE_COMMANDS TRUE  )
+set( CMAKE_VERBOSE_MAKEFILE        FALSE )
 
 # Always export compile commands in json file
 # (this is quite useful for tools like Sourcetrail)
@@ -33,18 +33,9 @@ set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )
 #
 # C++ compiler
 #
-set( CMAKE_CXX_STANDARD_REQUIRED ON )
-set( CMAKE_CXX_STANDARD          11 )
-
-if (APPLE)
-  # workaround for Xcode not looking the rigth SDK
-  set(_CMAKE_OSX_SYSROOT_PATH "")
-  set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk")
-else()
-  # Fixes RPath Problem for Linux dependencies and sub dependencies (easy fix, works in 99% of cases)
-  set( CMAKE_INSTALL_RPATH $ORIGIN )
-endif()
-
+set( CMAKE_CXX_STANDARD_REQUIRED ON      )
+set( CMAKE_CXX_STANDARD          11      )
+set( CMAKE_INSTALL_RPATH         $ORIGIN )
 
 if( NOT UNIX )
   set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
