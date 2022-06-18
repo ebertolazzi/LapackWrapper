@@ -72,7 +72,7 @@ namespace lapack_wrapper {
     , m_VTmat(nullptr)
     , m_Svec(nullptr)
     , m_IWorkSVD(nullptr)
-    , m_rcond(Utils::machineEps<real_type>())
+    , m_rcond(Utils::machine_eps<real_type>())
     , m_minRC(0)
     , m_LworkSVD(0)
     , m_svd_used(_svd_used)

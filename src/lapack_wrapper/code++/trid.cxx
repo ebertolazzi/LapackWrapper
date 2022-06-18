@@ -38,7 +38,7 @@ namespace lapack_wrapper {
     real_type       beta,
     real_type       y[]
   ) {
-    if ( Utils::isZero(beta) ) {
+    if ( Utils::is_zero(beta) ) {
       y[0] = alpha*(D[0]*x[0] + U[0] * x[1]);
       for ( integer i = 1; i < N-1; ++i )
         y[i] = alpha*(D[i]*x[i] + U[i] * x[i+1] + L[i-1] * x[i-1]);

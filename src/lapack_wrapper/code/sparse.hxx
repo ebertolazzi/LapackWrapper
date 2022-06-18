@@ -61,9 +61,9 @@ namespace lapack_wrapper {
       real_type y[],
       integer   incY
     ) const {
-      if ( Utils::isZero(beta) ) {
+      if ( Utils::is_zero(beta) ) {
         for ( integer i = 0; i < DimY; ++i ) y[i*incY] = 0;
-      } else if ( !Utils::isZero(beta-1) ) {
+      } else if ( !Utils::is_zero(beta-1) ) {
         for ( integer i = 0; i < DimY; ++i ) y[i*incY] *= beta;
       }
     }

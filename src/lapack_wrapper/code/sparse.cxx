@@ -202,7 +202,7 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   SparseCCOOR<T>::foundNaN() const
-  { return Utils::foundNaN( &m_vals.front(), m_nnz ); }
+  { return Utils::found_NaN( &m_vals.front(), m_nnz ); }
 
   template <typename T>
   void
