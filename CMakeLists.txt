@@ -176,7 +176,7 @@ if ( EB_ENABLE_TESTS )
 
   enable_testing()
 
-  if(APPLE OR UNIX)
+  if( APPLE OR UNIX OR MINGW )
     find_package( ZLIB REQUIRED )
   else()
     if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )

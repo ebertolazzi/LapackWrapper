@@ -50,23 +50,27 @@ task :build_osx => [:download] do
   Rake::Task[:install_common].invoke()
 end
 
+def extract_and_prepare()
+  extract_tgz(FILENAME)
+  FileUtils.rm_rf 'superlu'
+  FileUtils.mv    'superlu-'+VER, 'superlu'
+
+  ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+  ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+  ChangeOnFile("./superlu/SRC/zreadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+  ChangeOnFile("./superlu/SRC/zreadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
+
+  FileUtils.rm_rf 'build'
+  FileUtils.mkdir 'build'
+end
+
 desc "build superlu lib for linux"
 task :build_linux => [:download] do
   if File.exists?('lib/lib/libsuperlu_linux_static.a') then
     puts "SuperLU already compiled"
   else
-    extract_tgz(FILENAME)
-    FileUtils.rm_rf 'superlu'
-    FileUtils.mv    'superlu-'+VER, 'superlu'
-
-    ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-    ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-    ChangeOnFile("./superlu/SRC/zreadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-    ChangeOnFile("./superlu/SRC/zreadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-
-    FileUtils.rm_rf 'build'
-    FileUtils.mkdir 'build'
-    FileUtils.cd    'build'
+    extract_and_prepare()
+    FileUtils.cd 'build'
     if COMPILE_DEBUG then
       sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
       sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
@@ -81,42 +85,63 @@ task :build_linux => [:download] do
   Rake::Task[:install_common].invoke()
 end
 
-desc "build superlu lib for windows"
+desc "build superlu lib for WINDOWS"
 task :build_win, [:year, :bits] => [:download] do |t, args|
-  args.with_defaults(:year => "2017", :bits => "x64" )
+  args.with_defaults( :year => "2017", :bits => "x64" )
 
   if File.exists?("lib/lib/libsuperlu_win_#{args.bits}_static.lib") and
      File.exists?("lib/lib/libsuperlu_win_#{args.bits}_static_debug.lib") then
     puts "SuperLU already compiled"
   else
-    extract_tgz(FILENAME)
-    FileUtils.rm_rf 'superlu'
-    FileUtils.mv    'superlu-'+VER, 'superlu'
+    extract_and_prepare()
 
-    ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-    ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-    ChangeOnFile("./superlu/SRC/zreadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-    ChangeOnFile("./superlu/SRC/zreadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-
-    dir = "vs_#{args.year}_#{args.bits}"
-
-    FileUtils.rm_rf   dir
-    FileUtils.mkdir_p dir
-    FileUtils.cd      dir
     FileUtils.rm_rf   "lib"
     FileUtils.mkdir_p "lib/lib"
     FileUtils.mkdir_p "lib/include"
+
+    FileUtils.cd 'build'
 
     tmp = win_vs(args.bits,args.year)
 
     if COMPILE_DEBUG then
       sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Debug --target INSTALL '+PARALLEL+QUIET
+      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
       FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{args.bits}_static_debug.lib"
     else
       sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Release --target INSTALL '+PARALLEL+QUIET
+      sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
       FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{args.bits}_static.lib"
+    end
+    FileUtils.cd '..'
+  end
+  Rake::Task[:install_common].invoke()
+end
+
+desc "build superlu lib for MINGW"
+task :build_mingw => [:download] do
+
+  if File.exists?("lib/lib/libsuperlu_mingw_static.a") and
+     File.exists?("lib/lib/libsuperlu_mingw_static_debug.a") then
+    puts "SuperLU already compiled"
+  else
+    extract_and_prepare()
+
+    FileUtils.rm_rf   "lib"
+    FileUtils.mkdir_p "lib/lib"
+    FileUtils.mkdir_p "lib/include"
+
+    FileUtils.cd 'build'
+
+    tmp = win_vs('64','2017')
+
+    if COMPILE_DEBUG then
+      sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=STATUS ..'
+      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
+      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/superlu_mingw_static_debug.a"
+    else
+      sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=STATUS ..'
+      sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
+      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/superlu_mingw_static.lib"
     end
     FileUtils.cd '..'
   end
@@ -143,12 +168,16 @@ task :install_common do |t, args|
   end
 end
 
-desc "install locally superlu lib for linux"
+desc "install locally superlu lib for LINUX"
 task :install_linux => [:build_linux] do
 end
 
-desc "install locally superlu lib for osx"
+desc "install locally superlu lib for OSX"
 task :install_osx => [:build_osx] do
+end
+
+desc "install locally superlu lib for MINGW"
+task :install_mingw => [:build_mingw] do
 end
 
 desc "install locally superlu lib for windows"
@@ -157,19 +186,25 @@ task :install_win, [:year, :bits] do |t, args|
   Rake::Task[:build_win].invoke(args.year, args.bits)
 end
 
-desc "clean superlu for linux"
+desc "clean superlu for LINUX"
 task :clean_linux do
   FileUtils.rm_rf "lib"
   FileUtils.rm_rf "superlu"
 end
 
-desc "clean superlu for osx"
+desc "clean superlu for OSX"
 task :clean_osx do
   FileUtils.rm_rf "lib"
   FileUtils.rm_rf "superlu"
 end
 
-desc "clean superlu for windows"
+desc "clean superlu for MINGW"
+task :clean_mingw do
+  FileUtils.rm_rf "lib"
+  FileUtils.rm_rf "superlu"
+end
+
+desc "clean superlu for WINDOWS"
 task :clean_win do
   FileUtils.rm_rf "lib"
   Dir['vs_*'].each do |f|

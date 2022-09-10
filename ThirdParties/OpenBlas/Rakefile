@@ -9,6 +9,10 @@ desc "install locally OpenBlas for OSX (do nothing)"
 task :install_osx do
 end
 
+desc "install locally OpenBlas for MINGW (do nothing)"
+task :install_mingw do
+end
+
 desc "install locally OpenBlas for Windows"
 task :install_win, [:year, :bits]  do |t, args|
   args.with_defaults(:year => "2017", :bits => "x64" )
@@ -27,14 +31,18 @@ task :install_win, [:year, :bits]  do |t, args|
   end
 end
 
-desc "clean Openblas for linux"
+desc "clean Openblas for LINUX"
 task :clean_linux do
 end
 
-desc "clean Openblas forosx"
+desc "clean Openblas for OSX"
 task :clean_osx do
 end
 
-desc "clean Openblas for windows"
+desc "clean Openblas for WINDOWS"
 task :clean_win do
+end
+
+desc "clean Openblas for MINGW"
+task :clean_mingw do
 end
