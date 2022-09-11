@@ -51,7 +51,7 @@ option(enable_complex16 "Enable complex16 precision library" ON)
 
 # setup required compiler defines and options.
 
-include( ../../cmake/CMakeLists-cflags.txt )
+include( ../../cmake_utils/CMakeLists-cflags.txt )
 ## add_definitions(-DPRNTlevel=0 -DAdd_)
 ## get_directory_property( DirDefs COMPILE_DEFINITIONS )
 add_definitions( -DPRNTlevel=0 -DAdd_ )

@@ -1,5 +1,4 @@
-require "rake"
-require_relative "../../Rakefile_common.rb"
+require_relative "../../cmake_utils/Rakefile_common.rb"
 
 task :default => [:install_osx]
 
@@ -13,41 +12,15 @@ task :download do
   end
 end
 
+if COMPILE_DEBUG then
+  endname = "_static_debug"
+else
+  endname = "_static"
+end
+
 def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
   text= File.read file
   File.open(file, 'w+'){|f| f << text.gsub(text_to_replace, text_to_put_in_place)}
-end
-
-desc "build superlu lib for osx"
-task :build_osx => [:download] do
-  if File.exists?('lib/lib/libsuperlu_osx_static.a') then
-    puts "SuperLU already compiled"
-  else
-    extract_tgz(FILENAME)
-
-    FileUtils.rm_rf 'superlu'
-    FileUtils.mv    'superlu-'+VER, 'superlu'
-
-    ChangeOnFile("./superlu/SRC/creadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-    ChangeOnFile("./superlu/SRC/creadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-    ChangeOnFile("./superlu/SRC/zreadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-    ChangeOnFile("./superlu/SRC/zreadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
-
-    FileUtils.rm_rf 'build'
-    FileUtils.mkdir 'build'
-    FileUtils.cd    'build'
-    if COMPILE_DEBUG then
-      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
-      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_osx_static_debug.a"
-    else
-      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_osx_static.a"
-    end
-    FileUtils.cd '..'
-  end
-  Rake::Task[:install_common].invoke()
 end
 
 def extract_and_prepare()
@@ -64,23 +37,47 @@ def extract_and_prepare()
   FileUtils.mkdir 'build'
 end
 
-desc "build superlu lib for linux"
-task :build_linux => [:download] do
-  if File.exists?('lib/lib/libsuperlu_linux_static.a') then
+def extract_and_prepare_and_compile( os )
+  extract_and_prepare()
+  FileUtils.cd    'build'
+  if COMPILE_DEBUG then
+    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
+    sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
+    FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_#{os}_static_debug.a"
+  else
+    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
+    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
+    FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_#{os}_static.a"
+  end
+  FileUtils.cd '..'
+end
+
+desc "build superlu lib for OSX"
+task :build_osx => [:download] do
+  if File.exists?("lib/lib/libsuperlu_osx#{endname}.a") then
     puts "SuperLU already compiled"
   else
-    extract_and_prepare()
-    FileUtils.cd 'build'
-    if COMPILE_DEBUG then
-      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
-      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_linux_static_debug.a"
-    else
-      sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_linux_static.a"
-    end
-    FileUtils.cd '..'
+    extract_and_prepare_and_compile("osx")
+  end
+  Rake::Task[:install_common].invoke()
+end
+
+desc "build superlu lib for LINUX"
+task :build_linux => [:download] do
+  if File.exists?("lib/lib/libsuperlu_linux#{endname}.a") then
+    puts "SuperLU already compiled"
+  else
+    extract_and_prepare_and_compile("linux")
+  end
+  Rake::Task[:install_common].invoke()
+end
+
+desc "build superlu lib for MINGW"
+task :build_mingw => [:download] do
+  if File.exists?("lib/lib/libsuperlu_mingw#{endname}.a") then
+    puts "SuperLU already compiled"
+  else
+    extract_and_prepare_and_compile("mingw")
   end
   Rake::Task[:install_common].invoke()
 end
@@ -89,8 +86,7 @@ desc "build superlu lib for WINDOWS"
 task :build_win, [:year, :bits] => [:download] do |t, args|
   args.with_defaults( :year => "2017", :bits => "x64" )
 
-  if File.exists?("lib/lib/libsuperlu_win_#{args.bits}_static.lib") and
-     File.exists?("lib/lib/libsuperlu_win_#{args.bits}_static_debug.lib") then
+  if File.exists?("lib/lib/libsuperlu_win_#{args.bits}#{endname}.lib") then
     puts "SuperLU already compiled"
   else
     extract_and_prepare()
@@ -101,7 +97,7 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
 
     FileUtils.cd 'build'
 
-    tmp = win_vs(args.bits,args.year)
+    tmp = cmake_generation_command(args.bits,args.year)
 
     if COMPILE_DEBUG then
       sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=STATUS ..'
@@ -117,38 +113,7 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
   Rake::Task[:install_common].invoke()
 end
 
-desc "build superlu lib for MINGW"
-task :build_mingw => [:download] do
-
-  if File.exists?("lib/lib/libsuperlu_mingw_static.a") and
-     File.exists?("lib/lib/libsuperlu_mingw_static_debug.a") then
-    puts "SuperLU already compiled"
-  else
-    extract_and_prepare()
-
-    FileUtils.rm_rf   "lib"
-    FileUtils.mkdir_p "lib/lib"
-    FileUtils.mkdir_p "lib/include"
-
-    FileUtils.cd 'build'
-
-    tmp = win_vs('64','2017')
-
-    if COMPILE_DEBUG then
-      sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
-      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/superlu_mingw_static_debug.a"
-    else
-      sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-      FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/superlu_mingw_static.lib"
-    end
-    FileUtils.cd '..'
-  end
-  Rake::Task[:install_common].invoke()
-end
-
-task :install_common do |t, args|
+task :install_common do
   prefix = "../../lib3rd"
   puts "SuperLU copy files to #{prefix}"
   FileUtils.rm_rf   "#{prefix}/include/superlu"
@@ -169,15 +134,15 @@ task :install_common do |t, args|
 end
 
 desc "install locally superlu lib for LINUX"
-task :install_linux => [:build_linux] do
+task :install_linux => :build_linux do
 end
 
 desc "install locally superlu lib for OSX"
-task :install_osx => [:build_osx] do
+task :install_osx => :build_osx do
 end
 
 desc "install locally superlu lib for MINGW"
-task :install_mingw => [:build_mingw] do
+task :install_mingw => :build_mingw do
 end
 
 desc "install locally superlu lib for windows"

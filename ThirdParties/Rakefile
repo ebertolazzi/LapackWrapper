@@ -1,5 +1,5 @@
 require "rake"
-require_relative "../Rakefile_common.rb"
+require_relative "../cmake_utils/Rakefile_common.rb"
 
 task :default => [:install_osx] do
 end

@@ -3,35 +3,36 @@ require "fileutils"
 
 task :default => [:install_osx]
 
-task :copy_submodules, [:arg] do |t, args|
-  args.with_defaults(:arg => "osx")
+task :copy_submodules do
   FileUtils.mkdir_p "../lib3rd/"
   FileUtils.mkdir_p "../lib3rd/lib/"
   FileUtils.mkdir_p "../lib3rd/dll/"
   FileUtils.mkdir_p "../lib3rd/bin/"
-  tmp = '_' + args.arg
   ["Utils"].each do |base|
     FileUtils.cp_r "./#{base}/lib/include/#{base}/.", "../lib3rd/include"
     FileUtils.cp_r "./#{base}/lib/.", "../lib3rd"
   end
 end
 
-desc "build 3rd parties for OSX"
-task :build_osx do
+desc "build 3rd parties for OSX/LINUX/MINGW"
+task :build_common do
   FileUtils.cd "Utils"
-  sh "rake clean_osx"
-  sh "rake build_osx"
+  sh "rake clean"
+  sh "rake build"
   FileUtils.cd ".."
-  Rake::Task[:copy_submodules].invoke("osx")
+  Rake::Task[:copy_submodules].invoke()
+end
+
+desc "build 3rd parties for OSX"
+task :build_osx => :build_common do
 end
 
 desc "build 3rd parties for LINUX"
-task :build_linux do
-  FileUtils.cd "Utils"
-  sh "rake clean_linux"
-  sh "rake build_linux"
-  FileUtils.cd ".."
-  Rake::Task[:copy_submodules].invoke("linux")
+task :build_linux => :build_common do
+end
+
+desc "build 3rd parties for MINGW"
+task :build_mingw => :build_common do
 end
 
 desc "build for Visual Studio [default year=2017, bits=x64]"
@@ -44,23 +45,25 @@ task :build_win, [:year, :bits] do |t, args|
   Rake::Task[:copy_submodules].invoke("win")
 end
 
-desc "clean 3rd parties for OSX"
-task :clean_osx do
+desc "clean 3rd parties for OSX/LINUX/MINGW"
+task :clean_common do
   FileUtils.cd "Utils"
-  sh "rake clean_osx"
+  sh "rake clean"
   FileUtils.cd ".."
+end
+
+desc "clean 3rd parties for OSX"
+task :clean_osx => :clean_common do
 end
 
 desc "clean 3rd parties for LINUX"
-task :clean_linux do
-  FileUtils.cd "Utils"
-  sh "rake clean_linux"
-  FileUtils.cd ".."
+task :clean_linux => :clean_common do
+end
+
+desc "clean 3rd parties for MINGW"
+task :clean_mingw  => :clean_common do
 end
 
 desc "clean 3rd parties for WINDOWS"
-task :clean_win do |t, args|
-  FileUtils.cd "Utils"
-  sh "rake clean_win"
-  FileUtils.cd ".."
+task :clean_win  => :clean_common do
 end
