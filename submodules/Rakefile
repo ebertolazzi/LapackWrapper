@@ -1,7 +1,7 @@
 require "rake"
 require "fileutils"
 
-task :default => [:install_osx]
+task :default => :install_osx do end
 
 task :copy_submodules do
   FileUtils.mkdir_p "../lib3rd/"
@@ -15,55 +15,29 @@ task :copy_submodules do
 end
 
 desc "build 3rd parties for OSX/LINUX/MINGW"
-task :build_common do
+task :build_common, [:os] do |t, args|
+  args.with_defaults( :os => "osx" )
   FileUtils.cd "Utils"
-  sh "rake clean"
-  sh "rake build"
+  sh "rake clean_#{args.os}"
+  sh "rake build_#{args.os}"
   FileUtils.cd ".."
   Rake::Task[:copy_submodules].invoke()
 end
 
-desc "build 3rd parties for OSX"
-task :build_osx => :build_common do
-end
-
-desc "build 3rd parties for LINUX"
-task :build_linux => :build_common do
-end
-
-desc "build 3rd parties for MINGW"
-task :build_mingw => :build_common do
-end
-
-desc "build for Visual Studio [default year=2017, bits=x64]"
-task :build_win, [:year, :bits] do |t, args|
-  args.with_defaults( :year => "2017", :bits => "x64" )
-  FileUtils.cd "Utils"
-  sh "rake clean_win"
-  sh "rake build_win[#{args.year},#{args.bits}]"
-  FileUtils.cd ".."
-  Rake::Task[:copy_submodules].invoke("win")
-end
+task :build_osx   do Rake::Task[:build_common].invoke("osx")   end
+task :build_linux do Rake::Task[:build_common].invoke("linux") end
+task :build_mingw do Rake::Task[:build_common].invoke("mingw") end
+task :build_win   do Rake::Task[:build_common].invoke("win")   end
 
 desc "clean 3rd parties for OSX/LINUX/MINGW"
-task :clean_common do
+task :clean_common, [:os] do |t, args|
+  args.with_defaults( :os => "osx" )
   FileUtils.cd "Utils"
-  sh "rake clean"
+  sh "rake clean_#{args.os}"
   FileUtils.cd ".."
 end
 
-desc "clean 3rd parties for OSX"
-task :clean_osx => :clean_common do
-end
-
-desc "clean 3rd parties for LINUX"
-task :clean_linux => :clean_common do
-end
-
-desc "clean 3rd parties for MINGW"
-task :clean_mingw  => :clean_common do
-end
-
-desc "clean 3rd parties for WINDOWS"
-task :clean_win  => :clean_common do
-end
+task :clean_osx    do Rake::Task[:clean_common].invoke("osx")   end
+task :clean_linux  do Rake::Task[:clean_common].invoke("linux") end
+task :clean_mingw  do Rake::Task[:clean_common].invoke("mingw") end
+task :clean_win    do Rake::Task[:clean_common].invoke("win")   end

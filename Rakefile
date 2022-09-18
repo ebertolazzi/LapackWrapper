@@ -4,36 +4,33 @@ CLEAN.include   ["./**/*.o", "./**/*.obj", "./bin/**/example*", "./build"]
 CLEAN.clear_exclude.exclude { |fn| fn.pathmap("%f").downcase == "core" }
 CLOBBER.include []
 
-task :mkl, [:year, :bits] do |t, args|
-  args.with_defaults(:year => "2017", :bits => "x64" )
-  sh "'C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/bin/compilervars.bat' -arch #{args.bits} vs#{args.year}shell"
-end
+#task :mkl, [:year, :bits] do |t, args|
+#  args.with_defaults(:year => "2017", :bits => "x64" )
+#  sh "'C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/bin/compilervars.bat' -arch #{args.bits} vs#{args.year}shell"
+#end
 
 def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
   text = File.read file
   File.open(file, 'w+'){|f| f << text.gsub(text_to_replace, text_to_put_in_place)}
 end
 
-desc "compile for Visual Studio [default year=2017, bits=x64, lapack=LAPACK_WRAPPER_USE_OPENBLAS]"
-task :build_win, [:year, :bits, :lapack] do |t, args|
-  args.with_defaults(
-    :year   => "2017",
-    :bits   => "x64",
-    :lapack => "LAPACK_WRAPPER_USE_OPENBLAS"
-  )
-  Rake::Task[:win_3rd].invoke(args.year,args.bits,args.lapack)
-  Rake::Task[:build_win_common].invoke(args.year,args.bits,args.lapack)
-end
+desc "compile for Visual Studio [lapack=LAPACK_WRAPPER_USE_OPENBLAS]"
+task :build_win, [:lapack] do |t, args|
+  args.with_defaults( :lapack => "LAPACK_WRAPPER_USE_OPENBLAS" )
 
-desc "compile for Visual Studio [default year=2017, bits=x64, lapack=LAPACK_WRAPPER_USE_OPENBLAS]"
-task :build_win_common, [:year, :bits, :lapack] do |t, args|
-  args.with_defaults(
-    :year   => "2017",
-    :bits   => "x64",
-    :lapack => "LAPACK_WRAPPER_USE_OPENBLAS"
-  )
+  Rake::Task[:win_3rd].invoke()
 
-  cmd = "set path=%path%;lib3rd\\lib;lib3rd\\dll;"
+  # check architecture
+  case `where cl.exe`.chop
+  when /x64\\cl\.exe/
+    VS_ARCH = 'x64'
+  when /amd64\\cl\.exe/
+    VS_ARCH = 'x64'
+  when /bin\\cl\.exe/
+    VS_ARCH = 'x86'
+  else
+    raise RuntimeError, "Cannot determine architecture for Visual Studio".red
+  end
 
   FileUtils.rm_f 'src/lapack_wrapper_config.hh'
   FileUtils.cp   'src/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper_config.hh'
@@ -51,7 +48,7 @@ task :build_win_common, [:year, :bits, :lapack] do |t, args|
 
   FileUtils.mkdir_p "./lib/lib"
   FileUtils.mkdir_p "./lib/bin"
-  FileUtils.mkdir_p "./lib/bin/"+args.bits
+  FileUtils.mkdir_p "./lib/bin/"+VS_ARCH
   FileUtils.mkdir_p "./lib/dll"
   FileUtils.mkdir_p "./lib/include"
 
@@ -59,15 +56,12 @@ task :build_win_common, [:year, :bits, :lapack] do |t, args|
   FileUtils.mkdir_p "build"
   FileUtils.cd      "build"
 
-  cmd_cmake = cmake_generation_command(args.bits,args.year) + cmd_cmake_build() + ' -D' + args.lapack + ':VAR=ON '
-
   puts "run CMAKE for LAPACK WRAPPER".yellow
-
-  sh cmd_cmake + ' ..'
+  sh "cmake -G Ninja -DBITS:VAR=#{VS_ARCH} " + cmd_cmake_build() + ' -D' + args.lapack + ':VAR=ON ..'
   if COMPILE_DEBUG then
-    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+    sh 'cmake --build . --config Debug --target install '+PARALLEL
   else
-    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
+    sh 'cmake --build . --config Release --target install '+PARALLEL
   end
 
   FileUtils.cd '..'
@@ -94,7 +88,6 @@ task :build_mingw, [:lapack] do |t, args|
   Rake::Task[:build_common].invoke(args.lapack)
 end
 
-
 desc 'compile for OSX/LINUX/MINGW'
 task :build_common, [:lapack] do |t, args|
   args.with_defaults( :lapack => "LAPACK_WRAPPER_USE_ACCELERATE" )
@@ -117,15 +110,13 @@ task :build_common, [:lapack] do |t, args|
   FileUtils.mkdir_p "build"
   FileUtils.cd      "build"
 
-  cmd_cmake = "cmake " + cmd_cmake_build() + ' -D' + args.lapack + ':VAR=ON '
-
   puts "run CMAKE for LAPACK WRAPPER".yellow
 
-  sh cmd_cmake + ' ..'
+  sh "cmake -G Ninja " + cmd_cmake_build() + ' -D' + args.lapack + ':VAR=ON ..'
   if COMPILE_DEBUG then
-    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+    sh 'cmake --build . --config Debug --target install '+PARALLEL
   else
-    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
+    sh 'cmake --build . --config Release --target install '+PARALLEL
   end
 
   FileUtils.cd '..'
@@ -153,14 +144,9 @@ task :mingw_3rd do
 end
 
 desc 'install third parties for WINDOWS'
-task :win_3rd, [:year, :bits, :lapack] do |t, args|
-  args.with_defaults(
-    :year   => "2017",
-    :bits   => "x64",
-    :lapack => "LAPACK_WRAPPER_USE_OPENBLAS"
-  )
+task :win_3rd do
   FileUtils.cd 'ThirdParties'
-  sh "rake install_win[#{args.year},#{args.bits},#{args.lapack}]"
+  sh "rake install_win"
   FileUtils.cd '..'
 end
 
@@ -184,16 +170,6 @@ task :clean_linux do
   FileUtils.cd '..'
 end
 
-desc "clean for WINDOWS"
-task :clean_win do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-  FileUtils.rm_rf 'build'
-  FileUtils.cd 'ThirdParties'
-  sh "rake clean_win"
-  FileUtils.cd '..'
-end
-
 desc "clean for MINGW"
 task :clean_mingw do
   FileUtils.rm_rf 'lib'
@@ -201,6 +177,16 @@ task :clean_mingw do
   FileUtils.rm_rf 'build'
   FileUtils.cd 'ThirdParties'
   sh "rake clean_mingw"
+  FileUtils.cd '..'
+end
+
+desc "clean for WINDOWS"
+task :clean_win do
+  FileUtils.rm_rf 'lib'
+  FileUtils.rm_rf 'lib3rd'
+  FileUtils.rm_rf 'build'
+  FileUtils.cd 'ThirdParties'
+  sh "rake clean_win"
   FileUtils.cd '..'
 end
 

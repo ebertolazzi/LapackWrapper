@@ -1,6 +1,6 @@
 require_relative "../../cmake_utils/Rakefile_common.rb"
 
-task :default => [:install_osx]
+task :default => :install_osx do end
 
 VER='5.3.0'
 FILENAME="superlu-#{VER}.tar.gz"
@@ -39,21 +39,21 @@ end
 
 def extract_and_prepare_and_compile( os )
   extract_and_prepare()
-  FileUtils.cd    'build'
+  FileUtils.cd 'build'
   if COMPILE_DEBUG then
-    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
-    sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
+    sh 'cmake -G Ninja -DCMAKE_BUILD_TYPE:VAR=Debug -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
+    sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL
     FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_#{os}_static_debug.a"
   else
-    sh 'cmake -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
-    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
+    sh 'cmake -G Ninja -DCMAKE_BUILD_TYPE:VAR=Release -DCMAKE_INSTALL_PREFIX:PATH=../lib --loglevel=STATUS ..'
+    sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL
     FileUtils.mv '../lib/lib/libsuperlu.a', "../lib/lib/libsuperlu_#{os}_static.a"
   end
   FileUtils.cd '..'
 end
 
 desc "build superlu lib for OSX"
-task :build_osx => [:download] do
+task :build_osx => :download do
   if File.exists?("lib/lib/libsuperlu_osx#{endname}.a") then
     puts "SuperLU already compiled"
   else
@@ -63,7 +63,7 @@ task :build_osx => [:download] do
 end
 
 desc "build superlu lib for LINUX"
-task :build_linux => [:download] do
+task :build_linux => :download do
   if File.exists?("lib/lib/libsuperlu_linux#{endname}.a") then
     puts "SuperLU already compiled"
   else
@@ -73,7 +73,7 @@ task :build_linux => [:download] do
 end
 
 desc "build superlu lib for MINGW"
-task :build_mingw => [:download] do
+task :build_mingw => :download do
   if File.exists?("lib/lib/libsuperlu_mingw#{endname}.a") then
     puts "SuperLU already compiled"
   else
@@ -83,10 +83,21 @@ task :build_mingw => [:download] do
 end
 
 desc "build superlu lib for WINDOWS"
-task :build_win, [:year, :bits] => [:download] do |t, args|
-  args.with_defaults( :year => "2017", :bits => "x64" )
+task :build_win => :download do
 
-  if File.exists?("lib/lib/libsuperlu_win_#{args.bits}#{endname}.lib") then
+  # check architecture
+  case `where cl.exe`.chop
+  when /x64\\cl\.exe/
+    VS_ARCH = 'x64'
+  when /amd64\\cl\.exe/
+    VS_ARCH = 'x64'
+  when /bin\\cl\.exe/
+    VS_ARCH = 'x86'
+  else
+    raise RuntimeError, "Cannot determine architecture for Visual Studio".red
+  end
+
+  if File.exists?("lib/lib/libsuperlu_win_#{VS_ARCH}#{endname}.lib") then
     puts "SuperLU already compiled"
   else
     extract_and_prepare()
@@ -97,16 +108,16 @@ task :build_win, [:year, :bits] => [:download] do |t, args|
 
     FileUtils.cd 'build'
 
-    tmp = cmake_generation_command(args.bits,args.year)
+    tmp = "cmake -G Ninja -DBITS:VAR=#{VS_ARCH} "
 
     if COMPILE_DEBUG then
       sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL+QUIET
-      FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{args.bits}_static_debug.lib"
+      sh 'cmake --build . --clean-first --config Debug --target install '+PARALLEL
+      FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{VS_ARCH}_static_debug.lib"
     else
       sh tmp + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=STATUS ..'
-      sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL+QUIET
-      FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{args.bits}_static.lib"
+      sh 'cmake --build . --clean-first --config Release --target install '+PARALLEL
+      FileUtils.mv '../lib/lib/superlu.lib', "../lib/lib/superlu_win_#{VS_ARCH}_static.lib"
     end
     FileUtils.cd '..'
   end
@@ -133,46 +144,18 @@ task :install_common do
   end
 end
 
-desc "install locally superlu lib for LINUX"
-task :install_linux => :build_linux do
-end
+task :install_linux => :build_linux do end
+task :install_osx   => :build_osx   do end
+task :install_mingw => :build_mingw do end
+task :install_win   => :build_win   do end
 
-desc "install locally superlu lib for OSX"
-task :install_osx => :build_osx do
-end
-
-desc "install locally superlu lib for MINGW"
-task :install_mingw => :build_mingw do
-end
-
-desc "install locally superlu lib for windows"
-task :install_win, [:year, :bits] do |t, args|
-  args.with_defaults(:year => "2017", :bits => "x64" )
-  Rake::Task[:build_win].invoke(args.year, args.bits)
-end
-
-desc "clean superlu for LINUX"
-task :clean_linux do
+task :clean_common do
+  FileUtils.rm_rf "build"
   FileUtils.rm_rf "lib"
   FileUtils.rm_rf "superlu"
 end
 
-desc "clean superlu for OSX"
-task :clean_osx do
-  FileUtils.rm_rf "lib"
-  FileUtils.rm_rf "superlu"
-end
-
-desc "clean superlu for MINGW"
-task :clean_mingw do
-  FileUtils.rm_rf "lib"
-  FileUtils.rm_rf "superlu"
-end
-
-desc "clean superlu for WINDOWS"
-task :clean_win do
-  FileUtils.rm_rf "lib"
-  Dir['vs_*'].each do |f|
-    FileUtils.rm_rf f
-  end
-end
+task :clean_osx   => :clean_common do end
+task :clean_linux => :clean_common do end
+task :clean_mingw => :clean_common do end
+task :clean_win   => :clean_common do end

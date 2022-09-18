@@ -24,16 +24,8 @@ rake install_osx
 
 **Windows**
 
-* Visual Studio 2017 64 bit
-
 ~~~~
-rake install_win[2017,x64]
-~~~~
-
-* Visual Studio 2017 32 bit
-
-~~~~
-rake install_win[2017,x86]
+rake install_win
 ~~~~
 
 COMPILE

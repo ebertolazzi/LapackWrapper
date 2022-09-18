@@ -26,12 +26,11 @@ task :install_mingw do
 end
 
 desc "install 3rd parties for WINDOWS"
-task :install_win, [:year, :bits] do |t,args|
-  args.with_defaults(:year => "2017", :bits => "x64" )
+task :install_win do
   FileUtils.cd "SuperLU"
-  sh "rake install_win[#{args.year},#{args.bits}]"
+  sh "rake install_win"
   FileUtils.cd "../OpenBlas"
-  sh "rake install_win[#{args.year},#{args.bits}]"
+  sh "rake install_win"
   FileUtils.cd ".."
 end
 
