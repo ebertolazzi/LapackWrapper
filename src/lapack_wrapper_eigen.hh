@@ -21,10 +21,12 @@
 /// file: lapack_wrapper_eigen.hh
 ///
 
-#include "lapack_wrapper/lapack_wrapper.hh"
+#pragma once
 
 #ifndef LAPACK_WRAPPER_EIGEN_dot_HH
 #define LAPACK_WRAPPER_EIGEN_dot_HH
+
+#include "lapack_wrapper/lapack_wrapper.hh"
 
 // Eigen3
 #ifdef __GNUC__
@@ -83,13 +85,13 @@
 #endif
 
 // DO NOT PARALLELIZE EIGEN CODE
-#define EIGEN_DONT_PARALLELIZE
-#define EIGEN_DEFAULT_DENSE_INDEX_TYPE lapack_wrapper::integer
-#define EIGEN_NO_AUTOMATIC_RESIZING
+// #define EIGEN_DONT_PARALLELIZE
+// #define EIGEN_NO_AUTOMATIC_RESIZING
 // EIGEN cant use BLAS on windows
 // #define EIGEN_USE_BLAS
 
-#include "Eigen/Dense"
+#define EIGEN_DEFAULT_DENSE_INDEX_TYPE lapack_wrapper::integer
+#include "Utils_eigen.hh"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop

@@ -19,12 +19,12 @@ namespace Sparse_tool {
   public:
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef HSS_CGSSOR_Preconditioner<T> HSS_CGSSOR_PRECO;
-    typedef Preco<HSS_CGSSOR_PRECO>      PRECO;
+    using HSS_CGSSOR_PRECO = HSS_CGSSOR_Preconditioner<T>;
+    using PRECO            = Preco<HSS_CGSSOR_PRECO>;
     #endif
 
-    typedef T real_type; //!< type of the elements of the preconditioner
-    typedef typename T::value_type rreal_type; //!< type of the elements of the preconditioner
+    using real_type  = T; //!< type of the elements of the preconditioner
+    using rreal_type = typename T::value_type; //!< type of the elements of the preconditioner
 
     // variabili per CG
     CCoorMatrix<rreal_type>    Amat;

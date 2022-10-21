@@ -35,12 +35,13 @@ using namespace ::Sparse_tool_load;
 using           ::Sparse_tool::integer;
 using namespace ::std;
 
-typedef double Real;
+using Real = double;
 
 #include <Utils.hh>
 
 inline
-Real power2( Real const &  a)
+Real
+power2( Real const &  a)
 { return a*a; }
 
 #include <fstream>
@@ -48,7 +49,7 @@ Real power2( Real const &  a)
 #define LOOP(N)   for ( integer i = 0; i < N; ++i )
 #define REPEAT(N) for ( integer iii = 0; iii < N; ++iii )
 
-typedef double Real;
+using Real = double;
 
 static
 void

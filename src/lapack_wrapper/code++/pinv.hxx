@@ -35,7 +35,7 @@ namespace lapack_wrapper {
   template <typename T>
   class PINV_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::real_type real_type;
+    using real_type = typename LinearSystemSolver<T>::real_type;
 
   protected:
 
@@ -190,7 +190,7 @@ namespace lapack_wrapper {
   template <typename T>
   class PINV : public PINV_no_alloc<T> {
   public:
-    typedef typename PINV_no_alloc<T>::real_type real_type;
+    using real_type = typename PINV_no_alloc<T>::real_type;
 
   protected:
 

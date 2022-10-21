@@ -32,22 +32,22 @@ extern "C" {
                       double       * y,
                       double const * a,
                       int    const * ja,
-                      int    const * ia ) ;
+                      int    const * ia );
 }
 
-using namespace ::SparseToolLoad ;
+using namespace ::SparseToolLoad;
 using namespace ::std;
 
-#define LOOP(N)   for ( integer i = 0 ; i < N ; ++i )
-#define REPEAT(N) for ( integer iii = 0 ; iii < N ; ++iii )
+#define LOOP(N)   for ( integer i = 0; i < N; ++i )
+#define REPEAT(N) for ( integer iii = 0; iii < N; ++iii )
 
-typedef double Real ;
+using Real = double;
 
-blas_sparse_matrix mHandle ;
+blas_sparse_matrix mHandle;
 
-Vector<Real> A ;
-Vector<int>  R ;
-Vector<int>  J ;
+Vector<Real> A;
+Vector<int>  R;
+Vector<int>  J;
 
 static
 void
@@ -68,7 +68,7 @@ out(
        << setw(10) << 1e-3*nnz/tb
        << ":"
        << setw(10) << 1e-3*nnz/tc
-       << ")  (sparselib:BLAS:SPARSKIT)\n" ;
+       << ")  (sparselib:BLAS:SPARSKIT)\n";
 }
 
 // test CRow  ********************************************************
@@ -82,36 +82,36 @@ test_CRow(
   Vector<Real>     const & v
 ) {
 
-  Timing tm ;
-  Vector<Real> res( v . size() ) ;
+  Timing tm;
+  Vector<Real> res( v . size() );
 
-  sleep(1) ;
-  tm . start() ;
-  REPEAT(N) res = crow * v ;
-  tm . stop() ;
-  Real timea = tm . milliseconds() ;
+  sleep(1);
+  tm . start();
+  REPEAT(N) res = crow * v;
+  tm . stop();
+  Real timea = tm . milliseconds();
 
-  int n = v.size() ;
-  double const * pv = &v(0) ;
-  double       * pr = &res(0) ;
-  double const * pA = &A(0) ;
-  int    const * pR = &R(0) ;
-  int    const * pJ = &J(0) ;
+  int n = v.size();
+  double const * pv = &v(0);
+  double       * pr = &res(0);
+  double const * pA = &A(0);
+  int    const * pR = &R(0);
+  int    const * pJ = &J(0);
 
-  sleep(1) ;
-  tm . start() ;
+  sleep(1);
+  tm . start();
   REPEAT(N) BLAS_dusmv( blas_no_trans, 1.0, mHandle, pv, 1, pr, 1 );
-  tm . stop() ;
-  Real timeb = tm . milliseconds() ;
+  tm . stop();
+  Real timeb = tm . milliseconds();
 
-  sleep(1) ;
-  tm . start() ;
-  REPEAT(N) F77NAME(amux)( &n, pv, pr, pA, pJ, pR ) ;
-  tm . stop() ;
-  Real timec = tm . milliseconds() ;
+  sleep(1);
+  tm . start();
+  REPEAT(N) F77NAME(amux)( &n, pv, pr, pA, pJ, pR );
+  tm . stop();
+  Real timec = tm . milliseconds();
 
-  cout << "CRowMatrix:  "  ;
-  out(N, crow . nnz(), timea/N, timeb/N, timec/N ) ;
+  cout << "CRowMatrix:  ";
+  out(N, crow . nnz(), timea/N, timeb/N, timec/N );
 
 }
 
@@ -126,36 +126,36 @@ test_CCol(
   Vector<Real>     const & v
 ) {
 
-  Timing tm ;
-  Vector<Real> res( v.size() ) ;
+  Timing tm;
+  Vector<Real> res( v.size() );
 
-  sleep(1) ;
-  tm.start() ;
-  REPEAT(N) res = ccol * v ;
-  tm.stop() ;
-  Real timea = tm.milliseconds() ;
+  sleep(1);
+  tm.start();
+  REPEAT(N) res = ccol * v;
+  tm.stop();
+  Real timea = tm.milliseconds();
 
-  int n = v.size() ;
-  double const * pv = &v(0) ;
-  double       * pr = &res(0) ;
-  double const * pA = &A(0) ;
-  int    const * pR = &R(0) ;
-  int    const * pJ = &J(0) ;
+  int n = v.size();
+  double const * pv = &v(0);
+  double       * pr = &res(0);
+  double const * pA = &A(0);
+  int    const * pR = &R(0);
+  int    const * pJ = &J(0);
 
-  sleep(1) ;
-  tm . start() ;
+  sleep(1);
+  tm . start();
   REPEAT(N) BLAS_dusmv( blas_no_trans, 1.0, mHandle, pv, 1, pr, 1 );
-  tm . stop() ;
-  Real timeb = tm . milliseconds() ;
+  tm . stop();
+  Real timeb = tm . milliseconds();
 
-  sleep(1) ;
-  tm . start() ;
-  REPEAT(N) F77NAME(amux)( &n, pv, pr, pA, pJ, pR ) ;
-  tm . stop() ;
-  Real timec = tm . milliseconds() ;
+  sleep(1);
+  tm . start();
+  REPEAT(N) F77NAME(amux)( &n, pv, pr, pA, pJ, pR );
+  tm . stop();
+  Real timec = tm . milliseconds();
 
-  cout << "CColMatrix:  " ;
-  out(N, ccol . nnz(), timea/N, timeb/N, timec/N ) ;
+  cout << "CColMatrix:  ";
+  out(N, ccol . nnz(), timea/N, timeb/N, timec/N );
 }
 
 // test CCoor ********************************************************
@@ -177,7 +177,7 @@ test_CCoor(
   tm.stop();
   Real timea = tm.milliseconds();
 
-  int n = v.size() ;
+  int n = v.size();
   double const * pv = &v(0);
   double       * pr = &res(0);
   double const * pA = &A(0);
@@ -202,7 +202,7 @@ test_CCoor(
 
 int
 main() {
-  Timing tm ;
+  Timing tm;
 
   cout << "\nMATRIX TESTS\n";
 
@@ -295,6 +295,6 @@ main() {
     test_CCoor(cicle_repeat, mHandle, ccoor, v);
   }
 
-  cout << "\nTEST_TIME ALL DONE\n\n" ;
+  cout << "\nTEST_TIME ALL DONE\n\n";
 
 }

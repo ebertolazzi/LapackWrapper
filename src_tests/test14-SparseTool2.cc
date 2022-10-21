@@ -48,7 +48,7 @@ using namespace ::Sparse_tool_load;
 using           ::Sparse_tool::integer;
 using namespace ::std;
 
-typedef typename Vector<double>::V_base VBASE;
+using VBASE = typename Vector<double>::V_base;
 
 int
 main() {

@@ -36,10 +36,10 @@ namespace lapack_wrapper {
   template <typename T>
   class Eigenvalues {
   public:
-    typedef T                real_type;
-    typedef std::complex<T>  complex_type;
-    typedef MatrixWrapper<T> MatW;
-    typedef SparseCCOOR<T>   Sparse;
+    using real_type    = T;
+    using complex_type = std::complex<T>;
+    using MatW         = MatrixWrapper<T>;
+    using Sparse       = SparseCCOOR<T>;
 
   private:
     Malloc<real_type> m_mem;
@@ -93,10 +93,10 @@ namespace lapack_wrapper {
   template <typename T>
   class Eigenvectors {
   public:
-    typedef T                real_type;
-    typedef std::complex<T>  complex_type;
-    typedef MatrixWrapper<T> MatW;
-    typedef SparseCCOOR<T>   Sparse;
+    using real_type    = T;
+    using complex_type = std::complex<T>;
+    using MatW         = MatrixWrapper<T>;
+    using Sparse       = SparseCCOOR<T>;
 
   private:
     Malloc<real_type> m_mem;
@@ -159,10 +159,10 @@ namespace lapack_wrapper {
   template <typename T>
   class GeneralizedEigenvalues {
   public:
-    typedef T                real_type;
-    typedef std::complex<T>  complex_type;
-    typedef MatrixWrapper<T> MatW;
-    typedef SparseCCOOR<T>   Sparse;
+    using real_type    = T;
+    using complex_type = std::complex<T>;
+    using MatW         = MatrixWrapper<T>;
+    using Sparse       = SparseCCOOR<T>;
 
   private:
     Malloc<real_type> m_mem;
@@ -238,10 +238,10 @@ namespace lapack_wrapper {
   template <typename T>
   class GeneralizedEigenvectors {
   public:
-    typedef T                real_type;
-    typedef std::complex<T>  complex_type;
-    typedef MatrixWrapper<T> MatW;
-    typedef SparseCCOOR<T>   Sparse;
+    using real_type    = T;
+    using complex_type = std::complex<T>;
+    using MatW         = MatrixWrapper<T>;
+    using Sparse       = SparseCCOOR<T>;
 
   private:
     Malloc<real_type> m_mem_real;

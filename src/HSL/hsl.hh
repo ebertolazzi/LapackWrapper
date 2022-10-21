@@ -19,7 +19,7 @@
 
 namespace lapack_wrapper {
 
-  typedef bool logical;
+  using logical = bool;
 
   /*\
    |   __  __    _   _  _   _

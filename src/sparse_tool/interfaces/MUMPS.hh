@@ -69,9 +69,9 @@ namespace Sparse_tool {
   template <typename T>
   class MUMPS {
   public:
-    typedef T real_type;
-    typedef typename MUMPSType<T>::stuctType  stuctType;
-    typedef typename MUMPSType<T>::scalarType scalarType;
+    using real_type  = T;
+    using stuctType  = typename MUMPSType<T>::stuctType;
+    using scalarType = typename MUMPSType<T>::scalarType;
 
   private:
 

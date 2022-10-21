@@ -22,7 +22,7 @@
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
 
-#ifdef __GNUC__ 
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
@@ -35,7 +35,7 @@
 #endif
 
 using namespace std;
-typedef double real_type;
+using real_type = double;
 using lapack_wrapper::integer;
 
 static Utils::Console msg(&std::cout);

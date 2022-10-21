@@ -28,8 +28,8 @@
 using namespace Sparse_tool_load;
 using namespace std;
 
-typedef double real_type;
-typedef int    integer;
+using real_type = double;
+using integer   = int;
 
 static Utils::Console msg(&std::cout);
 

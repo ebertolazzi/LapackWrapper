@@ -36,16 +36,16 @@ namespace lapack_wrapper {
   template <typename T>
   class TridiagonalSPD : public LinearSystemSolver<T> {
   public:
-    typedef T real_type;
+    using real_type = T;
 
   private:
 
     Malloc<real_type> m_allocReals;
 
-    real_type * m_L    = nullptr;
-    real_type * m_D    = nullptr;
-    real_type * m_WORK = nullptr;
-    integer     m_nRC  = 0;
+    real_type * m_L{nullptr};
+    real_type * m_D{nullptr};
+    real_type * m_WORK{nullptr};
+    integer     m_nRC{0};
 
   public:
 
@@ -135,22 +135,22 @@ namespace lapack_wrapper {
   template <typename T>
   class TridiagonalLU : public LinearSystemSolver<T> {
   public:
-    typedef T real_type;
+    using real_type = T;
 
   private:
 
     Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
 
-    real_type * m_L     = nullptr;
-    real_type * m_D     = nullptr;
-    real_type * m_U     = nullptr;
-    real_type * m_U2    = nullptr;
-    real_type * m_WORK  = nullptr;
-    integer   * m_IPIV  = nullptr;
-    integer   * m_IWORK = nullptr;
+    real_type * m_L{nullptr};
+    real_type * m_D{nullptr};
+    real_type * m_U{nullptr};
+    real_type * m_U2{nullptr};
+    real_type * m_WORK{nullptr};
+    integer   * m_IPIV{nullptr};
+    integer   * m_IWORK{nullptr};
 
-    integer m_nRC = 0;
+    integer m_nRC{0};
 
   public:
 
@@ -264,20 +264,20 @@ namespace lapack_wrapper {
   template <typename T>
   class TridiagonalQR : public LinearSystemSolver<T> {
   public:
-    typedef T real_type;
+    using real_type = T;
 
   private:
 
     Malloc<real_type> m_allocReals;
 
-    real_type * m_C   = nullptr; // rotazioni givens
-    real_type * m_S   = nullptr;
-    real_type * m_BD  = nullptr; // band triangular matrix
-    real_type * m_BU  = nullptr; // band triangular matrix
-    real_type * m_BU2 = nullptr; // band triangular matrix
+    real_type * m_C{nullptr};   // rotazioni givens
+    real_type * m_S{nullptr};
+    real_type * m_BD{nullptr};  // band triangular matrix
+    real_type * m_BU{nullptr};  // band triangular matrix
+    real_type * m_BU2{nullptr}; // band triangular matrix
 
-    real_type   m_normInfA = 0;
-    integer     m_nRC      = 0;
+    real_type   m_normInfA{0};
+    integer     m_nRC{0};
 
     void Rsolve( real_type xb[] ) const;
     void RsolveTransposed( real_type xb[] ) const;

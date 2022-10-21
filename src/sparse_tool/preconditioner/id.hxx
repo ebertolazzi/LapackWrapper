@@ -21,11 +21,11 @@ namespace Sparse_tool {
   class IdPreconditioner : public Preco<IdPreconditioner<T> > {
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef IdPreconditioner<T> IDPRECO;
-    typedef Preco<IDPRECO>      PRECO;
+    using IDPRECO = IdPreconditioner<T>;
+    using PRECO   = Preco<IDPRECO>;
     #endif
 
-    typedef T real_type; //!< type of the element of the preconditioner
+    using real_type = T; //!< type of the element of the preconditioner
 
   public:
 

@@ -34,7 +34,7 @@ namespace lapack_wrapper {
   template <typename T>
   class QN {
   public:
-    typedef T real_type;
+    using real_type = T;
 
   protected:
     Malloc<real_type> m_allocReals;
@@ -169,7 +169,7 @@ namespace lapack_wrapper {
   template <typename T>
   class BFGS : public QN<T> {
   public:
-    typedef T real_type;
+    using real_type = T;
 
     using QN<T>::allocate;
     using QN<T>::zero;
@@ -211,7 +211,7 @@ namespace lapack_wrapper {
   template <typename T>
   class DFP : public QN<T> {
   public:
-    typedef T real_type;
+    using real_type = T;
 
     using QN<T>::allocate;
     using QN<T>::zero;
@@ -252,7 +252,7 @@ namespace lapack_wrapper {
   template <typename T>
   class SR1 : public QN<T> {
   public:
-    typedef T real_type;
+    using real_type = T;
 
     using QN<T>::allocate;
     using QN<T>::zero;

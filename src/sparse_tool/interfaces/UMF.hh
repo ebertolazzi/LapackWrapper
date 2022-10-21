@@ -27,8 +27,8 @@ namespace Sparse_tool {
   template <typename T>
   class UMF {
   public:
-    typedef int integer;
-    typedef T   real_type;
+    using integer   = int;
+    using real_type = T;
 
   private:
 
@@ -156,11 +156,11 @@ namespace Sparse_tool {
   public:
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef UMFpreconditioner<T> UMFPRECO;
-    typedef Preco<UMFPRECO>      PRECO;
+    using UMFPRECO = UMFpreconditioner<T>;
+    using PRECO    = Preco<UMFPRECO>;
     #endif
-    typedef T real_type; //!< type of the element of the preconditioner
-    typedef typename return_trait<T>::real_type realType;
+    using real_type = T; //!< type of the element of the preconditioner
+    using realType  = typename return_trait<T>::real_type;
 
   private:
 

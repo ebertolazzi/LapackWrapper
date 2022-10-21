@@ -149,35 +149,35 @@ namespace Sparse_tool {
 
   template<typename T>
   struct return_trait {
-    typedef T real_type; //!< type of the trait
+    using real_type = T; //!< type of the trait
   };
 
   // Partial specialization for `complex` type.
-  template<typename T> struct return_trait<std::complex<T> > { typedef T real_type; };
+  template<typename T> struct return_trait<std::complex<T> > { using real_type = T; };
 
   //! \internal Class for type promotion
   template<typename T>
-  struct autopromote_trait { typedef T T_numtype; };
+  struct autopromote_trait { using T_numtype = T; };
 
   //! promote `bool` to `int`
   template<> struct autopromote_trait<bool>
-  { typedef int T_numtype; };
+  { using T_numtype = int; };
 
   //! promote `char` to `int`
   template<> struct autopromote_trait<char>
-  { typedef int T_numtype; };
+  { using T_numtype = int; };
 
   //! promote `bool` to `int`
   template<> struct autopromote_trait<unsigned char>
-  { typedef int T_numtype; };
+  { using T_numtype = int; };
 
   //! promote `short` to `int`
   template<> struct autopromote_trait<short>
-  { typedef int T_numtype; };
+  { using T_numtype = int; };
 
   // promote `unsigned` `short` to `unsigned`
   template<> struct autopromote_trait<unsigned short>
-  { typedef unsigned T_numtype; };
+  { using T_numtype = unsigned; };
 
   #endif
 
@@ -542,8 +542,8 @@ namespace Sparse_tool {
   class Vector : public Eigen::Matrix<T,Eigen::Dynamic,1> {
   public:
 
-    typedef Eigen::Matrix<T,Eigen::Dynamic,1> V_base;
-    typedef T real_type;
+    using V_base    = Eigen::Matrix<T,Eigen::Dynamic,1>;
+    using real_type = T;
 
     Vector() : Eigen::Matrix<T,Eigen::Dynamic,1>(0) {}
     explicit Vector( integer dim ) : Eigen::Matrix<T,Eigen::Dynamic,1>(dim) {}
@@ -1020,7 +1020,7 @@ namespace Sparse_tool {
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  typedef struct { integer lo, hi; } stack_node;
+  using stack_node = struct { integer lo, hi; };
 
   static inline
   bool GT( integer i, integer i1 )
@@ -1763,9 +1763,9 @@ namespace Sparse_tool {
 
   template <typename T, typename Matrix>
   class Sparse : public SparseBase<Matrix> {
-    typedef SparseBase<Matrix> SBASE;
+    using SBASE = SparseBase<Matrix>;
   public:
-    typedef T real_type; //!< type of the element of the matrix
+    using real_type = T; //!< type of the element of the matrix
 
     Sparse(void) : SparseBase<Matrix>() { SBASE::setup(0, 0); }
     ~Sparse(void) {}
@@ -2464,8 +2464,8 @@ namespace Sparse_tool {
   //!   pattern are ordered, `false` otherwise.
   //!
   class SparsePattern : public SparseBase<SparsePattern> {
-    typedef SparsePattern             MATRIX;
-    typedef SparseBase<SparsePattern> SPARSE;
+    using MATRIX = SparsePattern;
+    using SPARSE = SparseBase<SparsePattern>;
 
     Vector<integer> I;    //!< Vector of row index
     Vector<integer> J;    //!< Vector of column index
@@ -2813,14 +2813,14 @@ namespace Sparse_tool {
   //!
   template <typename T>
   class CCoorMatrix : public Sparse<T,CCoorMatrix<T> > {
-    typedef CCoorMatrix<T>   MATRIX;
-    typedef Sparse<T,MATRIX> SPARSE;
+    using MATRIX = CCoorMatrix<T>;
+    using SPARSE = Sparse<T,MATRIX>;
   public:
-    typedef T real_type; //!< the type of the elements of the matrix
+    using real_type = T; //!< the type of the elements of the matrix
 
   private:
 
-    Vector<integer> I, J, C;
+    Vector<integer>   I, J, C;
     Vector<real_type> A;
 
     mutable integer ipos;
@@ -3390,10 +3390,10 @@ namespace Sparse_tool {
   //!
   template <typename T>
   class CRowMatrix : public Sparse<T,CRowMatrix<T> > {
-    typedef CRowMatrix<T>    MATRIX;
-    typedef Sparse<T,MATRIX> SPARSE;
+    using MATRIX = CRowMatrix<T>;
+    using SPARSE = Sparse<T,MATRIX>;
   public:
-    typedef T real_type; //!< the type of the elements of the matrix
+    using real_type = T; //!< the type of the elements of the matrix
 
   private:
 
@@ -3788,10 +3788,10 @@ namespace Sparse_tool {
   //!
   template <typename T>
   class CColMatrix : public Sparse<T,CColMatrix<T> > {
-    typedef CColMatrix<T>    MATRIX;
-    typedef Sparse<T,MATRIX> SPARSE;
+    using MATRIX = CColMatrix<T>;
+    using SPARSE = Sparse<T,MATRIX>;
   public:
-    typedef T real_type; //!< the type of the elements of the matrix
+    using real_type = T; //!< the type of the elements of the matrix
 
   private:
     Vector<real_type> A;
@@ -4176,11 +4176,11 @@ namespace Sparse_tool {
   //!
   template <typename T>
   class TridMatrix : public Sparse<T,TridMatrix<T> > {
-    typedef TridMatrix<T>    MATRIX;
-    typedef Sparse<T,MATRIX> SPARSE;
-    typedef typename Vector<T>::V_base VBASE;
+    using MATRIX = TridMatrix<T>;
+    using SPARSE = Sparse<T,MATRIX>;
+    using VBASE  = typename Vector<T>::V_base;
   public:
-    typedef T real_type; //!< type of the element of the matrix
+    using real_type = T; //!< type of the element of the matrix
 
   private:
 

@@ -288,7 +288,7 @@ namespace lapack_wrapper {
   template <typename T>
   class LinearSystemSolver {
   public:
-    typedef T real_type;
+    using real_type = T;
 
   public:
 

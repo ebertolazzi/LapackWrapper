@@ -18,12 +18,12 @@ namespace Sparse_tool {
   public:
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef HSS_CHEBYSHEV_Preconditioner<T> HSS_CHEBYSHEV_PRECO;
-    typedef Preco<HSS_CHEBYSHEV_PRECO>      PRECO;
+    using HSS_CHEBYSHEV_PRECO = HSS_CHEBYSHEV_Preconditioner<T>;
+    using PRECO               = Preco<HSS_CHEBYSHEV_PRECO>;
     #endif
 
-    typedef T real_type; //!< type of the elements of the preconditioner
-    typedef typename T::value_type rreal_type; //!< type of the elements of the preconditioner
+    using real_type  = T; //!< type of the elements of the preconditioner
+    using rreal_type = typename T::value_type; //!< type of the elements of the preconditioner
 
   private:
 

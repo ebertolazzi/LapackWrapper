@@ -60,7 +60,7 @@ namespace Sparse_tool {
     );
 
     using std::abs;
-    typedef typename vector_type::real_type vType;
+    using vType = typename vector_type::real_type;
 
     integer neq = b.size();
     vector_type p(neq), s(neq), t(neq), v(neq), r(neq), rtilde(neq);

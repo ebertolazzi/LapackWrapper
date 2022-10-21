@@ -34,8 +34,8 @@ namespace lapack_wrapper {
   template <typename T>
   class SVD_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::real_type real_type;
-    typedef enum { USE_GESVD = 0, USE_GESDD = 1 } SVD_USED;
+    using real_type = typename LinearSystemSolver<T>::real_type;
+    using SVD_USED  = enum { USE_GESVD = 0, USE_GESDD = 1 };
 
   protected:
 
@@ -215,8 +215,8 @@ namespace lapack_wrapper {
   template <typename T>
   class SVD : public SVD_no_alloc<T> {
   public:
-    typedef typename SVD_no_alloc<T>::real_type real_type;
-    typedef typename SVD_no_alloc<T>::SVD_USED  SVD_USED;
+    using real_type = typename SVD_no_alloc<T>::real_type;
+    using SVD_USED  = typename SVD_no_alloc<T>::SVD_USED;
 
   protected:
 
@@ -304,9 +304,9 @@ namespace lapack_wrapper {
   template <typename T>
   class GeneralizedSVD {
 
-    typedef T                real_type;
-    typedef MatrixWrapper<T> MatW;
-    typedef SparseCCOOR<T>   Sparse;
+    using real_type = T;
+    using MatW      = MatrixWrapper<T>;
+    using Sparse    = SparseCCOOR<T>;
 
     Malloc<real_type> m_mem_real;
     Malloc<integer>   m_mem_int;

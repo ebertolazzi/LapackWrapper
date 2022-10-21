@@ -47,7 +47,7 @@ using namespace std;
 using Utils::istream_type;
 using Utils::ostream_type;
 
-typedef std::complex<double> cplx;
+using cplx = std::complex<double>;
 
 static
 void

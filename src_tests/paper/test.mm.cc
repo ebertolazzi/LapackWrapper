@@ -21,19 +21,19 @@
 
 #include "SparseTool.hh"
 
-using namespace SparseToolLoad ;
-using namespace std ;
+using namespace SparseToolLoad;
+using namespace std;
 
 void
 testMM( string const & mm_file ) {
-  MatrixMarket                  mm ;
-  SparsePattern                 sp ;
-  CCoorMatrix<int>              Ai ;
-  CCoorMatrix<double>           Ar ;
-  CCoorMatrix<complex<double> > Ac ;
+  MatrixMarket                  mm;
+  SparsePattern                 sp;
+  CCoorMatrix<int>              Ai;
+  CCoorMatrix<double>           Ar;
+  CCoorMatrix<complex<double> > Ac;
 
   fmt::print( "Reading: {}...", mm_file );
-  mm.read( mm_file ) ;
+  mm.read( mm_file );
   fmt::print( "done\n" );
 
   fmt::print( "Loading Matrix..." );
@@ -48,24 +48,24 @@ testMM( string const & mm_file ) {
   switch ( mm . value_type() ) {
     case MM_PATTERN:
       MatrixMarket_save_to_file( mm_file + ".txt", sp, mm.matrix_type() );
-    break ;
+    break;
     case MM_INTEGER:
       MatrixMarket_save_to_file(
         mm_file + ".txt", Ai, mm.value_type(), mm.matrix_type()
       );
-    break ;
+    break;
     case MM_REAL:
       MatrixMarket_save_to_file(
         mm_file + ".txt", Ar, mm.value_type(), mm.matrix_type()
       );
-    break ;
+    break;
     case MM_COMPLEX:
       MatrixMarket_save_to_file(
         mm_file + ".txt", Ac, mm.value_type(), mm.matrix_type()
       );
     break;
   }
-  cout << "done\n" ;
+  cout << "done\n";
 }
 
 int
@@ -76,8 +76,8 @@ main() {
                      "plat1919.mtx",
                      "dwg961b.mtx",              // complex matrices
                      "bcsstk30.mtx",             // pattern
-                     NULL } ;
+                     NULL };
 
-  for ( char **p = Matrix ; *p != NULL ; ++p ) testMM( string("mm/")+*p) ;
-  return 0 ;
+  for ( char **p = Matrix; *p != NULL; ++p ) testMM( string("mm/")+*p);
+  return 0;
 }

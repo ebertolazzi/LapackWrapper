@@ -30,7 +30,7 @@ using namespace ::Sparse_tool_load;
 using           ::Sparse_tool::integer;
 using namespace ::std;
 
-typedef double Real;
+using Real = double;
 
 class all_matrix_test {
 
@@ -923,7 +923,7 @@ void all_matrix_test::test010(void) {
 #define LOOP(N)   for ( integer i = 0; i < N; ++i )
 #define REPEAT(N) for ( integer iii = 0; iii < N; ++iii )
 
-typedef double Real;
+using Real = double;
 
 static
 void

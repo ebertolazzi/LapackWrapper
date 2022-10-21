@@ -38,8 +38,8 @@ namespace lapack_wrapper {
   class DiagMatrixWrapper {
 
   public:
-    typedef T                    real_type;
-    typedef DiagMatrixWrapper<T> DMatW;
+    using real_type = T;
+    using DMatW     = DiagMatrixWrapper<T>;
 
   protected:
     integer     m_dim;
@@ -150,10 +150,10 @@ namespace lapack_wrapper {
   template <typename T>
   class MatrixWrapper {
 
-    typedef T                    real_type;
-    typedef MatrixWrapper<T>     MatW;
-    typedef DiagMatrixWrapper<T> DiagW;
-    typedef SparseMatrixBase<T>  Sparse;
+    using real_type = T;
+    using MatW      = MatrixWrapper<T>;
+    using DiagW     = DiagMatrixWrapper<T>;
+    using Sparse    = SparseMatrixBase<T>;
 
   protected:
 

@@ -21,11 +21,11 @@ namespace Sparse_tool {
   public:
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef SORpreconditioner<T> SORPRECO;
-    typedef Preco<SORPRECO>      PRECO;
+    using SORPRECO = SORpreconditioner<T>;
+    using PRECO    = Preco<SORPRECO>;
     #endif
 
-    typedef T real_type; //!< type of the elements of the preconditioner
+    using real_type = T; //!< type of the elements of the preconditioner
 
   private:
 

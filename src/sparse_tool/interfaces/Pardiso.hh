@@ -35,8 +35,8 @@ namespace Sparse_tool {
   // External Fortran routines defined in the PARDISO library.
   extern "C" {
 
-    typedef int    integer;
-    typedef double real;
+    using integer = int;
+    using real    = double;
 
     void
     F77NAME(pardisoinit)(
@@ -485,7 +485,7 @@ namespace Sparse_tool {
   class PardisoComplexU : public Pardiso<std::complex<real> > {
   public:
 
-    typedef Pardiso<std::complex<real> > PARDISO;
+    using PARDISO = Pardiso<std::complex<real> >;
 
     using PARDISO::check_matrix;
     using PARDISO::check_rhs;
@@ -514,7 +514,7 @@ namespace Sparse_tool {
   class PardisoComplexS : public Pardiso<std::complex<real> > {
   public:
 
-    typedef Pardiso<std::complex<real> > PARDISO;
+    using PARDISO = Pardiso<std::complex<real> >;
 
     using PARDISO::check_matrix;
     using PARDISO::check_rhs;
@@ -543,7 +543,7 @@ namespace Sparse_tool {
   class PardisoComplexH : public Pardiso<std::complex<real> > {
   public:
 
-    typedef Pardiso<std::complex<real> > PARDISO;
+    using PARDISO = Pardiso<std::complex<real> >;
 
     using PARDISO::check_matrix;
     using PARDISO::check_rhs;
@@ -572,7 +572,7 @@ namespace Sparse_tool {
   class PardisoComplexSPD : public Pardiso<std::complex<real> > {
   public:
 
-    typedef Pardiso<std::complex<real> > PARDISO;
+    using PARDISO = Pardiso<std::complex<real> >;
 
     using PARDISO::check_matrix;
     using PARDISO::check_rhs;

@@ -35,7 +35,7 @@ using namespace ::Sparse_tool_load;
 using           ::Sparse_tool::integer;
 using namespace ::std;
 
-typedef double Real;
+using Real = double;
 
 #include <Utils.hh>
 

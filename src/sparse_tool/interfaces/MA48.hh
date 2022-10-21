@@ -25,8 +25,8 @@ namespace Sparse_tool {
   template <typename T>
   class MA48 {
   public:
-    typedef T            real_type;
-    typedef HSL::integer integer;
+    using real_type = T;
+    using integer   = HSL::integer;
 
   private:
 

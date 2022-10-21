@@ -19,11 +19,11 @@ namespace Sparse_tool {
   public:
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef RILDUpreconditioner<T> RILDUPRECO;
-    typedef Preco<RILDUPRECO>      PRECO;
+    using RILDUPRECO = RILDUpreconditioner<T>;
+    using PRECO      = Preco<RILDUPRECO>;
     #endif
 
-    typedef T real_type; //!< type of the elements of the preconditioner
+    using real_type = T; //!< type of the elements of the preconditioner
 
   private:
 

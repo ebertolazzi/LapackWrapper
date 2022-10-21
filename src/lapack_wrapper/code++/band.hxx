@@ -35,7 +35,7 @@ namespace lapack_wrapper {
   template <typename T>
   class BandedLU : public LinearSystemSolver<T> {
   public:
-    typedef T real_type;
+    using real_type = T;
 
     Malloc<real_type> m_allocReals;
     Malloc<integer>   m_allocIntegers;
@@ -175,7 +175,7 @@ namespace lapack_wrapper {
   template <typename T>
   class BandedSPD : public LinearSystemSolver<T> {
   public:
-    typedef T real_type;
+    using real_type = T;
 
     Malloc<real_type> m_allocReals;
 

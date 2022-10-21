@@ -67,7 +67,7 @@
 #endif
 
 using namespace std;
-typedef double real_type;
+using real_type = double;
 
 static unsigned seed1 = 2;
 static std::mt19937 generator(seed1);

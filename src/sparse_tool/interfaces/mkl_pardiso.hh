@@ -33,7 +33,7 @@
 
 namespace Sparse_tool {
 
-  typedef double real;
+  using real = double;
 
   // External Fortran routines defined in the PARDISO library.
 
@@ -363,7 +363,7 @@ namespace Sparse_tool {
   class mkl_PardisoComplexU : public mkl_pardiso<std::complex<real> > {
   public:
 
-    typedef mkl_pardiso<std::complex<real> > PARDISO;
+    using PARDISO = mkl_pardiso<std::complex<real> >;
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using PARDISO::load;
@@ -395,7 +395,7 @@ namespace Sparse_tool {
   class mkl_PardisoComplexS : public mkl_pardiso<std::complex<real> > {
   public:
 
-    typedef mkl_pardiso<std::complex<real> > PARDISO;
+    using PARDISO = mkl_pardiso<std::complex<real> >;
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using PARDISO::load;
@@ -427,7 +427,7 @@ namespace Sparse_tool {
   class mkl_PardisoComplexH : public mkl_pardiso<std::complex<real> > {
   public:
 
-    typedef mkl_pardiso<std::complex<real> > PARDISO;
+    using PARDISO = mkl_pardiso<std::complex<real> >;
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using PARDISO::load;
@@ -459,7 +459,7 @@ namespace Sparse_tool {
   class mkl_PardisoComplexSPD : public mkl_pardiso<std::complex<real> > {
   public:
 
-    typedef mkl_pardiso<std::complex<real> > PARDISO;
+    using PARDISO = mkl_pardiso<std::complex<real> >;
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
     using PARDISO::load;

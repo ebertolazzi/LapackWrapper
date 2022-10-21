@@ -75,16 +75,16 @@ namespace Sparse_tool {
    |              |_|
   \*/
 
-  template <typename T> struct RealType { typedef T Type; };
+  template <typename T> struct RealType { using Type = T; };
 
-  template <> struct RealType<std::complex<float> >  { typedef float Type; };
-  template <> struct RealType<std::complex<double> > { typedef double Type; };
+  template <> struct RealType<std::complex<float> >  { using Type = float; };
+  template <> struct RealType<std::complex<double> > { using Type = double; };
 
   template <typename T>
   class SuperLU {
   public:
-    typedef int      integer;
-    typedef typename RealType<T>::Type real_type;
+    using integer   = int;
+    using real_type = typename RealType<T>::Type;
 
   private:
 
@@ -314,11 +314,11 @@ namespace Sparse_tool {
   public:
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef SuperLUpreconditioner<T> SLUPRECO;
-    typedef Preco<SLUPRECO>          PRECO;
+    using SLUPRECO = SuperLUpreconditioner<T>;
+    using PRECO    = Preco<SLUPRECO>;
     #endif
-    typedef T real_type; //!< type of the element of the preconditioner
-    typedef typename RealType<T>::Type realType;
+    using real_type = T; //!< type of the element of the preconditioner
+    using realType  = typename RealType<T>::Type;
 
   private:
 

@@ -273,134 +273,134 @@
 
 namespace lapack_wrapper {
 
-  typedef enum {
+  using Transposition = enum {
     NO_TRANSPOSE        = 0,
     TRANSPOSE           = 1,
     CONJUGATE_TRANSPOSE = 2
-  } Transposition;
+  };
 
   extern char const *Transposition_name[];
 
-  typedef enum {
+  using ULselect = enum {
     UPPER = 0,
     LOWER = 1
-  } ULselect;
+  };
 
   extern char const *ULselect_name[];
 
-  typedef enum {
+  using DiagonalType = enum {
     UNIT     = 0,
     NON_UNIT = 1
-  } DiagonalType;
+  };
 
   extern char const *DiagonalType_name[];
 
-  typedef enum {
+  using SideMultiply = enum {
     LEFT   = 0,
     RIGHT  = 1,
     C_OR_T = 2
-  } SideMultiply;
+  };
 
   extern char const *SideMultiply_name[];
 
-  typedef enum {
+  using BalanceType = enum {
     NO_BALANCE        = 0, // 'N'
     PERMUTE_ONLY      = 1, // 'P'
     SCALE_ONLY        = 2, // 'S'
     PERMUTE_AND_SCALE = 3  // 'B'
-  } BalanceType;
+  };
 
   extern char const *BalanceType_name[];
 
-  typedef enum {
+  using JobType = enum {
     ALL     = 0, // 'A'
     REDUCED = 1, // 'S'
     INPLACE = 2, // 'O'
     NO_JOB  = 3  // 'N'
-  } JobType;
+  };
 
   extern char const *JobType_name[];
 
-  typedef enum {
+  using SenseType = enum {
     NONE                         = 0, // 'N'
     EIGENVALUES_ONLY             = 1, // 'E'
     EIGENVECTORS_ONLY            = 2, // 'V'
     EIGENVALUES_AND_EIGENVECTORS = 3  // 'B'
-  } SenseType;
+  };
 
   extern char const *SenseType_name[];
 
-  typedef enum {
+  using DirectionType = enum {
     FORWARD  = 0,
     BACKWARD = 1
-  } DirectionType;
+  };
 
   extern char const *DirectionType_name[];
 
-  typedef enum {
+  using StorageType = enum {
     COLUMNWISE = 0,
     ROWWISE    = 1
-  } StorageType;
+  };
 
   extern char const *StorageType_name[];
 
-  typedef enum {
+  using MatrixType = enum {
     FULL_MATRIX             = 0,
     LOWER_TRIANGULAR_MATRIX = 1,
     UPPER_TRIANGULAR_MATRIX = 2,
     HESSENBERG_MATRIX       = 3,
     BANDED_MATRIX           = 4
-  } MatrixType;
+  };
 
   extern char const *MatrixType_name[];
 
-  typedef enum {
+  using EquilibrationType = enum {
     NO_EQUILIBRATE      = 0,
     EQUILIBRATE_ROWS    = 1,
     EQUILIBRATE_COLUMNS = 2,
     EQUILIBRATE_BOTH    = 3
-  } EquilibrationType;
+  };
 
   extern char const *EquilibrationType_name[];
 
   #ifndef LAPACK_WRAPPER_NO_DEBUG
 
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    typedef __CLPK_integer    integer;
-    typedef __CLPK_real       real;
-    typedef __CLPK_doublereal doublereal;
-    typedef char              character;
-    typedef doublereal        return_precision;
+    using integer          = __CLPK_integer;
+    using real             = __CLPK_real;
+    using doublereal       = __CLPK_doublereal;
+    using character        = char;
+    using return_precision = doublereal;
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    typedef int        integer;
-    typedef float      real;
-    typedef double     doublereal;
-    typedef char       character;
-    typedef doublereal return_precision;
+    using integer          = int;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = doublereal;
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    typedef lapack_int integer;
-    typedef float      real;
-    typedef double     doublereal;
-    typedef char       character;
-    typedef double     return_precision;
+    using integer          = lapack_int;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = double;
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-    typedef blasint    integer;
-    typedef float      real;
-    typedef double     doublereal;
-    typedef char       character;
-    typedef double     return_precision;
+    using integer          = blasint;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = double;
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-    typedef lapack_int integer;
-    typedef float      real;
-    typedef double     doublereal;
-    typedef char       character;
-    typedef doublereal return_precision;
+    using integer          = lapack_int;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = doublereal;
   #elif defined(LAPACK_WRAPPER_USE_MKL)
-    typedef MKL_INT integer;
-    typedef float   real;
-    typedef double  doublereal;
-    typedef char    character;
-    typedef double  return_precision;
+    using integer          = MKL_INT;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = double;
   #else
     #error "You must select the linear algebra packages used!"
   #endif

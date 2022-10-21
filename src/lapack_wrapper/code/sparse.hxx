@@ -30,9 +30,9 @@ namespace lapack_wrapper {
   template <typename T>
   class SparseMatrixBase {
   public:
-    typedef T                   real_type;
-    typedef SparseMatrixBase<T> Sparse;
-    typedef MatrixWrapper<T>    MatW;
+    using real_type = T;
+    using Sparse    = SparseMatrixBase<T>;
+    using MatW      = MatrixWrapper<T>;
 
   protected:
     integer m_nrows; //!< Number of rows
@@ -403,9 +403,9 @@ namespace lapack_wrapper {
   template <typename real>
   class SparseCCOOR : public SparseMatrixBase<real> {
   public:
-    typedef SparseMatrixBase<real>     Sparse;
-    typedef MatrixWrapper<real>        MatW;
-    typedef typename Sparse::real_type real_type;
+    using Sparse    = SparseMatrixBase<real>;
+    using MatW      = MatrixWrapper<real>;
+    using real_type = typename Sparse::real_type;
 
   protected:
     std::vector<real_type> m_vals;  //!< the values of the sparse matrix

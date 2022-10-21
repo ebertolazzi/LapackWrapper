@@ -30,7 +30,7 @@
 
 extern "C" {
 
-  typedef lapack_wrapper::integer integer;
+  using integer = lapack_wrapper::integer;
 
   void
   HSL_F77NAME(mc47a)(

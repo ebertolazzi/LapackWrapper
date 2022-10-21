@@ -35,7 +35,7 @@ namespace lapack_wrapper {
   template <typename T>
   class LU_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::real_type real_type;
+    using real_type = typename LinearSystemSolver<T>::real_type;
 
   protected:
 
@@ -135,7 +135,7 @@ namespace lapack_wrapper {
   template <typename T>
   class LU : public LU_no_alloc<T> {
   public:
-    typedef typename LU_no_alloc<T>::real_type real_type;
+    using real_type = typename LU_no_alloc<T>::real_type;
 
   private:
 
@@ -200,7 +200,7 @@ namespace lapack_wrapper {
   template <typename T>
   class LUPQ_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::real_type real_type;
+    using real_type = typename LinearSystemSolver<T>::real_type;
 
   protected:
 
@@ -269,7 +269,7 @@ namespace lapack_wrapper {
   template <typename T>
   class LUPQ : public LUPQ_no_alloc<T> {
   public:
-    typedef typename LUPQ_no_alloc<T>::real_type real_type;
+    using real_type = typename LUPQ_no_alloc<T>::real_type;
 
   private:
 

@@ -57,7 +57,7 @@ namespace Sparse_tool {
       A.nrows(), A.ncols(), b.size(), x.size()
     );
 
-    typedef typename vector_type::real_type vType;
+    using vType = typename vector_type::real_type;
 
     integer     neq = b.size();
     vector_type p(neq), q(neq), r(neq), Ap(neq);

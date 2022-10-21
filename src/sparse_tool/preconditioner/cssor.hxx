@@ -27,11 +27,11 @@ namespace Sparse_tool {
   public:
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef CSSORpreconditioner<T> CSSORPRECO;
-    typedef Preco<CSSORPRECO>      PRECO;
+    using CSSORPRECO = CSSORpreconditioner<T>;
+    using PRECO      = Preco<CSSORPRECO>;
     #endif
 
-    typedef T real_type; //!< type of the elements of the preconditioner
+    using real_type = T; //!< type of the elements of the preconditioner
 
   private:
 

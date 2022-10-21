@@ -14,7 +14,7 @@
 
 namespace lapack_wrapper {
 
-  typedef bool logical;
+  using logical = bool;
 
   template <typename real>
   void
@@ -67,74 +67,74 @@ namespace lapack_wrapper {
     switch ( INFO[0] ) {
     case -1:
       fmt::print( s, "Value of N is out of range N = {}\n", INFO[1] );
-      break ;
+      break;
     case -2:
       fmt::print( s, "Value of NE is out of range NE = {}\n", INFO[1] );
-      break ;
+      break;
     case -3:
       fmt::print( s, "JOB has wrong value or analisys was not "
                      "performed prior to factorization.\n"
                      "JOB = {}\n", INFO[1]);
-      break ;
+      break;
     case -4:
       fmt::print( s, "Error in permutation error\n" );
-      break ;
+      break;
     case -5:
       fmt::print( s,
         "Not enought space to preprocess the input matrix\n"
         "MAXS should be increased to at least {}\n",
         INFO[1]
       );
-      break ;
+      break;
     case -6:
       fmt::print( s,
         "The matrix is structurally singular\n"
         "Estimated rank = {}\n",
         INFO[1]
       );
-      break ;
+      break;
     case -7:
       fmt::print( s,
         "Error from analysis\n"
         "MAXIS should be increased to at least {}\n",
         INFO[1]
       );
-      break ;
+      break;
     case -8:
       fmt::print( s,
         "Error from numerical factorization\n"
         "MAXIS should be increased to at least {}\n",
         INFO[1]
       );
-      break ;
+      break;
     case -9:
       fmt::print( s,
         "Error from numerical factorization\n"
         "MAXS should be increased to at least {}\n",
         INFO[1]
       );
-      break ;
+      break;
     case -10:
       fmt::print( s,
         "The matrix is numerically singular\n"
         "Estimated rank = {}\n",
         INFO[1]
       );
-      break ;
+      break;
     case -11:
       fmt::print( s,
         "Error from the solution phase\n"
         "MAXS should be increased to at least {}\n",
         INFO[1]
       );
-      break ;
+      break;
     case -12:
       fmt::print( s,
         "Not enought space to postprocess the solution\n"
         "MAXS should be increased to at least {}\n",
         INFO[1]
       );
-      break ;
+      break;
     }
     fmt::print( s, "***** ERROR *****\n");
   }
@@ -144,7 +144,7 @@ namespace lapack_wrapper {
   void
   MA41<real>::load_matrix( integer nr ) {
     if ( verbose ) fmt::print( "MA41::load_matrix(...)\n");
-    N  = nr ;
+    N  = nr;
     NE = integer(A.size());
 
     COLSCA . resize(N);

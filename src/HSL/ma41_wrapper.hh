@@ -51,8 +51,8 @@ namespace lapack_wrapper {
   class MA41 {
   public:
     // the matrix
-    typedef std::vector<real>    vector_value;
-    typedef std::vector<integer> vector_integer;
+    using vector_value   = std::vector<real>;
+    using vector_integer = std::vector<integer>;
 
   private:
     enum {
@@ -93,21 +93,21 @@ namespace lapack_wrapper {
 
     void
     init(void) {
-      IRN.clear() ;
-      JCN.clear() ;
-      A.clear() ;
+      IRN.clear();
+      JCN.clear();
+      A.clear();
     }
 
     void
     insert( integer i, integer j, real a ) {
-      IRN.push_back(i+1) ;
-      JCN.push_back(j+1) ;
-      A.push_back(a) ;
+      IRN.push_back(i+1);
+      JCN.push_back(j+1);
+      A.push_back(a);
     }
 
     void
     setup( integer nr, bool v = false) {
-      verbose = v ;
+      verbose = v;
       load_matrix(nr);
       symbfac();
     }

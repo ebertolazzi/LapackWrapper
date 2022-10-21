@@ -40,7 +40,7 @@ namespace lapack_wrapper {
   template <typename T>
   class BlockTridiagonalSymmetic : public LinearSystemSolver<T> {
   public:
-    typedef T real_type;
+    using real_type = T;
 
   private:
 
@@ -49,14 +49,14 @@ namespace lapack_wrapper {
     Malloc<real_type*> m_allocRpointers;
     Malloc<integer*>   m_allocIpointers;
 
-    integer      m_nBlocks       = 0;
-    integer      m_nnz           = 0;
-    real_type ** m_D_blocks      = nullptr;
-    real_type ** m_L_blocks      = nullptr;
-    real_type *  m_Work          = nullptr;
-    integer   ** m_B_permutation = nullptr;
-    integer   *  m_row_blocks    = nullptr;
-    bool         m_is_factorized = false;
+    integer      m_nBlocks{0};
+    integer      m_nnz{0};
+    real_type ** m_D_blocks{nullptr};
+    real_type ** m_L_blocks{nullptr};
+    real_type *  m_Work{nullptr};
+    integer   ** m_B_permutation{nullptr};
+    integer   *  m_row_blocks{nullptr};
+    bool         m_is_factorized{false};
 
   public:
 

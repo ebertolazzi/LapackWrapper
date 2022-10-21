@@ -20,10 +20,10 @@ namespace Sparse_tool {
   class Dpreconditioner : public Preco<Dpreconditioner<T> > {
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef Dpreconditioner<T> DPRECO;
-    typedef Preco<DPRECO>      PRECO;
+    using DPRECO = Dpreconditioner<T>;
+    using PRECO  = Preco<DPRECO>;
     #endif
-    typedef T real_type; //!< type of the element of the preconditioner
+    using real_type = T; //!< type of the element of the preconditioner
 
     Vector<real_type> D;
 

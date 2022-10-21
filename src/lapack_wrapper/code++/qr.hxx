@@ -35,7 +35,7 @@ namespace lapack_wrapper {
   template <typename T>
   class QR_no_alloc : public LinearSystemSolver<T> {
   public:
-    typedef typename LinearSystemSolver<T>::real_type real_type;
+    using real_type = typename LinearSystemSolver<T>::real_type;
 
   protected:
 
@@ -272,7 +272,7 @@ namespace lapack_wrapper {
   template <typename T>
   class QR : public QR_no_alloc<T> {
   public:
-    typedef typename QR_no_alloc<T>::real_type real_type;
+    using real_type = typename QR_no_alloc<T>::real_type;
 
   protected:
 
@@ -362,11 +362,11 @@ namespace lapack_wrapper {
   template <typename T>
   class QRP_no_alloc : public QR_no_alloc<T> {
   public:
-    typedef typename QR_no_alloc<T>::real_type real_type;
+    using real_type = typename QR_no_alloc<T>::real_type;
 
   protected:
-    integer   * m_JPVT = nullptr;
-    real_type * m_WorkPermute = nullptr;
+    integer   * m_JPVT{nullptr};
+    real_type * m_WorkPermute{nullptr};
 
   public:
 
@@ -548,7 +548,7 @@ namespace lapack_wrapper {
   template <typename T>
   class QRP : public QRP_no_alloc<T> {
   public:
-    typedef typename QRP_no_alloc<T>::real_type real_type;
+    using real_type = typename QRP_no_alloc<T>::real_type;
 
   private:
     Malloc<real_type> m_allocReals;

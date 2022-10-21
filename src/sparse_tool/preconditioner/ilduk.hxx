@@ -19,11 +19,11 @@ namespace Sparse_tool {
   public:
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    typedef ILDUKpreconditioner<T> ILDUKPRECO;
-    typedef Preco<ILDUKPRECO>      PRECO;
+    using ILDUKPRECO = ILDUKpreconditioner<T>;
+    using PRECO      = Preco<ILDUKPRECO>;
     #endif
 
-    typedef T real_type; //!< type of the element of the preconditioner
+    using real_type = T; //!< type of the element of the preconditioner
 
   private:
 

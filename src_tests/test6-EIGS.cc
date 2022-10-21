@@ -26,7 +26,7 @@ using namespace std;
 
 static Utils::Console msg(&std::cout);
 
-typedef lapack_wrapper::doublereal real_type;
+using real_type = lapack_wrapper::doublereal;
 
 static
 void
