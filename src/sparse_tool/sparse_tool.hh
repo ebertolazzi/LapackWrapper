@@ -20,6 +20,9 @@
 #define SPARSETOOL_dot_HH
 
 #include <cmath>
+#include <complex>
+#include <string>
+#include <cstdint>
 
 // standard includes I/O
 #include <fstream>
@@ -32,12 +35,8 @@
 #include <algorithm>
 #include <functional>
 
-#include <complex>
-#include <string>
-
-#include <cstdint>
-
-#include "../lapack_wrapper_eigen.hh"
+#include "Utils_eigen.hh"
+#include "lapack_wrapper/lapack_wrapper.hh"
 
 // workaround for windows macros
 #ifdef max
