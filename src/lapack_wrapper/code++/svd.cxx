@@ -397,9 +397,9 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
-  GeneralizedSVD<T>::info( ostream_type & stream, real_type eps ) const {
-    fmt::print( stream,
+  string
+  GeneralizedSVD<T>::info( real_type eps ) const {
+    string res = fmt::format(
       "A = {} x {}\n"
       "B = {} x {}\n",
       m_M, m_N, m_P, m_N
@@ -407,18 +407,22 @@ namespace lapack_wrapper {
     for ( integer i = 0; i < m_N; ++i ) {
       T a = m_alpha_saved[i];
       T b = m_beta_saved[i];
-      fmt::print( stream,
+      res += fmt::format(
         "alpha[{}]={}, beta[{}]={}, alpha^2+beta^2 = {}\n",
         i, a, i, b, a*a+b*b
       );
     }
-    stream << "U\n"; m_U.print0( stream, eps );
-    stream << "V\n"; m_V.print0( stream, eps );
-    stream << "Q\n"; m_Q.print0( stream, eps );
-    stream << "R\n"; m_R.print0( stream, eps );
-    stream << "C\n"; m_Dalpha.print( stream );
-    stream << "S\n"; m_Dbeta.print( stream );
-    stream << '\n';
+    res += fmt::format(
+      "U\n{}"
+      "V\n{}"
+      "Q\n{}"
+      "R\n{}",
+      m_U.to_string( eps ),
+      m_V.to_string( eps ),
+      m_Q.to_string( eps ),
+      m_R.to_string( eps )
+    );
+    return res;
   }
 
 }

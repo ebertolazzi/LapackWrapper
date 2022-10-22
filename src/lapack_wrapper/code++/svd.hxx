@@ -405,7 +405,7 @@ namespace lapack_wrapper {
     real_type const * getAlpha() const { return m_alpha_saved; }
     real_type const * getBeta()  const { return m_beta_saved; }
 
-    void info( ostream_type & stream, real_type eps = 0 ) const;
+    string info( real_type eps = 0 ) const;
 
   };
 

@@ -22,8 +22,12 @@
 ///
 
 #include <vector>
+#include <string>
 
 namespace lapack_wrapper {
+
+  using std::vector;
+  using std::string;
 
   template <typename T> class MatrixWrapper;
 
@@ -386,7 +390,7 @@ namespace lapack_wrapper {
     //!
     //! \param[in] stream  Stream where to write elements.
     //!
-    void print( ostream_type & stream ) const;
+    string to_string() const;
 
   };
 

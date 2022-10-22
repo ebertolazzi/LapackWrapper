@@ -49,13 +49,15 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  void
-  QN<T>::print( ostream_type & stream ) const {
+  string
+  QN<T>::to_string() const {
+    string res = "";
     for ( integer i = 0; i < m_dim; ++i ) {
       for ( integer j = 0; j < m_dim; ++j )
-        fmt::print( stream, "{:14} ", m_H[i+j*m_dim] );
-      stream << '\n';
+        res += fmt::format( "{:14} ", m_H[i+j*m_dim] );
+      res += '\n';
     }
+    return res;
   }
 
   /*\

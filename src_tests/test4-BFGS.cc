@@ -46,29 +46,24 @@ main() {
 
     bfgs.allocate(3);
     bfgs.init();
-    cout << "\n\n";
-    bfgs.print( cout );
+    fmt::print( "\n\n{}\n", bfgs.to_string() );
 
     bfgs.update( y1, s1, epsi );
-    cout << "\n\n";
-    bfgs.print( cout );
+    fmt::print( "\n\n{}\n", bfgs.to_string() );
 
     bfgs.update( y2, s2, epsi );
-    cout << "\n\n";
-    bfgs.print( cout );
+    fmt::print( "\n\n{}\n", bfgs.to_string() );
 
     bfgs.update( y3, s3, epsi );
-    cout << "\n\n";
-    bfgs.print( cout );
+    fmt::print( "\n\n{}\n", bfgs.to_string() );
 
     for ( int i = 0; i < 90; ++i ) {
       bfgs.update( y1, s1, epsi );
       bfgs.update( y2, s2, epsi );
       bfgs.update( y3, s3, epsi );
     }
-    cout << "\n\n";
-    bfgs.print( cout );
-  
+    fmt::print( "\n\n{}\n", bfgs.to_string() );
+
   } catch ( exception const & exc ) {
     msg.error( exc.what() );
   } catch ( ... ) {

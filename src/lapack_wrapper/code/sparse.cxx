@@ -24,14 +24,16 @@
 namespace lapack_wrapper {
 
   template <typename T>
-  void
-  SparseMatrixBase<T>::print( ostream_type & stream ) const {
+  string
+  SparseMatrixBase<T>::to_string() const {
+    string res = "";
     integer const * iRow;
     integer const * jCol;
     real    const * vals;
     this->data(iRow, jCol, vals);
     for ( size_t i = 0; i < size_t(this->get_nnz()); ++i)
-      fmt::print( stream, "{}, {}, {}\n", iRow[i], jCol[i], vals[i] );
+      res += fmt::format( "{}, {}, {}\n", iRow[i], jCol[i], vals[i] );
+    return res;
   }
 
   template <typename T>

@@ -129,8 +129,7 @@ namespace lapack_wrapper {
       update( m_y, m_s, epsi );
     }
 
-    void
-    print( ostream_type & stream ) const;
+    string to_string() const;
 
     /*\
     :|:         _      _               _

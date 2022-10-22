@@ -96,7 +96,7 @@ test3() {
 
   lapack_wrapper::GeneralizedSVD<real_type> E;
   E.setup( A, B );
-  E.info( cout, 1e-10 );
+  fmt::print( "{}\n", E.info( 1e-10 ) );
 
   lapack_wrapper::gemm(
     1.0,
@@ -110,8 +110,7 @@ test3() {
     lapack_wrapper::NO_TRANSPOSE, E.getQ(),
     0.0, TMP1
   );
-  cout << "TMP1\n";
-  TMP1.print0(cout,1e-12);
+  fmt::print( "TMP1\n{}", TMP1.to_string(1e-12) );
 
   lapack_wrapper::gemm(
     1.0,
@@ -125,8 +124,7 @@ test3() {
     lapack_wrapper::NO_TRANSPOSE, E.getQ(),
     0.0, TMP1
   );
-  cout << "TMP1\n";
-  TMP1.print0(cout,1e-12);
+  fmt::print( "TMP1\n{}", TMP1.to_string(1e-12) );
 }
 
 static
@@ -150,7 +148,7 @@ test4() {
 
   lapack_wrapper::GeneralizedSVD<real_type> E;
   E.setup( A, B );
-  E.info( cout, 1e-12);
+  fmt::print( "{}\n", E.info(1e-12) );
 
   lapack_wrapper::gemm(
     1.0,
@@ -164,8 +162,7 @@ test4() {
     lapack_wrapper::NO_TRANSPOSE, E.getQ(),
     0.0, TMP1
   );
-  cout << "TMP1\n";
-  TMP1.print0(cout,1e-12);
+  fmt::print( "TMP1\n{}", TMP1.to_string(1e-12) );
 
   lapack_wrapper::gemm(
     1.0,
@@ -179,8 +176,7 @@ test4() {
     lapack_wrapper::NO_TRANSPOSE, E.getQ(),
     0.0, TMP3
   );
-  cout << "TMP3\n";
-  TMP3.print0(cout,1e-12);
+  fmt::print( "TMP3\n{}", TMP3.to_string(1e-12) );
 }
 
 static
@@ -200,24 +196,23 @@ test5() {
   vector<complex<real_type> > e;
   E.getEigenvalues( e );
 
-  vector<complex<real_type> >::const_iterator it;
-  for ( it = e.begin(); it != e.end(); ++it )
-    cout << *it << "\n";
+  for ( auto const & it : e )
+    fmt::print( "{}\n", it );
 
   vector<vector< lapack_wrapper::Eigenvectors<real_type>::complex_type > > vecs;
   E.getLeftEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
-    cout << "vL[" << n << "] = ";
+    fmt::print( "vL[{}] = ", n );
     for ( size_t i = 0; i < 4; ++i )
-      cout << ' ' << vecs[n][i];
-    cout << '\n';
+      fmt::print( " {}", vecs[n][i] );
+    fmt::print("\n");
   }
   E.getRightEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
-    cout << "vR[" << n << "] = ";
+    fmt::print( "vR[{}] = ", n );
     for ( size_t i = 0; i < 4; ++i )
-      cout << ' ' << vecs[n][i];
-    cout << '\n';
+      fmt::print( "{} ", vecs[n][i] );
+    fmt::print("\n");
   }
 }
 
@@ -241,43 +236,42 @@ test6() {
   vector<complex<real_type> > e;
   E.getEigenvalues( e );
 
-  vector<complex<real_type> >::const_iterator it;
-  for ( it = e.begin(); it != e.end(); ++it )
-    cout << *it << "\n";
+  for ( auto const & it : e )
+    fmt::print( "{}\n", it );
 
   vector<vector< lapack_wrapper::GeneralizedEigenvectors<real_type>::complex_type > > vecs;
   E.getLeftEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
-    cout << "vL[" << n << "] = ";
+    fmt::print( "vL[{}] = ", n );
     for ( size_t i = 0; i < 4; ++i )
-      cout << ' ' << vecs[n][i];
-    cout << '\n';
+      fmt::print( "{} ", vecs[n][i] );
+    fmt::print("\n");
   }
   E.getRightEigenvector( vecs );
   for ( size_t n = 0; n < 4; ++n ) {
-    cout << "vR[" << n << "] = ";
+    fmt::print( "vR[{}] = ", n );
     for ( size_t i = 0; i < 4; ++i )
-      cout << ' ' << vecs[n][i];
-    cout << '\n';
+      fmt::print( "{} ", vecs[n][i] );
+    fmt::print("\n");
   }
 }
 
 int
 main() {
   try {
-    cout << "test1\n";
+    fmt::print( "test1\n" );
     test1();
-    cout << "\n\ntest2\n";
+    fmt::print( "\n\ntest2\n" );
     test2();
-    cout << "\n\ntest3\n";
+    fmt::print( "\n\ntest3\n" );
     test3();
-    cout << "\n\ntest4\n";
+    fmt::print( "\n\ntest4\n" );
     test4();
-    cout << "\n\ntest5\n";
+    fmt::print( "\n\ntest5\n" );
     test5();
-    cout << "\n\ntest6\n";
+    fmt::print( "\n\ntest6\n" );
     test6();
-    cout << "\nAll done!\n";
+    fmt::print( "\nAll done!\n" );
   } catch ( exception const & exc ) {
     msg.error( exc.what() );
   } catch ( ... ) {

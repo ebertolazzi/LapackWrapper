@@ -42,19 +42,15 @@ namespace lapack_wrapper {
     using DMatW     = DiagMatrixWrapper<T>;
 
   protected:
-    integer     m_dim;
-    real_type * m_data;
+    integer     m_dim{0};
+    real_type * m_data{nullptr};
   public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //!
     //! Build an empty wrapper.
     //!
-    explicit
-    DiagMatrixWrapper( )
-    : m_dim(0)
-    , m_data(nullptr)
-    {}
+    explicit DiagMatrixWrapper( ) = default;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //!
@@ -64,10 +60,10 @@ namespace lapack_wrapper {
     //! \param dim  number of elements on the diagonal of the mapped matrix
     //!
     explicit
-    DiagMatrixWrapper( real_type * data, integer dim ) {
-      m_data = data;
-      m_dim  = dim;
-    }
+    DiagMatrixWrapper( real_type * data, integer dim )
+    : m_dim(dim)
+    , m_data(data)
+    { }
 
     integer getDim()   const { return m_dim;}  //!< Number of elements
     integer numElems() const { return m_dim;}  //!< Number of elements
@@ -110,17 +106,17 @@ namespace lapack_wrapper {
       return *this;
     }
 
-    void
-    print( ostream_type & stream ) const {
+    string
+    to_string() const {
+      string res = "";
       for ( integer i = 0; i < m_dim; ++i ) {
         for ( integer j = 0; j < m_dim; ++j ) {
-          stream << std::setw(14);
-          if ( i != j ) stream << '.';
-          else          stream << m_data[i];
-          stream << ' ';
+          if ( i != j ) res += ".              ";
+          else          res += fmt::format( "{:14} ", m_data[i] );
         }
-        stream << '\n';
+        res += '\n';
       }
+      return res;
     }
 
   };
@@ -131,7 +127,7 @@ namespace lapack_wrapper {
   inline
   ostream_type &
   operator << ( ostream_type & stream, DiagMatrixWrapper<T> const & A ) {
-    A.print( stream );
+    stream << A.to_string();
     return stream;
   }
 
@@ -998,28 +994,20 @@ namespace lapack_wrapper {
         lapack_wrapper::copy( to.m_nrows, pc, 1, to.m_data + i, to.m_ldData );
     }
 
-    void
-    print( ostream_type & stream ) const {
-      for ( integer i = 0; i < m_nrows; ++i ) {
-        for ( integer j = 0; j < m_ncols; ++j )
-          stream << std::setw(14) << (*this)(i,j) << ' ';
-        stream << '\n';
-      }
-    }
-
-    void
-    print0( ostream_type & stream, real_type eps ) const {
+    string
+    to_string( real_type eps = 0 ) const {
+      string res = "";
       for ( integer i = 0; i < m_nrows; ++i ) {
         for ( integer j = 0; j < m_ncols; ++j ) {
           real_type aij = (*this)(i,j);
-          stream << std::setw(14);
-          if ( std::abs( aij ) < eps ) stream << '.';
-          else                         stream << aij;
-          stream << ' ';
+          if ( std::abs( aij ) < eps ) res += ".              ";
+          else                         res += fmt::format( "{:14} ", aij );
         }
-        stream << '\n';
+        res += '\n';
       }
+      return res;
     }
+
   };
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1027,7 +1015,7 @@ namespace lapack_wrapper {
   inline
   ostream_type &
   operator << ( ostream_type & stream, MatrixWrapper<T> const & A ) {
-    A.print(stream);
+    stream << A.to_string();
     return stream;
   }
 

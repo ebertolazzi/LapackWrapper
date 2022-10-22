@@ -97,15 +97,16 @@ namespace Sparse_tool {
   using Utils::ostream_type;
   using Utils::istream_type;
 
-  using ::std::vector;
-  using ::std::istream;
-  using ::std::ostream;
-  using ::std::cin;
-  using ::std::cout;
-  using ::std::cerr;
-  using ::std::setw;
-  using ::std::greater;
-  using ::std::less;
+  using std::vector;
+  using std::string;
+  using std::istream;
+  using std::ostream;
+  using std::cin;
+  using std::cout;
+  using std::cerr;
+  using std::setw;
+  using std::greater;
+  using std::less;
 
   // FROM BLITZ++
 
@@ -4802,12 +4803,14 @@ namespace Sparse_tool {
   //!
   template <typename T, typename VEC_EXPR>
   inline
-  void
-  print( ostream_type & s, VEC_EXPR const & v ) {
+  string
+  to_string( VEC_EXPR const & v ) {
     integer sz1 = v.size() - 1;
-    s << "[";
-    for ( integer i = 0; i < sz1; ++i ) s << v(i) << " , ";
-    s << v(sz1) << "]";
+    string res = "[ ";
+    for ( integer i = 0; i < sz1; ++i )
+      res += fmt::format( "{}, ", v(i) );
+    res += fmt::format( "{} ]", v(sz1) );
+    return res;
   }
 
   //!
@@ -4816,7 +4819,7 @@ namespace Sparse_tool {
   template <typename T, typename VEC_EXPR> inline
   ostream_type &
   operator << ( ostream_type & s, VEC_EXPR const & v ) {
-    print(s,v);
+    s << v.to_string();
     return s;
   }
 
