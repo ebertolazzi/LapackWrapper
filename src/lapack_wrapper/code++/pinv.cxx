@@ -32,22 +32,6 @@ namespace lapack_wrapper {
   :|:  |_|
   \*/
 
-  template <typename T>
-  PINV_no_alloc<T>::PINV_no_alloc()
-  : LinearSystemSolver<T>()
-  , m_alloc_work("PINV_no_alloc")
-  , L_mm_work(0)
-  , mm_work(nullptr)
-  , m_nrows(0)
-  , m_ncols(0)
-  , m_rank(0)
-  , m_rcmax(0)
-  , m_A_factored(nullptr)
-  , m_Rt(nullptr)
-  {
-    m_epsi = std::pow( std::numeric_limits<T>::epsilon(), T(0.65) );
-  }
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>

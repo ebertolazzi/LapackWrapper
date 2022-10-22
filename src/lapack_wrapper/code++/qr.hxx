@@ -39,14 +39,14 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer m_nrows;
-    integer m_ncols;
-    integer m_nReflector;
-    integer m_LworkQR;
+    integer m_nrows{0};
+    integer m_ncols{0};
+    integer m_nReflector{0};
+    integer m_LworkQR{0};
 
-    real_type * m_Afactorized;
-    real_type * m_WorkQR;
-    real_type * m_Tau;
+    real_type * m_Afactorized{nullptr};
+    real_type * m_WorkQR{nullptr};
+    real_type * m_Tau{nullptr};
 
   public:
 
@@ -54,18 +54,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::solve;
     using LinearSystemSolver<T>::t_solve;
 
-    QR_no_alloc()
-    : LinearSystemSolver<T>()
-    , m_nrows(0)
-    , m_ncols(0)
-    , m_nReflector(0)
-    , m_LworkQR(0)
-    , m_Afactorized(nullptr)
-    , m_WorkQR(nullptr)
-    , m_Tau(nullptr)
-    {}
-
-    ~QR_no_alloc() override {}
+    QR_no_alloc() : LinearSystemSolver<T>() {}
 
     integer
     get_Lwork_QR( integer NR, integer NC ) const;
@@ -276,7 +265,7 @@ namespace lapack_wrapper {
 
   protected:
 
-    Malloc<real_type> m_allocReals;
+    Malloc<real_type> m_allocReals{"QR-allocReals"};
 
   public:
 
@@ -305,13 +294,9 @@ namespace lapack_wrapper {
     using QR_no_alloc<T>::no_allocate;
     using QR_no_alloc<T>::factorize;
 
-    QR()
-    : QR_no_alloc<T>()
-    , m_allocReals("QR-allocReals")
-    {}
+    QR() : QR_no_alloc<T>() {}
 
-    ~QR() override
-    { m_allocReals.free(); }
+    ~QR() override { m_allocReals.free(); }
 
     void
     allocate( integer nr, integer nc );
@@ -394,13 +379,7 @@ namespace lapack_wrapper {
     using QR_no_alloc<T>::no_allocate;
     using QR_no_alloc<T>::factorize;
 
-    QRP_no_alloc()
-    : QR_no_alloc<T>()
-    , m_JPVT(nullptr)
-    {}
-
-    ~QRP_no_alloc() override
-    {}
+    QRP_no_alloc() : QR_no_alloc<T>() {}
 
     integer
     get_Lwork_QRP( integer NR, integer NC ) const;
@@ -551,8 +530,8 @@ namespace lapack_wrapper {
     using real_type = typename QRP_no_alloc<T>::real_type;
 
   private:
-    Malloc<real_type> m_allocReals;
-    Malloc<integer>   m_allocIntegers;
+    Malloc<real_type> m_allocReals{"QRP-allocReals"};
+    Malloc<integer>   m_allocIntegers{"QRP-allocIntegers"};
 
   public:
 
@@ -580,14 +559,9 @@ namespace lapack_wrapper {
     using QRP_no_alloc<T>::no_allocate;
     using QRP_no_alloc<T>::factorize;
 
-    QRP()
-    : QRP_no_alloc<T>()
-    , m_allocReals("QRP-allocReals")
-    , m_allocIntegers("QRP-allocIntegers")
-    {}
+    QRP() : QRP_no_alloc<T>() {}
 
-    ~QRP() override
-    { m_allocIntegers.free(); }
+    ~QRP() override { m_allocIntegers.free(); }
 
     void
     allocate( integer nr, integer nc );

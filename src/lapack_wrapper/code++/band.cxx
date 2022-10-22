@@ -31,24 +31,6 @@ namespace lapack_wrapper {
    |  |____/ \__,_|_| |_|\__,_|\___|\__,_|_|  |_|\__,_|\__|_|  |_/_/\_\
   \*/
 
-  template <typename T>
-  BandedLU<T>::BandedLU()
-  : m_allocReals("_BandedLU_reals")
-  , m_allocIntegers("_BandedLU_integers")
-  , m_m(0)
-  , m_n(0)
-  , m_nL(0)
-  , m_nU(0)
-  , m_ldAB(0)
-  , m_is_factorized(false)
-  {}
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  BandedLU<T>::~BandedLU()
-  {}
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>

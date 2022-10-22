@@ -32,17 +32,6 @@ namespace lapack_wrapper {
    |
   \*/
 
-  template <typename T>
-  LU_no_alloc<T>::LU_no_alloc()
-  : LinearSystemSolver<T>()
-  , m_nrows(0)
-  , m_ncols(0)
-  , m_Afactorized(nullptr)
-  , m_Work(nullptr)
-  , m_Iwork(nullptr)
-  , m_i_pivot(nullptr)
-  {}
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
@@ -258,23 +247,6 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  LU<T>::LU()
-  : LU_no_alloc<T>()
-  , m_allocReals("allocReals")
-  , m_allocIntegers("allocIntegers")
-  {}
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  LU<T>::~LU() {
-    m_allocReals.free();
-    m_allocIntegers.free();
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
   void
   LU<T>::allocate( integer NR, integer NC ) {
     if ( m_nrows != NR || m_ncols != NC ) {
@@ -304,15 +276,6 @@ namespace lapack_wrapper {
    |  |_____\___/|_|    \__\_\
    |
   \*/
-
-  template <typename T>
-  LUPQ_no_alloc<T>::LUPQ_no_alloc()
-  : LinearSystemSolver<T>()
-  , m_nRC(0)
-  , m_Afactorized(nullptr)
-  , m_i_piv(nullptr)
-  , m_j_piv(nullptr)
-  {}
 
   template <typename T>
   void
@@ -484,21 +447,6 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  LUPQ<T>::LUPQ()
-  : LUPQ_no_alloc<T>()
-  , m_allocReals("LUPQ-allocReals")
-  , m_allocIntegers("LUPQ-allocIntegers")
-  {}
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  LUPQ<T>::~LUPQ() {
-    m_allocReals.free();
-    m_allocIntegers.free();
-  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

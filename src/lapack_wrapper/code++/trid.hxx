@@ -40,7 +40,7 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<real_type> m_allocReals;
+    Malloc<real_type> m_allocReals{"allocReals"};
 
     real_type * m_L{nullptr};
     real_type * m_D{nullptr};
@@ -51,9 +51,7 @@ namespace lapack_wrapper {
 
     using LinearSystemSolver<T>::factorize;
 
-    TridiagonalSPD()
-    : m_allocReals("allocReals")
-    {}
+    TridiagonalSPD() = default;
 
     ~TridiagonalSPD() override
     { m_allocReals.free(); }
@@ -139,8 +137,8 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<real_type> m_allocReals;
-    Malloc<integer>   m_allocIntegers;
+    Malloc<real_type> m_allocReals{"TridiagonalLU-allocReals"};
+    Malloc<integer>   m_allocIntegers{"TridiagonalLU-allocIntegers"};
 
     real_type * m_L{nullptr};
     real_type * m_D{nullptr};
@@ -156,10 +154,7 @@ namespace lapack_wrapper {
 
     using LinearSystemSolver<T>::factorize;
 
-    TridiagonalLU()
-    : m_allocReals("TridiagonalLU-allocReals")
-    , m_allocIntegers("TridiagonalLU-allocIntegers")
-    {}
+    TridiagonalLU() = default;
 
     ~TridiagonalLU() override {
       m_allocReals.free();
@@ -268,7 +263,7 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<real_type> m_allocReals;
+    Malloc<real_type> m_allocReals{"allocReals"};
 
     real_type * m_C{nullptr};   // rotazioni givens
     real_type * m_S{nullptr};
@@ -286,9 +281,7 @@ namespace lapack_wrapper {
 
     using LinearSystemSolver<T>::factorize;
 
-    TridiagonalQR()
-    : m_allocReals("allocReals")
-    {}
+    TridiagonalQR() = default;
 
     ~TridiagonalQR() override {
       m_allocReals.free();

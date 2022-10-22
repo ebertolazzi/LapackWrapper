@@ -245,7 +245,7 @@ namespace lapack_wrapper {
   \*/
   template <typename T>
   class DiagMatrix : public DiagMatrixWrapper<T> {
-    Malloc<T> m_mem;
+    Malloc<T> m_mem{"DiagMatrix(m_mem)"};
   public:
 
     using DiagMatrixWrapper<T>::m_dim;

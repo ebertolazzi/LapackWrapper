@@ -42,34 +42,46 @@ namespace lapack_wrapper {
     using Sparse       = SparseCCOOR<T>;
 
   private:
-    Malloc<real_type> m_mem;
+    Malloc<real_type> m_mem{"Eigenvalues::m_mem"};
 
-    integer     m_N;
-    integer     m_Lwork;
-    real_type * m_Re;
-    real_type * m_Im;
-    real_type * m_Work;
-    real_type * m_A_saved;
+    integer     m_N{0};
+    integer     m_Lwork{0};
+    real_type * m_Re{nullptr};
+    real_type * m_Im{nullptr};
+    real_type * m_Work{nullptr};
+    real_type * m_A_saved{nullptr};
 
     void allocate( integer N );
     void compute( );
 
   public:
 
-    Eigenvalues();
-    Eigenvalues( integer NRC, real_type const data[], integer ldData );
+    Eigenvalues() = default;
+
+    Eigenvalues( integer NRC, real_type const data[], integer ldData ) {
+      this->setup( NRC, data, ldData );
+    }
+
     explicit
-    Eigenvalues( MatW const & M );
+    Eigenvalues( MatW const & M ) {
+      this->setup( M );
+    }
+
     Eigenvalues(
       integer         NRC,
       integer         nnz,
       real_type const values[],
       integer   const row[],
       integer   const col[]
-    );
+    ) {
+      this->setup( NRC, nnz, values, row, col );
+    }
 
-    void setup( integer NRC, real_type const data[], integer ldData );
-    void setup( MatW const & M );
+    void
+    setup( integer NRC, real_type const data[], integer ldData );
+
+    void
+    setup( MatW const & M );
 
     void
     setup(
@@ -99,28 +111,32 @@ namespace lapack_wrapper {
     using Sparse       = SparseCCOOR<T>;
 
   private:
-    Malloc<real_type> m_mem;
+    Malloc<real_type> m_mem{"Eigenvectors::mem_real"};
 
-    integer     m_N;
-    integer     m_Lwork;
-    real_type * m_Re;
-    real_type * m_Im;
-    real_type * m_A_saved;
-    real_type * m_VL;
-    real_type * m_VR;
-    real_type * m_Work;
+    integer     m_N{0};
+    integer     m_Lwork{0};
+    real_type * m_Re{nullptr};
+    real_type * m_Im{nullptr};
+    real_type * m_A_saved{nullptr};
+    real_type * m_VL{nullptr};
+    real_type * m_VR{nullptr};
+    real_type * m_Work{nullptr};
 
     void allocate( integer N );
     void compute( );
 
   public:
 
-    Eigenvectors();
+    Eigenvectors() = default;
 
-    Eigenvectors( integer NRC, real_type const A[], integer ldA );
+    Eigenvectors( integer NRC, real_type const A[], integer ldA ) {
+      this->setup( NRC, A, ldA );
+    }
 
     explicit
-    Eigenvectors( MatW const & A );
+    Eigenvectors( MatW const & A ) {
+      this->setup( A );
+    }
 
     Eigenvectors(
       integer         NRC,
@@ -128,7 +144,9 @@ namespace lapack_wrapper {
       real_type const A_values[],
       integer   const A_row[],
       integer   const A_col[]
-    );
+    ) {
+      this->setup( NRC, A_nnz, A_values, A_row, A_col );
+    }
 
     void
     setup( integer NRC, real_type const A[], integer ldA );
@@ -165,31 +183,35 @@ namespace lapack_wrapper {
     using Sparse       = SparseCCOOR<T>;
 
   private:
-    Malloc<real_type> m_mem;
+    Malloc<real_type> m_mem{"GeneralizedEigenvalues::mem_real"};
 
-    integer     m_N;
-    integer     m_Lwork;
-    real_type * m_alphaRe;
-    real_type * m_alphaIm;
-    real_type * m_beta;
-    real_type * m_Work;
-    real_type * m_A_saved;
-    real_type * m_B_saved;
+    integer     m_N{0};
+    integer     m_Lwork{0};
+    real_type * m_alphaRe{nullptr};
+    real_type * m_alphaIm{nullptr};
+    real_type * m_beta{nullptr};
+    real_type * m_Work{nullptr};
+    real_type * m_A_saved{nullptr};
+    real_type * m_B_saved{nullptr};
 
     void allocate( integer N );
     void compute( );
 
   public:
 
-    GeneralizedEigenvalues();
+    GeneralizedEigenvalues() = default;
 
     GeneralizedEigenvalues(
       integer NRC,
       real_type const A[], integer ldA,
       real_type const B[], integer ldB
-    );
+    ) {
+      this->setup( NRC, A, ldA, B, ldB );
+    }
 
-    GeneralizedEigenvalues( MatW const & A, MatW const & B );
+    GeneralizedEigenvalues( MatW const & A, MatW const & B ) {
+      this->setup( A, B );
+    }
 
     GeneralizedEigenvalues(
       integer         NRC,
@@ -201,7 +223,13 @@ namespace lapack_wrapper {
       real_type const B_values[],
       integer   const B_row[],
       integer   const B_col[]
-    );
+    ) {
+      this->setup(
+        NRC,
+        A_nnz, A_values, A_row, A_col,
+        B_nnz, B_values, B_row, B_col
+      );
+    }
 
     void
     setup(
@@ -244,44 +272,48 @@ namespace lapack_wrapper {
     using Sparse       = SparseCCOOR<T>;
 
   private:
-    Malloc<real_type> m_mem_real;
-    Malloc<integer>   m_mem_int;
+    Malloc<real_type> m_mem_real{"GeneralizedEigenvectors::mem_real"};
+    Malloc<integer>   m_mem_int{"GeneralizedEigenvectors::mem_int"};
 
-    integer     m_N;
-    integer     m_Lwork;
-    integer     m_ilo;
-    integer     m_ihi;
-    real_type   m_abnorm;
-    real_type   m_bbnorm;
-    real_type * m_alphaRe;
-    real_type * m_alphaIm;
-    real_type * m_beta;
-    real_type * m_A_saved;
-    real_type * m_B_saved;
-    real_type * m_VL;
-    real_type * m_VR;
-    real_type * m_lscale;
-    real_type * m_rscale;
-    real_type * m_rconde;
-    real_type * m_rcondv;
-    real_type * m_Work;
-    integer   * m_iWork;
-    integer   * m_bWork;
+    integer     m_N{0};
+    integer     m_Lwork{0};
+    integer     m_ilo{0};
+    integer     m_ihi{0};
+    real_type   m_abnorm{0};
+    real_type   m_bbnorm{0};
+    real_type * m_alphaRe{nullptr};
+    real_type * m_alphaIm{nullptr};
+    real_type * m_beta{nullptr};
+    real_type * m_A_saved{nullptr};
+    real_type * m_B_saved{nullptr};
+    real_type * m_VL{nullptr};
+    real_type * m_VR{nullptr};
+    real_type * m_lscale{nullptr};
+    real_type * m_rscale{nullptr};
+    real_type * m_rconde{nullptr};
+    real_type * m_rcondv{nullptr};
+    real_type * m_Work{nullptr};
+    integer   * m_iWork{nullptr};
+    integer   * m_bWork{nullptr};
 
     void allocate( integer N );
     void compute( );
 
   public:
 
-    GeneralizedEigenvectors();
+    GeneralizedEigenvectors() = default;
 
     GeneralizedEigenvectors(
       integer NRC,
       real_type const A[], integer ldA,
       real_type const B[], integer ldB
-    );
+    ) {
+      this->setup( NRC, A, ldA, B, ldB );
+    }
 
-    GeneralizedEigenvectors( MatW const & A, MatW const & B );
+    GeneralizedEigenvectors( MatW const & A, MatW const & B ) {
+      this->setup( A, B );
+    }
 
     GeneralizedEigenvectors(
       integer         NRC,
@@ -293,7 +325,13 @@ namespace lapack_wrapper {
       real_type const B_values[],
       integer   const B_row[],
       integer   const B_col[]
-    );
+    ) {
+      this->setup(
+        NRC,
+        A_nnz, A_values, A_row, A_col,
+        B_nnz, B_values, B_row, B_col
+      );
+    }
 
     void
     setup(

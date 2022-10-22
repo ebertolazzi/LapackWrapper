@@ -37,21 +37,24 @@ namespace lapack_wrapper {
   public:
     using real_type = T;
 
-    Malloc<real_type> m_allocReals;
-    Malloc<integer>   m_allocIntegers;
+    Malloc<real_type> m_allocReals{"BandedLU_reals"};
+    Malloc<integer>   m_allocIntegers{"BandedLU_integers"};
 
-    integer     m_m, m_n, m_nL, m_nU, m_ldAB;
-    integer   * m_ipiv;
-    real_type * m_AB;
-
-    bool        m_is_factorized;
+    integer     m_m{0};
+    integer     m_n{0};
+    integer     m_nL{0};
+    integer     m_nU{0};
+    integer     m_ldAB{0};
+    integer   * m_ipiv{nullptr};
+    real_type * m_AB{nullptr};
+    bool        m_is_factorized{false};
 
   public:
 
     using LinearSystemSolver<T>::factorize;
 
-    BandedLU();
-    ~BandedLU() override;
+    BandedLU() = default;
+    ~BandedLU() override = default;
 
     void
     setup(

@@ -37,27 +37,19 @@ namespace lapack_wrapper {
     using real_type = T;
 
   protected:
-    Malloc<real_type> m_allocReals;
+    Malloc<real_type> m_allocReals{"QN reals"};
 
-    integer     m_dim;
-    real_type * m_H;
-    real_type * m_s;
-    real_type * m_y;
-    real_type * m_z;
+    integer     m_dim{0};
+    real_type * m_H{nullptr};
+    real_type * m_s{nullptr};
+    real_type * m_y{nullptr};
+    real_type * m_z{nullptr};
 
   public:
 
-    QN()
-    : m_allocReals("QN reals")
-    , m_dim(0)
-    , m_H(nullptr)
-    , m_s(nullptr)
-    , m_y(nullptr)
-    , m_z(nullptr)
-    {}
+    QN() = default;
 
-    virtual
-    ~QN() {}
+    virtual ~QN() = default;
 
     void
     allocate( integer N );
@@ -181,7 +173,7 @@ namespace lapack_wrapper {
     using QN<T>::m_H;
     using QN<T>::m_z;
 
-    BFGS() {}
+    BFGS() : QN<T>() {}
 
     /*\
     :|:         _      _               _
@@ -223,7 +215,7 @@ namespace lapack_wrapper {
     using QN<T>::m_H;
     using QN<T>::m_z;
 
-    DFP() {}
+    DFP() : QN<T>() {}
 
     /*\
     :|:         _      _               _
@@ -264,7 +256,7 @@ namespace lapack_wrapper {
     using QN<T>::m_H;
     using QN<T>::m_z;
 
-    SR1() {}
+    SR1() : QN<T>() {}
 
     /*\
     :|:         _      _               _

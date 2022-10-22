@@ -55,24 +55,6 @@ namespace lapack_wrapper {
   :|:
   \*/
 
-  template <typename T>
-  LSC<T>::LSC()
-  : LinearSystemSolver<T>()
-  , m_allocReals( "LSC-allocReals" )
-  , m_allocIntegers( "LSC-allocIntegers" )
-  , m_NR(0)
-  , m_NC(0)
-  , m_NRA(0)
-  , m_NRB(0)
-  , m_to_rowA(nullptr)
-  , m_to_rowB(nullptr)
-  , m_Amat(nullptr)
-  , m_lu()
-  , m_allocWorks( "LSC-allocWorks" )
-  , m_work(nullptr)
-  , m_rhs(nullptr)
-  {}
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>

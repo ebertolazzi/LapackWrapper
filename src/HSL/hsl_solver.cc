@@ -10,17 +10,6 @@
 
 namespace lapack_wrapper {
 
-  template <typename real>
-  HSLsolver<real>::HSLsolver()
-  : m_isInitialized(false)
-  , m_isFactorized(false)
-  , m_last_error("")
-  { }
-
-  template <typename real>
-  HSLsolver<real>::~HSLsolver()
-  { }
-
   template class HSLsolver<float>;
   template class HSLsolver<double>;
 

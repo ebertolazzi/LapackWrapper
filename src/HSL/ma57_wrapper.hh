@@ -36,28 +36,28 @@ namespace lapack_wrapper {
 
     // MA57 Storage:
     /// Array of length 5 with real control parameters.
-    real m_cntl[5] = {0,0,0,0,0};
+    real m_cntl[5]{0,0,0,0,0};
     /// Array of length 20 with int control parameters.
-    integer m_icntl[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    integer m_icntl[20]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     /// Integer Info variables.
-    mutable integer m_iinfo[40] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    mutable integer m_iinfo[40]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     /// Real Info variables.
-    mutable real m_rinfo[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    mutable real m_rinfo[20]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     // Factors in MA57:
     // Workspace MA57:
 
     /// Integer specifying task (1 for solve AX = B).
-    integer m_job = 0;
+    integer m_job{0};
 
     /// Specifies whether to refine iteratively.
-    bool m_doRefinement = true;
+    bool m_doRefinement{true};
 
     /// Residuum tolerance.
-    real m_tolRes = real(1e-11);
+    real m_tolRes{real(1e-11)};
     /// Maximum number of refinements.
-    integer m_MaxRefinements = 100;
+    integer m_MaxRefinements{100};
 
     /**
      * \brief getResidual:

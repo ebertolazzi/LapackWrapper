@@ -46,7 +46,7 @@
 #include <vector>
 
 namespace lapack_wrapper {
-  
+
   template < typename real>
   class MA41 {
   public:
@@ -64,8 +64,9 @@ namespace lapack_wrapper {
       ANALISYS_and_FACTORIZATION_and_SOLVE = 6
     };
 
-    bool    verbose;
-    integer N, NE;
+    bool    verbose{false};
+    integer N{0};
+    integer NE{0};
     integer KEEP[50], ICNTL[20], INFO[20];
     real    CNTL[10], RINFO[20];
 
@@ -76,7 +77,7 @@ namespace lapack_wrapper {
     // the matrix
     vector_value   A;
     vector_integer IRN, JCN;
-  
+
     void msg_info( ostream_type & s ) const;
     void msg_infor( ostream_type & s ) const;
     void msg_error( ostream_type & s ) const;
@@ -89,7 +90,7 @@ namespace lapack_wrapper {
     MA41( MA41 const & ) = delete;
 
   public:
-    MA41() : verbose(false) {}
+    MA41() = default;
 
     void
     init(void) {

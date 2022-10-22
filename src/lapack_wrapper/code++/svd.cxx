@@ -221,19 +221,6 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  template <typename T>
-  SVD<T>::SVD( SVD_USED svd_used )
-  : SVD_no_alloc<T>( svd_used )
-  , m_allocReals( "SVD-allocReals" )
-  , m_allocIntegers( "SVD-allocIntegers" )
-  {}
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  SVD<T>::~SVD()
-  { m_allocReals.free(); m_allocIntegers.free(); }
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
@@ -260,119 +247,6 @@ namespace lapack_wrapper {
   :|:   \____|\___|_| |_|\___|_|  \__,_|_|_/___\___|\__,_|____/  \_/  |____/
   :|:
   \*/
-
-  template <typename T>
-  GeneralizedSVD<T>::GeneralizedSVD()
-  : m_mem_real("GeneralizedSVD(real)")
-  , m_mem_int("GeneralizedSVD(int)")
-  , m_M(0)
-  , m_N(0)
-  , m_P(0)
-  , m_K(0)
-  , m_L(0)
-  , m_Lwork(0)
-  , m_Work(nullptr)
-  , m_IWork(nullptr)
-  , m_alpha_saved(nullptr)
-  , m_beta_saved(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  , m_U_saved(nullptr)
-  , m_V_saved(nullptr)
-  , m_Q_saved(nullptr)
-  {}
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  GeneralizedSVD<T>::GeneralizedSVD(
-    integer         m,
-    integer         n,
-    integer         p,
-    real_type const A[], integer ldA_in,
-    real_type const B[], integer ldB_in
-  )
-  : m_mem_real("GeneralizedSVD(real)")
-  , m_mem_int("GeneralizedSVD(int)")
-  , m_M(0)
-  , m_N(0)
-  , m_P(0)
-  , m_K(0)
-  , m_L(0)
-  , m_Lwork(0)
-  , m_Work(nullptr)
-  , m_IWork(nullptr)
-  , m_alpha_saved(nullptr)
-  , m_beta_saved(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  , m_U_saved(nullptr)
-  , m_V_saved(nullptr)
-  , m_Q_saved(nullptr)
-  { this->setup( m, n, p, A, ldA_in, B, ldB_in ); }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  GeneralizedSVD<T>::GeneralizedSVD( MatW const & A, MatW const & B )
-  : m_mem_real("GeneralizedSVD(real)")
-  , m_mem_int("GeneralizedSVD(int)")
-  , m_M(0)
-  , m_N(0)
-  , m_P(0)
-  , m_K(0)
-  , m_L(0)
-  , m_Lwork(0)
-  , m_Work(nullptr)
-  , m_IWork(nullptr)
-  , m_alpha_saved(nullptr)
-  , m_beta_saved(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  , m_U_saved(nullptr)
-  , m_V_saved(nullptr)
-  , m_Q_saved(nullptr)
-  { this->setup( A, B ); }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  GeneralizedSVD<T>::GeneralizedSVD(
-    integer         m,
-    integer         n,
-    integer         p,
-    integer         A_nnz,
-    real_type const A_values[],
-    integer   const A_row[],
-    integer   const A_col[],
-    integer         B_nnz,
-    real_type const B_values[],
-    integer   const B_row[],
-    integer   const B_col[]
-  )
-  : m_mem_real("GeneralizedSVD(real)")
-  , m_mem_int("GeneralizedSVD(int)")
-  , m_M(0)
-  , m_N(0)
-  , m_P(0)
-  , m_K(0)
-  , m_L(0)
-  , m_Lwork(0)
-  , m_Work(nullptr)
-  , m_IWork(nullptr)
-  , m_alpha_saved(nullptr)
-  , m_beta_saved(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  , m_U_saved(nullptr)
-  , m_V_saved(nullptr)
-  , m_Q_saved(nullptr)
-  { this->setup(
-      m, n, p,
-      A_nnz, A_values, A_row, A_col,
-      B_nnz, B_values, B_row, B_col
-    );
-  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

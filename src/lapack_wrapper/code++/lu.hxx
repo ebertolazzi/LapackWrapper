@@ -39,13 +39,13 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer     m_nrows;
-    integer     m_ncols;
+    integer     m_nrows{0};
+    integer     m_ncols{0};
 
-    real_type * m_Afactorized;
-    real_type * m_Work;
-    integer   * m_Iwork;
-    integer   * m_i_pivot;
+    real_type * m_Afactorized{nullptr};
+    real_type * m_Work{nullptr};
+    integer   * m_Iwork{nullptr};
+    integer   * m_i_pivot{nullptr};
 
     void check_ls( char const who[] ) const;
 
@@ -55,8 +55,9 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::solve;
     using LinearSystemSolver<T>::t_solve;
 
-    LU_no_alloc();
-    virtual ~LU_no_alloc() override {}
+    LU_no_alloc() : LinearSystemSolver<T>() {}
+
+    virtual ~LU_no_alloc() override = default;
 
     void
     no_allocate(
@@ -139,8 +140,8 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<real_type> m_allocReals;
-    Malloc<integer>   m_allocIntegers;
+    Malloc<real_type> m_allocReals{"LUPQ-allocReals"};
+    Malloc<integer>   m_allocIntegers{"LUPQ-allocIntegers"};
 
   public:
 
@@ -157,8 +158,7 @@ namespace lapack_wrapper {
     using LU_no_alloc<T>::cond1;
     using LU_no_alloc<T>::condInf;
 
-    LU();
-    ~LU() override;
+    LU() : LU_no_alloc<T>() {}
 
     void allocate( integer NR, integer NC );
 
@@ -204,10 +204,10 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer     m_nRC;
-    real_type * m_Afactorized;
-    integer   * m_i_piv;
-    integer   * m_j_piv;
+    integer     m_nRC{0};
+    real_type * m_Afactorized{nullptr};
+    integer   * m_i_piv{nullptr};
+    integer   * m_j_piv{nullptr};
 
   public:
 
@@ -215,8 +215,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::solve;
     using LinearSystemSolver<T>::t_solve;
 
-    LUPQ_no_alloc();
-    ~LUPQ_no_alloc() override {}
+    LUPQ_no_alloc() = default;
 
     void
     no_allocate(
@@ -273,8 +272,8 @@ namespace lapack_wrapper {
 
   private:
 
-    Malloc<real_type> m_allocReals;
-    Malloc<integer>   m_allocIntegers;
+    Malloc<real_type> m_allocReals{""};
+    Malloc<integer>   m_allocIntegers{""};
 
   public:
 
@@ -287,8 +286,12 @@ namespace lapack_wrapper {
     using LUPQ_no_alloc<T>::t_solve;
     using LUPQ_no_alloc<T>::factorize;
 
-    LUPQ();
-    ~LUPQ() override;
+    LUPQ() = default;
+
+    ~LUPQ() override {
+      m_allocReals.free();
+      m_allocIntegers.free();
+    }
 
     void allocate( integer NRC );
 

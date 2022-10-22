@@ -39,20 +39,20 @@ namespace lapack_wrapper {
 
   protected:
 
-    mutable Malloc<real_type> m_alloc_work;
-    mutable integer           L_mm_work;
-    mutable real_type       * mm_work;
+    mutable Malloc<real_type> m_alloc_work{"PINV_no_alloc"};
+    mutable integer           L_mm_work{0};
+    mutable real_type       * mm_work{nullptr};
 
-    integer     m_nrows;
-    integer     m_ncols;
-    integer     m_rank;
-    integer     m_rcmax;
-    real_type   m_epsi;
-    real_type * m_A_factored;
-    real_type * m_Rt;
+    integer     m_nrows{0};
+    integer     m_ncols{0};
+    integer     m_rank{0};
+    integer     m_rcmax{0};
+    real_type   m_epsi{std::pow( std::numeric_limits<T>::epsilon(), real_type(0.65) )};
+    real_type * m_A_factored{nullptr};
+    real_type * m_Rt{nullptr};
 
-    integer     m_LWorkQR2;
-    real_type * m_WorkQR2;
+    integer     m_LWorkQR2{0};
+    real_type * m_WorkQR2{nullptr};
 
     QRP_no_alloc<real_type> m_QR1;
     QR_no_alloc<real_type>  m_QR2;
@@ -66,8 +66,7 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::solve;
     using LinearSystemSolver<T>::t_solve;
 
-    PINV_no_alloc();
-    ~PINV_no_alloc() override {}
+    PINV_no_alloc() : LinearSystemSolver<T>() {}
 
     void
     no_allocate(
@@ -134,7 +133,7 @@ namespace lapack_wrapper {
     :|:    \_/ |_|_|   \__|\__,_|\__,_|_|___/
     \*/
 
-    //! 
+    //!
     //! In case of QR factorization of a square matrix solve the
     //! linear system \f$ QR x = b \f$.
     //!
@@ -194,8 +193,8 @@ namespace lapack_wrapper {
 
   protected:
 
-    Malloc<real_type> m_allocReals;
-    Malloc<integer>   m_allocIntegers;
+    Malloc<real_type> m_allocReals{"PINV-allocReals"};
+    Malloc<integer>   m_allocIntegers{"PINV-allocIntegers"};
 
   public:
 
@@ -207,14 +206,10 @@ namespace lapack_wrapper {
     using PINV_no_alloc<T>::no_allocate;
     using PINV_no_alloc<T>::factorize;
 
-    PINV()
-    : PINV_no_alloc<T>()
-    , m_allocReals("PINV-allocReals")
-    , m_allocIntegers("PINV-allocIntegers")
-    {}
+    PINV() : PINV_no_alloc<T>() {}
 
     ~PINV() override
-    { m_allocReals.free(); }
+    { m_allocReals.free(); m_allocIntegers.free(); }
 
     void
     allocate( integer nr, integer nc );

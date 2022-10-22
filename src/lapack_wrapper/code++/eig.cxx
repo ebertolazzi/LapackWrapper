@@ -32,16 +32,6 @@ namespace lapack_wrapper {
   :|:           |___/
   \*/
 
-  template <typename T>
-  Eigenvalues<T>::Eigenvalues()
-  : m_mem("Eigenvalues::mem_real")
-  , m_N(0)
-  , m_Re(nullptr)
-  , m_Im(nullptr)
-  , m_Work(nullptr)
-  , m_A_saved(nullptr)
-  {}
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
@@ -80,57 +70,6 @@ namespace lapack_wrapper {
     );
   }
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  Eigenvalues<T>::Eigenvalues(
-    integer         NRC,
-    real_type const data[],
-    integer         ldData
-  )
-  : m_mem("Eigenvalues::mem_real")
-  , m_N(0)
-  , m_Re(nullptr)
-  , m_Im(nullptr)
-  , m_Work(nullptr)
-  , m_A_saved(nullptr)
-  {
-    this->setup( NRC, data, ldData );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  Eigenvalues<T>::Eigenvalues( MatW const & M )
-  : m_mem("Eigenvalues::mem_real")
-  , m_N(0)
-  , m_Re(nullptr)
-  , m_Im(nullptr)
-  , m_Work(nullptr)
-  , m_A_saved(nullptr)
-  {
-    this->setup( M );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  Eigenvalues<T>::Eigenvalues(
-    integer         NRC,
-    integer         nnz,
-    real_type const values[],
-    integer   const row[],
-    integer   const col[]
-  )
-  : m_mem("Eigenvalues::mem_real")
-  , m_N(0)
-  , m_Re(nullptr)
-  , m_Im(nullptr)
-  , m_Work(nullptr)
-  , m_A_saved(nullptr)
-  {
-    this->setup( NRC, nnz, values, row, col );
-  }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -235,20 +174,6 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  Eigenvectors<T>::Eigenvectors()
-  : m_mem("Eigenvectors::mem_real")
-  , m_N(0)
-  , m_Re(nullptr)
-  , m_Im(nullptr)
-  , m_A_saved(nullptr)
-  , m_VL(nullptr)
-  , m_VR(nullptr)
-  , m_Work(nullptr)
-  {}
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
   void
   Eigenvectors<T>::allocate( integer Nin ) {
     m_N = Nin;
@@ -296,64 +221,6 @@ namespace lapack_wrapper {
       info == 0,
       "GeneralizedEigenvectors::compute, call geev return info = {}\n", info
     );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  Eigenvectors<T>::Eigenvectors(
-    integer         NRC,
-    real_type const A_data[],
-    integer         ldA
-  )
-  : m_mem("Eigenvectors::mem_real")
-  , m_N(0)
-  , m_Re(nullptr)
-  , m_Im(nullptr)
-  , m_A_saved(nullptr)
-  , m_VL(nullptr)
-  , m_VR(nullptr)
-  , m_Work(nullptr)
-  {
-    this->setup( NRC, A_data, ldA );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  Eigenvectors<T>::Eigenvectors( MatW const & A )
-  : m_mem("Eigenvectors::mem_real")
-  , m_N(0)
-  , m_Re(nullptr)
-  , m_Im(nullptr)
-  , m_A_saved(nullptr)
-  , m_VL(nullptr)
-  , m_VR(nullptr)
-  , m_Work(nullptr)
-  {
-    this->setup( A );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  Eigenvectors<T>::Eigenvectors(
-    integer         NRC,
-    integer         A_nnz,
-    real_type const A_values[],
-    integer   const A_row[],
-    integer   const A_col[]
-  )
-  : m_mem("Eigenvectors::mem_real")
-  , m_N(0)
-  , m_Re(nullptr)
-  , m_Im(nullptr)
-  , m_A_saved(nullptr)
-  , m_VL(nullptr)
-  , m_VR(nullptr)
-  , m_Work(nullptr)
-  {
-    this->setup( NRC, A_nnz, A_values, A_row, A_col );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -516,20 +383,6 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
-  GeneralizedEigenvalues<T>::GeneralizedEigenvalues()
-  : m_mem("GeneralizedEigenvalues::mem_real")
-  , m_N(0)
-  , m_alphaRe(nullptr)
-  , m_alphaIm(nullptr)
-  , m_beta(nullptr)
-  , m_Work(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  {}
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
   void
   GeneralizedEigenvalues<T>::allocate( integer Nin ) {
     m_N = Nin;
@@ -571,76 +424,6 @@ namespace lapack_wrapper {
     UTILS_ASSERT(
       info == 0,
       "GeneralizedEigenvalues::compute, call geev return info = {}\n", info
-    );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  GeneralizedEigenvalues<T>::GeneralizedEigenvalues(
-    integer         NRC,
-    real_type const A_data[],
-    integer         ldA,
-    real_type const B_data[],
-    integer         ldB
-  )
-  : m_mem("GeneralizedEigenvalues::mem_real")
-  , m_N(0)
-  , m_alphaRe(nullptr)
-  , m_alphaIm(nullptr)
-  , m_beta(nullptr)
-  , m_Work(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  {
-    this->setup( NRC, A_data, ldA, B_data, ldB );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  GeneralizedEigenvalues<T>::GeneralizedEigenvalues(
-    MatW const & A, MatW const & B
-  )
-  : m_mem("GeneralizedEigenvalues::mem_real")
-  , m_N(0)
-  , m_alphaRe(nullptr)
-  , m_alphaIm(nullptr)
-  , m_beta(nullptr)
-  , m_Work(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  {
-    this->setup( A, B );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  GeneralizedEigenvalues<T>::GeneralizedEigenvalues(
-    integer         NRC,
-    integer         A_nnz,
-    real_type const A_values[],
-    integer   const A_row[],
-    integer   const A_col[],
-    integer         B_nnz,
-    real_type const B_values[],
-    integer   const B_row[],
-    integer   const B_col[]
-  )
-  : m_mem("GeneralizedEigenvalues::mem_real")
-  , m_N(0)
-  , m_alphaRe(nullptr)
-  , m_alphaIm(nullptr)
-  , m_beta(nullptr)
-  , m_Work(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  {
-    this->setup(
-      NRC,
-      A_nnz, A_values, A_row, A_col,
-      B_nnz, B_values, B_row, B_col
     );
   }
 
@@ -763,27 +546,6 @@ namespace lapack_wrapper {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  template <typename T>
-  GeneralizedEigenvectors<T>::GeneralizedEigenvectors()
-  : m_mem_real("GeneralizedEigenvectors::mem_real")
-  , m_mem_int("GeneralizedEigenvectors::mem_int")
-  , m_N(0)
-  , m_alphaRe(nullptr)
-  , m_alphaIm(nullptr)
-  , m_beta(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  , m_VL(nullptr)
-  , m_VR(nullptr)
-  , m_lscale(nullptr)
-  , m_rscale(nullptr)
-  , m_rconde(nullptr)
-  , m_rcondv(nullptr)
-  , m_Work(nullptr)
-  , m_iWork(nullptr)
-  , m_bWork(nullptr)
-  {}
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
@@ -855,103 +617,6 @@ namespace lapack_wrapper {
     UTILS_ASSERT(
       info == 0,
       "GeneralizedEigenvectors::compute, call ggevx return info = {}\n", info
-    );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  GeneralizedEigenvectors<T>::GeneralizedEigenvectors(
-    integer         NRC,
-    real_type const A_data[],
-    integer         ldA,
-    real_type const B_data[],
-    integer         ldB
-  )
-  : m_mem_real("GeneralizedEigenvectors::mem_real")
-  , m_mem_int("GeneralizedEigenvectors::mem_int")
-  , m_N(0)
-  , m_alphaRe(nullptr)
-  , m_alphaIm(nullptr)
-  , m_beta(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  , m_VL(nullptr)
-  , m_VR(nullptr)
-  , m_lscale(nullptr)
-  , m_rscale(nullptr)
-  , m_rconde(nullptr)
-  , m_rcondv(nullptr)
-  , m_Work(nullptr)
-  , m_iWork(nullptr)
-  , m_bWork(nullptr)
-  {
-    this->setup( NRC, A_data, ldA, B_data, ldB );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  GeneralizedEigenvectors<T>::GeneralizedEigenvectors(
-    MatW const & A, MatW const & B
-  )
-  : m_mem_real("GeneralizedEigenvectors::mem_real")
-  , m_mem_int("GeneralizedEigenvectors::mem_int")
-  , m_N(0)
-  , m_alphaRe(nullptr)
-  , m_alphaIm(nullptr)
-  , m_beta(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  , m_VL(nullptr)
-  , m_VR(nullptr)
-  , m_lscale(nullptr)
-  , m_rscale(nullptr)
-  , m_rconde(nullptr)
-  , m_rcondv(nullptr)
-  , m_Work(nullptr)
-  , m_iWork(nullptr)
-  , m_bWork(nullptr)
-  {
-    this->setup( A, B );
-  }
-
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  template <typename T>
-  GeneralizedEigenvectors<T>::GeneralizedEigenvectors(
-    integer         NRC,
-    integer         A_nnz,
-    real_type const A_values[],
-    integer   const A_row[],
-    integer   const A_col[],
-    integer         B_nnz,
-    real_type const B_values[],
-    integer   const B_row[],
-    integer   const B_col[]
-  )
-  : m_mem_real("GeneralizedEigenvectors::mem_real")
-  , m_mem_int("GeneralizedEigenvectors::mem_int")
-  , m_N(0)
-  , m_alphaRe(nullptr)
-  , m_alphaIm(nullptr)
-  , m_beta(nullptr)
-  , m_A_saved(nullptr)
-  , m_B_saved(nullptr)
-  , m_VL(nullptr)
-  , m_VR(nullptr)
-  , m_lscale(nullptr)
-  , m_rscale(nullptr)
-  , m_rconde(nullptr)
-  , m_rcondv(nullptr)
-  , m_Work(nullptr)
-  , m_iWork(nullptr)
-  , m_bWork(nullptr)
-  {
-    this->setup(
-      NRC,
-      A_nnz, A_values, A_row, A_col,
-      B_nnz, B_values, B_row, B_col
     );
   }
 

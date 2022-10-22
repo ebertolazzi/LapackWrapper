@@ -511,15 +511,8 @@ namespace lapack_wrapper {
   \*/
 
   template <typename T>
-  DiagMatrix<T>::DiagMatrix()
-  : DiagMatrixWrapper<T>()
-  , m_mem("DiagMatrix")
-  {}
-
-  template <typename T>
   DiagMatrix<T>::DiagMatrix( DiagMatrix<T> const & D )
   : MatrixWrapper<T>( nullptr, D.dim )
-  , m_mem("DiagMatrix")
   {
     this->data = m_mem.realloc( size_t(D.dim) );
     std::copy_n( D.data, D.dim, this->data );
@@ -528,7 +521,6 @@ namespace lapack_wrapper {
   template <typename T>
   DiagMatrix<T>::DiagMatrix( integer dim )
   : DiagMatrixWrapper<T>( nullptr, dim )
-  , m_mem("DiagMatrix")
   {
     m_data = m_mem.realloc( size_t(m_dim) );
   }

@@ -60,23 +60,26 @@ namespace lapack_wrapper {
   public:
     using real_type = T;
 
-    Malloc<real_type> m_allocReals;
-    Malloc<integer>   m_allocIntegers;
+    Malloc<real_type> m_allocReals{"LSC-allocReals"};
+    Malloc<integer>   m_allocIntegers{"LSC-allocIntegers"};
 
-    integer     m_NR,  m_NC;
-    integer     m_NRA, m_NRB;
-    integer   * m_to_rowA;
-    integer   * m_to_rowB;
-    real_type * m_Amat;
+    integer     m_NR{0};
+    integer     m_NC{0};
+    integer     m_NRA{0};
+    integer     m_NRB{0};
+    integer   * m_to_rowA{nullptr};
+    integer   * m_to_rowB{nullptr};
+    real_type * m_Amat{nullptr};
     LU<T>       m_lu;
 
-    mutable Malloc<real_type> m_allocWorks;
-    mutable real_type *       m_work;
-    mutable real_type *       m_rhs;
+    mutable Malloc<real_type> m_allocWorks{"LSC-allocWorks"};
+    mutable real_type *       m_work{nullptr};
+    mutable real_type *       m_rhs{nullptr};
 
   public:
 
-    LSC();
+    LSC() : LinearSystemSolver<T>() {}
+
     ~LSC() override {}
 
     void

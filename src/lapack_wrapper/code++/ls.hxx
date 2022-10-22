@@ -39,19 +39,19 @@ namespace lapack_wrapper {
 
   protected:
 
-    mutable Malloc<real_type> m_allocWork;
-    mutable real_type       * m_Work;
-    mutable integer           m_Lwork;
+    mutable Malloc<real_type> m_allocWork{"LSS_no_alloc-allocReals"};
+    mutable real_type       * m_Work{nullptr};
+    mutable integer           m_Lwork{0};
 
-    integer m_nrows;
-    integer m_ncols;
+    integer m_nrows{0};
+    integer m_ncols{0};
 
-            real_type * m_Amat;
-    mutable real_type * m_sigma;
-    mutable real_type * m_AmatWork;
-    mutable integer     m_rank;
+            real_type * m_Amat{nullptr};
+    mutable real_type * m_sigma{nullptr};
+    mutable real_type * m_AmatWork{nullptr};
+    mutable integer     m_rank{0};
 
-    real_type m_rcond;
+    real_type m_rcond{real_type(-1)};
 
   public:
 
@@ -62,16 +62,6 @@ namespace lapack_wrapper {
     explicit
     LSS_no_alloc()
     : LinearSystemSolver<T>()
-    , m_allocWork("LSS_no_alloc-allocReals")
-    , m_Work(nullptr)
-    , m_Lwork(0)
-    , m_nrows(0)
-    , m_ncols(0)
-    , m_Amat(nullptr)
-    , m_sigma(nullptr)
-    , m_AmatWork(nullptr)
-    , m_rank(0)
-    , m_rcond(-1)
     {}
 
     ~LSS_no_alloc() override
@@ -134,7 +124,7 @@ namespace lapack_wrapper {
 
   protected:
 
-    Malloc<real_type> m_allocReals;
+    Malloc<real_type> m_allocReals{"LSS-allocReals"};
 
   public:
 
@@ -159,7 +149,6 @@ namespace lapack_wrapper {
     explicit
     LSS()
     : LSS_no_alloc<T>()
-    , m_allocReals("LSS-allocReals")
     {}
 
     ~LSS() override
@@ -217,20 +206,20 @@ namespace lapack_wrapper {
 
   protected:
 
-    mutable Malloc<real_type> m_allocWork;
-    mutable real_type       * m_Work;
-    mutable integer           m_Lwork;
+    mutable Malloc<real_type> m_allocWork{"LSY_no_alloc"};
+    mutable real_type       * m_Work{nullptr};
+    mutable integer           m_Lwork{0};
 
-    integer m_nrows;
-    integer m_ncols;
+    integer m_nrows{0};
+    integer m_ncols{0};
 
-    real_type * m_Amat;
+    real_type * m_Amat{nullptr};
 
-    mutable real_type * m_AmatWork;
-    mutable integer   * m_jpvt;
-    mutable integer     m_rank;
+    mutable real_type * m_AmatWork{nullptr};
+    mutable integer   * m_jpvt{nullptr};
+    mutable integer     m_rank{-1};
 
-    real_type m_rcond;
+    real_type m_rcond{real_type(-1)};
 
   public:
 
@@ -241,16 +230,6 @@ namespace lapack_wrapper {
     explicit
     LSY_no_alloc()
     : LinearSystemSolver<T>()
-    , m_allocWork("LSY_no_alloc")
-    , m_Work(nullptr)
-    , m_Lwork(0)
-    , m_nrows(0)
-    , m_ncols(0)
-    , m_Amat(nullptr)
-    , m_AmatWork(nullptr)
-    , m_jpvt(nullptr)
-    , m_rank(0)
-    , m_rcond(-1)
     {}
 
     ~LSY_no_alloc() override
@@ -319,8 +298,8 @@ namespace lapack_wrapper {
 
   protected:
 
-    Malloc<real_type> m_allocReals;
-    Malloc<integer>   m_allocInts;
+    Malloc<real_type> m_allocReals{"LSY-allocReals"};
+    Malloc<integer>   m_allocInts{"LSY-allocInts"};
 
   public:
 
@@ -343,8 +322,6 @@ namespace lapack_wrapper {
     explicit
     LSY()
     : LSY_no_alloc<T>()
-    , m_allocReals("LSY-allocReals")
-    , m_allocInts("LSY-allocInts")
     {}
 
     ~LSY() override

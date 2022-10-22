@@ -32,24 +32,24 @@ namespace lapack_wrapper {
     std::vector<real> m_w;
 
     /// Integer specifying task (1 for solve AX = B).
-    int m_job = 0;
+    int m_job{0};
 
     /// Length of the arrays a, irn and jcn (mostly 3 * DimSparse).
-    int m_la  = 0;
+    int m_la{0};
 
     /// Array of length 5 with real control parameters.
-    real m_cntl[10] = {0,0,0,0,0,0,0,0,0,0};
+    real m_cntl[10]{0,0,0,0,0,0,0,0,0,0};
 
     /// Array of length 20 with int control parameters.
-    int m_icntl[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    int m_icntl[20]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     /// Error Array von MA48.
-    mutable real ma48errors[3] = {0,0,0};
+    mutable real ma48errors[3]{0,0,0};
 
     /// Integer Info Variables.
-    mutable int m_info[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    mutable int m_info[20]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     /// Real Info Variables.
-    mutable real m_rinfo[10] = {0,0,0,0,0,0,0,0,0,0};
+    mutable real m_rinfo[10]{0,0,0,0,0,0,0,0,0,0};
 
     void load_error_string( int info ) const;
 
@@ -66,13 +66,13 @@ namespace lapack_wrapper {
      * \brief MA48:
      *        Constructor of the class MA48.
      */
-    MA48() {}
+    MA48() = default;
 
     /**
       * \brief ~MA48:
       *        Virtual destructor of the class MA48.
       */
-    ~MA48() override { }
+    ~MA48() override = default;
 
     /*\
     :|:   ___      _    _ _      __  __           _

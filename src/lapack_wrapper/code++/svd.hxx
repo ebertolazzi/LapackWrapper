@@ -39,20 +39,20 @@ namespace lapack_wrapper {
 
   protected:
 
-    integer     m_nrows;
-    integer     m_ncols;
+    integer     m_nrows{0};
+    integer     m_ncols{0};
 
-    real_type * m_Afactorized;
-    real_type * m_WorkSVD;
-    real_type * m_Umat;
-    real_type * m_VTmat;
-    real_type * m_Svec;
-    integer   * m_IWorkSVD;
+    real_type * m_Afactorized{nullptr};
+    real_type * m_WorkSVD{nullptr};
+    real_type * m_Umat{nullptr};
+    real_type * m_VTmat{nullptr};
+    real_type * m_Svec{nullptr};
+    integer   * m_IWorkSVD{nullptr};
 
-    real_type   m_rcond;
+    real_type   m_rcond{Utils::machine_eps<real_type>()};
 
-    integer     m_minRC;
-    integer     m_LworkSVD;
+    integer     m_minRC{0};
+    integer     m_LworkSVD{0};
 
     SVD_USED    m_svd_used;
 
@@ -64,21 +64,7 @@ namespace lapack_wrapper {
 
     SVD_no_alloc( SVD_USED _svd_used = USE_GESVD )
     : LinearSystemSolver<T>()
-    , m_nrows(0)
-    , m_ncols(0)
-    , m_Afactorized(nullptr)
-    , m_WorkSVD(nullptr)
-    , m_Umat(nullptr)
-    , m_VTmat(nullptr)
-    , m_Svec(nullptr)
-    , m_IWorkSVD(nullptr)
-    , m_rcond(Utils::machine_eps<real_type>())
-    , m_minRC(0)
-    , m_LworkSVD(0)
     , m_svd_used(_svd_used)
-    {}
-
-    ~SVD_no_alloc() override
     {}
 
     integer
@@ -220,8 +206,8 @@ namespace lapack_wrapper {
 
   protected:
 
-    Malloc<real_type> m_allocReals;
-    Malloc<integer>   m_allocIntegers;
+    Malloc<real_type> m_allocReals{"GeneralizedSVD(real)"};
+    Malloc<integer>   m_allocIntegers{"GeneralizedSVD(int)"};
 
   public:
 
@@ -251,8 +237,8 @@ namespace lapack_wrapper {
     using SVD_no_alloc<T>::Vt_mul;
     using SVD_no_alloc<T>::no_allocate;
 
-    SVD( SVD_USED _svd_used = SVD_no_alloc<T>::USE_GESVD );
-    ~SVD() override;
+    SVD( SVD_USED _svd_used = SVD_no_alloc<T>::USE_GESVD )
+    : SVD_no_alloc<T>(_svd_used) {}
 
     void
     allocate( integer NR, integer NC );
@@ -308,24 +294,24 @@ namespace lapack_wrapper {
     using MatW      = MatrixWrapper<T>;
     using Sparse    = SparseCCOOR<T>;
 
-    Malloc<real_type> m_mem_real;
-    Malloc<integer>   m_mem_int;
+    Malloc<real_type> m_mem_real{"GeneralizedSVD(real)"};
+    Malloc<integer>   m_mem_int{"GeneralizedSVD(int)"};
 
-    integer     m_M;
-    integer     m_N;
-    integer     m_P;
-    integer     m_K;
-    integer     m_L;
-    integer     m_Lwork;
-    real_type * m_Work;
-    integer   * m_IWork;
-    real_type * m_alpha_saved;
-    real_type * m_beta_saved;
-    real_type * m_A_saved;
-    real_type * m_B_saved;
-    real_type * m_U_saved;
-    real_type * m_V_saved;
-    real_type * m_Q_saved;
+    integer     m_M{0};
+    integer     m_N{0};
+    integer     m_P{0};
+    integer     m_K{0};
+    integer     m_L{0};
+    integer     m_Lwork{0};
+    real_type * m_Work{nullptr};
+    integer   * m_IWork{nullptr};
+    real_type * m_alpha_saved{nullptr};
+    real_type * m_beta_saved{nullptr};
+    real_type * m_A_saved{nullptr};
+    real_type * m_B_saved{nullptr};
+    real_type * m_U_saved{nullptr};
+    real_type * m_V_saved{nullptr};
+    real_type * m_Q_saved{nullptr};
 
     MatrixWrapper<T>     m_U, m_V, m_Q, m_R;
     DiagMatrixWrapper<T> m_Dalpha, m_Dbeta;
@@ -344,7 +330,7 @@ namespace lapack_wrapper {
 
   public:
 
-    GeneralizedSVD();
+    GeneralizedSVD() = default;
 
     GeneralizedSVD(
       integer         m,
@@ -352,9 +338,13 @@ namespace lapack_wrapper {
       integer         p,
       real_type const A[], integer ldA,
       real_type const B[], integer ldB
-    );
+    ) {
+      this->setup( m, n, p, A, ldA, B, ldB );
+    }
 
-    GeneralizedSVD( MatW const & A, MatW const & B );
+    GeneralizedSVD( MatW const & A, MatW const & B ) {
+      this->setup( A, B );
+    }
 
     GeneralizedSVD(
       integer         m,
@@ -368,7 +358,13 @@ namespace lapack_wrapper {
       real_type const B_values[],
       integer   const B_row[],
       integer   const B_col[]
-    );
+    ) {
+      this->setup(
+        m, n, p,
+        A_nnz, A_values, A_row, A_col,
+        B_nnz, B_values, B_row, B_col
+      );
+    }
 
     void
     setup(

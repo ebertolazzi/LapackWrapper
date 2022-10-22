@@ -18,22 +18,22 @@ namespace lapack_wrapper {
   template <typename real>
   class HSLsolver {
   protected:
-    integer m_nrows;
-    integer m_ncols;
-    integer m_nnz;
+    integer m_nrows{0};
+    integer m_ncols{0};
+    integer m_nnz{0};
 
     /// True if the HSL solver is initialized.
-    bool m_isInitialized;
+    bool m_isInitialized{false};
     /// True if the HSL solver is factorized.
-    bool m_isFactorized;
+    bool m_isFactorized{false};
 
-    mutable std::string m_last_error;
+    mutable std::string m_last_error{""};
 
     /**
      * \brief HSLsolver:
      *        Constructor of the class HSLsolver.
      */
-    HSLsolver();
+    HSLsolver() = default;
 
   public:
 
@@ -41,7 +41,7 @@ namespace lapack_wrapper {
      * \brief ~HSLsolver:
      *        Virtual destructor of the class HSLsolver.
      */
-    virtual ~HSLsolver();
+    virtual ~HSLsolver() = default;
 
     /*\
     :|:   ___      _    _ _      __  __           _
