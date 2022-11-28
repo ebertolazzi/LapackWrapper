@@ -901,21 +901,19 @@ namespace lapack_wrapper {
       integer ncol,
       MatW &  to
     ) {
-      if ( nrow > 0 && ncol > 0 ) {
-        #if defined(DEBUG) || defined(_DEBUG)
-        UTILS_ASSERT_TRACE(
-          i_offs >= 0 && i_offs+nrow <= m_nrows &&
-          j_offs >= 0 && j_offs+ncol <= m_ncols,
-          "view_block(i_offs={}, j_offs={}, nrow={}, ncol={}) "
-          "will be out of range [0,{}) x [0,{})\n",
-          i_offs, j_offs, nrow, ncol, m_nrows, m_ncols
-        );
-        #endif
-        to.setup(
-          m_data+this->iaddr(i_offs,j_offs),
-          nrow, ncol, m_ldData
-        );
-      }
+      #if defined(DEBUG) || defined(_DEBUG)
+      UTILS_ASSERT_TRACE(
+        i_offs >= 0 && i_offs+nrow <= m_nrows &&
+        j_offs >= 0 && j_offs+ncol <= m_ncols,
+        "view_block(i_offs={}, j_offs={}, nrow={}, ncol={}) "
+        "will be out of range [0,{}) x [0,{})\n",
+        i_offs, j_offs, nrow, ncol, m_nrows, m_ncols
+      );
+      #endif
+      integer offs = 0;
+      if ( m_nrows > 0 && m_ncols > 0 &&
+           nrow    > 0 && ncol    > 0 ) offs = this->iaddr(i_offs,j_offs);
+      to.setup( m_data+offs, nrow, ncol, m_ldData );
     }
 
     //!
@@ -1166,7 +1164,7 @@ namespace lapack_wrapper {
       B.ncols() == C.ncols(),
       "gemm, inconsistent dimensions:\n"
       "A = {} x {}\nB = {} x {}\nC = {} x {}\n",
-      A.nrows(), A.ncols(), B.nrows(), B.ncols(), C.nrows(), C.numConcolsls()
+      A.nrows(), A.ncols(), B.nrows(), B.ncols(), C.nrows(), C.ncols()
     );
     lapack_wrapper::gemm(
       NO_TRANSPOSE,
