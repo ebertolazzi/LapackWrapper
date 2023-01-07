@@ -273,20 +273,124 @@
 
 namespace lapack_wrapper {
 
-  using Transposition = enum {
+  #ifndef LAPACK_WRAPPER_NO_DEBUG
+
+  #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    using integer          = __CLPK_integer;
+    using real             = __CLPK_real;
+    using doublereal       = __CLPK_doublereal;
+    using character        = char;
+    using return_precision = doublereal;
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS)
+    using integer          = int;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = doublereal;
+  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
+    using integer          = lapack_int;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = double;
+  #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
+    using integer          = blasint;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = double;
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
+    using integer          = lapack_int;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = doublereal;
+  #elif defined(LAPACK_WRAPPER_USE_MKL)
+    using integer          = MKL_INT;
+    using real             = float;
+    using doublereal       = double;
+    using character        = char;
+    using return_precision = double;
+  #else
+    #error "You must select the linear algebra packages used!"
+  #endif
+
+  #endif
+
+  #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
+      defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+      defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+      defined(LAPACK_WRAPPER_USE_BLASFEO)
+    extern CBLAS_DIAG diag_cblas[2];
+    extern CBLAS_SIDE side_cblas[2];
+  #endif
+
+  extern character const *uplo_blas[2];
+  extern character const *diag_blas[2];
+  extern character const *side_blas[2];
+
+  extern character const *balance_blas[4];
+  extern character const *job_blas[4];
+  extern character const *sense_blas[4];
+  extern character const *direct_blas[2];
+  extern character const *store_blas[2];
+  extern character const *mtype_blas[5];
+  extern character const *equilibrate_blas[4];
+
+  //============================================================================
+
+  using Transposition = enum class Transposition : integer {
     NO_TRANSPOSE        = 0,
     TRANSPOSE           = 1,
     CONJUGATE_TRANSPOSE = 2
   };
 
-  extern char const *Transposition_name[];
+  inline
+  char *
+  to_blas( Transposition const & T ) {
+    switch( T ) {
+    case Transposition::NO_TRANSPOSE:        return const_cast<char*>("NO_TRANSPOSE");
+    case Transposition::TRANSPOSE:           return const_cast<char*>("TRANSPOSE");
+    case Transposition::CONJUGATE_TRANSPOSE: return const_cast<char*>("CONJUGATE_TRANSPOSE");
+    }
+  }
 
-  using ULselect = enum {
+  inline
+  CBLAS_TRANSPOSE
+  to_cblas( Transposition const & T ) {
+    switch( T ) {
+    case Transposition::NO_TRANSPOSE:        return CblasNoTrans;
+    case Transposition::TRANSPOSE:           return CblasTrans;
+    case Transposition::CONJUGATE_TRANSPOSE: return CblasConjTrans;
+    }
+  }
+
+  //============================================================================
+
+  using ULselect = enum class ULselect : integer {
     UPPER = 0,
     LOWER = 1
   };
 
-  extern char const *ULselect_name[];
+  inline
+  char *
+  to_blas( ULselect const & UL ) {
+    switch( UL ) {
+    case ULselect::UPPER: return const_cast<char*>("UPPER");
+    case ULselect::LOWER: return const_cast<char*>("LOWER");
+    }
+  }
+
+  inline
+  CBLAS_UPLO
+  to_cblas( ULselect const & UL ) {
+    switch( UL ) {
+    case ULselect::UPPER: return CblasUpper;
+    case ULselect::LOWER: return CblasLower;
+    }
+  }
+
+  //============================================================================
 
   using DiagonalType = enum {
     UNIT     = 0,
@@ -362,73 +466,6 @@ namespace lapack_wrapper {
   };
 
   extern char const *EquilibrationType_name[];
-
-  #ifndef LAPACK_WRAPPER_NO_DEBUG
-
-  #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    using integer          = __CLPK_integer;
-    using real             = __CLPK_real;
-    using doublereal       = __CLPK_doublereal;
-    using character        = char;
-    using return_precision = doublereal;
-  #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-    using integer          = int;
-    using real             = float;
-    using doublereal       = double;
-    using character        = char;
-    using return_precision = doublereal;
-  #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    using integer          = lapack_int;
-    using real             = float;
-    using doublereal       = double;
-    using character        = char;
-    using return_precision = double;
-  #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-    using integer          = blasint;
-    using real             = float;
-    using doublereal       = double;
-    using character        = char;
-    using return_precision = double;
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-    using integer          = lapack_int;
-    using real             = float;
-    using doublereal       = double;
-    using character        = char;
-    using return_precision = doublereal;
-  #elif defined(LAPACK_WRAPPER_USE_MKL)
-    using integer          = MKL_INT;
-    using real             = float;
-    using doublereal       = double;
-    using character        = char;
-    using return_precision = double;
-  #else
-    #error "You must select the linear algebra packages used!"
-  #endif
-
-  #endif
-
-  #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-      defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-      defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
-      defined(LAPACK_WRAPPER_USE_BLASFEO)
-    extern CBLAS_TRANSPOSE trans_cblas[3];
-    extern CBLAS_UPLO      uplo_cblas[2];
-    extern CBLAS_DIAG      diag_cblas[2];
-    extern CBLAS_SIDE      side_cblas[2];
-  #endif
-
-  extern character const *trans_blas[3];
-  extern character const *uplo_blas[2];
-  extern character const *diag_blas[2];
-  extern character const *side_blas[2];
-
-  extern character const *balance_blas[4];
-  extern character const *job_blas[4];
-  extern character const *sense_blas[4];
-  extern character const *direct_blas[2];
-  extern character const *store_blas[2];
-  extern character const *mtype_blas[5];
-  extern character const *equilibrate_blas[4];
 
   //============================================================================
 

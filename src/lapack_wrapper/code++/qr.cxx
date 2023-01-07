@@ -137,7 +137,7 @@ namespace lapack_wrapper {
       "QR_no_alloc::applyQ( SIDE = {}, TRANS = {}, Nrefl = {}, NR = {}, NC = {}, C, ldC = {})\n"
       "original matrix is {} x {}\n",
       SideMultiply_name[SIDE],
-      Transposition_name[TRANS],
+      to_blas(TRANS),
       nRefl, NR, NC, ldC,
       m_nrows, m_ncols
     );
@@ -162,14 +162,14 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR_no_alloc<T>::Q_mul( real_type x[] ) const {
-    applyQ( LEFT, NO_TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
+    applyQ( LEFT, Transposition::NO_TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
   }
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
   QR_no_alloc<T>::Qt_mul( real_type x[] ) const {
-    applyQ( LEFT, TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
+    applyQ( LEFT, Transposition::TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -182,7 +182,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( LEFT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ( LEFT, Transposition::NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -195,7 +195,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( LEFT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ( LEFT, Transposition::TRANSPOSE, m_nReflector, nr, nc, C, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -208,7 +208,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( RIGHT, NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ( RIGHT, Transposition::NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -221,7 +221,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( RIGHT, TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ( RIGHT, Transposition::TRANSPOSE, m_nReflector, nr, nc, C, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -232,7 +232,8 @@ namespace lapack_wrapper {
   void
   QR_no_alloc<T>::invR_mul( real_type x[], integer incx ) const {
     trsv( // m_nrows = leading dimension
-      UPPER, NO_TRANSPOSE, NON_UNIT,
+      ULselect::UPPER,
+      Transposition::NO_TRANSPOSE, NON_UNIT,
       m_nReflector, m_Afactorized, m_nrows, x, incx
     );
   }
@@ -243,7 +244,9 @@ namespace lapack_wrapper {
   void
   QR_no_alloc<T>::invR_mul( integer nr, integer nc, real_type C[], integer ldC ) const {
     trsm(
-      LEFT, UPPER, NO_TRANSPOSE, NON_UNIT,
+      LEFT,
+      ULselect::UPPER,
+      Transposition::NO_TRANSPOSE, NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
   }
@@ -254,7 +257,8 @@ namespace lapack_wrapper {
   void
   QR_no_alloc<T>::invRt_mul( real_type x[], integer incx ) const {
     trsv( // m_nrows = leading dimension
-      UPPER, TRANSPOSE, NON_UNIT,
+      ULselect::UPPER,
+      Transposition::TRANSPOSE, NON_UNIT,
       m_nReflector, m_Afactorized, m_nrows, x, incx
     );
   }
@@ -270,7 +274,9 @@ namespace lapack_wrapper {
     integer   ldC
   ) const {
     trsm(
-      LEFT, UPPER, TRANSPOSE, NON_UNIT,
+      LEFT,
+      ULselect::UPPER,
+      Transposition::TRANSPOSE, NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
   }
@@ -286,7 +292,9 @@ namespace lapack_wrapper {
     integer ldC
   ) const {
     trsm(
-      RIGHT, UPPER, NO_TRANSPOSE, NON_UNIT,
+      RIGHT,
+      ULselect::UPPER,
+      Transposition::NO_TRANSPOSE, NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
   }
@@ -297,7 +305,9 @@ namespace lapack_wrapper {
   void
   QR_no_alloc<T>::mul_invRt( integer nr, integer nc, real_type C[], integer ldC ) const {
     trsm(
-      RIGHT, UPPER, TRANSPOSE, NON_UNIT,
+      RIGHT,
+      ULselect::UPPER,
+      Transposition::TRANSPOSE, NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
   }

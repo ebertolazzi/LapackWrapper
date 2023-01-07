@@ -1081,7 +1081,7 @@ namespace lapack_wrapper {
     integer                  incc
   ) {
     lapack_wrapper::gemv(
-      NO_TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
       A.nrows(), A.ncols(),
       alpha,
       A.data(), A.ldim(),
@@ -1126,8 +1126,8 @@ namespace lapack_wrapper {
       C.nrows(), C.ncols()
     );
     lapack_wrapper::gemm(
-      NO_TRANSPOSE,
-      NO_TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
       A.nrows(), B.ncols(), A.ncols(),
       alpha,
       A.data(), A.ldim(),
@@ -1167,8 +1167,8 @@ namespace lapack_wrapper {
       A.nrows(), A.ncols(), B.nrows(), B.ncols(), C.nrows(), C.ncols()
     );
     lapack_wrapper::gemm(
-      NO_TRANSPOSE,
-      NO_TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
       A.nrows(), B.ncols(), A.ncols(),
       alpha,
       A.data(), A.ldim(),
@@ -1205,21 +1205,21 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    integer Ar = TRANSA == NO_TRANSPOSE ? A.nrows() : A.ncols();
-    integer Ac = TRANSA == NO_TRANSPOSE ? A.ncols() : A.nrows();
-    integer Br = TRANSB == NO_TRANSPOSE ? B.nrows() : B.ncols();
-    integer Bc = TRANSB == NO_TRANSPOSE ? B.ncols() : B.nrows();
+    integer Ar = TRANSA == Transposition::NO_TRANSPOSE ? A.nrows() : A.ncols();
+    integer Ac = TRANSA == Transposition::NO_TRANSPOSE ? A.ncols() : A.nrows();
+    integer Br = TRANSB == Transposition::NO_TRANSPOSE ? B.nrows() : B.ncols();
+    integer Bc = TRANSB == Transposition::NO_TRANSPOSE ? B.ncols() : B.nrows();
     UTILS_ASSERT_DEBUG(
       C.nrows() == Ar && C.ncols() == Bc && Ac == Br,
       "gemm, at `{}' inconsistent dimensions:"
       "\nA = {} x {}\nB = {} x {}\nC = {} x {}"
-      "\nA {} transposed\nB {} transposed\n",
+      "\nA {}\nB {}\n",
       where,
       A.nrows(), A.ncols(),
       B.nrows(), B.ncols(),
       C.nrows(), C.ncols(),
-      (NO_TRANSPOSE?"NO":""),
-      (NO_TRANSPOSE?"NO":"")
+      to_blas(TRANSA),
+      to_blas(TRANSB)
     );
     lapack_wrapper::gemm(
       TRANSA,
@@ -1258,20 +1258,20 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    integer Ar = TRANSA == NO_TRANSPOSE ? A.nrows() : A.ncols();
-    integer Ac = TRANSA == NO_TRANSPOSE ? A.ncols() : A.nrows();
-    integer Br = TRANSB == NO_TRANSPOSE ? B.nrows() : B.ncols();
-    integer Bc = TRANSB == NO_TRANSPOSE ? B.ncols() : B.nrows();
+    integer Ar = TRANSA == Transposition::NO_TRANSPOSE ? A.nrows() : A.ncols();
+    integer Ac = TRANSA == Transposition::NO_TRANSPOSE ? A.ncols() : A.nrows();
+    integer Br = TRANSB == Transposition::NO_TRANSPOSE ? B.nrows() : B.ncols();
+    integer Bc = TRANSB == Transposition::NO_TRANSPOSE ? B.ncols() : B.nrows();
     UTILS_ASSERT_DEBUG(
       C.nrows() == Ar && C.ncols() == Bc && Ac == Br,
       "gemm, inconsistent dimensions:"
       "\nA = {} x {}\nB = {} x {}\nC = {} x {}"
-      "\nA {} transposed\nB {} transposed\n",
+      "\nA {}\nB {}\n",
       A.nrows(), A.ncols(),
       B.nrows(), B.ncols(),
       C.nrows(), C.ncols(),
-      (NO_TRANSPOSE?"NO":""),
-      (NO_TRANSPOSE?"NO":"")
+      to_blas(TRANSA),
+      to_blas(TRANSB)
     );
     lapack_wrapper::gemm(
       TRANSA,

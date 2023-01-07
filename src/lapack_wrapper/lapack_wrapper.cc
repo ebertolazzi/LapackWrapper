@@ -51,13 +51,6 @@
 
 namespace lapack_wrapper {
 
-  char const *Transposition_name[] = {
-    "NO_TRANSPOSE",
-    "TRANSPOSE",
-    "CONJUGATE_TRANSPOSE"
-  };
-
-  char const *ULselect_name[]     = { "UPPER", "LOWER" };
   char const *DiagonalType_name[] = { "UNIT", "NON_UNIT" };
   char const *SideMultiply_name[] = { "LEFT", "RIGHT" };
   char const *BalanceType_name[]  = {
@@ -98,13 +91,10 @@ namespace lapack_wrapper {
       defined(LAPACK_WRAPPER_USE_ATLAS)      || \
       defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
       defined(LAPACK_WRAPPER_USE_BLASFEO)
-    CBLAS_TRANSPOSE trans_cblas[3] = { CblasNoTrans, CblasTrans, CblasConjTrans };
-    CBLAS_UPLO      uplo_cblas[2]  = { CblasUpper, CblasLower };
-    CBLAS_DIAG      diag_cblas[2]  = { CblasUnit, CblasNonUnit };
-    CBLAS_SIDE      side_cblas[2]  = { CblasLeft, CblasRight };
+    CBLAS_DIAG diag_cblas[2]  = { CblasUnit, CblasNonUnit };
+    CBLAS_SIDE side_cblas[2]  = { CblasLeft, CblasRight };
   #endif
 
-  character const *trans_blas[3]   = { "N", "T", "C" };
   character const *uplo_blas[2]    = { "Upper", "Lower" };
   character const *diag_blas[2]    = { "Unit",  "NonUnit" };
   character const *side_blas[2]    = { "Left",  "Right" };
@@ -201,15 +191,15 @@ namespace lapack_wrapper {
       // COMPUTE SUPERDIAGONAL BLOCK OF U
       trsm(
         RIGHT,
-        UPPER,
-        NO_TRANSPOSE,
+        ULselect::UPPER,
+        Transposition::NO_TRANSPOSE,
         NON_UNIT,
         M-jjB, JB, 1, Ajj, LDA, Ajj+JB, LDA
       );
       // UPDATE DIAGONAL AND SUBDIAGONAL BLOCKS
       gemm(
-        NO_TRANSPOSE,
-        NO_TRANSPOSE,
+        Transposition::NO_TRANSPOSE,
+        Transposition::NO_TRANSPOSE,
         M-jjB, N-jjB, JB,
         -1.0, Ajj+JB,         LDA,
               Ajj+JB*LDA,     LDA,
@@ -279,15 +269,15 @@ namespace lapack_wrapper {
       // COMPUTE SUPERDIAGONAL BLOCK OF U
       trsm(
         LEFT,
-        LOWER,
-        NO_TRANSPOSE,
+        ULselect::LOWER,
+        Transposition::NO_TRANSPOSE,
         UNIT,
         JB, N-jjB, 1.0, Ajj, LDA, Ajj+JB*LDA, LDA
       );
       // UPDATE DIAGONAL AND SUBDIAGONAL BLOCKS
       gemm(
-        NO_TRANSPOSE,
-        NO_TRANSPOSE,
+        Transposition::NO_TRANSPOSE,
+        Transposition::NO_TRANSPOSE,
         M-jjB, N-jjB, JB,
         -1.0, Ajj+JB,         LDA,
               Ajj+JB*LDA,     LDA,
@@ -362,8 +352,8 @@ namespace lapack_wrapper {
     // risolvo R
     trsm(
       LEFT,
-      UPPER,
-      NO_TRANSPOSE,
+      ULselect::UPPER,
+      Transposition::NO_TRANSPOSE,
       NON_UNIT,
       N, nrhs, 1.0, &Tmat.front(), N, RHS, ldRHS
     );

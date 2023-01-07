@@ -348,12 +348,12 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     sgemv(
-      trans_blas[TRANS],
+      to_blas(TRANS),
       &M, &N, &ALPHA, A, &LDA, X, &INCX, &BETA, Y, &INCY
     );
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(sgemv)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &ALPHA,
       const_cast<real*>(A), &LDA,
       const_cast<real*>(X), &INCX,
@@ -363,12 +363,12 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(sgemv)(
-      CblasColMajor, trans_cblas[TRANS],
+      CblasColMajor, to_cblas(TRANS),
       M, N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     sgemv_(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &ALPHA,
       const_cast<real*>(A), &LDA,
       const_cast<real*>(X), &INCX,
@@ -396,12 +396,12 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     dgemv(
-      trans_blas[TRANS],
+      to_blas(TRANS),
       &M, &N, &ALPHA, A, &LDA, X, &INCX, &BETA, Y, &INCY
     );
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(dgemv)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &ALPHA,
       const_cast<doublereal*>(A), &LDA,
       const_cast<doublereal*>(X), &INCX,
@@ -411,12 +411,12 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_ATLAS)      || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dgemv)(
-      CblasColMajor, trans_cblas[TRANS],
+      CblasColMajor, to_cblas(TRANS),
       M, N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dgemv_(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &ALPHA,
       const_cast<doublereal*>(A), &LDA,
       const_cast<doublereal*>(X), &INCX,
@@ -601,14 +601,13 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     sgemm(
-      trans_blas[TRANSA], trans_blas[TRANSB],
+      to_cblas(TRANSA), to_cblas(TRANSB),
       &M, &N, &K, &ALPHA, A, &LDA, B, &LDB,
       &BETA, C, &LDC
     );
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(sgemm)(
-      const_cast<character*>(trans_blas[TRANSA]),
-      const_cast<character*>(trans_blas[TRANSB]),
+      to_blas(TRANSA), to_blas(TRANSB),
       &M, &N, &K,
       &ALPHA, const_cast<real*>(A), &LDA,
       const_cast<real*>(B), &LDB,
@@ -619,8 +618,8 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(sgemm)(
       CblasColMajor,
-      trans_cblas[TRANSA],
-      trans_cblas[TRANSB],
+      to_cblas(TRANSA),
+      to_cblas(TRANSB),
       M, N, K,
       ALPHA, A, LDA,
       B, LDB,
@@ -628,8 +627,7 @@ namespace lapack_wrapper {
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     sgemm_(
-      const_cast<character*>(trans_blas[TRANSA]),
-      const_cast<character*>(trans_blas[TRANSB]),
+      to_blas(TRANSA), to_blas(TRANSB),
       &M, &N, &K,
       &ALPHA, const_cast<real*>(A), &LDA,
       const_cast<real*>(B), &LDB,
@@ -659,14 +657,13 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     dgemm(
-      trans_blas[TRANSA], trans_blas[TRANSB],
+      to_blas(TRANSA), to_blas(TRANSB),
       &M, &N, &K, &ALPHA, A, &LDA, B, &LDB,
       &BETA, C, &LDC
     );
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(dgemm)(
-      const_cast<character*>(trans_blas[TRANSA]),
-      const_cast<character*>(trans_blas[TRANSB]),
+      to_blas(TRANSA), to_blas(TRANSB),
       &M, &N, &K,
       &ALPHA, const_cast<doublereal*>(A), &LDA,
       const_cast<doublereal*>(B), &LDB,
@@ -677,8 +674,8 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dgemm)(
       CblasColMajor,
-      trans_cblas[TRANSA],
-      trans_cblas[TRANSB],
+      to_cblas(TRANSA),
+      to_cblas(TRANSB),
       M, N, K,
       ALPHA, A, LDA,
       B, LDB,
@@ -686,8 +683,7 @@ namespace lapack_wrapper {
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dgemm_(
-      const_cast<character*>(trans_blas[TRANSA]),
-      const_cast<character*>(trans_blas[TRANSB]),
+      to_blas(TRANSA), to_blas(TRANSB),
       &M, &N, &K,
       &ALPHA, const_cast<doublereal*>(A), &LDA,
       const_cast<doublereal*>(B), &LDB,
@@ -932,7 +928,7 @@ namespace lapack_wrapper {
     integer INFO = 0;
     #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_sgetrs(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<real*>(A), &LDA,
       const_cast<integer*>(IPIV),
@@ -941,7 +937,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
           defined(LAPACK_WRAPPER_USE_ATLAS)
     BLASFUNC(sgetrs)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<real*>(A), &LDA,
       const_cast<integer*>(IPIV),
@@ -949,17 +945,17 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     sgetrs_(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<real*>(A), &LDA,
       const_cast<integer*>(IPIV),
       B, &LDB, &INFO
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    sgetrs( trans_blas[TRANS], &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
+    sgetrs( to_blas(TRANS), &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(sgetrs)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<real*>(A), &LDA,
       const_cast<integer*>(IPIV),
@@ -986,7 +982,7 @@ namespace lapack_wrapper {
     integer INFO = 0;
     #if defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dgetrs(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<doublereal*>(A), &LDA,
       const_cast<integer*>(IPIV),
@@ -995,7 +991,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
           defined(LAPACK_WRAPPER_USE_ATLAS)
     BLASFUNC(dgetrs)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<doublereal*>(A), &LDA,
       const_cast<integer*>(IPIV),
@@ -1003,17 +999,17 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dgetrs_(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<doublereal*>(A), &LDA,
       const_cast<integer*>(IPIV),
       B, &LDB, &INFO
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dgetrs( trans_blas[TRANS], &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
+    dgetrs( to_blas(TRANS), &N, &NRHS, A, &LDA, IPIV, B, &LDB, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dgetrs)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<doublereal*>(A), &LDA,
       const_cast<integer*>(IPIV),

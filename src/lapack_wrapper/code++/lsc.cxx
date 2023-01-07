@@ -150,7 +150,7 @@ namespace lapack_wrapper {
     if ( m_NRA > 0 ) {
       for ( integer i = 0; i < m_NRA; ++i ) m_work[i] = xb[m_to_rowA[i]];
       lapack_wrapper::gemv(
-        lapack_wrapper::TRANSPOSE, m_NRA, m_NC,
+        Transposition::TRANSPOSE, m_NRA, m_NC,
         1.0, m_Amat, m_NRA,
         m_work, 1,
         0.0, m_rhs, 1
@@ -196,8 +196,8 @@ namespace lapack_wrapper {
 
 /*
     lapack_wrapper::gemm(
-      lapack_wrapper::TRANSPOSE,
-      lapack_wrapper::NO_TRANSPOSE,
+      Transposition::TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
       m_NRA, m_NC,
       integer               K,
       1.0, m_Amat, m_NRA,
@@ -210,7 +210,7 @@ namespace lapack_wrapper {
 
 
     lapack_wrapper::gemv(
-      lapack_wrapper::TRANSPOSE, m_NRA, m_NC,
+      Transposition::TRANSPOSE, m_NRA, m_NC,
       1.0, m_Amat, m_NRA,
       m_work, 1,
       0.0, m_rhs, 1

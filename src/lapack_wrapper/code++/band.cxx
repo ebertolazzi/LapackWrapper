@@ -60,7 +60,8 @@ namespace lapack_wrapper {
     if ( !m_is_factorized ) return false;
     UTILS_ASSERT0( m_m == m_n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs(
-      NO_TRANSPOSE, m_m, m_nL, m_nU, 1, m_AB, m_ldAB, m_ipiv, xb, m_m
+      Transposition::NO_TRANSPOSE,
+      m_m, m_nL, m_nU, 1, m_AB, m_ldAB, m_ipiv, xb, m_m
     );
     return info == 0;
   }
@@ -73,7 +74,8 @@ namespace lapack_wrapper {
     UTILS_ASSERT0( m_is_factorized, "BandedLU::solve, matrix not yet factorized\n" );
     UTILS_ASSERT0( m_m == m_n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs(
-      NO_TRANSPOSE, m_m, m_nL, m_nU, 1, m_AB, m_ldAB, m_ipiv, xb, m_m
+      Transposition::NO_TRANSPOSE,
+      m_m, m_nL, m_nU, 1, m_AB, m_ldAB, m_ipiv, xb, m_m
     );
     UTILS_ASSERT( info == 0, "BandedLU::solve, info = {}\nat {}\n", info, who );
   }
@@ -87,7 +89,7 @@ namespace lapack_wrapper {
     if ( !m_is_factorized ) return false;
     UTILS_ASSERT0( m_m == m_n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs(
-      TRANSPOSE, m_m, m_nL, m_nU, 1, m_AB, m_ldAB, m_ipiv, xb, m_m
+      Transposition::TRANSPOSE, m_m, m_nL, m_nU, 1, m_AB, m_ldAB, m_ipiv, xb, m_m
     );
     return info == 0;
   }
@@ -106,7 +108,7 @@ namespace lapack_wrapper {
       "BandedLU::solve, matrix must be square\n"
     );
     integer info = gbtrs(
-      TRANSPOSE, m_m, m_nL, m_nU, 1, m_AB, m_ldAB, m_ipiv, xb, m_m
+      Transposition::TRANSPOSE, m_m, m_nL, m_nU, 1, m_AB, m_ldAB, m_ipiv, xb, m_m
     );
     UTILS_ASSERT( info == 0, "BandedLU::t_solve, info = {}\nat {}\n", info, who );
   }
@@ -120,7 +122,8 @@ namespace lapack_wrapper {
     if ( !m_is_factorized ) return false;
     UTILS_ASSERT0( m_m == m_n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs(
-      NO_TRANSPOSE, m_m, m_nL, m_nU, nrhs, m_AB, m_ldAB, m_ipiv, B, ldB
+      Transposition::NO_TRANSPOSE,
+      m_m, m_nL, m_nU, nrhs, m_AB, m_ldAB, m_ipiv, B, ldB
     );
     return info == 0;
   }
@@ -138,7 +141,8 @@ namespace lapack_wrapper {
     UTILS_ASSERT0( m_is_factorized, "BandedLU::solve, matrix not yet factorized\n" );
     UTILS_ASSERT0( m_m == m_n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs(
-      NO_TRANSPOSE, m_m, m_nL, m_nU, nrhs, m_AB, m_ldAB, m_ipiv, B, ldB
+      Transposition::NO_TRANSPOSE,
+      m_m, m_nL, m_nU, nrhs, m_AB, m_ldAB, m_ipiv, B, ldB
     );
     UTILS_ASSERT( info == 0, "BandedLU::solve, info = {}\nat {}\n", info, who );
   }
@@ -152,7 +156,7 @@ namespace lapack_wrapper {
     if ( !m_is_factorized ) return false;
     UTILS_ASSERT0( m_m == m_n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs(
-      TRANSPOSE, m_m, m_nL, m_nU, nrhs, m_AB, m_ldAB, m_ipiv, B, ldB
+      Transposition::TRANSPOSE, m_m, m_nL, m_nU, nrhs, m_AB, m_ldAB, m_ipiv, B, ldB
     );
     return info == 0;
   }
@@ -170,7 +174,7 @@ namespace lapack_wrapper {
     UTILS_ASSERT0( m_is_factorized, "BandedLU::solve, matrix not yet factorized\n" );
     UTILS_ASSERT0( m_m == m_n, "BandedLU::solve, matrix must be square\n" );
     integer info = gbtrs(
-      TRANSPOSE, m_m, m_nL, m_nU, nrhs, m_AB, m_ldAB, m_ipiv, B, ldB
+      Transposition::TRANSPOSE, m_m, m_nL, m_nU, nrhs, m_AB, m_ldAB, m_ipiv, B, ldB
     );
     UTILS_ASSERT( info == 0, "BandedLU::t_solve, info = {}\nat {}\n", info, who );
   }

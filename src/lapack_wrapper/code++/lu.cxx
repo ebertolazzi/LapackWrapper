@@ -94,7 +94,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
-      NO_TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
     );
@@ -108,7 +108,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::solve( char const who[], real_type xb[] ) const {
     check_ls("solve");
     integer info = getrs(
-      NO_TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
     );
@@ -123,7 +123,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::t_solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
-      TRANSPOSE,
+      Transposition::TRANSPOSE,
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
     );
@@ -137,7 +137,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::t_solve( char const who[], real_type xb[] ) const {
     check_ls( who );
     integer info = getrs(
-      TRANSPOSE,
+      Transposition::TRANSPOSE,
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
     );
@@ -152,7 +152,7 @@ namespace lapack_wrapper {
   LU_no_alloc<T>::solve( integer nrhs, real_type B[], integer ldB ) const {
     if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
-      NO_TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     );
@@ -171,7 +171,7 @@ namespace lapack_wrapper {
   ) const {
     check_ls(who);
     integer info = getrs(
-      NO_TRANSPOSE,
+      Transposition::NO_TRANSPOSE,
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     );
@@ -190,7 +190,7 @@ namespace lapack_wrapper {
   ) const {
     if ( m_nrows != m_ncols ) return false;
     integer info = getrs(
-      TRANSPOSE,
+      Transposition::TRANSPOSE,
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     );
@@ -209,7 +209,7 @@ namespace lapack_wrapper {
   ) const {
     check_ls( who );
     integer info = getrs(
-      TRANSPOSE,
+      Transposition::TRANSPOSE,
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     );
@@ -349,13 +349,15 @@ namespace lapack_wrapper {
 
     // Solve for L part
     trsv(
-      LOWER, NO_TRANSPOSE, UNIT,
+      ULselect::LOWER,
+      Transposition::NO_TRANSPOSE, UNIT,
       m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
     // Solve for U part
     trsv(
-      UPPER, NO_TRANSPOSE, NON_UNIT,
+      ULselect::UPPER,
+      Transposition::NO_TRANSPOSE, NON_UNIT,
       m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
@@ -375,13 +377,17 @@ namespace lapack_wrapper {
 
     // Solve for L part
     trsm(
-      LEFT, LOWER, NO_TRANSPOSE, UNIT,
+      LEFT,
+      ULselect::LOWER,
+      Transposition::NO_TRANSPOSE, UNIT,
       m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
     // Solve for U part
     trsm(
-      LEFT, UPPER, NO_TRANSPOSE, NON_UNIT,
+      LEFT,
+      ULselect::UPPER,
+      Transposition::NO_TRANSPOSE, NON_UNIT,
       m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
@@ -401,13 +407,15 @@ namespace lapack_wrapper {
 
     // Solve for U part
     trsv(
-      UPPER, TRANSPOSE, NON_UNIT,
+      ULselect::UPPER,
+      Transposition::TRANSPOSE, NON_UNIT,
       m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
     // Solve for L part
     trsv(
-      LOWER, TRANSPOSE, UNIT,
+      ULselect::LOWER,
+      Transposition::TRANSPOSE, UNIT,
       m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
@@ -428,13 +436,17 @@ namespace lapack_wrapper {
 
     // Solve for U part
     trsm(
-      LEFT, UPPER, TRANSPOSE, NON_UNIT,
+      LEFT,
+      ULselect::UPPER,
+      Transposition::TRANSPOSE, NON_UNIT,
       m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
     // Solve for L part
     trsm(
-      LEFT, LOWER, TRANSPOSE, UNIT,
+      LEFT,
+      ULselect::LOWER,
+      Transposition::TRANSPOSE, UNIT,
       m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 

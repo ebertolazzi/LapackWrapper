@@ -433,27 +433,27 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sormqr)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA,
       TAU, C, &LDC, WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_sormqr(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA,
       TAU, C, &LDC, WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sormqr(
-      side_blas[SIDE], trans_blas[TRANS],
+      side_blas[SIDE], to_blas(TRANS),
       &M, &N, &K, A, &LDA,
       TAU, C, &LDC, WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(sormqr)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, const_cast<real*>(A), &LDA,
       const_cast<real*>(TAU),
       C, &LDC, WORK, &LWORK, &info
@@ -486,7 +486,7 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dormqr)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA,
       TAU, C, &LDC,
       WORK, &LWORK, &info
@@ -494,21 +494,21 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dormqr(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA,
       TAU, C, &LDC,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dormqr(
-      side_blas[SIDE], trans_blas[TRANS],
+      side_blas[SIDE], to_blas(TRANS),
       &M, &N, &K, A, &LDA, TAU, C, &LDC,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dormqr)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, const_cast<doublereal*>(A), &LDA,
       const_cast<doublereal*>(TAU), C, &LDC,
       WORK, &LWORK, &info
@@ -625,7 +625,7 @@ namespace lapack_wrapper {
     #ifdef LAPACK_WRAPPER_USE_ACCELERATE
     CLAPACKNAME(sormqr)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA, TAU, C, &LDC,
       WORK, &LWORK, &info
     );
@@ -634,20 +634,20 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sormqr)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA, TAU, C, &LDC,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_sormqr(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA, TAU, C, &LDC,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sormqr(
-      side_blas[SIDE], trans_blas[TRANS],
+      side_blas[SIDE], to_blas(TRANS),
       &M, &N, &K, A, &LDA, TAU, C, &LDC,
       WORK, &LWORK, &info
     );
@@ -679,7 +679,7 @@ namespace lapack_wrapper {
     #ifdef LAPACK_WRAPPER_USE_ACCELERATE
     CLAPACKNAME(dormqr)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA, TAU, C, &LDC,
       WORK, &LWORK, &info
     );
@@ -688,20 +688,20 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dormqr)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA, TAU, C, &LDC,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dormqr(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, A, &LDA, TAU, C, &LDC,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dormqr(
-      side_blas[SIDE], trans_blas[TRANS],
+      side_blas[SIDE], to_blas(TRANS),
       &M, &N, &K, A, &LDA, TAU, C, &LDC,
       WORK, &LWORK, &info
     );
@@ -1345,7 +1345,7 @@ namespace lapack_wrapper {
       defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slarfb)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       const_cast<character*>(direct_blas[DIRECT]),
       const_cast<character*>(store_blas[STOREV]),
       &M, &N, &K, V, &LDV,
@@ -1354,7 +1354,7 @@ namespace lapack_wrapper {
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_slarfb(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       const_cast<character*>(direct_blas[DIRECT]),
       const_cast<character*>(store_blas[STOREV]),
       &M, &N, &K, V, &LDV,
@@ -1362,14 +1362,14 @@ namespace lapack_wrapper {
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     slarfb(
-      side_blas[SIDE], trans_blas[TRANS],
+      side_blas[SIDE], to_blas(TRANS),
       direct_blas[DIRECT], store_blas[STOREV],
       &M, &N, &K, V, &LDV, T, &LDT, C, &LDC, WORK, &LDWORK
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(slarfb)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       const_cast<character*>(direct_blas[DIRECT]),
       const_cast<character*>(store_blas[STOREV]),
       &M, &N, &K,
@@ -1406,7 +1406,7 @@ namespace lapack_wrapper {
       defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlarfb)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       const_cast<character*>(direct_blas[DIRECT]),
       const_cast<character*>(store_blas[STOREV]),
       &M, &N, &K, V, &LDV,
@@ -1415,7 +1415,7 @@ namespace lapack_wrapper {
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dlarfb(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       const_cast<character*>(direct_blas[DIRECT]),
       const_cast<character*>(store_blas[STOREV]),
       &M, &N, &K, V, &LDV,
@@ -1423,14 +1423,14 @@ namespace lapack_wrapper {
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlarfb(
-      side_blas[SIDE], trans_blas[TRANS],
+      side_blas[SIDE], to_blas(TRANS),
       direct_blas[DIRECT], store_blas[STOREV],
       &M, &N, &K, V, &LDV, T, &LDT, C, &LDC, WORK, &LDWORK
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dlarfb)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       const_cast<character*>(direct_blas[DIRECT]),
       const_cast<character*>(store_blas[STOREV]),
       &M, &N, &K,
@@ -2276,27 +2276,27 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sormrz)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, &L, A, &LDA, TAU,
       C, &LDC, WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_sormrz(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, &L, A, &LDA, TAU,
       C, &LDC, WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sormrz(
-      side_blas[SIDE], trans_blas[TRANS],
+      side_blas[SIDE], to_blas(TRANS),
       &M, &N, &K, &L, A, &LDA, TAU,
       C, &LDC, WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(sormrz)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, &L,
       const_cast<real*>(A), &LDA,
       const_cast<real*>(TAU),
@@ -2333,27 +2333,27 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dormrz)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, &L, A, &LDA, TAU,
       C, &LDC, WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dormrz(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, &L, A, &LDA, TAU,
       C, &LDC, WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dormrz(
-      side_blas[SIDE], trans_blas[TRANS],
+      side_blas[SIDE], to_blas(TRANS),
       &M, &N, &K, &L, A, &LDA, TAU,
       C, &LDC, WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dormrz)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &M, &N, &K, &L,
       const_cast<doublereal*>(A), &LDA,
       const_cast<doublereal*>(TAU),

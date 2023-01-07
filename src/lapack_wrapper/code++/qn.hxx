@@ -81,7 +81,7 @@ namespace lapack_wrapper {
       integer         inc_r
     ) const {
       symv(
-        LOWER,
+        ULselect::LOWER,
         m_dim,
         alpha, m_H, m_dim,
         x, inc_x,

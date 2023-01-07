@@ -156,7 +156,7 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     strmv(
-      uplo_blas[UPLO], trans_blas[TRANS], diag_blas[DIAG],
+      to_blas(UPLO), to_blas(TRANS), diag_blas[DIAG],
       &N, A, &LDA, X, &INCX
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
@@ -164,22 +164,20 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(strmv)(
       CblasColMajor,
-      uplo_cblas[UPLO],
-      trans_cblas[TRANS],
+      to_cblas(UPLO),
+      to_cblas(TRANS),
       diag_cblas[DIAG],
       N, A, LDA, X, INCX
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     strmv_(
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &N, const_cast<real*>(A), &LDA, X, &INCX
     );
   #else
     BLASFUNC(strmv)(
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &N, const_cast<real*>(A), &LDA, X, &INCX
     );
@@ -200,7 +198,7 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     dtrmv(
-      uplo_blas[UPLO], trans_blas[TRANS], diag_blas[DIAG],
+      to_blas(UPLO), to_blas(TRANS), diag_blas[DIAG],
       &N, A, &LDA, X, &INCX
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
@@ -208,22 +206,20 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dtrmv)(
       CblasColMajor,
-      uplo_cblas[UPLO],
-      trans_cblas[TRANS],
+      to_cblas(UPLO),
+      to_cblas(TRANS),
       diag_cblas[DIAG],
       N, A, LDA, X, INCX
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dtrmv_(
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &N, const_cast<doublereal*>(A), &LDA, X, &INCX
     );
   #else
     BLASFUNC(dtrmv)(
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &N, const_cast<doublereal*>(A), &LDA, X, &INCX
     );
@@ -363,7 +359,7 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     strsv(
-      uplo_blas[UPLO], trans_blas[TRANS], diag_blas[DIAG],
+      to_blas(UPLO), to_blas(TRANS), diag_blas[DIAG],
       &N, A, &LDA, X, &INCX
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
@@ -371,22 +367,20 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(strsv)(
       CblasColMajor,
-      uplo_cblas[UPLO],
-      trans_cblas[TRANS],
+      to_cblas(UPLO),
+      to_cblas(TRANS),
       diag_cblas[DIAG],
       N, A, LDA, X, INCX
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     strsv_(
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &N, const_cast<real*>(A), &LDA, X, &INCX
     );
   #else
     BLASFUNC(strsv)(
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &N, const_cast<real*>(A), &LDA, X, &INCX
     );
@@ -407,7 +401,7 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     dtrsv(
-      uplo_blas[UPLO], trans_blas[TRANS], diag_blas[DIAG],
+      to_blas(UPLO), to_blas(TRANS), diag_blas[DIAG],
       &N, A, &LDA, X, &INCX
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
@@ -415,22 +409,20 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
     CBLASNAME(dtrsv)(
       CblasColMajor,
-      uplo_cblas[UPLO],
-      trans_cblas[TRANS],
+      to_cblas(UPLO),
+      to_cblas(TRANS),
       diag_cblas[DIAG],
       N, A, LDA, X, INCX
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dtrsv_(
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &N, const_cast<doublereal*>(A), &LDA, X, &INCX
     );
   #else
     BLASFUNC(dtrsv)(
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &N, const_cast<doublereal*>(A), &LDA, X, &INCX
     );
@@ -590,7 +582,7 @@ namespace lapack_wrapper {
   trmm(
     SideMultiply  const & SIDE,
     ULselect      const & UPLO,
-    Transposition const & TRANSA,
+    Transposition const & TRANS,
     DiagonalType  const & DIAG,
     integer               M,
     integer               N,
@@ -602,8 +594,8 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     strmm(
-      side_blas[SIDE], uplo_blas[UPLO],
-      trans_blas[TRANSA], diag_blas[DIAG],
+      side_blas[SIDE], to_blas(UPLO),
+      to_blas(TRANS), diag_blas[DIAG],
       &M, &N, &alpha, A, &LDA, B, &LDB
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
@@ -612,16 +604,15 @@ namespace lapack_wrapper {
     CBLASNAME(strmm) (
       CblasColMajor,
       side_cblas[SIDE],
-      uplo_cblas[UPLO],
-      trans_cblas[TRANSA],
+      to_cblas(UPLO),
+      to_cblas(TRANS),
       diag_cblas[DIAG],
       M, N, alpha, A, LDA, B, LDB
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     strmm_(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANSA]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &M, &N, &alpha,
       const_cast<real*>(A), &LDA, B, &LDB
@@ -629,8 +620,7 @@ namespace lapack_wrapper {
   #else
     BLASFUNC(strmm)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANSA]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &M, &N, &alpha,
       const_cast<real*>(A), &LDA, B, &LDB
@@ -643,7 +633,7 @@ namespace lapack_wrapper {
   trmm(
     SideMultiply  const & SIDE,
     ULselect      const & UPLO,
-    Transposition const & TRANSA,
+    Transposition const & TRANS,
     DiagonalType  const & DIAG,
     integer               M,
     integer               N,
@@ -655,8 +645,8 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     dtrmm(
-      side_blas[SIDE], uplo_blas[UPLO],
-      trans_blas[TRANSA], diag_blas[DIAG],
+      side_blas[SIDE], to_blas(UPLO),
+      to_blas(TRANS), diag_blas[DIAG],
       &M, &N, &alpha, A, &LDA, B, &LDB
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
@@ -665,16 +655,15 @@ namespace lapack_wrapper {
     CBLASNAME(dtrmm) (
       CblasColMajor,
       side_cblas[SIDE],
-      uplo_cblas[UPLO],
-      trans_cblas[TRANSA],
+      to_cblas(UPLO),
+      to_cblas(TRANS),
       diag_cblas[DIAG],
       M, N, alpha, A, LDA, B, LDB
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dtrmm_(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANSA]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &M, &N, &alpha,
       const_cast<doublereal*>(A), &LDA, B, &LDB
@@ -682,8 +671,7 @@ namespace lapack_wrapper {
   #else
     BLASFUNC(dtrmm)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANSA]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &M, &N, &alpha,
       const_cast<doublereal*>(A), &LDA, B, &LDB
@@ -858,8 +846,8 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     strsm(
-      side_blas[SIDE], uplo_blas[UPLO],
-      trans_blas[TRANS], diag_blas[DIAG],
+      side_blas[SIDE], to_blas(UPLO),
+      to_blas(TRANS), diag_blas[DIAG],
       &M, &N, &alpha, A, &LDA, B, &LDB
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
@@ -868,16 +856,15 @@ namespace lapack_wrapper {
     CBLASNAME(strsm)(
       CblasColMajor,
       side_cblas[SIDE],
-      uplo_cblas[UPLO],
-      trans_cblas[TRANS],
+      to_cblas(UPLO),
+      to_cblas(TRANS),
       diag_cblas[DIAG],
       M, N, alpha, A, LDA, B, LDB
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     strsm_(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &M, &N, &alpha,
       const_cast<real*>(A), &LDA, B, &LDB
@@ -885,8 +872,7 @@ namespace lapack_wrapper {
   #else
     BLASFUNC(strsm)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &M, &N, &alpha,
       const_cast<real*>(A), &LDA, B, &LDB
@@ -911,8 +897,8 @@ namespace lapack_wrapper {
   ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     dtrsm(
-      side_blas[SIDE], uplo_blas[UPLO],
-      trans_blas[TRANS], diag_blas[DIAG],
+      side_blas[SIDE], to_blas(UPLO),
+      to_blas(TRANS), diag_blas[DIAG],
       &M, &N, &alpha, A, &LDA, B, &LDB
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
@@ -921,16 +907,15 @@ namespace lapack_wrapper {
     CBLASNAME(dtrsm)(
       CblasColMajor,
       side_cblas[SIDE],
-      uplo_cblas[UPLO],
-      trans_cblas[TRANS],
+      to_cblas(UPLO),
+      to_cblas(TRANS),
       diag_cblas[DIAG],
       M, N, alpha, A, LDA, B, LDB
     );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dtrsm_(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &M, &N, &alpha,
       const_cast<doublereal*>(A), &LDA, B, &LDB
@@ -938,8 +923,7 @@ namespace lapack_wrapper {
   #else
     BLASFUNC(dtrsm)(
       const_cast<character*>(side_blas[SIDE]),
-      const_cast<character*>(uplo_blas[UPLO]),
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(UPLO), to_blas(TRANS),
       const_cast<character*>(diag_blas[DIAG]),
       &M, &N, &alpha,
       const_cast<doublereal*>(A), &LDA, B, &LDB

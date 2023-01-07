@@ -27,6 +27,7 @@ using namespace std;
 static Utils::Console msg(&std::cout);
 
 using real_type = lapack_wrapper::doublereal;
+using lapack_wrapper::Transposition;
 
 static
 void
@@ -100,28 +101,28 @@ test3() {
 
   lapack_wrapper::gemm(
     1.0,
-    lapack_wrapper::TRANSPOSE,    E.getU(),
-    lapack_wrapper::NO_TRANSPOSE, A,
+    Transposition::TRANSPOSE,    E.getU(),
+    Transposition::NO_TRANSPOSE, A,
     0.0, TMP
   );
   lapack_wrapper::gemm(
     1.0,
-    lapack_wrapper::NO_TRANSPOSE, TMP,
-    lapack_wrapper::NO_TRANSPOSE, E.getQ(),
+    Transposition::NO_TRANSPOSE, TMP,
+    Transposition::NO_TRANSPOSE, E.getQ(),
     0.0, TMP1
   );
   fmt::print( "TMP1\n{}", TMP1.to_string(1e-12) );
 
   lapack_wrapper::gemm(
     1.0,
-    lapack_wrapper::TRANSPOSE,    E.getV(),
-    lapack_wrapper::NO_TRANSPOSE, B,
+    Transposition::TRANSPOSE,    E.getV(),
+    Transposition::NO_TRANSPOSE, B,
     0.0, TMP
   );
   lapack_wrapper::gemm(
     1.0,
-    lapack_wrapper::NO_TRANSPOSE, TMP,
-    lapack_wrapper::NO_TRANSPOSE, E.getQ(),
+    Transposition::NO_TRANSPOSE, TMP,
+    Transposition::NO_TRANSPOSE, E.getQ(),
     0.0, TMP1
   );
   fmt::print( "TMP1\n{}", TMP1.to_string(1e-12) );
@@ -152,28 +153,28 @@ test4() {
 
   lapack_wrapper::gemm(
     1.0,
-    lapack_wrapper::TRANSPOSE,    E.getU(),
-    lapack_wrapper::NO_TRANSPOSE, A,
+    Transposition::TRANSPOSE,    E.getU(),
+    Transposition::NO_TRANSPOSE, A,
     0.0, TMP
   );
   lapack_wrapper::gemm(
     1.0,
-    lapack_wrapper::NO_TRANSPOSE, TMP,
-    lapack_wrapper::NO_TRANSPOSE, E.getQ(),
+    Transposition::NO_TRANSPOSE, TMP,
+    Transposition::NO_TRANSPOSE, E.getQ(),
     0.0, TMP1
   );
   fmt::print( "TMP1\n{}", TMP1.to_string(1e-12) );
 
   lapack_wrapper::gemm(
     1.0,
-    lapack_wrapper::TRANSPOSE,    E.getV(),
-    lapack_wrapper::NO_TRANSPOSE, B,
+    Transposition::TRANSPOSE,    E.getV(),
+    Transposition::NO_TRANSPOSE, B,
     0.0, TMP2
   );
   lapack_wrapper::gemm(
     1.0,
-    lapack_wrapper::NO_TRANSPOSE, TMP2,
-    lapack_wrapper::NO_TRANSPOSE, E.getQ(),
+    Transposition::NO_TRANSPOSE, TMP2,
+    Transposition::NO_TRANSPOSE, E.getQ(),
     0.0, TMP3
   );
   fmt::print( "TMP3\n{}", TMP3.to_string(1e-12) );

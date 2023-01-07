@@ -118,7 +118,7 @@ namespace lapack_wrapper {
       integer incy
     ) const {
       gemv(
-        NO_TRANSPOSE,
+        Transposition::NO_TRANSPOSE,
         m_nrows, m_minRC,
         alpha, m_Umat, m_nrows,
         x, incx,
@@ -137,7 +137,7 @@ namespace lapack_wrapper {
       integer         incy
     ) const {
       gemv(
-        TRANSPOSE,
+        Transposition::TRANSPOSE,
         m_nrows, m_minRC,
         alpha, m_Umat, m_nrows,
         x, incx,
@@ -156,7 +156,7 @@ namespace lapack_wrapper {
       integer         incy
     ) const {
       gemv(
-        TRANSPOSE,
+        Transposition::TRANSPOSE,
         m_minRC, m_ncols,
         alpha, m_VTmat, m_nrows,
         x, incx,
@@ -175,7 +175,7 @@ namespace lapack_wrapper {
       integer         incy
     ) const {
       gemv(
-        NO_TRANSPOSE,
+        Transposition::NO_TRANSPOSE,
         m_minRC, m_ncols,
         alpha, m_VTmat, m_nrows,
         x, incx,

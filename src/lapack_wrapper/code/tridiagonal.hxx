@@ -287,19 +287,19 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_ATLAS)  || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sgttrs)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS, DL, D, DU, DU2, IPIV, B, &LDB, &INFO
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_sgttrs(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS, DL, D, DU, DU2, IPIV, B, &LDB, &INFO
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    sgttrs( trans_blas[TRANS], &N, &NRHS, DL, D, DU, DU2, IPIV, B, &LDB, &INFO );
+    sgttrs( to_blas(TRANS), &N, &NRHS, DL, D, DU, DU2, IPIV, B, &LDB, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(sgttrs)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<real*>(DL),
       const_cast<real*>(D),
@@ -332,19 +332,19 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_ATLAS)  || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dgttrs)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS, DL, D, DU, DU2, IPIV, B, &LDB, &INFO
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dgttrs(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS, DL, D, DU, DU2, IPIV, B, &LDB, &INFO
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dgttrs( trans_blas[TRANS], &N, &NRHS, DL, D, DU, DU2, IPIV, B, &LDB, &INFO );
+    dgttrs( to_blas(TRANS), &N, &NRHS, DL, D, DU, DU2, IPIV, B, &LDB, &INFO );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dgttrs)(
-      const_cast<character*>(trans_blas[TRANS]),
+      to_blas(TRANS),
       &N, &NRHS,
       const_cast<doublereal*>(DL),
       const_cast<doublereal*>(D),
