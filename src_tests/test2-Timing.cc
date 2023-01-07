@@ -115,8 +115,8 @@ testMM() {
   tm.tic();
   for ( int i = 0; i < N_TIMES; ++i ) {
     gemm(
-      Transposition::NO_TRANSPOSE,
-      Transposition::NO_TRANSPOSE,
+      Transposition::NO,
+      Transposition::NO,
       N, N, N,
       -1.0, M1, N,
       M2, N,
@@ -178,7 +178,7 @@ testMv() {
   tm.tic();
   for ( int i = 0; i < N_TIMES; ++i ) {
     gemv(
-      Transposition::NO_TRANSPOSE,
+      Transposition::NO,
       N, N,
       -1.0, M, N,
       V, 1,

@@ -162,14 +162,22 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR_no_alloc<T>::Q_mul( real_type x[] ) const {
-    applyQ( SideMultiply::LEFT, Transposition::NO_TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
+    applyQ(
+      SideMultiply::LEFT,
+      Transposition::NO,
+      m_nReflector, m_nrows, 1, x, m_nrows
+    );
   }
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
   QR_no_alloc<T>::Qt_mul( real_type x[] ) const {
-    applyQ( SideMultiply::LEFT, Transposition::TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
+    applyQ(
+      SideMultiply::LEFT,
+      Transposition::YES,
+      m_nReflector, m_nrows, 1, x, m_nrows
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -182,7 +190,11 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( SideMultiply::LEFT, Transposition::NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ(
+      SideMultiply::LEFT,
+      Transposition::NO,
+      m_nReflector, nr, nc, C, ldC
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -195,7 +207,11 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( SideMultiply::LEFT, Transposition::TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ(
+      SideMultiply::LEFT,
+      Transposition::YES,
+      m_nReflector, nr, nc, C, ldC
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -208,7 +224,11 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( SideMultiply::RIGHT, Transposition::NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ(
+      SideMultiply::RIGHT,
+      Transposition::NO,
+      m_nReflector, nr, nc, C, ldC
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -221,7 +241,11 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( SideMultiply::RIGHT, Transposition::TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ(
+      SideMultiply::RIGHT,
+      Transposition::YES,
+      m_nReflector, nr, nc, C, ldC
+    );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -233,7 +257,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::invR_mul( real_type x[], integer incx ) const {
     trsv( // m_nrows = leading dimension
       ULselect::UPPER,
-      Transposition::NO_TRANSPOSE,
+      Transposition::NO,
       DiagonalType::NON_UNIT,
       m_nReflector, m_Afactorized, m_nrows, x, incx
     );
@@ -247,7 +271,7 @@ namespace lapack_wrapper {
     trsm(
       SideMultiply::LEFT,
       ULselect::UPPER,
-      Transposition::NO_TRANSPOSE,
+      Transposition::NO,
       DiagonalType::NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
@@ -260,7 +284,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::invRt_mul( real_type x[], integer incx ) const {
     trsv( // m_nrows = leading dimension
       ULselect::UPPER,
-      Transposition::TRANSPOSE,
+      Transposition::YES,
       DiagonalType::NON_UNIT,
       m_nReflector, m_Afactorized, m_nrows, x, incx
     );
@@ -279,7 +303,7 @@ namespace lapack_wrapper {
     trsm(
       SideMultiply::LEFT,
       ULselect::UPPER,
-      Transposition::TRANSPOSE,
+      Transposition::YES,
       DiagonalType::NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
@@ -298,7 +322,7 @@ namespace lapack_wrapper {
     trsm(
       SideMultiply::RIGHT,
       ULselect::UPPER,
-      Transposition::NO_TRANSPOSE,
+      Transposition::NO,
       DiagonalType::NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
@@ -312,7 +336,7 @@ namespace lapack_wrapper {
     trsm(
       SideMultiply::RIGHT,
       ULselect::UPPER,
-      Transposition::TRANSPOSE,
+      Transposition::YES,
       DiagonalType::NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );

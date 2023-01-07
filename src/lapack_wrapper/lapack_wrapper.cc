@@ -50,14 +50,6 @@
 #include <sstream>
 
 namespace lapack_wrapper {
-  char const *EquilibrationType_name[] = {
-    "NO_EQUILIBRATE",
-    "EQUILIBRATE_ROWS",
-    "EQUILIBRATE_COLUMNS",
-    "EQUILIBRATE_BOTH"
-  };
-
-  character const *equilibrate_blas[4]  = { "N", "R", "C", "B" };
 
   // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -130,14 +122,14 @@ namespace lapack_wrapper {
       trsm(
         SideMultiply::RIGHT,
         ULselect::UPPER,
-        Transposition::NO_TRANSPOSE,
+        Transposition::NO,
         DiagonalType::NON_UNIT,
         M-jjB, JB, 1, Ajj, LDA, Ajj+JB, LDA
       );
       // UPDATE DIAGONAL AND SUBDIAGONAL BLOCKS
       gemm(
-        Transposition::NO_TRANSPOSE,
-        Transposition::NO_TRANSPOSE,
+        Transposition::NO,
+        Transposition::NO,
         M-jjB, N-jjB, JB,
         -1.0, Ajj+JB,         LDA,
               Ajj+JB*LDA,     LDA,
@@ -208,14 +200,14 @@ namespace lapack_wrapper {
       trsm(
         SideMultiply::LEFT,
         ULselect::LOWER,
-        Transposition::NO_TRANSPOSE,
+        Transposition::NO,
         DiagonalType::UNIT,
         JB, N-jjB, 1.0, Ajj, LDA, Ajj+JB*LDA, LDA
       );
       // UPDATE DIAGONAL AND SUBDIAGONAL BLOCKS
       gemm(
-        Transposition::NO_TRANSPOSE,
-        Transposition::NO_TRANSPOSE,
+        Transposition::NO,
+        Transposition::NO,
         M-jjB, N-jjB, JB,
         -1.0, Ajj+JB,         LDA,
               Ajj+JB*LDA,     LDA,
@@ -291,7 +283,7 @@ namespace lapack_wrapper {
     trsm(
       SideMultiply::LEFT,
       ULselect::UPPER,
-      Transposition::NO_TRANSPOSE,
+      Transposition::NO,
       DiagonalType::NON_UNIT,
       N, nrhs, 1.0, &Tmat.front(), N, RHS, ldRHS
     );

@@ -198,10 +198,10 @@ test3() {
   real_type rhs[M], b[M];
   real_type x[N] = {1,2,3,4,5};
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, rhs, 1
+    Transposition::NO, M, N, 1, A, LDA, x, 1, 0, rhs, 1
   );
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, N, 1, A, LDA, x, 1, 0, b, 1
+    Transposition::NO, M, N, 1, A, LDA, x, 1, 0, b, 1
   );
 
   fmt::print(
@@ -217,7 +217,7 @@ test3() {
   qr.Q_mul( x );
 
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
+    Transposition::NO, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
 
   fmt::print(
@@ -245,7 +245,7 @@ test3() {
   /* L.solve( x ); */ \
   F.solve( 1, x, M); \
   fmt::print("x^T      = {}", lapack_wrapper::print_matrix( 1, M, x, 1 ) ); \
-  lapack_wrapper::gemv( Transposition::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1 ); \
+  lapack_wrapper::gemv( Transposition::NO, M, M, -1, A, LDA, x, 1, 1, b, 1 ); \
   fmt::print("residual = {}", lapack_wrapper::print_matrix( 1, M, b, 1 ) ); \
   res = lapack_wrapper::nrm2( M, b, 1 ); \
   fmt::print( "||res||_2 = {}\n", res ); \
@@ -275,10 +275,10 @@ test4() {
   real_type rhs[M], b[M], res;
   real_type x[M] = {1,2,3,4,5};
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, rhs, 1
+    Transposition::NO, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, b, 1
+    Transposition::NO, M, M, 1, A, LDA, x, 1, 0, b, 1
   );
 
   msg.green( fmt::format(
@@ -310,7 +310,7 @@ test4() {
   cout << "x^T      = " \
        << lapack_wrapper::print_matrix( 1, M, x, 1 ); \
   \
-  lapack_wrapper::gemv( Transposition::TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1 ); \
+  lapack_wrapper::gemv( Transposition::YES, M, M, -1, A, LDA, x, 1, 1, b, 1 ); \
   cout << "residual = " \
        << lapack_wrapper::print_matrix( 1, M, b, 1 ); \
   res = lapack_wrapper::nrm2( M, b, 1 ); \
@@ -342,10 +342,10 @@ test5() {
   real_type rhs[M], b[M], res;
   real_type x[M] = {1,2,3,4,5};
   lapack_wrapper::gemv(
-    Transposition::TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, rhs, 1
+    Transposition::YES, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
   lapack_wrapper::gemv(
-    Transposition::TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, b, 1
+    Transposition::YES, M, M, 1, A, LDA, x, 1, 0, b, 1
   );
 
   msg.green( fmt::format(
@@ -445,10 +445,10 @@ test7() {
   real_type rhs[M], b[M];
   real_type x[M] = {1,2,3,4,5};
   lapack_wrapper::gemv(
-    Transposition::TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, rhs, 1
+    Transposition::YES, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
   lapack_wrapper::gemv(
-    Transposition::TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, b, 1
+    Transposition::YES, M, M, 1, A, LDA, x, 1, 0, b, 1
   );
 
   msg.green( fmt::format(
@@ -466,7 +466,7 @@ test7() {
   //qrp.t_solve( 1, x, M );
 
   lapack_wrapper::gemv(
-    Transposition::TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
+    Transposition::YES, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
 
   fmt::print(
@@ -505,10 +505,10 @@ test8() {
   //bool      rselect[M] = { false, false, false, false, false };
   bool      rselect[M] = { true, false, true, true, true };
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, rhs, 1
+    Transposition::NO, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, M, 1, A, LDA, x, 1, 0, b, 1
+    Transposition::NO, M, M, 1, A, LDA, x, 1, 0, b, 1
   );
 
   msg.green( fmt::format(
@@ -527,7 +527,7 @@ test8() {
   //qrp.t_solve( 1, x, M );
 
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
+    Transposition::NO, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
 
   fmt::print(
@@ -565,7 +565,7 @@ test9() {
   real_type rhs[M], b[M], x[M];
   real_type const xe[M] = {1,2,3,4,5};
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, M, 1, A, LDA, xe, 1, 0, rhs, 1
+    Transposition::NO, M, M, 1, A, LDA, xe, 1, 0, rhs, 1
   );
   lapack_wrapper::copy( M, rhs, 1, b, 1 );
 
@@ -588,7 +588,7 @@ test9() {
   real_type e[M] = { x[0]-xe[0],x[1]-xe[1],x[2]-xe[2],x[3]-xe[3],x[4]-xe[4]};
 
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, M, -1, A, LDA, x, 1, 1, b, 1
+    Transposition::NO, M, M, -1, A, LDA, x, 1, 1, b, 1
   );
 
   fmt::print(
@@ -611,7 +611,7 @@ test9() {
 
   lapack_wrapper::copy( M, rhs, 1, b, 1 );
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, M-1, -1, A, LDA, x, 1, 1, b, 1
+    Transposition::NO, M, M-1, -1, A, LDA, x, 1, 1, b, 1
   );
   res = lapack_wrapper::nrm2( M, b, 1 );
 
@@ -646,7 +646,7 @@ test10() {
   real_type rhs[M], b[M], b2[2*M], x[N], x2[2*N];
   real_type const xe[N] = {1,2,3,4};
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
+    Transposition::NO, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
   );
   lapack_wrapper::copy( M, rhs, 1, b, 1 );
   lapack_wrapper::copy( M, rhs, 1, b2, 1 );
@@ -667,7 +667,7 @@ test10() {
   real_type e[N] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2] };
 
   lapack_wrapper::gemv(
-    Transposition::NO_TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1
+    Transposition::NO, M, N, -1, A, LDA, x, 1, 1, b, 1
   );
 
   //pinv.t_solve( 1, x, M );
@@ -707,7 +707,7 @@ test11() {
 
   real_type rhs[N], b[N], b2[2*N], x[M], x2[2*M];
   real_type const xe[M] = {1,2,3,4,5,6};
-  lapack_wrapper::gemv( Transposition::TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1 );
+  lapack_wrapper::gemv( Transposition::YES, M, N, 1, A, LDA, xe, 1, 0, rhs, 1 );
   lapack_wrapper::copy( N, rhs, 1, b, 1 );
   lapack_wrapper::copy( N, rhs, 1, b2, 1 );
   lapack_wrapper::copy( N, rhs, 1, b2+N, 1 );
@@ -728,7 +728,7 @@ test11() {
 
   real_type e[M] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2], x[3]-xe[3] };
 
-  lapack_wrapper::gemv( Transposition::TRANSPOSE, M, N, -1, A, LDA, x, 1, 1, b, 1 );
+  lapack_wrapper::gemv( Transposition::YES, M, N, -1, A, LDA, x, 1, 1, b, 1 );
 
   //pinv.t_solve( 1, x, M );
   fmt::print(
@@ -804,7 +804,7 @@ R1
 
   real_type rhs[N];
   real_type const xe[M] = {1,2,3,4,5,6,7,8};
-  lapack_wrapper::gemv( Transposition::TRANSPOSE, M, N, 1, A, LDA, xe, 1, 0, rhs, 1 );
+  lapack_wrapper::gemv( Transposition::YES, M, N, 1, A, LDA, xe, 1, 0, rhs, 1 );
 
   msg.green( fmt::format(
     "\n\n\nTest12:\n\nInitial A\n{}\n(A^T * x)^T = {}\n",
@@ -828,8 +828,8 @@ R1
   ) );
 
   lapack_wrapper::gemm(
-    Transposition::NO_TRANSPOSE,
-    Transposition::NO_TRANSPOSE,
+    Transposition::NO,
+    Transposition::NO,
     M, M, N,
     1.0, A, LDA,
     MAT1, N,
@@ -841,8 +841,8 @@ R1
   ) );
 
   lapack_wrapper::gemm(
-    Transposition::NO_TRANSPOSE,
-    Transposition::NO_TRANSPOSE,
+    Transposition::NO,
+    Transposition::NO,
     N, N, M,
     1.0, MAT1, N,
     A, LDA,
@@ -865,8 +865,8 @@ R1
   ) );
 
   lapack_wrapper::gemm(
-    Transposition::TRANSPOSE,
-    Transposition::NO_TRANSPOSE,
+    Transposition::YES,
+    Transposition::NO,
     N, N, M,
     1.0, A, LDA,
     MAT1, M,
@@ -878,8 +878,8 @@ R1
   ) );
 
   lapack_wrapper::gemm(
-    Transposition::NO_TRANSPOSE,
-    Transposition::TRANSPOSE,
+    Transposition::NO,
+    Transposition::YES,
     M, M, N,
     1.0,
     MAT1, M,

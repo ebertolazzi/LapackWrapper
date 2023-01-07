@@ -1081,7 +1081,7 @@ namespace lapack_wrapper {
     integer                  incc
   ) {
     lapack_wrapper::gemv(
-      Transposition::NO_TRANSPOSE,
+      Transposition::NO,
       A.nrows(), A.ncols(),
       alpha,
       A.data(), A.ldim(),
@@ -1126,8 +1126,8 @@ namespace lapack_wrapper {
       C.nrows(), C.ncols()
     );
     lapack_wrapper::gemm(
-      Transposition::NO_TRANSPOSE,
-      Transposition::NO_TRANSPOSE,
+      Transposition::NO,
+      Transposition::NO,
       A.nrows(), B.ncols(), A.ncols(),
       alpha,
       A.data(), A.ldim(),
@@ -1167,8 +1167,8 @@ namespace lapack_wrapper {
       A.nrows(), A.ncols(), B.nrows(), B.ncols(), C.nrows(), C.ncols()
     );
     lapack_wrapper::gemm(
-      Transposition::NO_TRANSPOSE,
-      Transposition::NO_TRANSPOSE,
+      Transposition::NO,
+      Transposition::NO,
       A.nrows(), B.ncols(), A.ncols(),
       alpha,
       A.data(), A.ldim(),
@@ -1205,10 +1205,10 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    integer Ar = TRANSA == Transposition::NO_TRANSPOSE ? A.nrows() : A.ncols();
-    integer Ac = TRANSA == Transposition::NO_TRANSPOSE ? A.ncols() : A.nrows();
-    integer Br = TRANSB == Transposition::NO_TRANSPOSE ? B.nrows() : B.ncols();
-    integer Bc = TRANSB == Transposition::NO_TRANSPOSE ? B.ncols() : B.nrows();
+    integer Ar = TRANSA == Transposition::NO ? A.nrows() : A.ncols();
+    integer Ac = TRANSA == Transposition::NO ? A.ncols() : A.nrows();
+    integer Br = TRANSB == Transposition::NO ? B.nrows() : B.ncols();
+    integer Bc = TRANSB == Transposition::NO ? B.ncols() : B.nrows();
     UTILS_ASSERT_DEBUG(
       C.nrows() == Ar && C.ncols() == Bc && Ac == Br,
       "gemm, at `{}' inconsistent dimensions:"
@@ -1258,10 +1258,10 @@ namespace lapack_wrapper {
     T                        beta,
     MatrixWrapper<T>       & C
   ) {
-    integer Ar = TRANSA == Transposition::NO_TRANSPOSE ? A.nrows() : A.ncols();
-    integer Ac = TRANSA == Transposition::NO_TRANSPOSE ? A.ncols() : A.nrows();
-    integer Br = TRANSB == Transposition::NO_TRANSPOSE ? B.nrows() : B.ncols();
-    integer Bc = TRANSB == Transposition::NO_TRANSPOSE ? B.ncols() : B.nrows();
+    integer Ar = TRANSA == Transposition::NO ? A.nrows() : A.ncols();
+    integer Ac = TRANSA == Transposition::NO ? A.ncols() : A.nrows();
+    integer Br = TRANSB == Transposition::NO ? B.nrows() : B.ncols();
+    integer Bc = TRANSB == Transposition::NO ? B.ncols() : B.nrows();
     UTILS_ASSERT_DEBUG(
       C.nrows() == Ar && C.ncols() == Bc && Ac == Br,
       "gemm, inconsistent dimensions:"

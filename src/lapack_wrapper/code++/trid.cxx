@@ -270,7 +270,8 @@ namespace lapack_wrapper {
   bool
   TridiagonalLU<T>::solve( real_type xb[] ) const {
     integer info = gttrs(
-      Transposition::NO_TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
+      Transposition::NO,
+      m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
     return info == 0;
   }
@@ -281,7 +282,8 @@ namespace lapack_wrapper {
   void
   TridiagonalLU<T>::solve( char const who[], real_type xb[] ) const {
     integer info = gttrs(
-      Transposition::NO_TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
+      Transposition::NO,
+      m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
     UTILS_ASSERT(
       info == 0,
@@ -297,7 +299,8 @@ namespace lapack_wrapper {
   bool
   TridiagonalLU<T>::t_solve( real_type xb[] ) const {
     integer info = gttrs(
-      Transposition::TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
+      Transposition::YES,
+      m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
     return info == 0;
   }
@@ -308,7 +311,8 @@ namespace lapack_wrapper {
   void
   TridiagonalLU<T>::t_solve( char const who[], real_type xb[] ) const {
     integer info = gttrs(
-      Transposition::TRANSPOSE, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
+      Transposition::YES,
+      m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
     );
     UTILS_ASSERT(
       info == 0,
@@ -324,7 +328,8 @@ namespace lapack_wrapper {
   bool
   TridiagonalLU<T>::solve( integer nrhs, real_type xb[], integer ldXB ) const {
     integer info = gttrs(
-      Transposition::NO_TRANSPOSE, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
+      Transposition::NO,
+      m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
     );
     return info == 0;
   }
@@ -340,7 +345,8 @@ namespace lapack_wrapper {
     integer    ldXB
   ) const {
     integer info = gttrs(
-      Transposition::NO_TRANSPOSE, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
+      Transposition::NO,
+      m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
     );
     UTILS_ASSERT(
       info == 0,
@@ -356,7 +362,8 @@ namespace lapack_wrapper {
   bool
   TridiagonalLU<T>::t_solve( integer nrhs, real_type xb[], integer ldXB ) const {
     integer info = gttrs(
-      Transposition::TRANSPOSE, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
+      Transposition::YES,
+      m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
     );
     return info == 0;
   }
@@ -372,7 +379,8 @@ namespace lapack_wrapper {
     integer    ldXB
   ) const {
     integer info = gttrs(
-      Transposition::TRANSPOSE, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
+      Transposition::YES,
+      m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB
     );
     UTILS_ASSERT(
       info == 0,

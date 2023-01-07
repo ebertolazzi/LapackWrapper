@@ -353,7 +353,7 @@ namespace lapack_wrapper {
       // Work = L^T nr0 x nr1
       getranspose( nr1, nr0, L0, nr1, m_Work, nr0 );
       // solve
-      info = getrs( Transposition::TRANSPOSE, nr0, nr1, D0, nr0, m_B_permutation[k-1], m_Work, nr0 );
+      info = getrs( Transposition::YES, nr0, nr1, D0, nr0, m_B_permutation[k-1], m_Work, nr0 );
       UTILS_ASSERT(
         info == 0,
         "BlockTridiagonalSymmetic::factorize[{}] getrs INFO = {}\n", who, info
@@ -362,8 +362,8 @@ namespace lapack_wrapper {
       // DD{k}   = DD{k} - (LL{k-1}*DD{k-1}) *LL{k-1}.';
 
       gemm(
-        Transposition::TRANSPOSE,
-        Transposition::TRANSPOSE,
+        Transposition::YES,
+        Transposition::YES,
         nr1, nr1, nr0,
         -1.0, m_Work, nr0,
         L0, nr1,
@@ -408,14 +408,14 @@ namespace lapack_wrapper {
       // Work = L^T nr0 x nr1
       getranspose( nr1, nr0, L0, nr1, m_Work, nr0 );
       // solve
-      info = getrs( Transposition::TRANSPOSE, nr0, nr1, D0, nr0, m_B_permutation[k-1], m_Work, nr0 );
+      info = getrs( Transposition::YES, nr0, nr1, D0, nr0, m_B_permutation[k-1], m_Work, nr0 );
       if ( info != 0 ) return false;
 
       // DD{k}   = DD{k} - (LL{k-1}*DD{k-1}) *LL{k-1}.';
 
       gemm(
-        Transposition::TRANSPOSE,
-        Transposition::TRANSPOSE,
+        Transposition::YES,
+        Transposition::YES,
         nr1, nr1, nr0,
         -1.0, m_Work, nr0,
         L0, nr1,
@@ -448,7 +448,7 @@ namespace lapack_wrapper {
       real_type const * L0 = m_L_blocks[k-1];
       xk = xkm1 + nr0;
       gemv(
-        Transposition::NO_TRANSPOSE, nr1, nr0,
+        Transposition::NO, nr1, nr0,
         -1.0, L0, nr1,
         xkm1, 1,
         1.0,
@@ -464,7 +464,8 @@ namespace lapack_wrapper {
       // solve
       real_type const * D1 = m_D_blocks[k];
       integer info = getrs(
-        Transposition::NO_TRANSPOSE, nr1, 1, D1, nr1, m_B_permutation[k], xk, nr1
+        Transposition::NO,
+        nr1, 1, D1, nr1, m_B_permutation[k], xk, nr1
       );
       if ( info != 0 ) return false;
       xk += nr1;
@@ -477,7 +478,7 @@ namespace lapack_wrapper {
       real_type const * L0 = m_L_blocks[k-1];
       xkm1 = xk - nr0;
       gemv(
-        Transposition::TRANSPOSE, nr1, nr0,
+        Transposition::YES, nr1, nr0,
         -1.0, L0, nr1,
         xk, 1,
         1.0,
@@ -510,8 +511,8 @@ namespace lapack_wrapper {
       real_type const * L0 = m_L_blocks[k-1];
       Bk = Bkm1 + nr0;
       gemm(
-        Transposition::NO_TRANSPOSE,
-        Transposition::NO_TRANSPOSE,
+        Transposition::NO,
+        Transposition::NO,
         nr1, nrhs, nr0,
         -1.0, L0, nr1,
         Bkm1, ldB,
@@ -528,7 +529,7 @@ namespace lapack_wrapper {
       // solve
       real_type const * D1 = m_D_blocks[k];
       integer info = getrs(
-        Transposition::NO_TRANSPOSE,
+        Transposition::NO,
         nr1, nrhs,
         D1, nr1, m_B_permutation[k],
         Bk, ldB
@@ -544,8 +545,8 @@ namespace lapack_wrapper {
       real_type const * L0 = m_L_blocks[k-1];
       Bkm1 = Bk - nr0;
       gemm(
-        Transposition::TRANSPOSE,
-        Transposition::NO_TRANSPOSE,
+        Transposition::YES,
+        Transposition::NO,
         nr0, nrhs, nr1,
         -1.0, L0, nr1,
         Bk, ldB,

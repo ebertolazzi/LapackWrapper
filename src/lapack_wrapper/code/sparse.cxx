@@ -227,7 +227,7 @@ namespace lapack_wrapper {
     if ( m_matrix_is_full ) {
       if ( m_matrix_is_row_major ) {
         lapack_wrapper::gemv(
-          Transposition::TRANSPOSE, m_ncols, m_nrows,
+          Transposition::YES, m_ncols, m_nrows,
           alpha,
           &m_vals.front(), m_ncols,
           x, 1,
@@ -236,7 +236,7 @@ namespace lapack_wrapper {
         );
       } else {
         lapack_wrapper::gemv(
-          Transposition::NO_TRANSPOSE,
+          Transposition::NO,
           m_nrows, m_ncols,
           alpha,
           &m_vals.front(), m_nrows,
@@ -277,7 +277,7 @@ namespace lapack_wrapper {
     if ( m_matrix_is_full ) {
       if ( m_matrix_is_row_major ) {
         lapack_wrapper::gemv(
-          Transposition::NO_TRANSPOSE,
+          Transposition::NO,
           m_ncols, m_nrows,
           alpha,
           &m_vals.front(), m_ncols,
@@ -287,7 +287,7 @@ namespace lapack_wrapper {
         );
       } else {
         lapack_wrapper::gemv(
-          Transposition::TRANSPOSE,
+          Transposition::YES,
           m_nrows, m_ncols,
           alpha,
           &m_vals.front(), m_nrows,

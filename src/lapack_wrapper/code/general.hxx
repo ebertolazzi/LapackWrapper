@@ -2048,18 +2048,12 @@ namespace lapack_wrapper {
     character buffer[10];
     #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(slaqge)(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
-    );
+    LAPACK_F77NAME(slaqge)( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
-    BLASFUNC(slaqge)(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
-    );
+    BLASFUNC(slaqge)( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    slaqge(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
-    );
+    slaqge( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(slaqge)(
       &M, &N, A, &LDA,
@@ -2096,18 +2090,12 @@ namespace lapack_wrapper {
     character buffer[10];
     #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dlaqge)(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
-    );
+    LAPACK_F77NAME(dlaqge)( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
-    BLASFUNC(dlaqge)(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
-    );
+    BLASFUNC(dlaqge)( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dlaqge(
-      &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer
-    );
+    dlaqge( &M, &N, A, &LDA, R, C, &ROWCND, &COLCND, &AMAX, buffer );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dlaqge)(
       &M, &N, A, &LDA,

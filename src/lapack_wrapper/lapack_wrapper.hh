@@ -320,8 +320,8 @@ namespace lapack_wrapper {
   //============================================================================
 
   using Transposition = enum class Transposition : integer {
-    NO_TRANSPOSE        = 0,
-    TRANSPOSE           = 1,
+    NO                  = 0,
+    YES                 = 1,
     CONJUGATE_TRANSPOSE = 2
   };
 
@@ -329,8 +329,8 @@ namespace lapack_wrapper {
   char *
   to_blas( Transposition const & T ) {
     switch( T ) {
-    case Transposition::NO_TRANSPOSE:        return const_cast<char*>("NO_TRANSPOSE");
-    case Transposition::TRANSPOSE:           return const_cast<char*>("TRANSPOSE");
+    case Transposition::NO:                  return const_cast<char*>("NO_TRANSPOSE");
+    case Transposition::YES:                 return const_cast<char*>("TRANSPOSE");
     case Transposition::CONJUGATE_TRANSPOSE: return const_cast<char*>("CONJUGATE_TRANSPOSE");
     }
   }
@@ -339,8 +339,8 @@ namespace lapack_wrapper {
   CBLAS_TRANSPOSE
   to_cblas( Transposition const & T ) {
     switch( T ) {
-    case Transposition::NO_TRANSPOSE:        return CblasNoTrans;
-    case Transposition::TRANSPOSE:           return CblasTrans;
+    case Transposition::NO:                  return CblasNoTrans;
+    case Transposition::YES:                 return CblasTrans;
     case Transposition::CONJUGATE_TRANSPOSE: return CblasConjTrans;
     }
   }

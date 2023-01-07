@@ -101,28 +101,28 @@ test3() {
 
   lapack_wrapper::gemm(
     1.0,
-    Transposition::TRANSPOSE,    E.getU(),
-    Transposition::NO_TRANSPOSE, A,
+    Transposition::YES, E.getU(),
+    Transposition::NO,  A,
     0.0, TMP
   );
   lapack_wrapper::gemm(
     1.0,
-    Transposition::NO_TRANSPOSE, TMP,
-    Transposition::NO_TRANSPOSE, E.getQ(),
+    Transposition::NO, TMP,
+    Transposition::NO, E.getQ(),
     0.0, TMP1
   );
   fmt::print( "TMP1\n{}", TMP1.to_string(1e-12) );
 
   lapack_wrapper::gemm(
     1.0,
-    Transposition::TRANSPOSE,    E.getV(),
-    Transposition::NO_TRANSPOSE, B,
+    Transposition::YES, E.getV(),
+    Transposition::NO,  B,
     0.0, TMP
   );
   lapack_wrapper::gemm(
     1.0,
-    Transposition::NO_TRANSPOSE, TMP,
-    Transposition::NO_TRANSPOSE, E.getQ(),
+    Transposition::NO, TMP,
+    Transposition::NO, E.getQ(),
     0.0, TMP1
   );
   fmt::print( "TMP1\n{}", TMP1.to_string(1e-12) );
@@ -153,28 +153,28 @@ test4() {
 
   lapack_wrapper::gemm(
     1.0,
-    Transposition::TRANSPOSE,    E.getU(),
-    Transposition::NO_TRANSPOSE, A,
+    Transposition::YES, E.getU(),
+    Transposition::NO,  A,
     0.0, TMP
   );
   lapack_wrapper::gemm(
     1.0,
-    Transposition::NO_TRANSPOSE, TMP,
-    Transposition::NO_TRANSPOSE, E.getQ(),
+    Transposition::NO, TMP,
+    Transposition::NO, E.getQ(),
     0.0, TMP1
   );
   fmt::print( "TMP1\n{}", TMP1.to_string(1e-12) );
 
   lapack_wrapper::gemm(
     1.0,
-    Transposition::TRANSPOSE,    E.getV(),
-    Transposition::NO_TRANSPOSE, B,
+    Transposition::YES, E.getV(),
+    Transposition::NO,  B,
     0.0, TMP2
   );
   lapack_wrapper::gemm(
     1.0,
-    Transposition::NO_TRANSPOSE, TMP2,
-    Transposition::NO_TRANSPOSE, E.getQ(),
+    Transposition::NO, TMP2,
+    Transposition::NO, E.getQ(),
     0.0, TMP3
   );
   fmt::print( "TMP3\n{}", TMP3.to_string(1e-12) );
