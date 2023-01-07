@@ -1004,8 +1004,8 @@ namespace lapack_wrapper {
   inline
   void
   larft(
-    DirectionType const & DIRECT, // direct_blas[DIRECT]
-    StorageType   const & STOREV, // store_blas[STOREV]
+    DirectionType const & DIRECT,
+    StorageType   const & STOREV,
     integer               N,
     integer               K,
     real                  V[],
@@ -1018,24 +1018,22 @@ namespace lapack_wrapper {
       defined(LAPACK_WRAPPER_USE_ATLAS)  || \
       defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slarft)(
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(DIRECT), to_blas(STOREV),
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_slarft(
-      direct_blas[DIRECT], store_blas[STOREV],
+      to_blas(DIRECT), to_blas(STOREV),
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     slarft(
-      direct_blas[DIRECT], store_blas[STOREV],
+      to_blas(DIRECT), to_blas(STOREV),
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(slarft)(
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(DIRECT), to_blas(STOREV),
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #else
@@ -1048,8 +1046,8 @@ namespace lapack_wrapper {
   inline
   void
   larft(
-    DirectionType const & DIRECT, // direct_blas[DIRECT]
-    StorageType   const & STOREV, // store_blas[STOREV]
+    DirectionType const & DIRECT,
+    StorageType   const & STOREV,
     integer               N,
     integer               K,
     doublereal            V[],
@@ -1062,24 +1060,22 @@ namespace lapack_wrapper {
       defined(LAPACK_WRAPPER_USE_ATLAS)  || \
       defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlarft)(
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(DIRECT), to_blas(STOREV),
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dlarft(
-      direct_blas[DIRECT], store_blas[STOREV],
+      to_blas(DIRECT), to_blas(STOREV),
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlarft(
-      direct_blas[DIRECT], store_blas[STOREV],
+      to_blas(DIRECT), to_blas(STOREV),
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dlarft)(
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(DIRECT), to_blas(STOREV),
       &N, &K, V, &LDV, TAU, T, &LDT
     );
   #else
@@ -1332,33 +1328,24 @@ namespace lapack_wrapper {
       defined(LAPACK_WRAPPER_USE_ATLAS)  || \
       defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(slarfb)(
-      to_blas(SIDE),
-      to_blas(TRANS),
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(SIDE), to_blas(TRANS), to_blas(DIRECT), to_blas(STOREV),
       &M, &N, &K, V, &LDV,
       T, &LDT, C, &LDC, WORK, &LDWORK
     );
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_slarfb(
-      to_blas(SIDE),
-      to_blas(TRANS),
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(SIDE), to_blas(TRANS), to_blas(DIRECT), to_blas(STOREV),
       &M, &N, &K, V, &LDV,
       T, &LDT, C, &LDC, WORK, &LDWORK
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     slarfb(
-      to_blas(SIDE), to_blas(TRANS),
-      direct_blas[DIRECT], store_blas[STOREV],
+      to_blas(SIDE), to_blas(TRANS), to_blas(DIRECT), to_blas(STOREV),
       &M, &N, &K, V, &LDV, T, &LDT, C, &LDC, WORK, &LDWORK
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(slarfb)(
-      to_blas(SIDE), to_blas(TRANS),
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(SIDE), to_blas(TRANS), to_blas(DIRECT), to_blas(STOREV),
       &M, &N, &K,
       const_cast<real*>(V), &LDV,
       const_cast<real*>(T), &LDT,
@@ -1392,31 +1379,24 @@ namespace lapack_wrapper {
       defined(LAPACK_WRAPPER_USE_ATLAS)  || \
       defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dlarfb)(
-      to_blas(SIDE), to_blas(TRANS),
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(SIDE), to_blas(TRANS), to_blas(DIRECT), to_blas(STOREV),
       &M, &N, &K, V, &LDV,
       T, &LDT, C, &LDC, WORK, &LDWORK
     );
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dlarfb(
-      to_blas(SIDE), to_blas(TRANS),
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(SIDE), to_blas(TRANS), to_blas(DIRECT), to_blas(STOREV),
       &M, &N, &K, V, &LDV,
       T, &LDT, C, &LDC, WORK, &LDWORK
     );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlarfb(
-      to_blas(SIDE), to_blas(TRANS),
-      direct_blas[DIRECT], store_blas[STOREV],
+      to_blas(SIDE), to_blas(TRANS), to_blas(DIRECT), to_blas(STOREV),
       &M, &N, &K, V, &LDV, T, &LDT, C, &LDC, WORK, &LDWORK
     );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dlarfb)(
-      to_blas(SIDE), to_blas(TRANS),
-      const_cast<character*>(direct_blas[DIRECT]),
-      const_cast<character*>(store_blas[STOREV]),
+      to_blas(SIDE), to_blas(TRANS), to_blas(DIRECT), to_blas(STOREV),
       &M, &N, &K,
       const_cast<doublereal*>(V), &LDV,
       const_cast<doublereal*>(T), &LDT,

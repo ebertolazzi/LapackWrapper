@@ -558,7 +558,7 @@ namespace lapack_wrapper {
     integer info = ggevx(
       lapack_wrapper::PERMUTE_AND_SCALE,
       false, false,
-      lapack_wrapper::EIGENVALUES_AND_EIGENVECTORS,
+      SenseType::EIGENVALUES_AND_EIGENVECTORS,
       m_N, nullptr, m_N, nullptr, m_N,
       nullptr, nullptr, nullptr, m_VL, m_N, m_VR, m_N,
       m_ilo, m_ihi,
@@ -600,7 +600,7 @@ namespace lapack_wrapper {
       lapack_wrapper::PERMUTE_ONLY, // "B", // ATTENZIONE LA SCALATURA NON FUNZIONA
       m_VL != nullptr,
       m_VR != nullptr,
-      lapack_wrapper::EIGENVALUES_AND_EIGENVECTORS,
+      SenseType::EIGENVALUES_AND_EIGENVECTORS,
       m_N,
       m_A_saved, m_N,
       m_B_saved, m_N,

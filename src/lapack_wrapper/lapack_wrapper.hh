@@ -321,9 +321,6 @@ namespace lapack_wrapper {
   extern character const *diag_blas[2];
 
   extern character const *balance_blas[4];
-  extern character const *sense_blas[4];
-  extern character const *direct_blas[2];
-  extern character const *store_blas[2];
   extern character const *mtype_blas[5];
   extern character const *equilibrate_blas[4];
 
@@ -463,32 +460,55 @@ namespace lapack_wrapper {
 
   //============================================================================
 
-  using SenseType = enum {
+  using SenseType = enum class SenseType : integer {
     NONE                         = 0, // 'N'
     EIGENVALUES_ONLY             = 1, // 'E'
     EIGENVECTORS_ONLY            = 2, // 'V'
     EIGENVALUES_AND_EIGENVECTORS = 3  // 'B'
   };
 
-  extern char const *SenseType_name[];
+  inline
+  char *
+  to_blas( SenseType const & ST ) {
+    switch( ST ) {
+    case SenseType::NONE:                         return const_cast<char*>("NONE");
+    case SenseType::EIGENVALUES_ONLY:             return const_cast<char*>("EIGENVALUES"); // REDUCED
+    case SenseType::EIGENVECTORS_ONLY:            return const_cast<char*>("VECTORS"); // INPLACE
+    case SenseType::EIGENVALUES_AND_EIGENVECTORS: return const_cast<char*>("BOTH_EIGENVALUES_AND_EIGENVECTORS");
+    }
+  }
 
   //============================================================================
 
-  using DirectionType = enum {
+  using DirectionType = enum class DirectionType : integer {
     FORWARD  = 0,
     BACKWARD = 1
   };
 
-  extern char const *DirectionType_name[];
+  inline
+  char *
+  to_blas( DirectionType const & DIR ) {
+    switch( DIR ) {
+    case DirectionType::FORWARD:  return const_cast<char*>("FORWARD");
+    case DirectionType::BACKWARD: return const_cast<char*>("BACKWARD"); // REDUCED
+    }
+  }
 
   //============================================================================
 
-  using StorageType = enum {
+  using StorageType = enum class StorageType : integer {
     COLUMNWISE = 0,
     ROWWISE    = 1
   };
 
-  extern char const *StorageType_name[];
+  inline
+  char *
+  to_blas( StorageType const & ST ) {
+    switch( ST ) {
+    case StorageType::COLUMNWISE: return const_cast<char*>("COLUMNWISE");
+    case StorageType::ROWWISE:    return const_cast<char*>("ROWWISE"); // REDUCED
+    }
+  }
 
   //============================================================================
 

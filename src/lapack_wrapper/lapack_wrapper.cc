@@ -57,14 +57,6 @@ namespace lapack_wrapper {
     "SCALE_ONLY",
     "PERMUTE_AND_SCALE"
   };
-  char const *SenseType_name[] = {
-    "NONE",
-    "EIGENVALUES_ONLY",
-    "EIGENVECTORS_ONLY",
-    "EIGENVALUES_AND_EIGENVECTORS"
-  };
-  char const *DirectionType_name[] = { "FORWARD", "BACKWARD" };
-  char const *StorageType_name[] = { "COLUMNWISE", "ROWWISE" };
   char const *MatrixType_name[] = {
     "FULL_MATRIX",
     "LOWER_TRIANGULAR_MATRIX",
@@ -85,11 +77,6 @@ namespace lapack_wrapper {
     "Scale Only",
     "Both permute and scale"
   };
-
-  character const *sense_blas[4] = { "N", "E", "V", "B" };
-
-  character const *direct_blas[2] = { "Forward", "Backward" };
-  character const *store_blas[2]  = { "ColumnWise", "RowWise" };
 
   character const *mtype_blas[5]  = {
     "G", // A is a full matrix.
