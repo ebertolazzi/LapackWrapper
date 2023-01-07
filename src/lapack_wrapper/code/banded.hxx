@@ -203,10 +203,7 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(stbmv)(
-      CblasColMajor,
-      to_cblas(UPLO),
-      to_cblas(TRANS),
-      diag_cblas[DIAG],
+      CblasColMajor, to_cblas(UPLO), to_cblas(TRANS), to_cblas(DIAG),
       N, K, A, ldA, xb, incx
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
@@ -245,10 +242,7 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(dtbmv)(
-      CblasColMajor,
-      to_cblas(UPLO),
-      to_cblas(TRANS),
-      diag_cblas[DIAG],
+      CblasColMajor, to_cblas(UPLO), to_cblas(TRANS), to_cblas(DIAG),
       N, K, A, ldA, xb, incx
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
@@ -444,19 +438,17 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(stbsv)(
       CblasColMajor,
-      to_cblas(UPLO),
-      to_cblas(TRANS),
-      diag_cblas[DIAG],
+      to_cblas(UPLO), to_cblas(TRANS), to_cblas(DIAG),
       N, K, A, ldA, xb, incx
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     stbsv(
-      to_blas(UPLO), to_blas(TRANS), diag_blas[DIAG],
+      to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
       &N, &K, A, &ldA, xb, &incx
     );
     #else
     BLASFUNC(stbsv)(
-      to_blas(UPLO), to_blas(TRANS),
+      to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
       const_cast<character*>(diag_blas[DIAG]),
       &N, &K,
       const_cast<real*>(A), &ldA, xb, &incx
@@ -485,19 +477,17 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(dtbsv)(
       CblasColMajor,
-      to_cblas(UPLO),
-      to_cblas(TRANS),
-      diag_cblas[DIAG],
+      to_cblas(UPLO), to_cblas(TRANS), to_cblas(DIAG),
       N, K, A, ldA, xb, incx
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dtbsv(
-      to_blas(UPLO), to_blas(TRANS), diag_blas[DIAG],
+      to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
       &N, &K, A, &ldA, xb, &incx
     );
     #else
     BLASFUNC(dtbsv)(
-      to_blas(UPLO), to_blas(TRANS),
+      to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
       const_cast<character*>(diag_blas[DIAG]),
       &N, &K,
       const_cast<doublereal*>(A), &ldA, xb, &incx

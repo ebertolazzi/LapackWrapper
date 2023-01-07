@@ -51,8 +51,6 @@
 
 namespace lapack_wrapper {
 
-  char const *DiagonalType_name[] = { "UNIT", "NON_UNIT" };
-  char const *SideMultiply_name[] = { "LEFT", "RIGHT" };
   char const *BalanceType_name[]  = {
     "NO_BALANCE",
     "PERMUTE_ONLY",
@@ -87,17 +85,6 @@ namespace lapack_wrapper {
     "EQUILIBRATE_BOTH"
   };
 
-  #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-      defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-      defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
-      defined(LAPACK_WRAPPER_USE_BLASFEO)
-    CBLAS_DIAG diag_cblas[2]  = { CblasUnit, CblasNonUnit };
-    CBLAS_SIDE side_cblas[2]  = { CblasLeft, CblasRight };
-  #endif
-
-  character const *uplo_blas[2]    = { "Upper", "Lower" };
-  character const *diag_blas[2]    = { "Unit",  "NonUnit" };
-  character const *side_blas[2]    = { "Left",  "Right" };
   character const *balance_blas[4] = {
     "No Balance",
     "Permute Only",
@@ -190,10 +177,10 @@ namespace lapack_wrapper {
       }
       // COMPUTE SUPERDIAGONAL BLOCK OF U
       trsm(
-        RIGHT,
+        SideMultiply::RIGHT,
         ULselect::UPPER,
         Transposition::NO_TRANSPOSE,
-        NON_UNIT,
+        DiagonalType::NON_UNIT,
         M-jjB, JB, 1, Ajj, LDA, Ajj+JB, LDA
       );
       // UPDATE DIAGONAL AND SUBDIAGONAL BLOCKS
@@ -268,10 +255,10 @@ namespace lapack_wrapper {
       if ( INFO != 0 ) return INFO + j;
       // COMPUTE SUPERDIAGONAL BLOCK OF U
       trsm(
-        LEFT,
+        SideMultiply::LEFT,
         ULselect::LOWER,
         Transposition::NO_TRANSPOSE,
-        UNIT,
+        DiagonalType::UNIT,
         JB, N-jjB, 1.0, Ajj, LDA, Ajj+JB*LDA, LDA
       );
       // UPDATE DIAGONAL AND SUBDIAGONAL BLOCKS
@@ -351,10 +338,10 @@ namespace lapack_wrapper {
     }
     // risolvo R
     trsm(
-      LEFT,
+      SideMultiply::LEFT,
       ULselect::UPPER,
       Transposition::NO_TRANSPOSE,
-      NON_UNIT,
+      DiagonalType::NON_UNIT,
       N, nrhs, 1.0, &Tmat.front(), N, RHS, ldRHS
     );
   }

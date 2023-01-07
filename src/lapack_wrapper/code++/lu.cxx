@@ -350,14 +350,16 @@ namespace lapack_wrapper {
     // Solve for L part
     trsv(
       ULselect::LOWER,
-      Transposition::NO_TRANSPOSE, UNIT,
+      Transposition::NO_TRANSPOSE,
+      DiagonalType::UNIT,
       m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
     // Solve for U part
     trsv(
       ULselect::UPPER,
-      Transposition::NO_TRANSPOSE, NON_UNIT,
+      Transposition::NO_TRANSPOSE,
+      DiagonalType::NON_UNIT,
       m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
@@ -377,17 +379,19 @@ namespace lapack_wrapper {
 
     // Solve for L part
     trsm(
-      LEFT,
+      SideMultiply::LEFT,
       ULselect::LOWER,
-      Transposition::NO_TRANSPOSE, UNIT,
+      Transposition::NO_TRANSPOSE,
+      DiagonalType::UNIT,
       m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
     // Solve for U part
     trsm(
-      LEFT,
+      SideMultiply::LEFT,
       ULselect::UPPER,
-      Transposition::NO_TRANSPOSE, NON_UNIT,
+      Transposition::NO_TRANSPOSE,
+      DiagonalType::NON_UNIT,
       m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
@@ -408,14 +412,16 @@ namespace lapack_wrapper {
     // Solve for U part
     trsv(
       ULselect::UPPER,
-      Transposition::TRANSPOSE, NON_UNIT,
+      Transposition::TRANSPOSE,
+      DiagonalType::NON_UNIT,
       m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
     // Solve for L part
     trsv(
       ULselect::LOWER,
-      Transposition::TRANSPOSE, UNIT,
+      Transposition::TRANSPOSE,
+      DiagonalType::UNIT,
       m_nRC, m_Afactorized, m_nRC, xb, 1
     );
 
@@ -436,17 +442,19 @@ namespace lapack_wrapper {
 
     // Solve for U part
     trsm(
-      LEFT,
+      SideMultiply::LEFT,
       ULselect::UPPER,
-      Transposition::TRANSPOSE, NON_UNIT,
+      Transposition::TRANSPOSE,
+      DiagonalType::NON_UNIT,
       m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 
     // Solve for L part
     trsm(
-      LEFT,
+      SideMultiply::LEFT,
       ULselect::LOWER,
-      Transposition::TRANSPOSE, UNIT,
+      Transposition::TRANSPOSE,
+      DiagonalType::UNIT,
       m_nRC, nrhs, 1.0, m_Afactorized, m_nRC, B, ldB
     );
 

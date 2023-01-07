@@ -132,11 +132,11 @@ namespace lapack_wrapper {
     integer       ldC
   ) const {
     UTILS_ASSERT(
-      (SIDE == lapack_wrapper::LEFT  && NR == m_nrows) ||
-      (SIDE == lapack_wrapper::RIGHT && NC == m_nrows),
+      (SIDE == SideMultiply::LEFT  && NR == m_nrows) ||
+      (SIDE == SideMultiply::RIGHT && NC == m_nrows),
       "QR_no_alloc::applyQ( SIDE = {}, TRANS = {}, Nrefl = {}, NR = {}, NC = {}, C, ldC = {})\n"
       "original matrix is {} x {}\n",
-      SideMultiply_name[SIDE],
+      to_blas(SIDE),
       to_blas(TRANS),
       nRefl, NR, NC, ldC,
       m_nrows, m_ncols
@@ -162,14 +162,14 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR_no_alloc<T>::Q_mul( real_type x[] ) const {
-    applyQ( LEFT, Transposition::NO_TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
+    applyQ( SideMultiply::LEFT, Transposition::NO_TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
   }
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
   QR_no_alloc<T>::Qt_mul( real_type x[] ) const {
-    applyQ( LEFT, Transposition::TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
+    applyQ( SideMultiply::LEFT, Transposition::TRANSPOSE, m_nReflector, m_nrows, 1, x, m_nrows );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -182,7 +182,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( LEFT, Transposition::NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ( SideMultiply::LEFT, Transposition::NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -195,7 +195,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( LEFT, Transposition::TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ( SideMultiply::LEFT, Transposition::TRANSPOSE, m_nReflector, nr, nc, C, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -208,7 +208,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( RIGHT, Transposition::NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ( SideMultiply::RIGHT, Transposition::NO_TRANSPOSE, m_nReflector, nr, nc, C, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -221,7 +221,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    applyQ( RIGHT, Transposition::TRANSPOSE, m_nReflector, nr, nc, C, ldC );
+    applyQ( SideMultiply::RIGHT, Transposition::TRANSPOSE, m_nReflector, nr, nc, C, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -233,7 +233,8 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::invR_mul( real_type x[], integer incx ) const {
     trsv( // m_nrows = leading dimension
       ULselect::UPPER,
-      Transposition::NO_TRANSPOSE, NON_UNIT,
+      Transposition::NO_TRANSPOSE,
+      DiagonalType::NON_UNIT,
       m_nReflector, m_Afactorized, m_nrows, x, incx
     );
   }
@@ -244,9 +245,10 @@ namespace lapack_wrapper {
   void
   QR_no_alloc<T>::invR_mul( integer nr, integer nc, real_type C[], integer ldC ) const {
     trsm(
-      LEFT,
+      SideMultiply::LEFT,
       ULselect::UPPER,
-      Transposition::NO_TRANSPOSE, NON_UNIT,
+      Transposition::NO_TRANSPOSE,
+      DiagonalType::NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
   }
@@ -258,7 +260,8 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::invRt_mul( real_type x[], integer incx ) const {
     trsv( // m_nrows = leading dimension
       ULselect::UPPER,
-      Transposition::TRANSPOSE, NON_UNIT,
+      Transposition::TRANSPOSE,
+      DiagonalType::NON_UNIT,
       m_nReflector, m_Afactorized, m_nrows, x, incx
     );
   }
@@ -274,9 +277,10 @@ namespace lapack_wrapper {
     integer   ldC
   ) const {
     trsm(
-      LEFT,
+      SideMultiply::LEFT,
       ULselect::UPPER,
-      Transposition::TRANSPOSE, NON_UNIT,
+      Transposition::TRANSPOSE,
+      DiagonalType::NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
   }
@@ -292,9 +296,10 @@ namespace lapack_wrapper {
     integer ldC
   ) const {
     trsm(
-      RIGHT,
+      SideMultiply::RIGHT,
       ULselect::UPPER,
-      Transposition::NO_TRANSPOSE, NON_UNIT,
+      Transposition::NO_TRANSPOSE,
+      DiagonalType::NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
   }
@@ -305,9 +310,10 @@ namespace lapack_wrapper {
   void
   QR_no_alloc<T>::mul_invRt( integer nr, integer nc, real_type C[], integer ldC ) const {
     trsm(
-      RIGHT,
+      SideMultiply::RIGHT,
       ULselect::UPPER,
-      Transposition::TRANSPOSE, NON_UNIT,
+      Transposition::TRANSPOSE,
+      DiagonalType::NON_UNIT,
       nr, nc, 1.0, m_Afactorized, m_nrows, C, ldC
     );
   }

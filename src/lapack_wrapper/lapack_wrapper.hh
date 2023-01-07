@@ -317,17 +317,8 @@ namespace lapack_wrapper {
 
   #endif
 
-  #if defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-      defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-      defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
-      defined(LAPACK_WRAPPER_USE_BLASFEO)
-    extern CBLAS_DIAG diag_cblas[2];
-    extern CBLAS_SIDE side_cblas[2];
-  #endif
-
   extern character const *uplo_blas[2];
   extern character const *diag_blas[2];
-  extern character const *side_blas[2];
 
   extern character const *balance_blas[4];
   extern character const *job_blas[4];
@@ -392,20 +383,53 @@ namespace lapack_wrapper {
 
   //============================================================================
 
-  using DiagonalType = enum {
+  using DiagonalType = enum class DiagonalType : integer {
     UNIT     = 0,
     NON_UNIT = 1
   };
 
-  extern char const *DiagonalType_name[];
+  inline
+  char *
+  to_blas( DiagonalType const & DT ) {
+    switch( DT ) {
+    case DiagonalType::UNIT:     return const_cast<char*>("UNIT");
+    case DiagonalType::NON_UNIT: return const_cast<char*>("NON_UNIT");
+    }
+  }
 
-  using SideMultiply = enum {
+  inline
+  CBLAS_DIAG
+  to_cblas( DiagonalType const & DT ) {
+    switch( DT ) {
+    case DiagonalType::UNIT:     return CblasUnit;
+    case DiagonalType::NON_UNIT: return CblasNonUnit;
+    }
+  }
+
+  //============================================================================
+
+  using SideMultiply = enum class SideMultiply : integer {
     LEFT   = 0,
-    RIGHT  = 1,
-    C_OR_T = 2
+    RIGHT  = 1
   };
 
-  extern char const *SideMultiply_name[];
+  inline
+  char *
+  to_blas( SideMultiply const & UL ) {
+    switch( UL ) {
+    case SideMultiply::LEFT:  return const_cast<char*>("LEFT");
+    case SideMultiply::RIGHT: return const_cast<char*>("RIGHT");
+    }
+  }
+
+  inline
+  CBLAS_SIDE
+  to_cblas( SideMultiply const & UL ) {
+    switch( UL ) {
+    case SideMultiply::LEFT:  return CblasLeft;
+    case SideMultiply::RIGHT: return CblasRight;
+    }
+  }
 
   using BalanceType = enum {
     NO_BALANCE        = 0, // 'N'
