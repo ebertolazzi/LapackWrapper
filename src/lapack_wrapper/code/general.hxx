@@ -3001,28 +3001,16 @@ namespace lapack_wrapper {
   ) {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(slascl)(
-      const_cast<character*>(mtype_blas[TYPE]),
-      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
-    );
+    CLAPACKNAME(slascl)( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
     #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
           defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(slascl)(
-      mtype_blas[TYPE],
-      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
-    );
+    LAPACK_F77NAME(slascl)( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-    LAPACK_F77NAME(slascl)(
-      const_cast<character*>(mtype_blas[TYPE]),
-      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
-    );
+    LAPACK_F77NAME(slascl)( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_slascl(
-      const_cast<character*>(mtype_blas[TYPE]),
-      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
-    );
+    LAPACK_slascl( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    slascl( mtype_blas[TYPE], &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info);
+    slascl( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info);
     #else
     #error "LapackWrapper undefined mapping!"
     #endif
@@ -3044,27 +3032,16 @@ namespace lapack_wrapper {
   ) {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    CLAPACKNAME(dlascl)(
-      const_cast<character*>(mtype_blas[TYPE]),
-      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
-    );
+    CLAPACKNAME(dlascl)( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
     #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
           defined(LAPACK_WRAPPER_USE_ATLAS)
-    LAPACK_F77NAME(dlascl)(
-      mtype_blas[TYPE], &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
-    );
+    LAPACK_F77NAME(dlascl)( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-    LAPACK_F77NAME(dlascl)(
-      const_cast<character*>(mtype_blas[TYPE]),
-      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
-    );
+    LAPACK_F77NAME(dlascl)( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_dlascl(
-      const_cast<character*>(mtype_blas[TYPE]),
-      &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info
-    );
+    LAPACK_dlascl( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dlascl( mtype_blas[TYPE], &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info);
+    dlascl( to_blas(TYPE), &KL, &KU, &FROM, &TO, &M, &N, A, &LDA, &info);
     #else
     #error "LapackWrapper undefined mapping!"
     #endif

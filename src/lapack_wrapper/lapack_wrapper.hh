@@ -317,11 +317,7 @@ namespace lapack_wrapper {
 
   #endif
 
-  extern character const *uplo_blas[2];
-  extern character const *diag_blas[2];
-
   extern character const *balance_blas[4];
-  extern character const *mtype_blas[5];
   extern character const *equilibrate_blas[4];
 
   //============================================================================
@@ -429,17 +425,6 @@ namespace lapack_wrapper {
 
   //============================================================================
 
-  using BalanceType = enum {
-    NO_BALANCE        = 0, // 'N'
-    PERMUTE_ONLY      = 1, // 'P'
-    SCALE_ONLY        = 2, // 'S'
-    PERMUTE_AND_SCALE = 3  // 'B'
-  };
-
-  extern char const *BalanceType_name[];
-
-  //============================================================================
-
   using JobType = enum class JobType : integer {
     ALL     = 0, // 'A'
     REDUCED = 1, // 'S'
@@ -512,15 +497,36 @@ namespace lapack_wrapper {
 
   //============================================================================
 
-  using MatrixType = enum {
-    FULL_MATRIX             = 0,
-    LOWER_TRIANGULAR_MATRIX = 1,
-    UPPER_TRIANGULAR_MATRIX = 2,
-    HESSENBERG_MATRIX       = 3,
-    BANDED_MATRIX           = 4
+  using MatrixType = enum class MatrixType : integer {
+    FULL             = 0,
+    LOWER_TRIANGULAR = 1,
+    UPPER_TRIANGULAR = 2,
+    HESSENBERG       = 3,
+    BANDED           = 4
   };
 
-  extern char const *MatrixType_name[];
+  inline
+  char *
+  to_blas( MatrixType const & MT ) {
+    switch( MT ) {
+    case MatrixType::FULL:             return const_cast<char*>("GENERAL FULL");
+    case MatrixType::LOWER_TRIANGULAR: return const_cast<char*>("LOWER_TRIANGULAR");
+    case MatrixType::UPPER_TRIANGULAR: return const_cast<char*>("UPPER_TRIANGULAR");
+    case MatrixType::HESSENBERG:       return const_cast<char*>("HESSENBERG");
+    case MatrixType::BANDED:           return const_cast<char*>("BANDED");
+    }
+  }
+
+  //============================================================================
+
+  using BalanceType = enum {
+    NO_BALANCE        = 0, // 'N'
+    PERMUTE_ONLY      = 1, // 'P'
+    SCALE_ONLY        = 2, // 'S'
+    PERMUTE_AND_SCALE = 3  // 'B'
+  };
+
+  extern char const *BalanceType_name[];
 
   //============================================================================
 

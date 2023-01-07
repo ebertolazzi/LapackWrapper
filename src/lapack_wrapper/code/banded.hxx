@@ -203,19 +203,18 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(stbmv)(
-      CblasColMajor, to_cblas(UPLO), to_cblas(TRANS), to_cblas(DIAG),
+      CblasColMajor,
+      to_cblas(UPLO), to_cblas(TRANS), to_cblas(DIAG),
       N, K, A, ldA, xb, incx
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     stbmv(
-      to_blas(UPLO), to_blas(TRANS), diag_blas[DIAG],
+      to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
       &N, &K, A, &ldA, xb, &incx
     );
     #else
     BLASFUNC(stbmv)(
-      to_blas(UPLO),
-      to_blas(TRANS),
-      const_cast<character*>(diag_blas[DIAG]),
+      to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
       &N, &K,
       const_cast<real*>(A), &ldA, xb, &incx
     );
@@ -247,13 +246,12 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dtbmv(
-      to_blas(UPLO), to_blas(TRANS), diag_blas[DIAG],
+      to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
       &N, &K, A, &ldA, xb, &incx
     );
     #else
     BLASFUNC(dtbmv)(
-      to_blas(UPLO), to_blas(TRANS),
-      const_cast<character*>(diag_blas[DIAG]),
+      to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
       &N, &K,
       const_cast<doublereal*>(A), &ldA, xb, &incx
     );
@@ -449,7 +447,6 @@ namespace lapack_wrapper {
     #else
     BLASFUNC(stbsv)(
       to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
-      const_cast<character*>(diag_blas[DIAG]),
       &N, &K,
       const_cast<real*>(A), &ldA, xb, &incx
     );
@@ -488,7 +485,6 @@ namespace lapack_wrapper {
     #else
     BLASFUNC(dtbsv)(
       to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
-      const_cast<character*>(diag_blas[DIAG]),
       &N, &K,
       const_cast<doublereal*>(A), &ldA, xb, &incx
     );

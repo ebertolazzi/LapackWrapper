@@ -57,13 +57,6 @@ namespace lapack_wrapper {
     "SCALE_ONLY",
     "PERMUTE_AND_SCALE"
   };
-  char const *MatrixType_name[] = {
-    "FULL_MATRIX",
-    "LOWER_TRIANGULAR_MATRIX",
-    "UPPER_TRIANGULAR_MATRIX",
-    "HESSENBERG_MATRIX",
-    "BANDED_MATRIX"
-  };
   char const *EquilibrationType_name[] = {
     "NO_EQUILIBRATE",
     "EQUILIBRATE_ROWS",
@@ -76,14 +69,6 @@ namespace lapack_wrapper {
     "Permute Only",
     "Scale Only",
     "Both permute and scale"
-  };
-
-  character const *mtype_blas[5]  = {
-    "G", // A is a full matrix.
-    "L", // A is a lower triangular matrix.
-    "U", // A is an upper triangular matrix.
-    "H", // A is an upper Hessenberg matrix.
-    "B"  // A is a symmetric band matrix with lower bandwidth KL
   };
 
   character const *equilibrate_blas[4]  = { "N", "R", "C", "B" };
