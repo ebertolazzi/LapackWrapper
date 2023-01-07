@@ -321,7 +321,6 @@ namespace lapack_wrapper {
   extern character const *diag_blas[2];
 
   extern character const *balance_blas[4];
-  extern character const *job_blas[4];
   extern character const *sense_blas[4];
   extern character const *direct_blas[2];
   extern character const *store_blas[2];
@@ -431,6 +430,8 @@ namespace lapack_wrapper {
     }
   }
 
+  //============================================================================
+
   using BalanceType = enum {
     NO_BALANCE        = 0, // 'N'
     PERMUTE_ONLY      = 1, // 'P'
@@ -440,14 +441,27 @@ namespace lapack_wrapper {
 
   extern char const *BalanceType_name[];
 
-  using JobType = enum {
+  //============================================================================
+
+  using JobType = enum class JobType : integer {
     ALL     = 0, // 'A'
     REDUCED = 1, // 'S'
     INPLACE = 2, // 'O'
     NO_JOB  = 3  // 'N'
   };
 
-  extern char const *JobType_name[];
+  inline
+  char *
+  to_blas( JobType const & JOB ) {
+    switch( JOB ) {
+    case JobType::ALL:     return const_cast<char*>("ALL");
+    case JobType::REDUCED: return const_cast<char*>("S"); // REDUCED
+    case JobType::INPLACE: return const_cast<char*>("O"); // INPLACE
+    case JobType::NO_JOB:  return const_cast<char*>("NO_JOB");
+    }
+  }
+
+  //============================================================================
 
   using SenseType = enum {
     NONE                         = 0, // 'N'
@@ -458,6 +472,8 @@ namespace lapack_wrapper {
 
   extern char const *SenseType_name[];
 
+  //============================================================================
+
   using DirectionType = enum {
     FORWARD  = 0,
     BACKWARD = 1
@@ -465,12 +481,16 @@ namespace lapack_wrapper {
 
   extern char const *DirectionType_name[];
 
+  //============================================================================
+
   using StorageType = enum {
     COLUMNWISE = 0,
     ROWWISE    = 1
   };
 
   extern char const *StorageType_name[];
+
+  //============================================================================
 
   using MatrixType = enum {
     FULL_MATRIX             = 0,
@@ -481,6 +501,8 @@ namespace lapack_wrapper {
   };
 
   extern char const *MatrixType_name[];
+
+  //============================================================================
 
   using EquilibrationType = enum {
     NO_EQUILIBRATE      = 0,

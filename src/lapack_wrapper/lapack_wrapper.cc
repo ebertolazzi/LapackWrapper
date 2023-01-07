@@ -57,12 +57,6 @@ namespace lapack_wrapper {
     "SCALE_ONLY",
     "PERMUTE_AND_SCALE"
   };
-  char const *JobType_name[] = {
-    "ALL",
-    "REDUCED",
-    "INPLACE",
-    "NO_JOB"
-  };
   char const *SenseType_name[] = {
     "NONE",
     "EIGENVALUES_ONLY",
@@ -92,7 +86,6 @@ namespace lapack_wrapper {
     "Both permute and scale"
   };
 
-  character const *job_blas[4]   = { "A", "S", "O", "N" };
   character const *sense_blas[4] = { "N", "E", "V", "B" };
 
   character const *direct_blas[2] = { "Forward", "Backward" };

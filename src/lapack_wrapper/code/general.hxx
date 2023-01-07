@@ -4911,36 +4911,32 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)
     LAPACK_F77NAME(sgesvd)(
-      job_blas[JOBU],
-      job_blas[JOBVT],
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sgesvd)(
-      const_cast<character*>(job_blas[JOBU]),
-      const_cast<character*>(job_blas[JOBVT]),
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_sgesvd(
-      const_cast<character*>(job_blas[JOBU]),
-      const_cast<character*>(job_blas[JOBVT]),
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgesvd(
-      job_blas[JOBU], job_blas[JOBVT],
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(sgesvd)(
-      const_cast<character*>(job_blas[JOBU]),
-      const_cast<character*>(job_blas[JOBVT]),
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
@@ -4970,36 +4966,32 @@ namespace lapack_wrapper {
     integer info = 0;
     #if defined(LAPACK_WRAPPER_USE_LAPACK)
     LAPACK_F77NAME(dgesvd)(
-      job_blas[JOBU],
-      job_blas[JOBVT],
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dgesvd)(
-      const_cast<character*>(job_blas[JOBU]),
-      const_cast<character*>(job_blas[JOBVT]),
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dgesvd(
-      const_cast<character*>(job_blas[JOBU]),
-      const_cast<character*>(job_blas[JOBVT]),
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgesvd(
-      job_blas[JOBU], job_blas[JOBVT],
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dgesvd)(
-      const_cast<character*>(job_blas[JOBU]),
-      const_cast<character*>(job_blas[JOBVT]),
+      to_blas(JOBU), to_blas(JOBVT),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, &info
     );
@@ -5211,24 +5203,24 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_ATLAS)  || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sgesdd)(
-      const_cast<character*>(job_blas[JOBZ]),
+      to_blas(JOBZ),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, IWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_sgesdd(
-      const_cast<character*>(job_blas[JOBZ]),
+      to_blas(JOBZ),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, IWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sgesdd(
-      job_blas[JOBZ],
+      to_blas(JOBZ),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(sgesdd)(
-      const_cast<character*>(job_blas[JOBZ]),
+      to_blas(JOBZ),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info
     );
     #else
@@ -5259,24 +5251,24 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_ATLAS)  || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dgesdd)(
-      const_cast<character*>(job_blas[JOBZ]),
+      to_blas(JOBZ),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, IWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dgesdd(
-      const_cast<character*>(job_blas[JOBZ]),
+      to_blas(JOBZ),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT,
       WORK, &LWORK, IWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dgesdd(
-      job_blas[JOBZ],
+      to_blas(JOBZ),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dgesdd)(
-      const_cast<character*>(job_blas[JOBZ]),
+      to_blas(JOBZ),
       &M, &N, A, &LDA, S, U, &LDU, VT, &LDVT, WORK, &LWORK, IWORK, &info
     );
     #else

@@ -40,7 +40,8 @@ namespace lapack_wrapper {
     integer minRC = std::min(NR,NC);
     real_type tmp;
     integer info = gesvd(
-      REDUCED, REDUCED,
+      JobType::REDUCED,
+      JobType::REDUCED,
       NR, NC,
       nullptr, NR,
       nullptr,
@@ -51,7 +52,7 @@ namespace lapack_wrapper {
     UTILS_ASSERT( info == 0, "SVD::allocate, in gesvd info = {}\n", info );
     integer L = integer(tmp);
     info = gesdd(
-      REDUCED,
+      JobType::REDUCED,
       NR, NC,
       nullptr, NR,
       nullptr,
@@ -118,8 +119,8 @@ namespace lapack_wrapper {
     switch ( m_svd_used ) {
     case USE_GESVD:
       info = gesvd(
-        REDUCED,
-        REDUCED,
+        JobType::REDUCED,
+        JobType::REDUCED,
         m_nrows, m_ncols, m_Afactorized, m_nrows,
         m_Svec,
         m_Umat,    m_nrows,
@@ -134,7 +135,7 @@ namespace lapack_wrapper {
       break;
     case USE_GESDD:
       info = gesdd(
-        REDUCED,
+        JobType::REDUCED,
         m_nrows, m_ncols, m_Afactorized, m_nrows,
         m_Svec,
         m_Umat,    m_nrows,
@@ -162,8 +163,8 @@ namespace lapack_wrapper {
     switch ( m_svd_used ) {
     case USE_GESVD:
       info = gesvd(
-        REDUCED,
-        REDUCED,
+        JobType::REDUCED,
+        JobType::REDUCED,
         m_nrows, m_ncols, m_Afactorized, m_nrows,
         m_Svec,
         m_Umat,    m_nrows,
@@ -173,7 +174,7 @@ namespace lapack_wrapper {
       break;
     case USE_GESDD:
       info = gesdd(
-        REDUCED,
+        JobType::REDUCED,
         m_nrows, m_ncols, m_Afactorized, m_nrows,
         m_Svec,
         m_Umat,    m_nrows,
