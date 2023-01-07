@@ -317,9 +317,6 @@ namespace lapack_wrapper {
 
   #endif
 
-  extern character const *balance_blas[4];
-  extern character const *equilibrate_blas[4];
-
   //============================================================================
 
   using Transposition = enum class Transposition : integer {
@@ -519,25 +516,43 @@ namespace lapack_wrapper {
 
   //============================================================================
 
-  using BalanceType = enum {
+  using BalanceType = enum class BalanceType : integer {
     NO_BALANCE        = 0, // 'N'
     PERMUTE_ONLY      = 1, // 'P'
     SCALE_ONLY        = 2, // 'S'
     PERMUTE_AND_SCALE = 3  // 'B'
   };
 
-  extern char const *BalanceType_name[];
+  inline
+  char *
+  to_blas( BalanceType const & BT ) {
+    switch( BT ) {
+    case BalanceType::NO_BALANCE:        return const_cast<char*>("NO_BALANCE");
+    case BalanceType::PERMUTE_ONLY:      return const_cast<char*>("PERMUTE_ONLY");
+    case BalanceType::SCALE_ONLY:        return const_cast<char*>("SCALE_ONLY");
+    case BalanceType::PERMUTE_AND_SCALE: return const_cast<char*>("BOTH_PERMUTE_AND_SCALE");
+    }
+  }
 
   //============================================================================
 
-  using EquilibrationType = enum {
+  using EquilibrationType = enum class EquilibrationType : integer  {
     NO_EQUILIBRATE      = 0,
     EQUILIBRATE_ROWS    = 1,
     EQUILIBRATE_COLUMNS = 2,
     EQUILIBRATE_BOTH    = 3
   };
 
-  extern char const *EquilibrationType_name[];
+  inline
+  char *
+  to_blas( EquilibrationType const & EQT ) {
+    switch( EQT ) {
+    case EquilibrationType::NO_EQUILIBRATE:      return const_cast<char*>("NO_EQUILIBRATE");
+    case EquilibrationType::EQUILIBRATE_ROWS:    return const_cast<char*>("ROWS_EQUILIBRATE");
+    case EquilibrationType::EQUILIBRATE_COLUMNS: return const_cast<char*>("COLUMNS_EQUILIBRATE");
+    case EquilibrationType::EQUILIBRATE_BOTH:    return const_cast<char*>("BOTH_ROW_AND_COLUMN_EQUILIBRATE");
+    }
+  }
 
   //============================================================================
 

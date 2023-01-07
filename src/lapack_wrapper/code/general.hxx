@@ -2072,10 +2072,10 @@ namespace lapack_wrapper {
     #error "LapackWrapper undefined mapping!"
     #endif
     switch ( buffer[0] ) {
-    case 'N': equ = NO_EQUILIBRATE;      break;
-    case 'R': equ = EQUILIBRATE_ROWS;    break;
-    case 'C': equ = EQUILIBRATE_COLUMNS; break;
-    case 'B': equ = EQUILIBRATE_BOTH;    break;
+    case 'N': equ = EquilibrationType::NO_EQUILIBRATE;      break;
+    case 'R': equ = EquilibrationType::EQUILIBRATE_ROWS;    break;
+    case 'C': equ = EquilibrationType::EQUILIBRATE_COLUMNS; break;
+    case 'B': equ = EquilibrationType::EQUILIBRATE_BOTH;    break;
     }
   }
 
@@ -2120,10 +2120,10 @@ namespace lapack_wrapper {
     #error "LapackWrapper undefined mapping!"
     #endif
     switch ( buffer[0] ) {
-    case 'N': equ = NO_EQUILIBRATE;      break;
-    case 'R': equ = EQUILIBRATE_ROWS;    break;
-    case 'C': equ = EQUILIBRATE_COLUMNS; break;
-    case 'B': equ = EQUILIBRATE_BOTH;    break;
+    case 'N': equ = EquilibrationType::NO_EQUILIBRATE;      break;
+    case 'R': equ = EquilibrationType::EQUILIBRATE_ROWS;    break;
+    case 'C': equ = EquilibrationType::EQUILIBRATE_COLUMNS; break;
+    case 'B': equ = EquilibrationType::EQUILIBRATE_BOTH;    break;
     }
   }
 
@@ -4484,7 +4484,7 @@ namespace lapack_wrapper {
     #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(sggevx)(
-      balance_blas[balanc],
+      to_blas(balanc),
       (jobvl?"V":"N"),
       (jobvr?"V":"N"),
       to_blas(sense),
@@ -4501,7 +4501,7 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(sggevx)(
-      const_cast<character*>(balance_blas[balanc]),
+      to_blas(balanc),
       const_cast<character*>(jobvl?"V":"N"),
       const_cast<character*>(jobvr?"V":"N"),
       to_blas(sense),
@@ -4518,7 +4518,7 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_sggevx(
-      const_cast<character*>(balance_blas[balanc]),
+      to_blas(balanc),
       const_cast<character*>(jobvl?"V":"N"),
       const_cast<character*>(jobvr?"V":"N"),
       to_blas(sense),
@@ -4535,7 +4535,7 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     sggevx(
-      balance_blas[balanc],
+      to_blas(balanc),
       (jobvl?"V":"N"),
       (jobvr?"V":"N"),
       to_blas(sense),
@@ -4552,7 +4552,7 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(sggevx)(
-      const_cast<character*>(balance_blas[balanc]),
+      to_blas(balanc),
       const_cast<character*>(jobvl?"V":"N"),
       const_cast<character*>(jobvr?"V":"N"),
       to_blas(sense),
@@ -4609,7 +4609,7 @@ namespace lapack_wrapper {
     #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)
     LAPACK_F77NAME(dggevx)(
-      balance_blas[balanc],
+      to_blas(balanc),
       (jobvl?"V":"N"),
       (jobvr?"V":"N"),
       to_blas(sense),
@@ -4626,7 +4626,7 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     LAPACK_F77NAME(dggevx)(
-      const_cast<character*>(balance_blas[balanc]),
+      to_blas(balanc),
       const_cast<character*>(jobvl?"V":"N"),
       const_cast<character*>(jobvr?"V":"N"),
       to_blas(sense),
@@ -4643,7 +4643,7 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
     LAPACK_dggevx(
-      const_cast<character*>(balance_blas[balanc]),
+      to_blas(balanc),
       const_cast<character*>(jobvl?"V":"N"),
       const_cast<character*>(jobvr?"V":"N"),
       to_blas(sense),
@@ -4660,7 +4660,7 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
     dggevx(
-      balance_blas[balanc],
+      to_blas(balanc),
       (jobvl?"V":"N"),
       (jobvr?"V":"N"),
       to_blas(sense),
@@ -4677,7 +4677,7 @@ namespace lapack_wrapper {
     );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
     CLAPACKNAME(dggevx)(
-      const_cast<character*>(balance_blas[balanc]),
+      to_blas(balanc),
       const_cast<character*>(jobvl?"V":"N"),
       const_cast<character*>(jobvr?"V":"N"),
       to_blas(sense),

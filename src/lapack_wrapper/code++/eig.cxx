@@ -556,7 +556,7 @@ namespace lapack_wrapper {
     integer doLwork    = -1;
     T       Lworkdummy = 1;
     integer info = ggevx(
-      lapack_wrapper::PERMUTE_AND_SCALE,
+      BalanceType::PERMUTE_AND_SCALE,
       false, false,
       SenseType::EIGENVALUES_AND_EIGENVECTORS,
       m_N, nullptr, m_N, nullptr, m_N,
@@ -597,7 +597,7 @@ namespace lapack_wrapper {
   void
   GeneralizedEigenvectors<T>::compute( ) {
     integer info = ggevx(
-      lapack_wrapper::PERMUTE_ONLY, // "B", // ATTENZIONE LA SCALATURA NON FUNZIONA
+      BalanceType::PERMUTE_ONLY, // ATTENZIONE LA SCALATURA NON FUNZIONA
       m_VL != nullptr,
       m_VR != nullptr,
       SenseType::EIGENVALUES_AND_EIGENVECTORS,

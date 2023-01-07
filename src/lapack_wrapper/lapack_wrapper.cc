@@ -50,25 +50,11 @@
 #include <sstream>
 
 namespace lapack_wrapper {
-
-  char const *BalanceType_name[]  = {
-    "NO_BALANCE",
-    "PERMUTE_ONLY",
-    "SCALE_ONLY",
-    "PERMUTE_AND_SCALE"
-  };
   char const *EquilibrationType_name[] = {
     "NO_EQUILIBRATE",
     "EQUILIBRATE_ROWS",
     "EQUILIBRATE_COLUMNS",
     "EQUILIBRATE_BOTH"
-  };
-
-  character const *balance_blas[4] = {
-    "No Balance",
-    "Permute Only",
-    "Scale Only",
-    "Both permute and scale"
   };
 
   character const *equilibrate_blas[4]  = { "N", "R", "C", "B" };
