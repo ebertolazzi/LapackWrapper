@@ -329,9 +329,9 @@ namespace lapack_wrapper {
   char *
   to_blas( Transposition const & T ) {
     switch( T ) {
-    case Transposition::NO:                  return const_cast<char*>("NO_TRANSPOSE");
-    case Transposition::YES:                 return const_cast<char*>("TRANSPOSE");
-    case Transposition::CONJUGATE_TRANSPOSE: return const_cast<char*>("CONJUGATE_TRANSPOSE");
+    case Transposition::NO:  return const_cast<char*>("NO_TRANSPOSE");
+    case Transposition::YES: return const_cast<char*>("TRANSPOSE");
+    default:                 return const_cast<char*>("CONJUGATE_TRANSPOSE");
     }
   }
 
@@ -339,9 +339,9 @@ namespace lapack_wrapper {
   CBLAS_TRANSPOSE
   to_cblas( Transposition const & T ) {
     switch( T ) {
-    case Transposition::NO:                  return CblasNoTrans;
-    case Transposition::YES:                 return CblasTrans;
-    case Transposition::CONJUGATE_TRANSPOSE: return CblasConjTrans;
+    case Transposition::NO:  return CblasNoTrans;
+    case Transposition::YES: return CblasTrans;
+    default:                 return CblasConjTrans;
     }
   }
 
