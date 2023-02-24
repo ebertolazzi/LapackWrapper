@@ -355,19 +355,15 @@ namespace lapack_wrapper {
   inline
   char *
   to_blas( ULselect const & UL ) {
-    switch( UL ) {
-    case ULselect::UPPER: return const_cast<char*>("UPPER");
-    case ULselect::LOWER: return const_cast<char*>("LOWER");
-    }
+    if ( UL == ULselect::UPPER ) return const_cast<char*>("UPPER");
+    return const_cast<char*>("LOWER");
   }
 
   inline
   CBLAS_UPLO
   to_cblas( ULselect const & UL ) {
-    switch( UL ) {
-    case ULselect::UPPER: return CblasUpper;
-    case ULselect::LOWER: return CblasLower;
-    }
+    if ( UL == ULselect::UPPER ) return CblasUpper;
+    return CblasLower;
   }
 
   //============================================================================
@@ -380,19 +376,15 @@ namespace lapack_wrapper {
   inline
   char *
   to_blas( DiagonalType const & DT ) {
-    switch( DT ) {
-    case DiagonalType::UNIT:     return const_cast<char*>("UNIT");
-    case DiagonalType::NON_UNIT: return const_cast<char*>("NON_UNIT");
-    }
+    if ( DT == DiagonalType::UNIT ) return const_cast<char*>("UNIT");
+    return const_cast<char*>("NON_UNIT");
   }
 
   inline
   CBLAS_DIAG
   to_cblas( DiagonalType const & DT ) {
-    switch( DT ) {
-    case DiagonalType::UNIT:     return CblasUnit;
-    case DiagonalType::NON_UNIT: return CblasNonUnit;
-    }
+    if ( DT == DiagonalType::UNIT ) return CblasUnit;
+    return CblasNonUnit;
   }
 
   //============================================================================
@@ -405,19 +397,15 @@ namespace lapack_wrapper {
   inline
   char *
   to_blas( SideMultiply const & UL ) {
-    switch( UL ) {
-    case SideMultiply::LEFT:  return const_cast<char*>("LEFT");
-    case SideMultiply::RIGHT: return const_cast<char*>("RIGHT");
-    }
+    if ( UL ==  SideMultiply::LEFT ) return const_cast<char*>("LEFT");
+    return const_cast<char*>("RIGHT");
   }
 
   inline
   CBLAS_SIDE
   to_cblas( SideMultiply const & UL ) {
-    switch( UL ) {
-    case SideMultiply::LEFT:  return CblasLeft;
-    case SideMultiply::RIGHT: return CblasRight;
-    }
+    if ( UL== SideMultiply::LEFT ) return CblasLeft;
+    return CblasRight;
   }
 
   //============================================================================
@@ -436,7 +424,7 @@ namespace lapack_wrapper {
     case JobType::ALL:     return const_cast<char*>("ALL");
     case JobType::REDUCED: return const_cast<char*>("S"); // REDUCED
     case JobType::INPLACE: return const_cast<char*>("O"); // INPLACE
-    case JobType::NO_JOB:  return const_cast<char*>("NO_JOB");
+    default:               return const_cast<char*>("NO_JOB");
     }
   }
 
@@ -453,10 +441,10 @@ namespace lapack_wrapper {
   char *
   to_blas( SenseType const & ST ) {
     switch( ST ) {
-    case SenseType::NONE:                         return const_cast<char*>("NONE");
-    case SenseType::EIGENVALUES_ONLY:             return const_cast<char*>("EIGENVALUES"); // REDUCED
-    case SenseType::EIGENVECTORS_ONLY:            return const_cast<char*>("VECTORS"); // INPLACE
-    case SenseType::EIGENVALUES_AND_EIGENVECTORS: return const_cast<char*>("BOTH_EIGENVALUES_AND_EIGENVECTORS");
+    case SenseType::NONE:              return const_cast<char*>("NONE");
+    case SenseType::EIGENVALUES_ONLY:  return const_cast<char*>("EIGENVALUES"); // REDUCED
+    case SenseType::EIGENVECTORS_ONLY: return const_cast<char*>("VECTORS"); // INPLACE
+    default:                           return const_cast<char*>("BOTH_EIGENVALUES_AND_EIGENVECTORS");
     }
   }
 
@@ -470,10 +458,8 @@ namespace lapack_wrapper {
   inline
   char *
   to_blas( DirectionType const & DIR ) {
-    switch( DIR ) {
-    case DirectionType::FORWARD:  return const_cast<char*>("FORWARD");
-    case DirectionType::BACKWARD: return const_cast<char*>("BACKWARD"); // REDUCED
-    }
+    if ( DIR == DirectionType::FORWARD ) return const_cast<char*>("FORWARD");
+    return const_cast<char*>("BACKWARD"); // REDUCED
   }
 
   //============================================================================
@@ -486,10 +472,8 @@ namespace lapack_wrapper {
   inline
   char *
   to_blas( StorageType const & ST ) {
-    switch( ST ) {
-    case StorageType::COLUMNWISE: return const_cast<char*>("COLUMNWISE");
-    case StorageType::ROWWISE:    return const_cast<char*>("ROWWISE"); // REDUCED
-    }
+    if ( ST == StorageType::COLUMNWISE ) return const_cast<char*>("COLUMNWISE");
+    return const_cast<char*>("ROWWISE"); // REDUCED
   }
 
   //============================================================================
@@ -510,7 +494,7 @@ namespace lapack_wrapper {
     case MatrixType::LOWER_TRIANGULAR: return const_cast<char*>("LOWER_TRIANGULAR");
     case MatrixType::UPPER_TRIANGULAR: return const_cast<char*>("UPPER_TRIANGULAR");
     case MatrixType::HESSENBERG:       return const_cast<char*>("HESSENBERG");
-    case MatrixType::BANDED:           return const_cast<char*>("BANDED");
+    default:                           return const_cast<char*>("BANDED");
     }
   }
 
@@ -527,10 +511,10 @@ namespace lapack_wrapper {
   char *
   to_blas( BalanceType const & BT ) {
     switch( BT ) {
-    case BalanceType::NO_BALANCE:        return const_cast<char*>("NO_BALANCE");
-    case BalanceType::PERMUTE_ONLY:      return const_cast<char*>("PERMUTE_ONLY");
-    case BalanceType::SCALE_ONLY:        return const_cast<char*>("SCALE_ONLY");
-    case BalanceType::PERMUTE_AND_SCALE: return const_cast<char*>("BOTH_PERMUTE_AND_SCALE");
+    case BalanceType::NO_BALANCE:   return const_cast<char*>("NO_BALANCE");
+    case BalanceType::PERMUTE_ONLY: return const_cast<char*>("PERMUTE_ONLY");
+    case BalanceType::SCALE_ONLY:   return const_cast<char*>("SCALE_ONLY");
+    default:                        return const_cast<char*>("BOTH_PERMUTE_AND_SCALE");
     }
   }
 
@@ -550,7 +534,7 @@ namespace lapack_wrapper {
     case EquilibrationType::NO_EQUILIBRATE:      return const_cast<char*>("NO_EQUILIBRATE");
     case EquilibrationType::EQUILIBRATE_ROWS:    return const_cast<char*>("ROWS_EQUILIBRATE");
     case EquilibrationType::EQUILIBRATE_COLUMNS: return const_cast<char*>("COLUMNS_EQUILIBRATE");
-    case EquilibrationType::EQUILIBRATE_BOTH:    return const_cast<char*>("BOTH_ROW_AND_COLUMN_EQUILIBRATE");
+    default:                                     return const_cast<char*>("BOTH_ROW_AND_COLUMN_EQUILIBRATE");
     }
   }
 
