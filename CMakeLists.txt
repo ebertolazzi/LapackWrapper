@@ -182,15 +182,17 @@ if ( UTILS_ENABLE_TESTS )
     if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
       find_library(
         ZLIB_LIBRARIES zlibstaticd
-        HINTS ./submodules/Utils/ThirdParties/zlib-ng/lib
+        HINTS ./submodules/Utils/ThirdParties/zlib-ng/lib/win/lib
+              ${UPDIR}/Utils/lib3rd/lib ${UPDIR}/Utils/lib3rd/dll
       )
     else()
       find_library(
         ZLIB_LIBRARIES zlibstatic
-        HINTS ./submodules/Utils/ThirdParties/zlib-ng/lib
+        HINTS ./submodules/Utils/ThirdParties/zlib-ng/lib/win/lib
+               ${UPDIR}/Utils/lib3rd/lib ${UPDIR}/Utils/lib3rd/dll
       )
     endif()
-    set( ZLIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParties/zlib-ng/include ")
+    set( ZLIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParties/zlib-ng/win/include " "${UPDIR}/Utils/lib3rd/include ")
   endif()
 
   set( EXELISTBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin" )

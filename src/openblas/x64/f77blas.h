@@ -64,24 +64,24 @@ void   BLASFUNC(sbf16tos)  (blasint *, bfloat16 *, blasint *, float *,    blasin
 void   BLASFUNC(dbf16tod)  (blasint *, bfloat16 *, blasint *, double *,   blasint *);
 
 #ifdef RETURN_BY_STRUCT
-using myccomplex_t = struct {
+typedef struct {
   float r, i;
-};
+} myccomplex_t;
 
-using myzcomplex_t = struct {
+typedef struct {
   double r, i;
-};
+} myzcomplex_t;
 
-using myxcomplex_t = struct {
+typedef struct {
   xdouble r, i;
-} ;
+} myxcomplex_t;
 
-myccomplex_t BLASFUNC(cdotu)  (blasint *, float  *, blasint *, float  *, blasint *);
-myccomplex_t BLASFUNC(cdotc)  (blasint *, float  *, blasint *, float  *, blasint *);
-myzcomplex_t BLASFUNC(zdotu)  (blasint *, double  *, blasint *, double  *, blasint *);
-myzcomplex_t BLASFUNC(zdotc)  (blasint *, double  *, blasint *, double  *, blasint *);
-myxcomplex_t BLASFUNC(xdotu)  (blasint *, xdouble  *, blasint *, xdouble  *, blasint *);
-myxcomplex_t BLASFUNC(xdotc)  (blasint *, xdouble  *, blasint *, xdouble  *, blasint *);
+myccomplex_t    BLASFUNC(cdotu)  (blasint *, float  *, blasint *, float  *, blasint *);
+myccomplex_t    BLASFUNC(cdotc)  (blasint *, float  *, blasint *, float  *, blasint *);
+myzcomplex_t    BLASFUNC(zdotu)  (blasint *, double  *, blasint *, double  *, blasint *);
+myzcomplex_t    BLASFUNC(zdotc)  (blasint *, double  *, blasint *, double  *, blasint *);
+myxcomplex_t    BLASFUNC(xdotu)  (blasint *, xdouble  *, blasint *, xdouble  *, blasint *);
+myxcomplex_t    BLASFUNC(xdotc)  (blasint *, xdouble  *, blasint *, xdouble  *, blasint *);
 
 #elif defined RETURN_BY_STACK
 void  BLASFUNC(cdotu)  (openblas_complex_float   *,  blasint *, float  * , blasint *, float  *,  blasint *);
