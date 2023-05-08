@@ -3,6 +3,7 @@ require_relative "../../cmake_utils/Rakefile_common.rb"
 task :default => :install_osx do end
 
 VER='5.3.0'
+#VER='6.0.0'
 FILENAME="superlu-#{VER}.tar.gz"
 
 desc "download superlu-#{VER}.tar.gz lib"

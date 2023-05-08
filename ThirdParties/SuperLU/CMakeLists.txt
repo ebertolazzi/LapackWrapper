@@ -12,8 +12,8 @@ SET( CMAKE_INSTALL_MESSAGE NEVER )
 # Project Version
 PROJECT( SuperLU C CXX )
 set(VERSION_MAJOR "5")
-set(VERSION_MINOR "2")
-set(VERSION_BugFix "2")
+set(VERSION_MINOR "3")
+set(VERSION_BugFix "0")
 set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BugFix})
 
 ######################################################################
@@ -86,3 +86,5 @@ add_subdirectory( superlu/SRC )
 # file(WRITE "make.defs" "# can be exposed to users"
 #  ${CMAKE_C_COMPILER}  )
 configure_file( superlu/make.inc.in superlu/make.inc )
+#configure_file( superlu/superlu.pc.in superlu/superlu.pc )
+#configure_file( superlu/SRC/superlu_config.h.in superlu/SRC/superlu_config.h )
