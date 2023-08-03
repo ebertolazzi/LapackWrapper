@@ -4870,9 +4870,6 @@ namespace Sparse_tool {
     } else {
       s << "ordered = NO\n";
     }
-    integer N = 1;
-    integer n = M.maxSize();
-    while ( (n/=10) > 0 ) ++N;
     for ( M.Begin(); M.End(); M.Next() )
       fmt::print( s, "({},{}) = {}\n", M.row(), M.column(), M.value() );
     return s;
