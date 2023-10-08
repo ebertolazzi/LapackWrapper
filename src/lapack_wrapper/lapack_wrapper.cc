@@ -304,7 +304,7 @@ namespace lapack_wrapper {
     integer JPIV[]
   ) {
     // Set constants to control overflow
-    integer INFO = 0;
+    integer INFO   = 0;
     T       EPS    = lamch<T>("P");
     T       SMLNUM = lamch<T>("S") / EPS;
     T       SMIN   = 0;

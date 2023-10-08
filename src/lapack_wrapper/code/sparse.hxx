@@ -557,7 +557,7 @@ namespace lapack_wrapper {
         "NNZ = {}, |rows| = {}, |cols| = {}, |vals| = {}\n",
         NNZ, m_rows.size(), m_cols.size(), m_vals.size()
       );
-      integer offs = 0;
+      integer offs{0};
       if ( fi ) ++offs;
       if ( m_fortran_indexing ) --offs;
       for ( integer index = 0; index < NNZ; ++index ) {
@@ -575,7 +575,7 @@ namespace lapack_wrapper {
       std::vector<r_type> & v,
       bool                  fi
     ) {
-      integer offs = 0;
+      integer offs{0};
       if ( fi ) ++offs;
       if ( m_fortran_indexing ) --offs;
       i.clear(); i.reserve( m_nnz );

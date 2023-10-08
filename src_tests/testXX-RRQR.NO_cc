@@ -79,7 +79,7 @@ int main( int argc, char *argv[] ) {
     buff_wk_qp4, lwork, info
   );
   // Current factorization.
-  // dgeqp3_( & m_A, & n_A, buff_A, & ldim_A, buff_p, buff_tau, 
+  // dgeqp3_( & m_A, & n_A, buff_A, & ldim_A, buff_p, buff_tau,
   //          buff_wk_qp4, & lwork, & info );
   printf( "%% Just after computing factorization.\n" );
 

@@ -521,7 +521,7 @@ namespace lapack_wrapper {
   ) const {
     re.clear(); re.reserve( m_N );
     im.clear(); im.reserve( m_N );
-    for ( int i = 0;i < m_N; ++i ) {
+    for ( integer i = 0;i < m_N; ++i ) {
       re.push_back( m_alphaRe[i]/m_beta[i] );
       im.push_back( m_alphaIm[i]/m_beta[i] );
     }
@@ -535,7 +535,7 @@ namespace lapack_wrapper {
     std::vector<std::complex<real_type> > & eigs
   ) const {
     eigs.clear(); eigs.reserve( m_N );
-    for ( int i = 0;i < m_N; ++i )
+    for ( integer i = 0;i < m_N; ++i )
       eigs.push_back(
         std::complex<real_type>( m_alphaRe[i], m_alphaIm[i] ) / m_beta[i]
       );

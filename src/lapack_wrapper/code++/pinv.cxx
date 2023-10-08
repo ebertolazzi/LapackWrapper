@@ -85,10 +85,10 @@ namespace lapack_wrapper {
     m_LWorkQR2 = Lwork-L1-(NR+NC)*NC;
     m_WorkQR2  = ptr;
 
-    m_nrows    = NR;
-    m_ncols    = NC;
-    m_rank     = 0;
-    m_rcmax    = NR > NC ? NR : NC;
+    m_nrows = NR;
+    m_ncols = NC;
+    m_rank  = 0;
+    m_rcmax = NR > NC ? NR : NC;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

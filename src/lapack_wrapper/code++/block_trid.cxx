@@ -99,7 +99,7 @@ namespace lapack_wrapper {
     // use a temporary vector
     std::vector<integer> rBlocks;
     rBlocks.reserve(nblks+1);
-    integer n = 0;
+    integer n{0};
     for ( integer k = 0; k <= nblks; ++k, n += block_size )
       rBlocks.push_back(n);
     this->setup( nblks, &rBlocks.front() );
@@ -440,7 +440,7 @@ namespace lapack_wrapper {
     if ( !m_is_factorized ) return false;
 
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
-    integer k = 0;
+    integer k   = 0;
     integer nr0 = this->D_nrows(0), nr1;
     real_type * xkm1 = xb, *xk;
     while ( ++k < m_nBlocks ) {
@@ -503,7 +503,7 @@ namespace lapack_wrapper {
     if ( !m_is_factorized ) return false;
 
     // RR{k} = RR{k}-LL{k-1}*RR{k-1};
-    integer k = 0;
+    integer k   = 0;
     integer nr0 = this->D_nrows(0), nr1;
     real_type * Bkm1 = B, *Bk;
     while ( ++k < m_nBlocks ) {

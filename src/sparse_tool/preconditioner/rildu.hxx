@@ -219,12 +219,12 @@ namespace Sparse_tool {
         #endif
           integer LRi  = L_R(i);
           integer LRi1 = L_R(i+1);
-          real_type bf = 0;
+          real_type bf{0};
           for ( integer ii = LRi; ii < LRi1; ++ii ) bf += W(L_J(ii))*L_A(ii);
           W(i) -= bf;
         }
 
-        real_type bf = 0;
+        real_type bf{0};
         for ( kk = LRk; kk < LRk1; ++kk ) bf += L_A(kk) * W(L_J(kk));
         D(k) -= bf;
 

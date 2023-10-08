@@ -2476,7 +2476,7 @@ namespace Sparse_tool {
     void
     convert( SparseBase<MAT> const & M, Compare cmp ) {
       // count nonzero
-      integer nz = 0;
+      integer nz{0};
       for ( M.Begin(); M.End(); M.Next() )
         if ( cmp( M.row(), M.column() ) ) ++nz;
 
@@ -2632,7 +2632,7 @@ namespace Sparse_tool {
     internal_order() {
       QuickSortIJ<integer>( I.data(), J.data(), SPARSE::sp_nnz );
       // eliminate duplicate elements
-      integer i1 = 0, i = 0;
+      integer i1{0}, i{0};
       SPARSE::sp_lower_nnz = 0;
       SPARSE::sp_diag_nnz  = 0;
       SPARSE::sp_upper_nnz = 0;
@@ -2829,7 +2829,7 @@ namespace Sparse_tool {
     void
     convert( SparseBase<MAT> const & M, Compare cmp ) {
       // count nonzero
-      integer nz = 0;
+      integer nz{0};
       for ( M.Begin(); M.End(); M.Next() )
         if ( cmp( M.row(), M.column() ) ) ++nz;
 
@@ -2977,7 +2977,7 @@ namespace Sparse_tool {
     internal_order() {
       QuickSortIJ2<integer,T>( I.data(), J.data(), A.data(), SPARSE::sp_nnz );
       // eliminate duplicate elements
-      integer i1 = 0, i = 0;
+      integer i1{0}, i{0};
       SPARSE::sp_lower_nnz = 0;
       SPARSE::sp_diag_nnz  = 0;
       SPARSE::sp_upper_nnz = 0;
@@ -2999,7 +2999,7 @@ namespace Sparse_tool {
       A(SPARSE::sp_nnz) = T(0);
       C.resize(SPARSE::sp_ncols+1);
 
-      integer nc = 0;
+      integer nc{0};
       C(0) = 0;
       for ( integer k = 1; k < SPARSE::sp_nnz; ++k ) {
         UTILS_ASSERT(
@@ -4197,7 +4197,7 @@ namespace Sparse_tool {
       VECTOR ll(SPARSE::sp_nrows-1), dd(SPARSE::sp_nrows);
 
       // LU DEC
-      integer k = 0;
+      integer k{0};
       dd(0) = D(0);
       for ( k = 1; k < SPARSE::sp_nrows; ++k ) {
         ll(k-1) = L(k-1) / dd(k-1);
@@ -4257,7 +4257,7 @@ namespace Sparse_tool {
     void
     resize( integer ns ) {
       A.resize(3*ns-2);
-      integer kk = 0;
+      integer kk{0};
       new (&L) Eigen::Map<VBASE>(A.data()+kk, ns-1 ); kk += ns-1;
       new (&D) Eigen::Map<VBASE>(A.data()+kk, ns   ); kk += ns;
       new (&U) Eigen::Map<VBASE>(A.data()+kk, ns-1 );

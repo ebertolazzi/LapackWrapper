@@ -254,7 +254,7 @@ namespace lapack_wrapper {
       x[0] /= U[0];
     }
   };
-  
+
   /*
   //   __  __
   //  |  \/  |_   __
@@ -308,7 +308,7 @@ namespace lapack_wrapper {
     static inline void aMxpby( t_Value, t_Value const *, t_Value const *,
                                t_Value, t_Value * ) { }
   };
-  
+
   /*
   //   __  __ __  __
   //  |  \/  |  \/  |
@@ -337,8 +337,7 @@ namespace lapack_wrapper {
       for ( integer i = 0; i < N; ++i, B += LDB, C += LDC )
         Mv<t_Value,M,K,LDA,1,1>::subTo( A, B, C );
     }
-    static inline void aMxpby( t_Value a, t_Value const * A, t_Value const * B,
-                               t_Value b, t_Value * C ) {
+    static inline void aMxpby( t_Value a, t_Value const * A, t_Value const * B, t_Value b, t_Value * C ) {
       for ( integer i = 0; i < N; ++i, B += LDB, C += LDC )
         Mv<t_Value,M,K,LDA,1,1>::aMxpby( a, A, B, b, C );
     }

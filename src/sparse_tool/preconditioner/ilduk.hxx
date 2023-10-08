@@ -157,7 +157,7 @@ namespace Sparse_tool {
           integer       nj = U_size[j];
           real_type * U_Aj = U_A[j];
           integer *   U_Ij = U_I[j];
-          real_type bf = 0;
+          real_type bf{0};
           for ( integer jj = 0; jj < nj; ++jj ) bf += W(U_Ij[jj])*U_Aj[jj];
           W(j) -= bf;
         }
@@ -174,12 +174,12 @@ namespace Sparse_tool {
           integer       ni = L_size[i];
           real_type * L_Ai = L_A[i];
           integer *   L_Ji = L_J[i];
-          real_type bf = 0;
+          real_type bf{0};
           for ( integer ii = 0; ii < ni; ++ii ) bf += W(L_Ji[ii])*L_Ai[ii];
           W(i) -= bf;
         }
 
-        real_type bf = 0;
+        real_type bf{0};
         for ( kk = 0; kk < L_sizek; ++kk ) bf += L_Ak[kk] * W(L_Jk[kk]);
         D(k) -= bf;
 
@@ -219,13 +219,13 @@ namespace Sparse_tool {
     template <typename VECTOR>
     void
     ass_preco( VECTOR & v ) const {
-      integer k = 0;
+      integer k{0};
       // solve L
       while ( ++k < PRECO::pr_size ) {
         integer i_cnt = L_size[k];
         real_type const * pA = L_A[k];
         integer   const * pJ = L_J[k];
-        real_type bf = 0;
+        real_type bf{0};
         while ( i_cnt-- > 0 ) bf += *pA++ * v(*pJ++);
         v(k) -= bf;
       }

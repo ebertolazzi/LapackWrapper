@@ -910,7 +910,7 @@ namespace lapack_wrapper {
         i_offs, j_offs, nrow, ncol, m_nrows, m_ncols
       );
       #endif
-      integer offs = 0;
+      integer offs{0};
       if ( m_nrows > 0 && m_ncols > 0 &&
            nrow    > 0 && ncol    > 0 ) offs = this->iaddr(i_offs,j_offs);
       to.setup( m_data+offs, nrow, ncol, m_ldData );
@@ -994,7 +994,7 @@ namespace lapack_wrapper {
 
     string
     to_string( real_type eps = 0 ) const {
-      string res = "";
+      string res{""};
       for ( integer i = 0; i < m_nrows; ++i ) {
         for ( integer j = 0; j < m_ncols; ++j ) {
           real_type aij = (*this)(i,j);

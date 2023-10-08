@@ -158,25 +158,31 @@ namespace lapack_wrapper {
     integer          INCX,
     real             A[],
     integer          LDA
-  )
-  #if defined(LAPACK_WRAPPER_USE_MKL)
-  { ssyr( to_blas(UPLO), &N, &ALPHA, X, &INCX, A, &LDA ); }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { BLASFUNC(ssyr)(
-      to_blas(UPLO),
-      &N, &ALPHA,
-      const_cast<real*>(X), &INCX,
-      A, &LDA
-    );
+  ) {
+    #if defined(LAPACK_WRAPPER_USE_MKL)
+      ssyr( to_blas(UPLO), &N, &ALPHA, X, &INCX, A, &LDA );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
+      BLASFUNC(ssyr)(
+        to_blas(UPLO),
+        &N, &ALPHA,
+        const_cast<real*>(X), &INCX,
+        A, &LDA
+      );
+    #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+      ssyr_(
+        to_blas(UPLO),
+        &N, &ALPHA,
+        const_cast<real*>(X), &INCX,
+        A, &LDA
+      );
+    #elif defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+          defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_BLASFEO)
+      CBLASNAME(ssyr)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, A, LDA );
+    #else
+      #error "LapackWrapper undefined mapping!"
+    #endif
   }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
-        defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { CBLASNAME(ssyr)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, A, LDA ); }
-  #else
-  #error "LapackWrapper undefined mapping!"
-  #endif
 
   inline
   void
@@ -188,25 +194,31 @@ namespace lapack_wrapper {
     integer          INCX,
     doublereal       A[],
     integer          LDA
-  )
-  #if defined(LAPACK_WRAPPER_USE_MKL)
-  { dsyr( to_blas(UPLO), &N, &ALPHA, X, &INCX, A, &LDA ); }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { BLASFUNC(dsyr)(
-      to_blas(UPLO),
-      &N, &ALPHA,
-      const_cast<doublereal*>(X), &INCX,
-      A, &LDA
-    );
+  ) {
+    #if defined(LAPACK_WRAPPER_USE_MKL)
+      dsyr( to_blas(UPLO), &N, &ALPHA, X, &INCX, A, &LDA );
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
+      BLASFUNC(dsyr)(
+        to_blas(UPLO),
+        &N, &ALPHA,
+        const_cast<doublereal*>(X), &INCX,
+        A, &LDA
+      );
+    #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+      dsyr_(
+        to_blas(UPLO),
+        &N, &ALPHA,
+        const_cast<doublereal*>(X), &INCX,
+        A, &LDA
+      );
+    #elif defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+          defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
+          defined(LAPACK_WRAPPER_USE_BLASFEO)
+      CBLASNAME(dsyr)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, A, LDA ); }
+    #else
+      #error "LapackWrapper undefined mapping!"
+    #endif
   }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
-        defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { CBLASNAME(dsyr)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, A, LDA ); }
-  #else
-  #error "LapackWrapper undefined mapping!"
-  #endif
 
   /*
   //                 ____
@@ -347,26 +359,33 @@ namespace lapack_wrapper {
     integer          INCY,
     real             A[],
     integer          LDA
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
-  { ssyr2( to_blas(UPLO), &N, &ALPHA, X, &INCX, Y, &INCY, A, &LDA ); }
+    ssyr2( to_blas(UPLO), &N, &ALPHA, X, &INCX, Y, &INCY, A, &LDA );
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { BLASFUNC(ssyr2)(
+    BLASFUNC(ssyr2)(
       to_blas(UPLO),
       &N, &ALPHA,
       const_cast<real*>(X), &INCX,
       const_cast<real*>(Y), &INCY,
       A, &LDA
     );
-  }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    ssyr2_(
+      to_blas(UPLO),
+      &N, &ALPHA,
+      const_cast<real*>(X), &INCX,
+      const_cast<real*>(Y), &INCY,
+      A, &LDA
+    );
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { CBLASNAME(ssyr2)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, Y, INCY, A, LDA ); }
+    CBLASNAME(ssyr2)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, Y, INCY, A, LDA ); }
   #else
-  #error "LapackWrapper undefined mapping!"
+    #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
   inline
   void
@@ -380,26 +399,33 @@ namespace lapack_wrapper {
     integer          INCY,
     doublereal       A[],
     integer          LDA
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
-  { dsyr2( to_blas(UPLO), &N, &ALPHA, X, &INCX, Y, &INCY, A, &LDA ); }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { BLASFUNC(dsyr2)(
+    dsyr2( to_blas(UPLO), &N, &ALPHA, X, &INCX, Y, &INCY, A, &LDA );
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    dsyr2_(
       to_blas(UPLO),
       &N, &ALPHA,
       const_cast<doublereal*>(X), &INCX,
       const_cast<doublereal*>(Y), &INCY,
       A, &LDA
     );
-  }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
+    BLASFUNC(dsyr2)(
+      to_blas(UPLO),
+      &N, &ALPHA,
+      const_cast<doublereal*>(X), &INCX,
+      const_cast<doublereal*>(Y), &INCY,
+      A, &LDA
+    );
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { CBLASNAME(dsyr2)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, Y, INCY, A, LDA ); }
+    CBLASNAME(dsyr2)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, Y, INCY, A, LDA );
   #else
-  #error "LapackWrapper undefined mapping!"
+    #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
   /*
   //   ___ _   _ _ __ _____   __
@@ -545,34 +571,40 @@ namespace lapack_wrapper {
     real             BETA,
     real             Y[],
     integer          INCY
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
-  { ssymv( to_blas(UPLO), &N, &ALPHA, A, &LDA, X, &INCX, &BETA, Y, &INCY ); }
+    ssymv( to_blas(UPLO), &N, &ALPHA, A, &LDA, X, &INCX, &BETA, Y, &INCY );
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    ssymv_(
+      to_blas(UPLO),
+      &N, &ALPHA,
+      const_cast<real*>(A), &LDA,
+      const_cast<real*>(X), &INCX,
+      &BETA, Y, &INCY
+    );
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { BLASFUNC(ssymv)(
+    BLASFUNC(ssymv)(
       to_blas(UPLO),
       &N, &ALPHA,
       const_cast<real*>(A), &LDA,
       const_cast<real*>(X), &INCX,
       &BETA, Y, &INCY
     );
-  }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
-  { CBLASNAME(ssymv)( CblasColMajor, to_cblas(UPLO), N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY ); }
+    CBLASNAME(ssymv)( CblasColMajor, to_cblas(UPLO), N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { ssymv_(
+    ssymv_(
       to_blas(UPLO),
       &N, &ALPHA,
       const_cast<real*>(A), &LDA,
       const_cast<real*>(X), &INCX,
       &BETA, Y, &INCY
     );
-  }
   #else
-  #error "LapackWrapper undefined mapping!"
+    #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
   inline
   void
@@ -587,34 +619,40 @@ namespace lapack_wrapper {
     doublereal       BETA,
     doublereal       Y[],
     integer          INCY
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
-  { dsymv( to_blas(UPLO), &N, &ALPHA, A, &LDA, X, &INCX, &BETA, Y, &INCY ); }
+    dsymv( to_blas(UPLO), &N, &ALPHA, A, &LDA, X, &INCX, &BETA, Y, &INCY );
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    dsymv_(
+      to_blas(UPLO),
+      &N, &ALPHA,
+      const_cast<doublereal*>(A), &LDA,
+      const_cast<doublereal*>(X), &INCX,
+      &BETA, Y, &INCY
+    );
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { BLASFUNC(dsymv)(
+    BLASFUNC(dsymv)(
       to_blas(UPLO),
       &N, &ALPHA,
       const_cast<doublereal*>(A), &LDA,
       const_cast<doublereal*>(X), &INCX,
       &BETA, Y, &INCY
     );
-  }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
-  { CBLASNAME(dsymv)( CblasColMajor, to_cblas(UPLO), N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY ); }
+    CBLASNAME(dsymv)( CblasColMajor, to_cblas(UPLO), N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { dsymv_(
+    dsymv_(
       to_blas(UPLO),
       &N, &ALPHA,
       const_cast<doublereal*>(A), &LDA,
       const_cast<doublereal*>(X), &INCX,
       &BETA, Y, &INCY
     );
-  }
   #else
-  #error "LapackWrapper undefined mapping!"
+    #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
   /*
   //   ___ _   _ _ __ ___  _ __ ___
@@ -801,28 +839,33 @@ namespace lapack_wrapper {
     real                 BETA,
     real                 C[],
     integer              LDC
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
-  { ssymm(
+    ssymm(
       to_blas(SIDE), to_blas(UPLO),
       &M, &N, &ALPHA, A, &LDA, B, &LDB,
       &BETA, C, &LDC
     );
-  }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { BLASFUNC(ssymm)(
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    ssymm_(
       to_blas(SIDE), to_blas(UPLO),
       &M, &N,
       &ALPHA, const_cast<real*>(A), &LDA,
       const_cast<real*>(B), &LDB,
       &BETA, C, &LDC
     );
-  }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
+    BLASFUNC(ssymm)(
+      to_blas(SIDE), to_blas(UPLO),
+      &M, &N,
+      &ALPHA, const_cast<real*>(A), &LDA,
+      const_cast<real*>(B), &LDB,
+      &BETA, C, &LDC
+    );
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { CBLASNAME(ssymm)(
+    CBLASNAME(ssymm)(
       CblasColMajor,
       to_cblas(SIDE), to_cblas(UPLO),
       M, N,
@@ -830,10 +873,10 @@ namespace lapack_wrapper {
       B, LDB,
       BETA, C, LDC
     );
-  }
   #else
-  #error "LapackWrapper undefined mapping!"
+    #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
   inline
   void
@@ -850,28 +893,33 @@ namespace lapack_wrapper {
     doublereal           BETA,
     doublereal           C[],
     integer              LDC
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_MKL)
-  { dsymm(
+    dsymm(
       to_blas(SIDE), to_blas(UPLO),
       &M, &N, &ALPHA, A, &LDA, B, &LDB,
       &BETA, C, &LDC
     );
-  }
-  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { BLASFUNC(dsymm)(
+  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
+    dsymm_(
       to_blas(SIDE), to_blas(UPLO),
       &M, &N,
       &ALPHA, const_cast<doublereal*>(A), &LDA,
       const_cast<doublereal*>(B), &LDB,
       &BETA, C, &LDC
     );
-  }
-  #elif defined(LAPACK_WRAPPER_USE_ACCELERATE) || \
-        defined(LAPACK_WRAPPER_USE_ATLAS)      || \
-        defined(LAPACK_WRAPPER_USE_OPENBLAS)   || \
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
+    BLASFUNC(dsymm)(
+      to_blas(SIDE), to_blas(UPLO),
+      &M, &N,
+      &ALPHA, const_cast<doublereal*>(A), &LDA,
+      const_cast<doublereal*>(B), &LDB,
+      &BETA, C, &LDC
+    );
+  #elif defined(LAPACK_WRAPPER_USE_ATLAS)    || \
+        defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { CBLASNAME(dsymm)(
+    CBLASNAME(dsymm)(
       CblasColMajor,
       to_cblas(SIDE), to_cblas(UPLO),
       M, N,
@@ -879,10 +927,10 @@ namespace lapack_wrapper {
       B, LDB,
       BETA, C, LDC
     );
-  }
   #else
-  #error "LapackWrapper undefined mapping!"
+    #error "LapackWrapper undefined mapping!"
   #endif
+  }
 
 }
 

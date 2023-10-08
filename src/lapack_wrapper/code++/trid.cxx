@@ -445,7 +445,7 @@ namespace lapack_wrapper {
     lapack_wrapper::zero( N-2, m_BU2, 1 );
 
     m_normInfA = 0;
-    integer i = 0;
+    integer i{0};
     for (; i < N-2; ++i ) {
       real_type Li = L[i];
       rotg( m_BD[i], Li, m_C[i], m_S[i] );
@@ -617,7 +617,7 @@ namespace lapack_wrapper {
     copy( m_nRC-1, m_BU,  1, &U.front(),  1 );
     copy( m_nRC-2, m_BU2, 1, &U2.front(), 1 );
     T line[3];
-    integer i = 0;
+    integer i{0};
     while ( i < m_nRC-1 ) {
       line[0] = line[2] = 0; line[1] = lambda;
       std::fill( tmp.begin(), tmp.end(), T(0) );

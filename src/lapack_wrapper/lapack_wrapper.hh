@@ -157,11 +157,10 @@
 // find Headers for Lapack/Blas
 
 #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-
+  #if __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_3
+    #define ACCELERATE_NEW_LAPACK
+  #endif
   #include <Accelerate/Accelerate.h>
-  #define CBLASNAME(A)   cblas_##A
-  #define CLAPACKNAME(A) A##_
-
 #elif defined(LAPACK_WRAPPER_USE_ATLAS)
 
   // atlas 3.6.0
@@ -233,8 +232,8 @@
     #endif
   #endif
 
-  #define CBLASNAME(A)       cblas_##A
-  #define LAPACK_F77NAME(A)  LAPACK_##A
+  #define CBLASNAME(A)      cblas_##A
+  #define LAPACK_F77NAME(A) LAPACK_##A
 
   #ifdef LAPACK_WRAPPER_USE_BLASFEO
     #include <s_blas.h>
@@ -276,9 +275,15 @@ namespace lapack_wrapper {
   #ifndef LAPACK_WRAPPER_NO_DEBUG
 
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    using integer          = __CLPK_integer;
-    using real             = __CLPK_real;
-    using doublereal       = __CLPK_doublereal;
+    #ifdef ACCELERATE_NEW_LAPACK
+      using integer    = __LAPACK_int;
+      using real       = float;
+      using doublereal = double;
+    #else
+      using integer    = __CLPK_integer;
+      using real       = __CLPK_real;
+      using doublereal = __CLPK_doublereal;
+    #endif
     using character        = char;
     using return_precision = doublereal;
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
@@ -554,24 +559,32 @@ namespace lapack_wrapper {
 
   extern "C" {
     #ifdef LAPACK_WRAPPER_USE_ACCELERATE
-    int xerbla_( character const * what, integer * info, int );
+      #ifndef ACCELERATE_NEW_LAPACK
+        int xerbla_( character const * what, integer * info, int );
+      #endif
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    int xerbla_( character const * what, integer * info, int );
+      int xerbla_( character const * what, integer * info, int );
     #else
-    int LAPACK_F77NAME(xerbla)( character const * what, integer * info, int );
+      int LAPACK_F77NAME(xerbla)( character const * what, integer * info, int );
     #endif
   };
 
   inline
   void
   xerbla( character const * WHAT, integer info ) {
-    int len = int(strlen(WHAT));
     #ifdef LAPACK_WRAPPER_USE_ACCELERATE
-    xerbla_( WHAT, &info, len );
+      #ifdef ACCELERATE_NEW_LAPACK
+        xerbla_( const_cast<character*>(WHAT), &info );
+      #else
+        int len = int(strlen(WHAT));
+        xerbla_( WHAT, &info, len );
+      #endif
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    xerbla_( WHAT, &info, len );
+      int len = int(strlen(WHAT));
+      xerbla_( WHAT, &info, len );
     #else
-    LAPACK_F77NAME(xerbla)( WHAT, &info, len );
+      int len = int(strlen(WHAT));
+      LAPACK_F77NAME(xerbla)( WHAT, &info, len );
     #endif
   }
 
@@ -648,7 +661,7 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_BLASFEO)
   { return BLASFUNC(slamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return real(CLAPACKNAME(slamch)( const_cast<character*>(WHAT) )); }
+  { return real(slamch_( const_cast<character*>(WHAT) )); }
   #else
   { return LAPACKNAME(slamch)( const_cast<character*>(WHAT) ); }
   #endif
@@ -664,7 +677,7 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_BLASFEO)
   { return BLASFUNC(dlamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { return CLAPACKNAME(dlamch)( const_cast<character*>(WHAT) ); }
+  { return dlamch_( const_cast<character*>(WHAT) ); }
   #else
   { return LAPACKNAME(dlamch)( const_cast<character*>(WHAT) ); }
   #endif
@@ -825,37 +838,37 @@ namespace lapack_wrapper {
     integer         N4
   ) {
     #ifdef LAPACK_WRAPPER_USE_ACCELERATE
-    return CLAPACKNAME(ilaenv)(
-      &ISPEC,
-      const_cast<character*>(NAME),
-      const_cast<character*>(OPTS),
-      &N1, &N2, &N3, &N4
-    );
+      return ilaenv_(
+        &ISPEC,
+        const_cast<character*>(NAME),
+        const_cast<character*>(OPTS),
+        &N1, &N2, &N3, &N4
+      );
     #elif defined(LAPACK_WRAPPER_USE_LAPACK) || \
           defined(LAPACK_WRAPPER_USE_ATLAS)
-    size_t len_NAME = strlen( NAME );
-    size_t len_OPTS = strlen( OPTS );
-    return LAPACK_F77NAME(ilaenv)(
-      &ISPEC,
-      const_cast<character*>(NAME),
-      const_cast<character*>(OPTS),
-      &N1, &N2, &N3, &N4, &len_NAME, &len_OPTS
-    );
+      size_t len_NAME = strlen( NAME );
+      size_t len_OPTS = strlen( OPTS );
+      return LAPACK_F77NAME(ilaenv)(
+        &ISPEC,
+        const_cast<character*>(NAME),
+        const_cast<character*>(OPTS),
+        &N1, &N2, &N3, &N4, &len_NAME, &len_OPTS
+      );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
-    size_t len_NAME = strlen( NAME );
-    size_t len_OPTS = strlen( OPTS );
-    return BLASFUNC(ilaenv)(
-      &ISPEC,
-      const_cast<character*>(NAME),
-      const_cast<character*>(OPTS),
-      &N1, &N2, &N3, &N4, &len_NAME, &len_OPTS
-    );
+      size_t len_NAME = strlen( NAME );
+      size_t len_OPTS = strlen( OPTS );
+      return BLASFUNC(ilaenv)(
+        &ISPEC,
+        const_cast<character*>(NAME),
+        const_cast<character*>(OPTS),
+        &N1, &N2, &N3, &N4, &len_NAME, &len_OPTS
+      );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    return ::ilaenv( &ISPEC, NAME, OPTS, &N1, &N2, &N3, &N4 );
+      return ::ilaenv( &ISPEC, NAME, OPTS, &N1, &N2, &N3, &N4 );
     #else
-    #error "lapack_wrapper undefined mapping!"
-    return 0;
+      #error "lapack_wrapper undefined mapping!"
+      return 0;
     #endif
   }
 
@@ -1006,45 +1019,42 @@ namespace lapack_wrapper {
     real     & SESTPR,
     real     & S,
     real     & C
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { CLAPACKNAME(slaic1)(
+    slaic1_(
       &JOB, &J,
       const_cast<real*>(X), &SEST,
       const_cast<real*>(W), &GAMMA,
       &SESTPR, &S, &C
     );
-  }
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { LAPACK_F77NAME(slaic1)(
+    LAPACK_F77NAME(slaic1)(
       &JOB, &J,
       const_cast<real*>(X), &SEST,
       const_cast<real*>(W), &GAMMA,
       &SESTPR, &S, &C
     );
-  }
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { BLASFUNC(slaic1)(
+    BLASFUNC(slaic1)(
       &JOB, &J,
       const_cast<real*>(X), &SEST,
       const_cast<real*>(W), &GAMMA,
       &SESTPR, &S, &C
     );
-  }
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-  { LAPACK_F77NAME(slaic1)(
+    LAPACK_F77NAME(slaic1)(
       &JOB, &J,
       const_cast<real*>(X), &SEST,
       const_cast<real*>(W), &GAMMA,
       &SESTPR, &S, &C
     );
-  }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
-  { slaic1( &JOB, &J, X, &SEST, W, &GAMMA, &SESTPR, &S, &C  ); }
+    slaic1( &JOB, &J, X, &SEST, W, &GAMMA, &SESTPR, &S, &C  );
   #else
-  #error "lapack_wrapper undefined mapping!"
+    #error "lapack_wrapper undefined mapping!"
   #endif
+  }
 
   inline
   void
@@ -1058,45 +1068,42 @@ namespace lapack_wrapper {
     doublereal     & SESTPR,
     doublereal     & S,
     doublereal     & C
-  )
+  ) {
   #if defined(LAPACK_WRAPPER_USE_ACCELERATE)
-  { CLAPACKNAME(dlaic1)(
+    dlaic1_(
       &JOB, &J,
       const_cast<doublereal*>(X), &SEST,
       const_cast<doublereal*>(W), &GAMMA,
       &SESTPR, &S, &C
     );
-  }
   #elif defined(LAPACK_WRAPPER_USE_LAPACK)
-  { LAPACK_F77NAME(dlaic1)(
+    LAPACK_F77NAME(dlaic1)(
       &JOB, &J,
       const_cast<doublereal*>(X), &SEST,
       const_cast<doublereal*>(W), &GAMMA,
       &SESTPR, &S, &C
     );
-  }
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { BLASFUNC(dlaic1)(
+    BLASFUNC(dlaic1)(
       &JOB, &J,
       const_cast<doublereal*>(X), &SEST,
       const_cast<doublereal*>(W), &GAMMA,
       &SESTPR, &S, &C
     );
-  }
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-  { LAPACK_F77NAME(dlaic1)(
+    LAPACK_F77NAME(dlaic1)(
       &JOB, &J,
       const_cast<doublereal*>(X), &SEST,
       const_cast<doublereal*>(W), &GAMMA,
       &SESTPR, &S, &C
     );
-  }
   #elif defined(LAPACK_WRAPPER_USE_MKL)
-  { dlaic1( &JOB, &J, X, &SEST, W, &GAMMA, &SESTPR, &S, &C ); }
+    dlaic1( &JOB, &J, X, &SEST, W, &GAMMA, &SESTPR, &S, &C );
   #else
-  #error "lapack_wrapper undefined mapping!"
+    #error "lapack_wrapper undefined mapping!"
   #endif
+  }
 
   /*\
    *  Purpose
@@ -1160,18 +1167,23 @@ namespace lapack_wrapper {
     #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)  || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-    LAPACK_F77NAME(slarnv)( &IDIST, ISEED, &N, X ); // return void in openblas
-    return 0;
+      LAPACK_F77NAME(slarnv)( &IDIST, ISEED, &N, X ); // return void in openblas
+      return 0;
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_slarnv( &IDIST, ISEED, &N, X ); // return void in openblas
-    return 0;
+      LAPACK_slarnv( &IDIST, ISEED, &N, X ); // return void in openblas
+      return 0;
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    slarnv( &IDIST, ISEED, &N, X ); // return void in openblas
-    return 0;
+      slarnv( &IDIST, ISEED, &N, X ); // return void in openblas
+      return 0;
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    return CLAPACKNAME(slarnv)( &IDIST, ISEED, &N, X );
+      #ifdef ACCELERATE_NEW_LAPACK
+        slarnv_( &IDIST, ISEED, &N, X );
+        return 0;
+      #else
+        return slarnv_( &IDIST, ISEED, &N, X );
+      #endif
     #else
-    return LAPACKNAME(slarnv)( &IDIST, ISEED, &N, X );
+      return LAPACKNAME(slarnv)( &IDIST, ISEED, &N, X );
     #endif
   }
 
@@ -1188,18 +1200,23 @@ namespace lapack_wrapper {
     #if defined(LAPACK_WRAPPER_USE_LAPACK) || \
         defined(LAPACK_WRAPPER_USE_ATLAS)  || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-    LAPACK_F77NAME(dlarnv)( &IDIST, ISEED, &N, X ); // return void in openblas
-    return 0;
+      LAPACK_F77NAME(dlarnv)( &IDIST, ISEED, &N, X ); // return void in openblas
+      return 0;
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    LAPACK_dlarnv( &IDIST, ISEED, &N, X ); // return void in openblas
-    return 0;
+      LAPACK_dlarnv( &IDIST, ISEED, &N, X ); // return void in openblas
+      return 0;
     #elif defined(LAPACK_WRAPPER_USE_MKL)
-    dlarnv( &IDIST, ISEED, &N, X ); // return void in openblas
-    return 0;
+      dlarnv( &IDIST, ISEED, &N, X ); // return void in openblas
+      return 0;
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    return CLAPACKNAME(dlarnv)( &IDIST, ISEED, &N, X );
+      #ifdef ACCELERATE_NEW_LAPACK
+        dlarnv_( &IDIST, ISEED, &N, X );
+        return 0;
+      #else
+        return dlarnv_( &IDIST, ISEED, &N, X );
+      #endif
     #else
-    return LAPACKNAME(dlarnv)( &IDIST, ISEED, &N, X );
+      return LAPACKNAME(dlarnv)( &IDIST, ISEED, &N, X );
     #endif
   }
 

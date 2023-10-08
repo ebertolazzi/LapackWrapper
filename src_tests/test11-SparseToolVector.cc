@@ -25,6 +25,20 @@
 #include <sparse_tool/sparse_tool_iterative.hh>
 #include <sparse_tool/sparse_tool_matrix_market.hh>
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++98-compat"
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#pragma clang diagnostic ignored "-Wglobal-constructors"
+#pragma clang diagnostic ignored "-Wundefined-func-template"
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#endif
+
 //#include <sparse_tool/interfaces/MA41.hh>
 //#include <sparse_tool/interfaces/MA48.hh>
 //#include <sparse_tool/interfaces/SuperLU.hh>
@@ -80,7 +94,7 @@ public:
 
   all_vector_test(integer n) : a(n), b(n), c(n), res(n), rres(n) { }
   ~all_vector_test() {}
-  
+
   void preco(void) {
     integer i;
     for ( i = 0; i < a.size(); ++i ) a[i] = 1.2+i*sqrt(2.0);
@@ -88,35 +102,35 @@ public:
     c = a;
     scalar = sqrt(2.0);
   }
-  
+
   void do_all_tests(void) {
-    cout << "*******************************\n" 
+    cout << "*******************************\n"
          << "*******************************\n"
          << "VECTOR TESTS\n";
 
     test001(); test002(); test003(); test004(); test005();
     test006(); test007(); test008(); test009(); test010();
-    
+
     test011(); test012(); test013(); test014(); test015();
     test016(); test017(); test018(); test019(); test020();
-    
+
     test021(); test022(); test023(); test024(); test025();
     test026(); test027(); test028(); test029(); test030();
-    
+
     test031(); test032(); test033(); test034(); test035();
     test036(); test037(); test038(); test039(); test030();
-    
+
     test041(); test042(); test043(); test044(); test045();
     test046(); test047(); test048(); test049(); test050();
- 
+
     test051(); test052(); test053(); test054(); test055();
     test056(); test057(); test057(); test058(); test059();
     test060(); test061(); test062(); test063(); test064();
-    
+
     cout << "VECTOR TESTS: ALL DONE\n\n\n";
 
   }
-  
+
   void test001();
   void test002();
   void test003();
@@ -127,7 +141,7 @@ public:
   void test008();
   void test009();
   void test010();
-    
+
   void test011();
   void test012();
   void test013();
@@ -138,7 +152,7 @@ public:
   void test018();
   void test019();
   void test020();
-    
+
   void test021();
   void test022();
   void test023();
@@ -149,7 +163,7 @@ public:
   void test028();
   void test029();
   void test030();
-    
+
   void test031();
   void test032();
   void test033();
@@ -160,7 +174,7 @@ public:
   void test038();
   void test039();
   void test040();
-    
+
   void test041();
   void test042();
   void test043();
@@ -171,7 +185,7 @@ public:
   void test048();
   void test049();
   void test050();
- 
+
   void test051();
   void test052();
   void test053();
@@ -187,7 +201,7 @@ public:
   void test062();
   void test063();
   void test064();
-   
+
 };
 
 
@@ -201,7 +215,7 @@ all_vector_test::test001(void) {
   res = scalar;
   for ( integer i = 0; i < a.size(); ++i) rres[i] = scalar;
   test_diff(res, rres);
-    
+
   preco();
   cout << "vector += scalar";
   res += scalar;
@@ -217,7 +231,7 @@ all_vector_test::test001(void) {
   res *= scalar;
   for ( integer i = 0; i < a.size(); ++i) rres[i] *= scalar;
   test_diff(res, rres);
-    
+
   cout << "vector /= scalar";
   res /= scalar;
   for ( integer i = 0; i < a.size(); ++i) rres[i] /= scalar;
@@ -333,7 +347,7 @@ all_vector_test::test010(void) {
   cout << "\ntest(10)\n";
   DO_TESTS("scalar * vector", scalar * a, scalar * a[i]);
 }
-  
+
 
 void
 all_vector_test::test011(void) {
@@ -360,7 +374,7 @@ all_vector_test::test013(void) {
   cout << "\ntest(13)\n";
   DO_TESTS("vector - scalar", a.array() - scalar, a[i] - scalar);
 }
- 
+
 
 void
 all_vector_test::test014(void) {
@@ -378,7 +392,7 @@ all_vector_test::test015(void) {
   cout << "\ntest(15)\n";
   DO_TESTS("vector / scalar", a / scalar, a[i] / scalar);
 }
-  
+
   // combined test
 
 void
@@ -397,7 +411,7 @@ all_vector_test::test017(void) {
   cout << "\ntest(17)\n";
   DO_TESTS("vector - scalar + vector", a.array() - scalar + b.array(), a[i] - scalar + b[i]);
 }
-  
+
 
 void
 all_vector_test::test018(void) {
@@ -406,7 +420,7 @@ all_vector_test::test018(void) {
   cout << "\ntest(18)\n";
   DO_TESTS("vector * scalar + vector", a.array() * scalar + b.array(), a[i] * scalar + b[i]);
 }
-  
+
 
 void
 all_vector_test::test019(void) {
@@ -433,7 +447,7 @@ all_vector_test::test021(void) {
   cout << "\ntest(21)\n";
   DO_TESTS("vector - scalar - vector", a.array() - scalar - b.array(), a[i] - scalar - b[i]);
 }
-  
+
 
 void
 all_vector_test::test022(void) {
@@ -442,7 +456,7 @@ all_vector_test::test022(void) {
   cout << "\ntest(22)\n";
   DO_TESTS("vector * scalar - vector", a * scalar - b, a[i] * scalar - b[i]);
 }
-  
+
 
 void
 all_vector_test::test023(void) {
@@ -469,7 +483,7 @@ all_vector_test::test025(void) {
   cout << "\ntest(25)\n";
   DO_TESTS("vector - scalar * vector", a - scalar * b, a[i] - scalar * b[i]);
 }
-  
+
 
 void
 all_vector_test::test026(void) {
@@ -478,7 +492,7 @@ all_vector_test::test026(void) {
   cout << "\ntest(26)\n";
   DO_TESTS("vector * scalar * vector", a.array() * scalar * b.array(), a[i] * scalar * b[i]);
 }
-  
+
 
 void
 all_vector_test::test027(void) {
@@ -505,7 +519,7 @@ all_vector_test::test029(void) {
   cout << "\ntest(29)\n";
   DO_TESTS("vector - scalar / vector", a.array() - scalar / b.array(), a[i] - scalar / b[i]);
 }
-  
+
 
 void
 all_vector_test::test030(void) {
@@ -514,7 +528,7 @@ all_vector_test::test030(void) {
   cout << "\ntest(30)\n";
   DO_TESTS("vector * scalar / vector", a.array() * scalar / b.array(), a[i] * scalar / b[i]);
 }
-  
+
 
 void
 all_vector_test::test031(void) {

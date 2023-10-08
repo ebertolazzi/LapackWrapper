@@ -139,9 +139,9 @@ namespace Sparse_tool {
       );
 
       m_num_line = 0;
-      cType   = MM_COORDINATE;
-      vType   = MM_REAL;
-      mType   = MM_GENERAL;
+      cType      = MM_COORDINATE;
+      vType      = MM_REAL;
+      mType      = MM_GENERAL;
 
       while ( this -> getLine( stream ) ) {
         #if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
@@ -225,7 +225,7 @@ namespace Sparse_tool {
 
       sp.resize( m_nrows, m_ncols, m_nnz );
 
-      integer kk = 0;
+      integer kk{0};
       while( kk < m_nnz ) {
         UTILS_ASSERT0(
           stream.good(),
@@ -273,7 +273,7 @@ namespace Sparse_tool {
 
       mat.resize( m_nrows, m_ncols, m_nnz );
 
-      integer kk = 0;
+      integer kk{0};
       while ( kk < m_nnz ) {
         UTILS_ASSERT0(
           stream.good(),
@@ -328,7 +328,7 @@ namespace Sparse_tool {
 
       mat.resize( m_nrows, m_ncols, m_nnz );
 
-      integer kk = 0;
+      integer kk{0};
       while( kk < m_nnz ) {
         UTILS_ASSERT0(
           stream.good(),
@@ -339,7 +339,7 @@ namespace Sparse_tool {
         if ( getLine( stream ) ) continue; // skip comments
 
         integer i, j;
-        double  re, im = 0;
+        double  re, im{0};
         sscanf( m_line, fmts[vType], &i, &j, &re, &im );
 
         UTILS_ASSERT(
@@ -389,7 +389,7 @@ namespace Sparse_tool {
 
       mat.resize( m_nrows, m_ncols, m_nnz );
 
-      integer kk = 0;
+      integer kk{0};
       while ( kk < m_nnz ) {
 
         UTILS_ASSERT0(
@@ -468,7 +468,7 @@ namespace Sparse_tool {
       static char const *fmts[4] = { "", "%lf", "%lf", "%lf%lf" };
       mat.clear(); mat.resize( m_nnz );
       for ( integer kk = 0; kk < m_nnz; ++kk ) {
-        double re, im = 0;
+        double re, im{0};
         sscanf(m_line, fmts[mType], &re, &im );
         mat.push_back( std::complex<T>(re,im) );
       }

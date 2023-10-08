@@ -155,7 +155,7 @@ namespace Sparse_tool {
       );
 
       for (
-        unsigned kkk = 0;
+        unsigned kkk{0};
         this->INFO[3] > A_work.size() && kkk < 10;
         ++kkk
       ) {

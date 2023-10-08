@@ -135,7 +135,7 @@ namespace Sparse_tool {
       s(0)     = beta;
       for ( integer k = 1; k <= m; ++k ) s(k) = 0;
 
-      integer i = 0;
+      integer i{0};
       do {
 
         w = A * v.col(i);
