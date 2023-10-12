@@ -214,7 +214,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_ATLAS)    || \
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
-      CBLASNAME(dsyr)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, A, LDA ); }
+      CBLASNAME(dsyr)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, A, LDA );
     #else
       #error "LapackWrapper undefined mapping!"
     #endif
@@ -381,7 +381,7 @@ namespace lapack_wrapper {
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)    || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-    CBLASNAME(ssyr2)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, Y, INCY, A, LDA ); }
+    CBLASNAME(ssyr2)( CblasColMajor, to_cblas(UPLO), N, ALPHA, X, INCX, Y, INCY, A, LDA );
   #else
     #error "LapackWrapper undefined mapping!"
   #endif
