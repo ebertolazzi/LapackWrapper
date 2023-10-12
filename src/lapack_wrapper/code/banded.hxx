@@ -201,7 +201,7 @@ namespace lapack_wrapper {
     #if defined(LAPACK_WRAPPER_USE_ATLAS)    || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-      stbmv(
+      CBLASNAME(stbmv)(
         CblasColMajor,
         to_cblas(UPLO), to_cblas(TRANS), to_cblas(DIAG),
         N, K, A, ldA, xb, incx
@@ -216,11 +216,13 @@ namespace lapack_wrapper {
         to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
         &N, &K, A, &ldA, xb, &incx
       );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       BLASFUNC(stbmv)(
         to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
         &N, &K, const_cast<real*>(A), &ldA, xb, &incx
       );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -256,11 +258,13 @@ namespace lapack_wrapper {
         to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
         &N, &K, A, &ldA, xb, &incx
       );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       BLASFUNC(dtbmv)(
         to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
         &N, &K, const_cast<doublereal*>(A), &ldA, xb, &incx
       );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -454,11 +458,13 @@ namespace lapack_wrapper {
         to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
         &N, &K, A, &ldA, xb, &incx
       );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       BLASFUNC(stbsv)(
         to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
         &N, &K, const_cast<real*>(A), &ldA, xb, &incx
       );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -495,11 +501,13 @@ namespace lapack_wrapper {
         to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
         &N, &K, A, &ldA, xb, &incx
       );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       BLASFUNC(dtbsv)(
         to_blas(UPLO), to_blas(TRANS), to_blas(DIAG),
         &N, &K, const_cast<doublereal*>(A), &ldA, xb, &incx
       );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 

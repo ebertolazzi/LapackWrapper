@@ -66,13 +66,15 @@ namespace lapack_wrapper {
       scopy( &N, X, &INCX, Y, &INCY );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
       scopy_( &N, const_cast<real*>(X), &INCX, Y, &INCY );
-    #elif ddefined(LAPACK_WRAPPER_USE_ATLAS) || \
+    #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
           defined(LAPACK_WRAPPER_USE_OPENBLAS)
       CBLASNAME(scopy)( N, X, INCX, Y, INCY );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
       scopy_( &N, const_cast<real*>(X), &INCX, Y, &INCY );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       BLASFUNC(scopy)( &N, const_cast<real*>(X), &INCX, Y, &INCY );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -94,8 +96,10 @@ namespace lapack_wrapper {
       CBLASNAME(dcopy)( N, X, INCX, Y, INCY );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
       dcopy_( &N, const_cast<doublereal*>(X), &INCX, Y, &INCY );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       BLASFUNC(dcopy)( &N, const_cast<doublereal*>(X), &INCX, Y, &INCY );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -188,8 +192,10 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(sswap)( N, X, INCX, Y, INCY );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(sswap)( &N, X, &INCX, Y, &INCY );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -210,8 +216,10 @@ namespace lapack_wrapper {
         defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
     CBLASNAME(dswap)( N, X, INCX, Y, INCY );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(dswap)( &N, X, &INCX, Y, &INCY );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -384,8 +392,10 @@ namespace lapack_wrapper {
     CBLASNAME(sscal)( N, S, X, INCX );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     sscal_( &N, &S, X, &INCX );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(sscal)( &N, &S, X, &INCX );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -406,8 +416,10 @@ namespace lapack_wrapper {
     CBLASNAME(dscal)( N, S, X, INCX );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dscal_( &N, &S, X, &INCX );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(dscal)( &N, &S, X, &INCX );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -422,14 +434,19 @@ namespace lapack_wrapper {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     srscl( &N, &S, X, &INCX );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    real rS = 1/S; sscal_( &N, &rS, X, &INCX );
+    real rS = 1/S;
+    sscal_( &N, &rS, X, &INCX );
   #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    real rS = 1/S; CBLASNAME(sscal)( N, rS, X, INCX );
+    real rS = 1/S;
+    CBLASNAME(sscal)( N, rS, X, INCX );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-    real rS = 1/S; sscal_( &N, &rS, X, &INCX );
-  #else
+    real rS = 1/S;
+    sscal_( &N, &rS, X, &INCX );
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(srscl)( &N, &S, X, &INCX );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -444,14 +461,19 @@ namespace lapack_wrapper {
   #if defined(LAPACK_WRAPPER_USE_MKL)
     drscl( &N, &S, X, &INCX );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-    doublereal rS = 1/S; dscal_( &N, &rS, X, &INCX );
+    doublereal rS = 1/S;
+    dscal_( &N, &rS, X, &INCX );
   #elif defined(LAPACK_WRAPPER_USE_ATLAS) || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)
-    doublereal rS = 1/S; CBLASNAME(dscal)( N, rS, X, INCX );
+    doublereal rS = 1/S;
+    CBLASNAME(dscal)( N, rS, X, INCX );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-    doublereal rS = 1/S; dscal_( &N, &rS, X, &INCX );
-  #else
+    doublereal rS = 1/S;
+    dscal_( &N, &rS, X, &INCX );
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(drscl)( &N, &S, X, &INCX );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -505,8 +527,10 @@ namespace lapack_wrapper {
       CBLASNAME(saxpy)( N, A, X, INCX, Y, INCY );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
       saxpy_( &N, &A, const_cast<real*>(X), &INCX, Y, &INCY );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       BLASFUNC(saxpy)( &N, &A, const_cast<real*>(X), &INCX, Y, &INCY );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -529,8 +553,10 @@ namespace lapack_wrapper {
       CBLASNAME(daxpy)( N, A, X, INCX, Y, INCY );
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
      daxpy_( &N, &A, const_cast<doublereal*>(X), &INCX, Y, &INCY );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       BLASFUNC(daxpy)( &N, &A, const_cast<doublereal*>(X), &INCX, Y, &INCY );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -558,8 +584,10 @@ namespace lapack_wrapper {
     CBLASNAME(scopy)( N, &z, iz, X, INCX );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     scopy_( &N, &z, &iz, X, &INCX );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(scopy)( &N, &z, &iz, X, &INCX );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -581,8 +609,10 @@ namespace lapack_wrapper {
     CBLASNAME(dcopy)( N, &z, iz, X, INCX );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     dcopy_( &N, &z, &iz, X, &INCX );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(dcopy)( &N, &z, &iz, X, &INCX );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -639,8 +669,10 @@ namespace lapack_wrapper {
     CBLASNAME(srot)( N, DX, INCX, DY, INCY, C, S );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     srot_( &N, DX, &INCX, DY, &INCY, &C, &S );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(srot)( &N, DX, &INCX, DY, &INCY, &C, &S );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -664,8 +696,10 @@ namespace lapack_wrapper {
     CBLASNAME(drot)( N, DX, INCX, DY, INCY, C, S );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     drot_( &N, DX, &INCX, DY, &INCY, &C, &S );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(drot)( &N, DX, &INCX, DY, &INCY, &C, &S );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -727,8 +761,10 @@ namespace lapack_wrapper {
     CBLASNAME(srotg)( &DX, &DY, &C, &S );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     srotg_( &DX, &DY, &C, &S );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(srotg)( &DX, &DY, &C, &S );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -749,8 +785,10 @@ namespace lapack_wrapper {
     CBLASNAME(drotg)( &DX, &DY, &C, &S );
   #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
     drotg_( &DX, &DY, &C, &S );
-  #else
+  #elif defined(LAPACK_WRAPPER_USE_LAPACK)
     BLASFUNC(drotg)( &DX, &DY, &C, &S );
+  #else
+    #error "LapackWrapper undefined mapping!"
   #endif
   }
 
@@ -801,8 +839,10 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
       return CBLASNAME(snrm2)( N, X, INCX );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       return BLASFUNC(snrm2)( &N, const_cast<real*>(X), &INCX );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -821,8 +861,10 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
       return CBLASNAME(dnrm2)( N, X, INCX );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       return BLASFUNC(dnrm2)( &N, const_cast<doublereal*>(X), &INCX );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -871,8 +913,10 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
       return CBLASNAME(sasum)( N, X, INCX );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       return BLASFUNC(sasum)( &N, const_cast<real*>(X), &INCX );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -891,8 +935,10 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
       return CBLASNAME(dasum)( N, X, INCX );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       return BLASFUNC(dasum)( &N, const_cast<doublereal*>(X), &INCX );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -941,8 +987,10 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
       return integer(CBLASNAME(isamax)( N, X, INCX ));
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       return BLASFUNC(isamax)( &N, const_cast<real*>(X), &INCX )-1;
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -961,8 +1009,10 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
       return integer(CBLASNAME(idamax)( N, X, INCX ));
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       return BLASFUNC(idamax)( &N, const_cast<doublereal*>(X), &INCX )-1;
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -1037,12 +1087,14 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
       return CBLASNAME(sdot)( N, SX, INCX, SY, INCY );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       return BLASFUNC(sdot)(
         &N,
         const_cast<real*>(SX), &INCX,
         const_cast<real*>(SY), &INCY
       );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
@@ -1063,12 +1115,14 @@ namespace lapack_wrapper {
           defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
           defined(LAPACK_WRAPPER_USE_BLASFEO)
       return CBLASNAME(ddot)( N, SX, INCX, SY, INCY );
-    #else
+    #elif defined(LAPACK_WRAPPER_USE_LAPACK)
       return BLASFUNC(ddot)(
         &N,
         const_cast<doublereal*>(SX), &INCX,
         const_cast<doublereal*>(SY), &INCY
       );
+    #else
+      #error "LapackWrapper undefined mapping!"
     #endif
   }
 
