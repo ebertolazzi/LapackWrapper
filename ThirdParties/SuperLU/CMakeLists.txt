@@ -27,10 +27,6 @@ SET(CMAKE_INSTALL_LIBDIR     "${CMAKE_INSTALL_PREFIX}/lib")
 SET(CMAKE_INSTALL_BINDIR     "${CMAKE_INSTALL_PREFIX}/bin")
 SET(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include")
 
-if( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists-customize.txt" )
-  include(../CMakeLists-customize.txt)
-endif()
-
 IF ( APPLE OR UNIX )
   SET(PROJECT_NAME_LIB_EXPORT libsuperlu.a)
 ELSE()
@@ -70,6 +66,12 @@ else()
   #STRING(REPLACE "/W3" "/w" CMAKE_CXX_FLAGS_DEBUG   ${CMAKE_CXX_FLAGS_DEBUG})
 endif()
 
+if( EXISTS "${CMAKE_CURRENT_LIST_DIR}/../CMakeLists-customize.txt" )
+  include("${CMAKE_CURRENT_LIST_DIR}/../CMakeLists-customize.txt")
+  message( STATUS "CMAKE_OSX_DEPLOYMENT_TARGET = ${CMAKE_OSX_DEPLOYMENT_TARGET}" )
+  message( STATUS "CMAKE_OSX_ARCHITECTURES     = ${CMAKE_OSX_ARCHITECTURES}" )
+endif()
+
 ######################################################################
 #
 # Include directories
@@ -89,6 +91,6 @@ add_subdirectory( superlu/SRC )
 
 # file(WRITE "make.defs" "# can be exposed to users"
 #  ${CMAKE_C_COMPILER}  )
-configure_file( superlu/make.inc.in superlu/make.inc )
+#configure_file( superlu/make.inc.in superlu/make.inc )
 #configure_file( superlu/superlu.pc.in superlu/superlu.pc )
 #configure_file( superlu/SRC/superlu_config.h.in superlu/SRC/superlu_config.h )

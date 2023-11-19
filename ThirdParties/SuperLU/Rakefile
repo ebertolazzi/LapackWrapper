@@ -34,6 +34,9 @@ def extract_and_prepare()
   ChangeOnFile("./superlu/SRC/zreadrb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
   ChangeOnFile("./superlu/SRC/zreadhb.c","#ifdef DEBUG","#ifdef DISABLED_DEBUG")
 
+  FileUtils.rm_f './superlu/CMakeLists.txt'
+  FileUtils.cp   "CMakeLists.txt", './superlu/CMakeLists.txt'
+
   FileUtils.rm_rf 'build'
   FileUtils.mkdir 'build'
 end
