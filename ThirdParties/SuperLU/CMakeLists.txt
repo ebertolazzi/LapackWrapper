@@ -27,8 +27,8 @@ SET(CMAKE_INSTALL_LIBDIR     "${CMAKE_INSTALL_PREFIX}/lib")
 SET(CMAKE_INSTALL_BINDIR     "${CMAKE_INSTALL_PREFIX}/bin")
 SET(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include")
 
-if ( APPLE )
-  set( CMAKE_OSX_ARCHITECTURES arm64;x86_64 )
+if( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists-customize.txt" )
+  include(../CMakeLists-customize.txt)
 endif()
 
 IF ( APPLE OR UNIX )
