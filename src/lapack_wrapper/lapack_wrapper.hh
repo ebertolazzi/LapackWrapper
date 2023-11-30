@@ -1314,6 +1314,11 @@ namespace lapack_wrapper {
   }
 }
 
+namespace fmt {
+  template <typename TYPE> struct formatter<lapack_wrapper::DiagMatrixWrapper<TYPE>> : ostream_formatter {};
+  template <typename TYPE> struct formatter<lapack_wrapper::MatrixWrapper<TYPE>>     : ostream_formatter {};
+}
+
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif

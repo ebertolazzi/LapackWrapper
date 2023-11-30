@@ -807,6 +807,10 @@ namespace Sparse_tool_load {
 }
 #endif
 
+namespace fmt {
+  template <> struct formatter<Sparse_tool::MatrixMarket>  : ostream_formatter {};
+}
+
 #endif
 
 /*

@@ -22,6 +22,10 @@
 
 #include <iostream>
 
+namespace fmt {
+  template <typename TYPE> struct formatter<std::complex<TYPE>> : ostream_formatter {};
+}
+
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"

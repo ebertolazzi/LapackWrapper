@@ -4895,6 +4895,11 @@ namespace Sparse_tool_load {
 }
 #endif
 
+namespace fmt {
+  template <> struct formatter<Sparse_tool::SparsePattern> : ostream_formatter {};
+  template <typename TYPE, typename MAT> struct formatter<Sparse_tool::Sparse<TYPE,MAT>> : ostream_formatter {};
+}
+
 #endif
 
 /*
