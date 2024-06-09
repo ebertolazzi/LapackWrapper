@@ -379,9 +379,7 @@ namespace lapack_wrapper {
 
     virtual
     void
-    get_full_view( MatrixWrapper<real_type> & ) {
-      UTILS_ERROR0( "get_full_view not defined\n");
-    }
+    get_full_view( MatrixWrapper<real_type> & );
 
     //!
     //! Print the sparse matrix to a stream element by element:

@@ -25,7 +25,7 @@
 
 //#include <sparse_tool/interfaces/MA41.hh>
 //#include <sparse_tool/interfaces/MA48.hh>
-#include <sparse_tool/interfaces/SuperLU.hh>
+//#include <sparse_tool/interfaces/SuperLU.hh>
 //#include <sparse_tool/interfaces/mkl_pardiso.hh>
 //#include <sparse_tool/interfaces/UMF.hh>
 
@@ -180,7 +180,7 @@ testSparseTool( istream_type & mm_file ) {
   fmt::print("residual (pardiso) = {}\n", resid.lpNorm<Eigen::Infinity>() );
 #endif
 
-#if 1
+#if 0
   x.setZero();
   SuperLU<double> superlu;
   superlu.load( A );

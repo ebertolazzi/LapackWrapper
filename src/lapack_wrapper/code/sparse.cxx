@@ -26,7 +26,7 @@ namespace lapack_wrapper {
   template <typename T>
   string
   SparseMatrixBase<T>::to_string() const {
-    string res = "";
+    string res{""};
     integer const * iRow;
     integer const * jCol;
     real    const * vals;
@@ -60,10 +60,10 @@ namespace lapack_wrapper {
     case 2:
     case -1:
     case -2:
-      for ( integer j = 0; j < Matrix.ncols(); ++j ) {
-        for ( integer i = 0; i < Matrix.nrows(); ++i ) {
-          integer ii = i;
-          integer jj = j;
+      for ( integer j{0}; j < Matrix.ncols(); ++j ) {
+        for ( integer i{0}; i < Matrix.nrows(); ++i ) {
+          integer ii{i};
+          integer jj{j};
           if ( transpose ) std::swap( ii, jj );
           bool do_push = true;
           switch ( lower_upper ) {
@@ -81,8 +81,8 @@ namespace lapack_wrapper {
       }
       break;
     case 3:
-      for ( integer j = 0; j < Matrix.ncols(); ++j ) {
-        for ( integer i = 0; i < Matrix.nrows(); ++i ) {
+      for ( integer j{0}; j < Matrix.ncols(); ++j ) {
+        for ( integer i{0}; i < Matrix.nrows(); ++i ) {
           integer ii = i;
           integer jj = j;
           if ( transpose ) std::swap( ii, jj );
@@ -93,12 +93,12 @@ namespace lapack_wrapper {
       }
       break;
     case -3:
-      for ( integer j = 0; j < Matrix.ncols(); ++j ) {
-        for ( integer i = 0; i < Matrix.nrows(); ++i ) {
+      for ( integer j{0}; j < Matrix.ncols(); ++j ) {
+        for ( integer i{0}; i < Matrix.nrows(); ++i ) {
           integer ii = i;
           integer jj = j;
           if ( transpose ) std::swap( ii, jj );
-          T const & v = Matrix(i,j);
+          T const & v{ Matrix(i,j) };
           this->push_value_C( ii, jj, v );
           if ( i != j ) this->push_value_C( jj, ii, -v );
         }
@@ -154,7 +154,7 @@ namespace lapack_wrapper {
       }
       break;
     case 3:
-      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
+      for ( integer index{0}; index < Matrix.get_nnz(); ++index ) {
         integer i = rowsM[index];
         integer j = colsM[index];
         T const & v = valsM[index];
@@ -163,7 +163,7 @@ namespace lapack_wrapper {
       }
       break;
     case -3:
-      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
+      for ( integer index{0}; index < Matrix.get_nnz(); ++index ) {
         integer i = rowsM[index];
         integer j = colsM[index];
         T const & v = valsM[index];
@@ -172,6 +172,12 @@ namespace lapack_wrapper {
       }
       break;
     }
+  }
+
+  template <typename T>
+  void
+  SparseMatrixBase<T>::get_full_view( MatrixWrapper<real_type> & ) {
+    UTILS_ERROR0( "get_full_view not defined\n");
   }
 
   /*\

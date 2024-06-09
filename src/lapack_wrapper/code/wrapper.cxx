@@ -21,6 +21,8 @@
 /// file: wrapper.cxx
 ///
 
+#include "Utils_fmt.hh"
+
 namespace lapack_wrapper {
 
   /*
@@ -523,6 +525,31 @@ namespace lapack_wrapper {
   : DiagMatrixWrapper<T>( nullptr, dim )
   {
     m_data = m_mem.realloc( size_t(m_dim) );
+  }
+
+  template <typename T>
+  typename DiagMatrixWrapper<T>::DMatW &
+  DiagMatrixWrapper<T>::operator = ( DMatW const & COPY ) {
+    UTILS_ASSERT0(
+      m_dim == COPY.m_dim,
+      "DiagMatrixWrapper operator = bad matrix dimensions\n"
+    );
+    std::copy_n( COPY.m_data, COPY.m_dim, m_data );
+    return *this;
+  }
+
+  template <typename T>
+  string
+  DiagMatrixWrapper<T>::to_string() const {
+    string res{""};
+    for ( integer i{0}; i < m_dim; ++i ) {
+      for ( integer j{0}; j < m_dim; ++j ) {
+        if ( i != j ) res += ".              ";
+        else          res += fmt::format( "{:14} ", m_data[i] );
+      }
+      res += '\n';
+    }
+    return res;
   }
 
   template <typename T>

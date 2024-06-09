@@ -97,27 +97,9 @@ namespace lapack_wrapper {
       return *this;
     }
 
-    DMatW & operator = ( DMatW const & COPY ) {
-      UTILS_ASSERT0(
-        m_dim == COPY.m_dim,
-        "DiagMatrixWrapper operator = bad matrix dimensions\n"
-      );
-      std::copy_n( COPY.m_data, COPY.m_dim, m_data );
-      return *this;
-    }
+    DMatW & operator = ( DMatW const & COPY );
 
-    string
-    to_string() const {
-      string res = "";
-      for ( integer i = 0; i < m_dim; ++i ) {
-        for ( integer j = 0; j < m_dim; ++j ) {
-          if ( i != j ) res += ".              ";
-          else          res += fmt::format( "{:14} ", m_data[i] );
-        }
-        res += '\n';
-      }
-      return res;
-    }
+    string to_string() const;
 
   };
 

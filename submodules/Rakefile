@@ -8,10 +8,8 @@ task :copy_submodules do
   FileUtils.mkdir_p "../lib3rd/lib/"
   FileUtils.mkdir_p "../lib3rd/dll/"
   FileUtils.mkdir_p "../lib3rd/bin/"
-  ["Utils"].each do |base|
-    FileUtils.cp_r "./#{base}/lib/include/#{base}/.", "../lib3rd/include"
-    FileUtils.cp_r "./#{base}/lib/.", "../lib3rd"
-  end
+  FileUtils.cp_r    "./UtilsLite/lib/include/Utils/.", "../lib3rd/include"
+  FileUtils.cp_r    "./UtilsLite/lib/.", "../lib3rd"
 end
 
 desc "build 3rd parties for OSX/LINUX/MINGW"

@@ -12,7 +12,18 @@
 cmake_minimum_required(VERSION 3.14)
 
 project( lapack_wrapper )
-include(./cmake_utils/CMakeLists-common.txt)
+
+if (IS_DIRECTORY "${PROJECT_SOURCE_DIR}/cmake_utils")
+  set( HOME "${PROJECT_SOURCE_DIR}/cmake_utils/" )
+else()
+  if (IS_DIRECTORY "${PROJECT_SOURCE_DIR}/../cmake_utils")
+    set( HOME "${PROJECT_SOURCE_DIR}/../cmake_utils/" )
+  else()
+    set( HOME "${PROJECT_SOURCE_DIR}/../../cmake_utils/" )
+  endif()
+endif()
+
+include( "${HOME}/CMakeLists-common.txt" )
 
 project(
   ${PROJECT_NAME}
@@ -84,42 +95,14 @@ include_directories( ./lib3rd/include )
 #
 set(DEPEND_TARGETS)
 
-find_library(
-  SUPERLU superlu${ARTIFACTS_STATIC_SUFFIX}
-  HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib
-  NO_DEFAULT_PATH
-  REQUIRED
-)
-
 # DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
-find_library(
-  UTILS Utils${ARTIFACTS_STATIC_SUFFIX}
-  HINTS ${UPDIR}/Utils/lib/lib
-  NO_DEFAULT_PATH
-)
-if( UTILS )
-  message(STATUS "Found Utils${ARTIFACTS_STATIC_SUFFIX}")
-  utils_copy_directory(
-    "${UPDIR}/Utils/lib"
-    "${CMAKE_CURRENT_SOURCE_DIR}/lib3rd"
-  )
-else()
-  message(STATUS "NOT Found Utils${ARTIFACTS_STATIC_SUFFIX} use submodule")
-  add_subdirectory(./submodules/Utils)
-  include_directories(./submodules/Utils/src)
-  set( UTILS utils_Utils_Static )
-  set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
-  #add_custom_command(
-  #  TARGET ${UTILS}
-  #  PRE_BUILD
-  #  COMMAND "rake install"
-  #  WORKING_DIRECTORY "./submodules/Utils/ThirdParties"
-  #)
-endif()
+#utils_add_library_or_submodule( "quarticRootsFlocke" ROOTS )
+utils_add_library_or_submodule( "UtilsLite" UTILS )
+#utils_add_library_or_submodule( "GenericContainer" GC "GC" )
+
 
 # definisce lapackblas_libraries
-include( ./cmake_utils/CMakeLists-blas-lapack.txt )
+include( "${HOME}/CMakeLists-blas-lapack.txt" )
 
 #   _____                  _
 #  |_   _|_ _ _ _ __ _ ___| |_ ___
@@ -265,6 +248,6 @@ install(
 #
 
 # do not work
-include( ./cmake_utils/CMakeLists-cpack.txt )
+include( "${HOME}/CMakeLists-cpack.txt" )
 
 utils_final_messages()
