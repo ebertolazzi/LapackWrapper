@@ -1,4 +1,0 @@
-######################################################################
-if( EXISTS "${CMAKE_CURRENT_LIST_DIR}/../../CMakeLists-customize.txt" )
-  include("${CMAKE_CURRENT_LIST_DIR}/../../CMakeLists-customize.txt")
-endif()

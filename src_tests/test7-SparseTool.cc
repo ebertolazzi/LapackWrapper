@@ -220,7 +220,7 @@ main() {
     //"af23560.mtx.gz", // MA48 fails
     //"memplus.mtx.gz", //
     //"fidap005.mtx.gz",
-    "ASIC_100k.mtx.gz",           // 99340 (ok) 200 iter
+    "ASIC_100k.mtx",           // 99340 (ok) 200 iter
     //"ASIC_320ks.mtx.gz",          // 321671 (ok) 200 iter
     //"ASIC_680k.mtx.gz",           // 682862 (ok) 200 iter
     //"af23560.mtx.gz",             // 23560 (no)
@@ -249,11 +249,7 @@ main() {
       cerr << "Cannot open file: " << fname << "\n";
       exit(0);
     }
-    zstr::istream gz(file);
-    //ifstream file( fname.c_str() );
-    //cout << (file.good()?"OK":"NO") << endl;
-    //cout << (file.fail()?"OK":"NO") << endl;
-    testSparseTool( gz );
+    testSparseTool( file );
     file.close();
   }
   fmt::print("\nAll Done Folks\n\n");

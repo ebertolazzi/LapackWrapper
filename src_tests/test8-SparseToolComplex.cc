@@ -140,7 +140,7 @@ main() {
     //"fem_hifreq_circuit.mtx.gz", // 491100, fail gmres, fail bicgstab
     //"mono_500Hz.mtx.gz", // 169410 fail gmres, fail bicgstab
     //"mplate.mtx.gz", // 5962, 7 bicgstab
-    "qc2534.mtx.gz", // 2534, 35 bicgstab
+    "qc2534.mtx", // 2534, 35 bicgstab
     //"qc324.mtx.gz", // ok 5 bicgstab
     //"RFdevice.mtx.gz", // 74104 fail gmres, fail bicgstab
     //"ted_AB.mtx.gz", // 10605 fail gmres, fail bicgstab
@@ -158,11 +158,7 @@ main() {
       cerr << "Cannot open file: " << fname << "\n";
       exit(0);
     }
-    zstr::istream gz(file);
-    //ifstream file( fname.c_str() );
-    //cout << (file.good()?"OK":"NO") << endl;
-    //cout << (file.fail()?"OK":"NO") << endl;
-    testSparseTool( gz );
+    testSparseTool( file );
     file.close();
   }
   fmt::print("\nAll Done Folks\n\n");

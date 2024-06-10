@@ -1,53 +1,61 @@
 require "rake"
-require_relative "../cmake_utils/Rakefile_common.rb"
+
+if File.exist?(File.expand_path('../cmake_utils/Rakefile_common.rb', File.dirname(__FILE__))) then
+  require_relative "../cmake_utils/Rakefile_common.rb"
+else
+  require_relative "../../Rakefile_common.rb"
+end
 
 task :default => [:install_osx] do
 end
 
 desc "install 3rd parties for OSX"
 task :install_osx do
-  FileUtils.cd "SuperLU"
-  sh "rake install_osx"
-  FileUtils.cd ".."
+  #FileUtils.cd "SuperLU"
+  #sh "rake install_osx"
+  #FileUtils.cd ".."
 end
 
 desc "install 3rd parties for LINUX"
 task :install_linux do
-  FileUtils.cd "SuperLU"
-  sh "rake install_linux"
-  FileUtils.cd ".."
+  #FileUtils.cd "SuperLU"
+  #sh "rake install_linux"
+  #FileUtils.cd ".."
 end
 
 desc "install 3rd parties for LINUX"
 task :install_mingw do
-  FileUtils.cd "SuperLU"
-  sh "rake install_mingw"
-  FileUtils.cd ".."
+  #FileUtils.cd "SuperLU"
+  #sh "rake install_mingw"
+  #FileUtils.cd ".."
 end
 
 desc "install 3rd parties for WINDOWS"
 task :install_win do
-  FileUtils.cd "SuperLU"
-  sh "rake install_win"
-  FileUtils.cd "../OpenBlas"
+  #FileUtils.cd "SuperLU"
+  #sh "rake install_win"
+  #FileUtils.cd ".."
+  FileUtils.cd "OpenBlas"
   sh "rake install_win"
   FileUtils.cd ".."
 end
 
 desc "clean 3rd parties for OSX"
 task :clean_osx do
-  FileUtils.cd "SuperLU"
-  sh "rake clean_osx"
-  FileUtils.cd "../OpenBlas"
+  #FileUtils.cd "SuperLU"
+  #sh "rake clean_osx"
+  #FileUtils.cd ".."
+  FileUtils.cd "OpenBlas"
   sh "rake clean_osx"
   FileUtils.cd ".."
 end
 
 desc "clean 3rd parties for LINUX"
 task :clean_linux do
-  FileUtils.cd "SuperLU"
-  sh "rake clean_linux"
-  FileUtils.cd "../OpenBlas"
+  #FileUtils.cd "SuperLU"
+  #sh "rake clean_linux"
+  #FileUtils.cd ".."
+  FileUtils.cd "OpenBlas"
   sh "rake clean_linux"
   FileUtils.cd ".."
   arch = `uname -m`.chomp #elimina a capo
@@ -90,18 +98,20 @@ end
 
 desc "clean 3rd parties for MINGW"
 task :clean_mingw do
-  FileUtils.cd "SuperLU"
-  sh "rake clean_mingw"
-  FileUtils.cd "../OpenBlas"
+  #FileUtils.cd "SuperLU"
+  #sh "rake clean_mingw"
+  #FileUtils.cd ".."
+  FileUtils.cd "OpenBlas"
   sh "rake clean_mingw"
   FileUtils.cd ".."
 end
 
 desc "clean 3rd parties for WINDOWS"
 task :clean_win do
-  FileUtils.cd "SuperLU"
-  sh "rake clean_win"
-  FileUtils.cd "../OpenBlas"
+  #FileUtils.cd "SuperLU"
+  #sh "rake clean_win"
+  #FileUtils.cd ".."
+  FileUtils.cd "OpenBlas"
   sh "rake clean_win"
   FileUtils.cd ".."
 end

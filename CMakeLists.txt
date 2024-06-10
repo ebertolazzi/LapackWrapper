@@ -146,7 +146,7 @@ if ( UTILS_BUILD_SHARED )
   )
   target_link_libraries(
     ${UTILS_NAMESPACE}_${PROJECT_NAME}
-    ${SUPERLU} ${lapackblas_libraries} ${UTILS_NAMESPACE}_HSL_Static ${UTILS}
+    ${lapackblas_libraries} ${UTILS_NAMESPACE}_HSL_Static ${UTILS}
   )
 endif()
 
@@ -162,25 +162,6 @@ endif()
 if ( UTILS_ENABLE_TESTS )
 
   enable_testing()
-
-  if( APPLE OR UNIX OR MINGW )
-    find_package( ZLIB REQUIRED )
-  else()
-    if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
-      find_library(
-        ZLIB_LIBRARIES zlibstaticd
-        HINTS ./submodules/Utils/ThirdParties/zlib-ng/lib/win/lib
-              ${UPDIR}/Utils/lib3rd/lib ${UPDIR}/Utils/lib3rd/dll
-      )
-    else()
-      find_library(
-        ZLIB_LIBRARIES zlibstatic
-        HINTS ./submodules/Utils/ThirdParties/zlib-ng/lib/win/lib
-               ${UPDIR}/Utils/lib3rd/lib ${UPDIR}/Utils/lib3rd/dll
-      )
-    endif()
-    set( ZLIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParties/zlib-ng/win/include " "${UPDIR}/Utils/lib3rd/include ")
-  endif()
 
   set( EXELISTBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin" )
   set( EXELISTCPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src_tests" )
@@ -211,8 +192,6 @@ if ( UTILS_ENABLE_TESTS )
     ${UTILS_NAMESPACE}_${PROJECT_NAME}_Static
     ${UTILS_NAMESPACE}_HSL_Static
     ${UTILS}
-    ${SUPERLU}
-    ${ZLIB_LIBRARIES}
     ${lapackblas_libraries}
     ${CMAKE_DL_LIBS}
   )

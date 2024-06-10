@@ -17,8 +17,6 @@
 #define SPARSETOOL_MATRIX_MARKET_HH
 
 #include "sparse_tool.hh"
-
-#include <Utils_zstr.hh>
 #include <string.h>
 
 #if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
@@ -66,13 +64,13 @@ namespace Sparse_tool {
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  static char const *cC[] = { "coordinate", "array" };
-  static char const *cV[] = { "pattern", "integer", "real", "complex" };
-  static char const *cM[] = { "general", "symmetric", "skew-symmetric", "Hermitian" };
+  static char const *cC[]{ "coordinate", "array" };
+  static char const *cV[]{ "pattern", "integer", "real", "complex" };
+  static char const *cM[]{ "general", "symmetric", "skew-symmetric", "Hermitian" };
 
-  static char const MM_HEADER[] = "% Generated with saveToMatrixMarket of toolkit Sparse_tool\n"
-                                  "% by Enrico Bertolazzi\n"
-                                  "%--------------------------------------------------------\n";
+  static char const MM_HEADER[]{"% Generated with saveToMatrixMarket of toolkit Sparse_tool\n"
+                                "% by Enrico Bertolazzi\n"
+                                "%--------------------------------------------------------\n"};
   #endif
 
   //!
@@ -160,7 +158,7 @@ namespace Sparse_tool {
              strcmp( m_str[1], "matrix" )         != 0 ) continue;
 
         // coordinate or array ?
-        for ( unsigned i = 2; i < nstr; ++i ) {
+        for ( unsigned i{2}; i < nstr; ++i ) {
           char const * p = m_str[i];
           if      ( strcmp( p, "coordinate")     == 0 ) cType = MM_COORDINATE;
           else if ( strcmp( p, "array")          == 0 ) cType = MM_ARRAY;
@@ -313,7 +311,7 @@ namespace Sparse_tool {
 
       read_header( stream );
 
-      static char const *fmts[4] = { "%d%d", "%d%d%d", "%d%d%lf", "%d%d%lf%lf" };
+      static char const *fmts[4]{ "%d%d", "%d%d%d", "%d%d%lf", "%d%d%lf%lf" };
 
       UTILS_ASSERT0(
         cType == MM_COORDINATE,
@@ -442,7 +440,7 @@ namespace Sparse_tool {
         "try to read an integer matrix into a non integer one!, data is " << *this
       );
       mat.resize( m_nnz );
-      for ( integer kk = 0; kk < m_nnz; ++kk ) {
+      for ( integer kk{0}; kk < m_nnz; ++kk ) {
         int a;
         sscanf(m_line, "%d", &a);
         mat(kk) = a;
@@ -467,7 +465,7 @@ namespace Sparse_tool {
       );
       static char const *fmts[4] = { "", "%lf", "%lf", "%lf%lf" };
       mat.clear(); mat.resize( m_nnz );
-      for ( integer kk = 0; kk < m_nnz; ++kk ) {
+      for ( integer kk{0}; kk < m_nnz; ++kk ) {
         double re, im{0};
         sscanf(m_line, fmts[mType], &re, &im );
         mat.push_back( std::complex<T>(re,im) );
@@ -497,7 +495,7 @@ namespace Sparse_tool {
       );
       //static char const *fmts[4] = { "", "%lf", "%lf", "%lf%lf" };
       mat.clear(); mat.resize( m_nnz );
-      for ( integer kk = 0; kk < m_nnz; ++kk ) {
+      for ( integer kk{0}; kk < m_nnz; ++kk ) {
         double a;
         sscanf(m_line, "%lf", &a );
         mat.push_back( a );
@@ -521,24 +519,15 @@ namespace Sparse_tool {
     template<typename MAT>
     void
     read( char const fname[], MAT & M ) {
-      integer len = strlen(fname);
-      string  msg = fmt::format(
+      string  msg{ fmt::format(
         "Sparse_tool::MatrixMarket::read\n"
         "In reading Matrix Market File, cannot open {}\n",
         fname
-      );
-      if ( len > 4 && strcmp(fname+len-3,".gz") == 0 ) {
-        ifstream file(fname,std::ios::binary);
-        UTILS_ASSERT( file.is_open(), msg );
-        zstr::istream fz(file);
-        read( fz, M );
-        file.close();
-      } else {
-        ifstream file(fname);
-        UTILS_ASSERT( file.is_open(), msg );
-        read( file, M );
-        file.close();
-      }
+      ) };
+      ifstream file(fname);
+      UTILS_ASSERT( file.is_open(), msg );
+      read( file, M );
+      file.close();
     }
 
     //!
@@ -554,7 +543,7 @@ namespace Sparse_tool {
 
     integer nrows() const { return m_nrows; } //!< number of rows of loaded matrix
     integer ncols() const { return m_ncols; } //!< number of columns of loaded matrix
-    integer nnz()     const { return m_nnz;   } //!< total number of nonzeros
+    integer nnz()   const { return m_nnz;   } //!< total number of nonzeros
 
     // ALIAS
     #ifdef LAPACK_WRAPPER_USE_ALIAS
@@ -719,7 +708,7 @@ namespace Sparse_tool {
       "{} 1\n",
       MM_HEADER, V.size()
     );
-    for ( integer i = 0; i < V.size(); ++i )
+    for ( integer i{0}; i < V.size(); ++i )
       fmt::print( file, "{} {}\n", V(i).real(), V(i).imag() );
 
     file.close();
@@ -808,7 +797,7 @@ namespace Sparse_tool_load {
 #endif
 
 namespace fmt {
-  template <> struct formatter<Sparse_tool::MatrixMarket>  : ostream_formatter {};
+  template <> struct formatter<Sparse_tool::MatrixMarket> : ostream_formatter {};
 }
 
 #endif
