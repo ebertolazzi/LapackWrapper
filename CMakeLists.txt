@@ -31,8 +31,8 @@ project(
   HOMEPAGE_URL "https://ebertolazzi.github.io/LapackWrapper/"
 )
 
-include(./cmake_utils/CMakeLists-cflags.txt)
-include(./cmake_utils/CMakeLists-utilities.txt)
+include( "${HOME}/CMakeLists-cflags.txt" )
+include( "${HOME}/CMakeLists-utilities.txt" )
 
 # Evaluating the suffix to append to target built by this CMake file
 utils_artifacts_suffix(ARTIFACTS_STATIC_SUFFIX TRUE)
