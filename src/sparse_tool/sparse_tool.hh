@@ -35,7 +35,13 @@
 #include <algorithm>
 #include <functional>
 
-#include "Utils_eigen.hh"
+
+#ifdef NO_SYSTEM_UTILS
+  #include "Utils_eigen.hh"
+#else
+  #include <Utils_eigen.hh>
+#endif
+
 #include "lapack_wrapper/lapack_wrapper.hh"
 
 // workaround for windows macros

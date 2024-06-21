@@ -51,8 +51,6 @@ using namespace ::std;
 
 using Real = double;
 
-#include <Utils.hh>
-
 inline
 Real
 power2( Real const &  a)

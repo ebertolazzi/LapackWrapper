@@ -40,8 +40,15 @@
 \*/
 @@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@
 
-#include "Utils.hh"
-#include "Utils_fmt.hh"
+#ifdef NO_SYSTEM_UTILS
+  #include "Utils.hh"
+  #include "Utils_fmt.hh"
+  #include "Utils_trace.hh"
+#else
+  #include <Utils.hh>
+  #include <Utils_fmt.hh>
+  #include <Utils_trace.hh>
+#endif
 
 namespace lapack_wrapper {
   using Utils::ostream_type;

@@ -51,8 +51,6 @@ using namespace ::std;
 
 using Real = double;
 
-#include <Utils.hh>
-
 static Utils::Console msg(&std::cout);
 
 inline

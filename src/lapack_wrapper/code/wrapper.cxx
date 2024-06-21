@@ -21,8 +21,6 @@
 /// file: wrapper.cxx
 ///
 
-#include "Utils_fmt.hh"
-
 namespace lapack_wrapper {
 
   /*
