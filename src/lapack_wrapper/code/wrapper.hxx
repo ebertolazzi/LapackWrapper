@@ -25,6 +25,10 @@
 #pragma clang diagnostic ignored "-Wpadded"
 #endif
 
+#if defined(DEBUG) || defined(_DEBUG)
+  #include "Utils_trace.hh"
+#endif
+
 namespace lapack_wrapper {
 
   /*\
