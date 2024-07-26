@@ -431,12 +431,12 @@ namespace lapack_wrapper {
     //! Copy a matrix to a rectangular block of the stored matrix
     //! staring at `(irow,icol)` position.
     //!
-    //! \param[in] nr    number of rows of the block to be zeroed
-    //! \param[in] nc    number of columns of the block to be zeroed
+    //! \param[in] nr    number of rows of the block to be copied
+    //! \param[in] nc    number of columns of the block to be copied
     //! \param[in] B     pointer to memory storing the input matrix `B`
     //! \param[in] ldB   leading dimension of the matrix `B`
-    //! \param[in] irow  starting row
-    //! \param[in] icol  stating column
+    //! \param[in] irow  starting row of insert position
+    //! \param[in] icol  stating column of insert position
     //!
     void
     load_block(
@@ -473,12 +473,12 @@ namespace lapack_wrapper {
     //! Copy a matrix to a rectangular block of the stored matrix
     //! staring at `(irow,icol)` position.
     //!
-    //! \param[in] nr    number of rows of the block to be zeroed
-    //! \param[in] nc    number of columns of the block to be zeroed
+    //! \param[in] nr    number of rows of the block to be copied
+    //! \param[in] nc    number of columns of the block to be copied
     //! \param[in] B     pointer to memory storing the input matrix `B`
     //! \param[in] ldB   leading dimension of the matrix `B`
-    //! \param[in] irow  starting row
-    //! \param[in] icol  stating column
+    //! \param[in] irow  starting row of insert position
+    //! \param[in] icol  stating column of insert position
     //!
     void
     load_block_transposed(
