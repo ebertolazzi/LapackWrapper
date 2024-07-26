@@ -447,6 +447,7 @@ namespace lapack_wrapper {
       integer         irow = 0,
       integer         icol = 0
     ) {
+      if ( nr == 0 || nc == 0 ) return;
       integer inr = irow + nr;
       integer inc = icol + nc;
       UTILS_ASSERT(
@@ -489,6 +490,7 @@ namespace lapack_wrapper {
       integer         irow = 0,
       integer         icol = 0
     ) {
+      if ( nr == 0 || nc == 0 ) return;
       UTILS_ASSERT(
         irow + nc <= m_nrows &&
         icol + nr <= m_ncols &&
@@ -519,6 +521,7 @@ namespace lapack_wrapper {
       integer         irow = 0,
       integer         icol = 0
     ) {
+      if ( n == 0 ) return;
       UTILS_ASSERT(
         irow + n <= m_nrows &&
         icol + n <= m_ncols &&
