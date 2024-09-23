@@ -15,7 +15,7 @@ end
 desc "build 3rd parties for OSX/LINUX/MINGW"
 task :build_common, [:os] do |t, args|
   args.with_defaults( :os => "osx" )
-  FileUtils.cd "Utils"
+  FileUtils.cd "UtilsLite"
   sh "rake clean_#{args.os}"
   sh "rake build_#{args.os}"
   FileUtils.cd ".."
@@ -30,7 +30,7 @@ task :build_win   do Rake::Task[:build_common].invoke("win")   end
 desc "clean 3rd parties for OSX/LINUX/MINGW"
 task :clean_common, [:os] do |t, args|
   args.with_defaults( :os => "osx" )
-  FileUtils.cd "Utils"
+  FileUtils.cd "UtilsLite"
   sh "rake clean_#{args.os}"
   FileUtils.cd ".."
 end
