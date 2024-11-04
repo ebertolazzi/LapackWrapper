@@ -51,10 +51,13 @@ namespace lapack_wrapper {
     real_type * m_A_factored{nullptr};
     real_type * m_Rt{nullptr};
 
+    integer     m_LWorkQRP1{0};
+    real_type * m_WorkQRP1{nullptr};
+
     integer     m_LWorkQR2{0};
     real_type * m_WorkQR2{nullptr};
 
-    QRP_no_alloc<real_type> m_QR1;
+    QRP_no_alloc<real_type> m_QRP1;
     QR_no_alloc<real_type>  m_QR2;
 
     void factorize( char const who[] );

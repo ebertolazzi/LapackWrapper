@@ -214,7 +214,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedLU<T>::zero() {
-    integer nnz = m_m*(2*m_nL+m_nU+1);
+    integer nnz{ m_m*(2*m_nL+m_nU+1) };
     lapack_wrapper::zero( nnz, m_AB, 1 );
     m_is_factorized = false;
   }
@@ -340,9 +340,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   BandedLU<T>::dump( ostream_type & stream ) const {
-    for ( integer i = 0; i <= m_nL+m_nU; ++i ) {
+    for ( integer i{0}; i <= m_nL+m_nU; ++i ) {
       real_type const * col = m_AB + m_nL + i;
-      for ( integer j = 0; j < m_n; ++j, col += m_ldAB )
+      for ( integer j{0}; j < m_n; ++j, col += m_ldAB )
         stream << std::setw(10) << col[0] << ' ';
       stream << '\n';
     }

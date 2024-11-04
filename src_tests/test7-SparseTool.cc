@@ -215,28 +215,28 @@ testSparseTool( istream_type & mm_file ) {
 int
 main() {
   char const * rMatrix[] = {
-    //"af23560.mtx.gz", // MA48 fails
-    //"memplus.mtx.gz", //
-    //"fidap005.mtx.gz",
+    //"af23560.mtx", // MA48 fails
+    //"memplus.mtx", //
+    //"fidap005.mtx",
     "ASIC_100k.mtx",           // 99340 (ok) 200 iter
-    //"ASIC_320ks.mtx.gz",          // 321671 (ok) 200 iter
-    //"ASIC_680k.mtx.gz",           // 682862 (ok) 200 iter
-    //"af23560.mtx.gz",             // 23560 (no)
-    //"audikw_1.mtx.gz",            // 943695 (ok) 11 iter
-    //"barrier2-2.mtx.gz",          // 113076 (no)
-    //"bmw3_2.mtx.gz",              // 227362 (ok) 8 iter
-    //"cage15.mtx.gz",              // In reading Matrix Market File, bad pattern index on line 38025901
-    //"CO.mtx.gz",                  // 221119 (ok) 10 iter
-    //"dwg961b.mtx.gz",             // 961 (ok) 14
-    //"ecology2.mtx.gz",            // 999999 (ok) 53 iter
-    //"fidapm05.mtx.gz",            // 42 (no)
-    //"memchip.mtx.gz",             // 2707524 (ok) 200 iter
-    //"hor__131.mtx.gz",            // 434 (ok) 200 iter
-    //"ldoor.mtx.gz",               // 952203 (ok) 11 iter
-    //"para-9.mtx.gz",              // 155924 (no)
-    //"parabolic_fem.mtx.gz",       // 525825 (ok) 54 iter
-    //"plat1919.mtx.gz",            // 1919 (ok) 200 iter
-    //"s3dkq4m2.mtx.gz",            // 90449 (ok) 10 iter
+    //"ASIC_320ks.mtx",          // 321671 (ok) 200 iter
+    //"ASIC_680k.mtx",           // 682862 (ok) 200 iter
+    //"af23560.mtx",             // 23560 (no)
+    //"audikw_1.mtx",            // 943695 (ok) 11 iter
+    //"barrier2-2.mtx",          // 113076 (no)
+    //"bmw3_2.mtx",              // 227362 (ok) 8 iter
+    //"cage15.mtxz",              // In reading Matrix Market File, bad pattern index on line 38025901
+    //"CO.mtx",                  // 221119 (ok) 10 iter
+    //"dwg961b.mtx",             // 961 (ok) 14
+    //"ecology2.mtx",            // 999999 (ok) 53 iter
+    //"fidapm05.mtx",            // 42 (no)
+    //"memchip.mtx",             // 2707524 (ok) 200 iter
+    //"hor__131.mtx",            // 434 (ok) 200 iter
+    //"ldoor.mtx",               // 952203 (ok) 11 iter
+    //"para-9.mtx",              // 155924 (no)
+    //"parabolic_fem.mtx",       // 525825 (ok) 54 iter
+    //"plat1919.mtx",            // 1919 (ok) 200 iter
+    //"s3dkq4m2.mtx",            // 90449 (ok) 10 iter
     nullptr
   };
 

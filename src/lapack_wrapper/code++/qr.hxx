@@ -353,6 +353,9 @@ namespace lapack_wrapper {
     integer   * m_JPVT{nullptr};
     real_type * m_WorkPermute{nullptr};
 
+  private:
+    using QR_no_alloc<T>::get_Lwork_QR;
+
   public:
 
     using QR_no_alloc<T>::m_nrows;
@@ -376,7 +379,6 @@ namespace lapack_wrapper {
     using QR_no_alloc<T>::getQ;
     using QR_no_alloc<T>::getA;
     using QR_no_alloc<T>::getTau;
-    using QR_no_alloc<T>::no_allocate;
     using QR_no_alloc<T>::factorize;
 
     QRP_no_alloc() : QR_no_alloc<T>() {}

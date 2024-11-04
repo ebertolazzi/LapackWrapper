@@ -92,7 +92,7 @@ namespace Sparse_tool {
     MatrixType mType; //! the matrix type
 
     bool
-    getLine( istream_type & stream ) {
+    get_line( istream_type & stream ) {
       stream.getline( m_line, 128 );
       ++m_num_line;
       return m_line[0] == '%';
@@ -141,7 +141,7 @@ namespace Sparse_tool {
       vType      = MM_REAL;
       mType      = MM_GENERAL;
 
-      while ( this -> getLine( stream ) ) {
+      while ( this -> get_line( stream ) ) {
         #if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
           unsigned nstr = sscanf_s( m_line,
                                     "%s%s%s%s%s",
@@ -231,7 +231,7 @@ namespace Sparse_tool {
           "Failed in reading Matrix Market File\n"
         );
 
-        if ( getLine( stream ) ) continue; // skip comments and empty line
+        if ( get_line( stream ) ) continue; // skip comments and empty line
 
         integer i, j;
         sscanf( m_line, "%d%d", &i, &j );
@@ -279,17 +279,17 @@ namespace Sparse_tool {
           "Failed in reading Matrix Market File\n"
         );
 
-        if ( getLine( stream ) ) continue; // skip comments
+        if ( get_line( stream ) ) continue; // skip comments
 
-        integer i, j, a;
+        integer i{0}, j{0}, a{0};
         sscanf( m_line, "%d%d%d", &i, &j, &a );
 
         UTILS_ASSERT(
           i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
           "Sparse_tool::MatrixMarket::read\n"
-          "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
+          "In reading Matrix Market File, bad pattern ({},{}) = {} index on line {}\n"
           "Read: <<{}>>\n",
-          i, j, m_num_line, m_line
+          i, j, a, m_num_line, m_line
         );
 
         --i; --j; // zero base index
@@ -334,18 +334,18 @@ namespace Sparse_tool {
           "Failed in reading Matrix Market File\n"
         );
 
-        if ( getLine( stream ) ) continue; // skip comments
+        if ( get_line( stream ) ) continue; // skip comments
 
-        integer i, j;
-        double  re, im{0};
+        integer i{0}, j{0};
+        double  re{0}, im{0};
         sscanf( m_line, fmts[vType], &i, &j, &re, &im );
 
         UTILS_ASSERT(
           i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
           "Sparse_tool::MatrixMarket::read\n"
-          "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
+          "In reading Matrix Market File, bad pattern ({},{}) = (r:{},i:{})index on line {}\n"
           "Read: <<{}>>\n",
-          i, j, m_num_line, m_line
+          i, j, re, im,  m_num_line, m_line
         );
         --i; --j; // zero base index
 
@@ -396,18 +396,18 @@ namespace Sparse_tool {
           "Failed in reading Matrix Market File\n"
         );
 
-        if ( getLine( stream ) ) continue; // skip comments
+        if ( get_line( stream ) ) continue; // skip comments
 
-        integer i, j;
-        double  a;
+        integer i{0}, j{0};
+        double  a{0};
         sscanf( m_line, "%d%d%lf", &i, &j, &a );
 
         UTILS_ASSERT(
           i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
           "Sparse_tool::MatrixMarket::read\n"
-          "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
+          "In reading Matrix Market File, bad pattern ({},{}) = {} index on line {}\n"
           "Read: <<{}>>\n",
-          i, j, m_num_line, m_line
+          i, j, a, m_num_line, m_line
         );
         --i; --j; // zero base index
 

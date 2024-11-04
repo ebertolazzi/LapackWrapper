@@ -562,17 +562,32 @@ namespace lapack_wrapper {
     integer     Liwork,
     integer   * iWork
   ) {
-    integer Lwmin = this->get_Lwork_QRP( NR, NC ) + NR*NC + NR+NC;
+
+    m_LworkQR = this->get_Lwork_QRP( NR, NC );
+
+    integer Lwmin = m_LworkQR + NR*NC + NR+NC;
+
     UTILS_ASSERT(
       Liwork >= NC && Lwork >= Lwmin,
       "QRP_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {}, ...)\n"
       "Lwork must be >= {} amd Liwork = NC",
       NR, NC, Lwork, Liwork, Lwmin
     );
-    integer mxRC = std::max(NR,NC);
-    this->no_allocate( NR, NC, Lwork-mxRC, Work+mxRC );
-    m_WorkPermute = Work;
-    m_JPVT        = iWork;
+
+    m_nrows      = NR;
+    m_ncols      = NC;
+    m_nReflector = std::min(NR,NC);
+
+    m_JPVT = iWork;
+
+    real_type * ptr = Work;
+    m_WorkQR      = ptr; ptr += m_LworkQR;
+    m_WorkPermute = ptr; ptr += std::max(NR,NC);
+
+
+    m_Afactorized = ptr; ptr += NR*NC;
+    m_Tau         = ptr; ptr += m_nReflector;
+
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

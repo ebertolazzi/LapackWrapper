@@ -42,8 +42,8 @@ namespace lapack_wrapper {
     integer & Lwork,
     integer & Liwork
   ) const {
-    integer L1   = m_QR1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1);
-    integer L2   = m_QR2.get_Lwork_QR( NC, NC ) + (NC+1)*(NC+1);
+    integer L1 = m_QRP1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1);
+    integer L2 = m_QR2.get_Lwork_QR( NC, NC )   + (NC+1)*(NC+1);
     Lwork  = L1 + L2 + (NR+NC)*NC;
     Liwork = NC;
   }
@@ -68,9 +68,9 @@ namespace lapack_wrapper {
       NR, NC
     );
 
-    integer L1   = m_QR1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1);
-    integer L2   = m_QR2.get_Lwork_QR( NC, NC ) + (NC+1)*(NC+1);
-    integer Ltot = L1 + L2 + (NR+NC)*NC;
+    m_LWorkQRP1 = m_QRP1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1);
+    m_LWorkQR2  = m_QR2.get_Lwork_QR( NC, NC )   + (NC+1)*(NC+1);
+    integer Ltot = m_LWorkQRP1 + m_LWorkQR2 + (NR+NC)*NC;
     UTILS_ASSERT(
       Lwork >= Ltot && Liwork >= NC,
       "PINV_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {},...)\n"
@@ -78,12 +78,10 @@ namespace lapack_wrapper {
       NR, NC, Lwork, Liwork, Ltot, NC
     );
     real_type * ptr = Work;
-    m_QR1.no_allocate( NR, NC, L1, ptr, NC, iWork ); ptr += L1;
     m_A_factored = ptr; ptr += NR*NC;
     m_Rt         = ptr; ptr += NC*NC;
-
-    m_LWorkQR2 = Lwork-L1-(NR+NC)*NC;
-    m_WorkQR2  = ptr;
+    m_QRP1.no_allocate( NR, NC, m_LWorkQRP1, ptr, Liwork, iWork ); ptr += m_LWorkQRP1;
+    m_WorkQR2    = ptr;
 
     m_nrows = NR;
     m_ncols = NC;
@@ -133,10 +131,10 @@ namespace lapack_wrapper {
   PINV_no_alloc<T>::factorize( char const who[] ) {
 
     // perform QR factorization
-    m_QR1.factorize_nodim( who, m_A_factored, m_nrows );
+    m_QRP1.factorize_nodim( who, m_A_factored, m_nrows );
 
     // evaluate rank
-    m_QR1.getRt( m_Rt, m_ncols );
+    m_QRP1.getRt( m_Rt, m_ncols );
 
     m_rank = m_ncols;
     real_type threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
@@ -188,11 +186,11 @@ namespace lapack_wrapper {
   PINV_no_alloc<T>::factorize() {
 
     // perform QR factorization
-    bool ok = m_QR1.factorize_nodim( m_A_factored, m_nrows );
+    bool ok = m_QRP1.factorize_nodim( m_A_factored, m_nrows );
     if ( !ok ) return false;
 
     // evaluate rank
-    m_QR1.getRt( m_Rt, m_ncols );
+    m_QRP1.getRt( m_Rt, m_ncols );
 
     m_rank = m_ncols;
     real_type threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
@@ -232,7 +230,7 @@ namespace lapack_wrapper {
     // A^+ = P R^(-1) Q^T
     copy( m_nrows, b, incb, mm_work, 1 );
 
-    m_QR1.Qt_mul( mm_work );
+    m_QRP1.Qt_mul( mm_work );
 
     if ( m_rank < m_ncols ) {
       /*
@@ -260,10 +258,10 @@ namespace lapack_wrapper {
       std::fill_n( mm_work+m_rank, m_nrows-m_rank, real_type(0) );
       m_QR2.Q_mul( mm_work );
     } else {
-      m_QR1.invR_mul( mm_work );
+      m_QRP1.invR_mul( mm_work );
     }
 
-    m_QR1.permute( mm_work );
+    m_QRP1.permute( mm_work );
 
     copy( m_ncols, mm_work, 1, x, incx );
     return true;
@@ -299,7 +297,7 @@ namespace lapack_wrapper {
     // A*P = Q*R --> A =  Q * R * P^(-1)
     // A^+ = P R^(-1) Q^T
 
-    m_QR1.Qt_mul( m_nrows, nrhs, mm_work, m_nrows );
+    m_QRP1.Qt_mul( m_nrows, nrhs, mm_work, m_nrows );
 
     #if 0
     fmt::print(
@@ -313,7 +311,7 @@ namespace lapack_wrapper {
       gezero( m_nrows-m_rank, nrhs, mm_work+m_rank, m_nrows );
       m_QR2.Q_mul( m_ncols, nrhs, mm_work, m_nrows );
     } else {
-      m_QR1.invR_mul( m_ncols, nrhs, mm_work, m_nrows );
+      m_QRP1.invR_mul( m_ncols, nrhs, mm_work, m_nrows );
     }
 
     #if 0
@@ -323,7 +321,7 @@ namespace lapack_wrapper {
     );
     #endif
 
-    m_QR1.permute_rows( m_ncols, nrhs, mm_work, m_nrows );
+    m_QRP1.permute_rows( m_ncols, nrhs, mm_work, m_nrows );
 
     gecopy( m_ncols, nrhs, mm_work, m_nrows, X, ldX );
 
@@ -349,17 +347,17 @@ namespace lapack_wrapper {
     copy( m_ncols, b, incb, mm_work, 1 );
     if ( m_nrows > m_ncols ) std::fill_n( mm_work+m_ncols, m_nrows-m_ncols, real_type(0) );
 
-    m_QR1.inv_permute( mm_work );
+    m_QRP1.inv_permute( mm_work );
 
     if ( m_rank < m_ncols ) {
       m_QR2.Qt_mul( mm_work );
       m_QR2.invR_mul( mm_work );
       std::fill_n( mm_work+m_rank, m_nrows-m_rank, real_type(0) );
     } else {
-      m_QR1.invRt_mul( mm_work );
+      m_QRP1.invRt_mul( mm_work );
     }
 
-    m_QR1.Q_mul( mm_work );
+    m_QRP1.Q_mul( mm_work );
 
     copy( m_nrows, mm_work, 1, x, incx );
 
@@ -395,17 +393,17 @@ namespace lapack_wrapper {
     if ( m_nrows > m_ncols )
       gezero( m_nrows-m_ncols, nrhs, mm_work+m_ncols, m_nrows );
 
-    m_QR1.inv_permute_rows( m_ncols, nrhs, mm_work, m_nrows );
+    m_QRP1.inv_permute_rows( m_ncols, nrhs, mm_work, m_nrows );
 
     if ( m_rank < m_ncols ) {
       m_QR2.Qt_mul( m_ncols, nrhs, mm_work, m_nrows );
       gezero( m_nrows-m_rank, nrhs, mm_work+m_rank, m_nrows );
       m_QR2.invR_mul( m_rank, nrhs, mm_work, m_nrows );
     } else {
-      m_QR1.invRt_mul( m_ncols, nrhs, mm_work, m_nrows );
+      m_QRP1.invRt_mul( m_ncols, nrhs, mm_work, m_nrows );
     }
 
-    m_QR1.Q_mul( m_nrows, nrhs, mm_work, m_nrows );
+    m_QRP1.Q_mul( m_nrows, nrhs, mm_work, m_nrows );
 
     gecopy( m_nrows, nrhs, mm_work, m_nrows, X, ldX );
 
@@ -419,7 +417,7 @@ namespace lapack_wrapper {
   PINV_no_alloc<T>::info( ostream_type & stream ) const {
     Malloc<integer> memi("PINV_no_alloc<T>::info");
     integer * jpvt = memi.malloc( size_t(m_ncols) );
-    m_QR1.getPerm( jpvt );
+    m_QRP1.getPerm( jpvt );
     fmt::print( stream,
       "PINV INFO\n"
       "size = {} x {}\n"

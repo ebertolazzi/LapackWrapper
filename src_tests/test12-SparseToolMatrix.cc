@@ -1117,9 +1117,11 @@ test_timing() {
   cout << "\nMATRIX TESTS\n";
 
   char const *rMatrix[] = {
-    "hor__131.mtx.gz",
-    "af23560.mtx.gz",
-     "plat1919.mtx.gz", NULL };
+    "hor__131.mtx",
+    "af23560.mtx",
+    "plat1919.mtx",
+    NULL
+  };
   char const **p = rMatrix;
 
   Vector<Real> v;
