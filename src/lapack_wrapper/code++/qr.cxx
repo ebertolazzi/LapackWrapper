@@ -57,7 +57,8 @@ namespace lapack_wrapper {
     m_nrows      = NR;
     m_ncols      = NC;
     m_nReflector = std::min(NR,NC);
-    integer Lwmin = this->get_Lwork_QR( NR, NC ) + NR*NC + m_nReflector;
+    m_LworkQR    = this->get_Lwork_QR( NR, NC );
+    integer Lwmin = m_LworkQR + NR*NC + m_nReflector;
     UTILS_ASSERT(
       Lwork >= Lwmin,
       "QR_no_alloc::no_allocate( NR = {}, NC = {}, Lwork {}, .. )\n"
@@ -67,7 +68,6 @@ namespace lapack_wrapper {
     real_type * ptr = Work;
     m_Afactorized = ptr; ptr += NR*NC;
     m_Tau         = ptr; ptr += m_nReflector;
-    m_LworkQR     = Lwork - NR*NC - m_nReflector;
     m_WorkQR      = ptr;
   }
 
@@ -80,17 +80,13 @@ namespace lapack_wrapper {
     real_type const A[],
     integer         LDA
   ) {
-    integer info = gecopy(
-      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
-    );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
     UTILS_ASSERT(
       info == 0,
       "QR_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
-    info = geqrf(
-      m_nrows, m_ncols, m_Afactorized, m_nrows, m_Tau, m_WorkQR, m_LworkQR
-    );
+    info = geqrf( m_nrows, m_ncols, m_Afactorized, m_nrows, m_Tau, m_WorkQR, m_LworkQR );
     UTILS_ASSERT(
       info == 0,
       "QR_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}\n",
@@ -103,14 +99,10 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   QR_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
-    integer info = gecopy(
-      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
-    );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
     bool ok = info == 0;
     if ( ok ) {
-      info = geqrf(
-        m_nrows, m_ncols, m_Afactorized, m_nrows, m_Tau, m_WorkQR, m_LworkQR
-      );
+      info = geqrf( m_nrows, m_ncols, m_Afactorized, m_nrows, m_Tau, m_WorkQR, m_LworkQR );
       ok = info == 0;
     }
     return ok;
@@ -349,8 +341,8 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::getR( real_type R[], integer ldR ) const {
     integer minRC = std::min( m_nrows, m_ncols );
     gezero( minRC, minRC, R, ldR );
-    for ( integer i = 0; i < minRC; ++i )
-      for ( integer j = i; j < minRC; ++j )
+    for ( integer i{0}; i < minRC; ++i )
+      for ( integer j{i}; j < minRC; ++j )
         R[i+j*ldR] = m_Afactorized[ i+j*m_nrows ];
   }
 
@@ -361,8 +353,8 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::getRt( real_type R[], integer ldR ) const {
     integer minRC = std::min( m_nrows, m_ncols );
     gezero( minRC, minRC, R, ldR );
-    for ( integer i = 0; i < minRC; ++i )
-      for ( integer j = i; j < minRC; ++j )
+    for ( integer i{0}; i < minRC; ++i )
+      for ( integer j{i}; j < minRC; ++j )
         R[j+i*ldR] = m_Afactorized[ i+j*m_nrows ];
   }
 
@@ -374,8 +366,8 @@ namespace lapack_wrapper {
     integer minRC = std::min( m_nrows, m_ncols );
     R.setup( minRC, minRC );
     R.zero_fill();
-    for ( integer i = 0; i < minRC; ++i )
-      for ( integer j = i; j < minRC; ++j )
+    for ( integer i{0}; i < minRC; ++i )
+      for ( integer j{i}; j < minRC; ++j )
         R(i,j) = m_Afactorized[ i+j*m_nrows ];
   }
 
@@ -387,8 +379,8 @@ namespace lapack_wrapper {
     integer minRC = std::min( m_nrows, m_ncols );
     R.setup( minRC, minRC );
     R.zero_fill();
-    for ( integer i = 0; i < minRC; ++i )
-      for ( integer j = i; j < minRC; ++j )
+    for ( integer i{0}; i < minRC; ++i )
+      for ( integer j{i}; j < minRC; ++j )
         R(j,i) = m_Afactorized[ i+j*m_nrows ];
   }
 
@@ -583,10 +575,8 @@ namespace lapack_wrapper {
     real_type * ptr = Work;
     m_WorkQR      = ptr; ptr += m_LworkQR;
     m_WorkPermute = ptr; ptr += std::max(NR,NC);
-
-
     m_Afactorized = ptr; ptr += NR*NC;
-    m_Tau         = ptr; ptr += m_nReflector;
+    m_Tau         = ptr; //ptr += m_nReflector;
 
   }
 
@@ -600,9 +590,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     // calcolo fattorizzazione QR della matrice A
-    integer info = gecopy(
-      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
-    );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
     UTILS_ASSERT(
       info == 0,
       "QRP_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
@@ -626,9 +614,7 @@ namespace lapack_wrapper {
   bool
   QRP_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
     // calcolo fattorizzazione QR della matrice A
-    integer info = gecopy(
-      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
-    );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
     bool ok = info == 0;
     if ( ok ) {
       std::fill_n( m_JPVT, m_ncols, integer(0) );
@@ -647,7 +633,7 @@ namespace lapack_wrapper {
   void
   QRP_no_alloc<T>::permute( real_type x[], integer incx ) const {
     // applico permutazione
-    for ( integer i = 0; i < m_ncols; ++i )
+    for ( integer i{0}; i < m_ncols; ++i )
       m_WorkPermute[m_JPVT[i]-1] = x[i*incx];
     copy( m_ncols, m_WorkPermute, 1, x, incx );
   }
@@ -658,10 +644,12 @@ namespace lapack_wrapper {
   void
   QRP_no_alloc<T>::inv_permute( real_type x[], integer incx ) const {
     // applico permutazione
-    for ( integer i = 0; i < m_ncols; ++i )
+    for ( integer i{0}; i < m_ncols; ++i )
       m_WorkPermute[i] = x[incx*(m_JPVT[i]-1)];
     copy( m_ncols, m_WorkPermute, 1, x, incx );
   }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   template <typename T>
   void
@@ -679,6 +667,8 @@ namespace lapack_wrapper {
     for ( integer j = 0; j < nc; ++j ) permute( C + ldC*j, 1 );
   }
 
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   template <typename T>
   void
   QRP_no_alloc<T>::inv_permute_rows(
@@ -692,7 +682,7 @@ namespace lapack_wrapper {
       "QRP_no_alloc::inv_permute_rows, bad number of row, expected {} found {}\n",
       m_ncols, nr
     );
-    for ( integer j = 0; j < nc; ++j ) inv_permute( C + ldC*j, 1 );
+    for ( integer j{0}; j < nc; ++j ) inv_permute( C + ldC*j, 1 );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -710,7 +700,7 @@ namespace lapack_wrapper {
       "QRP_no_alloc::permute_cols, bad number of cols, expected {} found {}\n",
       m_ncols, nc
     );
-    for ( integer i = 0; i < nr; ++i ) permute( C + i, ldC );
+    for ( integer i{0}; i < nr; ++i ) permute( C + i, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -728,7 +718,7 @@ namespace lapack_wrapper {
       "QRP_no_alloc::inv_permute_cols, bad number of cols, expected {} found {}\n",
       m_ncols, nc
     );
-    for ( integer i = 0; i < nr; ++i ) inv_permute( C + i, ldC );
+    for ( integer i{0}; i < nr; ++i ) inv_permute( C + i, ldC );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
