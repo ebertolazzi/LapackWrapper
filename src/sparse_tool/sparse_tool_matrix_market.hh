@@ -535,8 +535,8 @@ namespace Sparse_tool {
     //!
     template<typename MAT>
     void
-    read( string const & fname, MAT & M ) {
-      read( fname.c_str(), M );
+    read( string_view fname, MAT & M ) {
+      read( fname.data(), M );
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -646,14 +646,14 @@ namespace Sparse_tool {
   static
   void
   MatrixMarket_save_to_file(
-    std::string const & fname,
+    string_view         fname,
     Sparse<T,M> const & A,
     real_type           vType,
     MatrixType          mType
   ) {
 
     std::ofstream file;
-    file.open( fname.c_str() );
+    file.open( fname.data() );
     file.precision(15);
 
     fmt::print( file,
@@ -724,12 +724,12 @@ namespace Sparse_tool {
   static
   void
   MatrixMarket_save_to_file(
-    std::string const & fname,
-    Vector<T>   const & V
+    string_view       fname,
+    Vector<T> const & V
   ) {
 
     std::ofstream file;
-    file.open( fname.c_str() );
+    file.open( fname.data() );
     file.precision(15);
 
     fmt::print( file,

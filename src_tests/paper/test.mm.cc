@@ -25,7 +25,7 @@ using namespace SparseToolLoad;
 using namespace std;
 
 void
-testMM( string const & mm_file ) {
+testMM( string_view mm_file ) {
   MatrixMarket                  mm;
   SparsePattern                 sp;
   CCoorMatrix<int>              Ai;

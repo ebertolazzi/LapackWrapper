@@ -28,7 +28,7 @@ using namespace SparseToolLoad;
 using namespace std;
 
 void
-testUMF( string const & mm_file ) {
+testUMF( string_view mm_file ) {
   Timing              tm;
   MatrixMarket        mm;
   UMF                 umf;

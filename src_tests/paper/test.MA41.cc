@@ -28,7 +28,7 @@ using namespace SparseToolLoad;
 using namespace std;
 
 void
-testMA41( string const & mm_file ) {
+testMA41( string_view mm_file ) {
   Timing              tm;
   MatrixMarket        mm;
   MA41                ma41;

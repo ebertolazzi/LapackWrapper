@@ -28,7 +28,7 @@ using namespace SparseToolLoad;
 using namespace std;
 
 void
-testSLU( string const & mm_file ) {
+testSLU( string_view mm_file ) {
   Timing              tm;
   MatrixMarket        mm;
   superLU             slu;

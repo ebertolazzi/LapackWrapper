@@ -99,7 +99,7 @@ test1() {
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print(
-    "residual = {}\n||res||_2 = {}\ndone test1\n",
+    "residual = {}\n‖res‖₂ = {}\ndone test1\n",
     lapack_wrapper::print_matrix( 1, M, b, 1 ), res
   );
   msg.green( "\n\ndone test1\n" );
@@ -161,8 +161,8 @@ test2() {
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print(
-    "residual  = {}"
-    "||res||_2 = {}\n"
+    "residual = {}"
+    "‖res‖₂   = {}\n"
     "done test2\n",
     lapack_wrapper::print_matrix( 1, M, b, 1 ), res
   );
@@ -231,7 +231,7 @@ test3() {
   real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  fmt::print( "||res||_2 = {}\n", res );
+  fmt::print( "‖res‖₂ = {}\n", res );
   msg.green( "\n\ndone test3\n" );
 
 }
@@ -249,7 +249,7 @@ test3() {
   lapack_wrapper::gemv( Transposition::NO, M, M, -1, A, LDA, x, 1, 1, b, 1 ); \
   fmt::print("residual = {}", lapack_wrapper::print_matrix( 1, M, b, 1 ) ); \
   res = lapack_wrapper::nrm2( M, b, 1 ); \
-  fmt::print( "||res||_2 = {}\n", res ); \
+  fmt::print( "‖res‖₂ = {}\n", res ); \
   UTILS_ASSERT0( res < 1e-6, "test failed!\n" );
 
 static
@@ -315,7 +315,7 @@ test4() {
   cout << "residual = " \
        << lapack_wrapper::print_matrix( 1, M, b, 1 ); \
   res = lapack_wrapper::nrm2( M, b, 1 ); \
-  cout << "||res||_2 = " << res << '\n'; \
+  cout << "‖res‖₂ = " << res << '\n'; \
   UTILS_ASSERT0( res < 1e-6, "test failed!\n" );
 
 
@@ -423,7 +423,7 @@ test6() {
   real_type res = lapack_wrapper::nrm2( N, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  fmt::print( "||res||_2 = {}\n", res );
+  fmt::print( "‖res‖₂ = {}\n", res );
   msg.green( "\n\ndone test6\n" );
 
 }
@@ -480,7 +480,7 @@ test7() {
   real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  fmt::print( "||res||_2 = {}\n", res );
+  fmt::print( "‖res‖₂ = {}\n", res );
   msg.green( "\n\ndone test7\n" );
 
 }
@@ -541,7 +541,7 @@ test8() {
   real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  fmt::print( "||res||_2 = {}\n", res );
+  fmt::print( "‖res‖₂ = {}\n", res );
 
   msg.green( "\n\ndone test8\n" );
 }
@@ -604,7 +604,7 @@ test9() {
   real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_WARNING( res < 1e-6, "\n\n\n\ntest failed! res = {}\n\n\n\n", res );
 
-  fmt::print( "||res||_2 = {}\n", res );
+  fmt::print( "‖res‖₂ = {}\n", res );
 
   cout << "\n\nDo PINV factorization of A\n";
   pinv.factorize( M, M-1, A, LDA );
@@ -617,9 +617,9 @@ test9() {
   res = lapack_wrapper::nrm2( M, b, 1 );
 
   fmt::print(
-    "x^T       = {}"
-    "residual  = {}\n"
-    "||res||_2 = {}\n",
+    "x^T      = {}"
+    "residual = {}\n"
+    "‖res‖₂   = {}\n",
     lapack_wrapper::print_matrix( 1, M-1, x, 1 ),
     lapack_wrapper::print_matrix( 1, M, b, 1 ),
     res
@@ -686,7 +686,7 @@ test10() {
   real_type res = lapack_wrapper::nrm2( M, b, 1 );
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
-  fmt::print( "||res||_2 = {}\n", res );
+  fmt::print( "‖res‖₂ = {}\n", res );
 
   msg.green( "\n\ndone test10\n" );
 }
@@ -749,7 +749,7 @@ test11() {
     "\n\n\n\n\ntest failed! res = {}\n\n\n\n", res
   );
 
-  fmt::print( "||res||_2 = {}\n", res );
+  fmt::print( "‖res‖₂ = {}\n", res );
 
   msg.green( "\n\ndone test11\n" );
 }

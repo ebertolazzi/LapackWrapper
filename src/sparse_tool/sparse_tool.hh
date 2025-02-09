@@ -22,6 +22,7 @@
 #include <cmath>
 #include <complex>
 #include <string>
+#include <string_view>
 #include <cstdint>
 
 // standard includes I/O
@@ -105,6 +106,7 @@ namespace Sparse_tool {
 
   using std::vector;
   using std::string;
+  using std::string_view;
   using std::istream;
   using std::ostream;
   using std::cin;
