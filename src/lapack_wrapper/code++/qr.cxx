@@ -76,7 +76,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR_no_alloc<T>::factorize_nodim(
-    char const      who[],
+    string_view     who,
     real_type const A[],
     integer         LDA
   ) {
@@ -585,7 +585,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QRP_no_alloc<T>::factorize_nodim(
-    char const      who[],
+    string_view     who,
     real_type const A[],
     integer         LDA
   ) {

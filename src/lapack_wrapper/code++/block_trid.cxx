@@ -327,7 +327,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  BlockTridiagonalSymmetic<T>::factorize( char const who[] ) {
+  BlockTridiagonalSymmetic<T>::factorize( string_view who ) {
     UTILS_ASSERT(
       !m_is_factorized,
       "BlockTridiagonalSymmetic::factorize[{}], already factored\n", who

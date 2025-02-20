@@ -42,13 +42,13 @@ namespace Sparse_tool {
   template <typename MAT>
   void
   Spy(
-    std::string     const & fname,
+    string_view             fname,
     SparseBase<MAT> const & sp,
     double          const   xsize,
     vector<integer> const * rowLines = nullptr,
     vector<integer> const * colLines = nullptr
   ) {
-     std::ofstream file( fname.c_str() );
+     std::ofstream file( fname.data() );
      Spy( file, sp, xsize, rowLines, colLines );
      file.close();
   }

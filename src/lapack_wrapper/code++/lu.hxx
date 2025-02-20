@@ -47,7 +47,7 @@ namespace lapack_wrapper {
     integer   * m_Iwork{nullptr};
     integer   * m_i_pivot{nullptr};
 
-    void check_ls( char const who[] ) const;
+    void check_ls( string_view who ) const;
 
   public:
 
@@ -78,7 +78,7 @@ namespace lapack_wrapper {
     }
 
     void
-    factorize_nodim( char const who[], real_type const A[], integer LDA );
+    factorize_nodim( string_view who, real_type const A[], integer LDA );
 
     bool
     factorize_nodim( real_type const A[], integer LDA );
@@ -95,9 +95,9 @@ namespace lapack_wrapper {
     \*/
 
     bool solve( real_type xb[] ) const override;
-    void solve( char const who[], real_type xb[] ) const override;
+    void solve( string_view who, real_type xb[] ) const override;
     bool t_solve( real_type xb[] ) const override;
-    void t_solve( char const who[], real_type xb[] ) const override;
+    void t_solve( string_view who, real_type xb[] ) const override;
 
     bool
     solve(
@@ -108,10 +108,10 @@ namespace lapack_wrapper {
 
     void
     solve(
-      char const who[],
-      integer    nrhs,
-      real_type  B[],
-      integer    ldB
+      string_view who,
+      integer     nrhs,
+      real_type   B[],
+      integer     ldB
     ) const override;
 
     bool
@@ -123,10 +123,10 @@ namespace lapack_wrapper {
 
     void
     t_solve(
-      char const who[],
-      integer   nrhs,
-      real_type B[],
-      integer   ldB
+      string_view who,
+      integer     nrhs,
+      real_type   B[],
+      integer     ldB
     ) const override;
 
   };
@@ -164,7 +164,7 @@ namespace lapack_wrapper {
 
     void
     factorize(
-      char const      who[],
+      string_view     who,
       integer         NR,
       integer         NC,
       real_type const A[],
@@ -228,7 +228,7 @@ namespace lapack_wrapper {
 
     void
     factorize_nodim(
-      char const      who[],
+      string_view     who,
       real_type const A[],
       integer         LDA
     );
@@ -297,7 +297,7 @@ namespace lapack_wrapper {
 
     void
     factorize(
-      char const      who[],
+      string_view     who,
       integer         NRC,
       real_type const A[],
       integer         LDA
@@ -308,15 +308,13 @@ namespace lapack_wrapper {
 
     void
     factorize(
-      char const      who[],
+      string_view     who,
       integer         NR,
       integer         NC,
       real_type const A[],
       integer         LDA
     ) override {
-      UTILS_ASSERT(
-        NR == NC, "LUPQ::factorize, non square matrix: {} x {}\n", NR, NC
-      );
+      UTILS_ASSERT( NR == NC, "LUPQ::factorize, non square matrix: {} x {}\n", NR, NC );
       factorize( who, NR, A, LDA );
     }
 

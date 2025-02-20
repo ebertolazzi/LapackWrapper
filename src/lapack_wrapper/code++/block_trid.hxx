@@ -150,7 +150,7 @@ namespace lapack_wrapper {
     real_type const & operator () ( integer ii, integer jj ) const;
     real_type       & operator () ( integer ii, integer jj );
 
-    void factorize( char const who[] );
+    void factorize( string_view who );
     bool factorize( );
 
     /*\

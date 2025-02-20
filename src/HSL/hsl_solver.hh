@@ -10,10 +10,15 @@
 #define HSL_SOLVER_dot_HH
 
 #include "hsl.hh"
+
 #include <string>
+#include <string_view>
 #include <algorithm>
 
 namespace lapack_wrapper {
+
+  using std::string;
+  using std::string_view;
 
   template <typename real>
   class HSLsolver {
@@ -27,7 +32,7 @@ namespace lapack_wrapper {
     /// True if the HSL solver is factorized.
     bool m_isFactorized{false};
 
-    mutable std::string m_last_error{""};
+    mutable string m_last_error{""};
 
     /**
      * \brief HSLsolver:

@@ -94,7 +94,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   PINV_no_alloc<T>::factorize_nodim(
-    char      const who[],
+    string_view     who,
     real_type const A[],
     integer         LDA
   ) {
@@ -114,12 +114,12 @@ namespace lapack_wrapper {
   template <typename T>
   void
   PINV_no_alloc<T>::t_factorize_nodim(
-    char      const who[],
+    string_view     who,
     real_type const A[],
     integer         LDA
   ) {
-    for ( integer i = 0; i < m_nrows; ++i )
-      for ( integer j = 0; j < m_ncols; ++j )
+    for ( integer i{0}; i < m_nrows; ++i )
+      for ( integer j{0}; j < m_ncols; ++j )
         m_A_factored[i+j*m_nrows] = A[j+i*LDA];
     this->factorize( who );
   }
@@ -128,7 +128,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  PINV_no_alloc<T>::factorize( char const who[] ) {
+  PINV_no_alloc<T>::factorize( string_view who ) {
 
     // perform QR factorization
     m_QRP1.factorize_nodim( who, m_A_factored, m_nrows );
@@ -138,7 +138,7 @@ namespace lapack_wrapper {
 
     m_rank = m_ncols;
     real_type threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
-    for ( integer i = 1; i < m_rank; ++i ) {
+    for ( integer i{1}; i < m_rank; ++i ) {
       if ( std::abs(m_Rt[i*(m_ncols+1)]) < threshold )
         { m_rank = i; break; }
     }

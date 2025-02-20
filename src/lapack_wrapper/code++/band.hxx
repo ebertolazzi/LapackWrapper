@@ -97,7 +97,7 @@ namespace lapack_wrapper {
     );
 
     // do internal factorization, to be executed (only once) before to call solve or t_solve
-    void factorize( char const who[] );
+    void factorize( string_view who );
 
     bool factorize();
 
@@ -110,9 +110,9 @@ namespace lapack_wrapper {
     \*/
 
     bool solve( real_type xb[] ) const override;
-    void solve( char const who[], real_type xb[] ) const override;
+    void solve( string_view who, real_type xb[] ) const override;
     bool t_solve( real_type xb[] ) const override;
-    void t_solve( char const who[], real_type xb[] ) const override;
+    void t_solve( string_view who, real_type xb[] ) const override;
 
     bool
     solve(
@@ -123,10 +123,10 @@ namespace lapack_wrapper {
 
     void
     solve(
-      char const who[],
-      integer    nrhs,
-      real_type  B[],
-      integer    ldB
+      string_view who,
+      integer     nrhs,
+      real_type   B[],
+      integer     ldB
     ) const override;
 
     bool
@@ -138,10 +138,10 @@ namespace lapack_wrapper {
 
     void
     t_solve(
-      char const who[],
-      integer   nrhs,
-      real_type B[],
-      integer   ldB
+      string_view who,
+      integer     nrhs,
+      real_type   B[],
+      integer     ldB
     ) const override;
 
     /*\
@@ -215,7 +215,7 @@ namespace lapack_wrapper {
     void zero();
 
     // do internal fatcorization, to be executed (only once) before to call solve or t_solve
-    void factorize( char const who[] );
+    void factorize( string_view who );
 
     bool factorize( );
 
@@ -228,9 +228,9 @@ namespace lapack_wrapper {
     \*/
 
     bool solve( real_type xb[] ) const override;
-    void solve( char const who[], real_type xb[] ) const override;
+    void solve( string_view who, real_type xb[] ) const override;
     bool t_solve( real_type xb[] ) const override;
-    void t_solve( char const who[], real_type xb[] ) const override;
+    void t_solve( string_view who, real_type xb[] ) const override;
 
     bool
     solve(
@@ -241,10 +241,10 @@ namespace lapack_wrapper {
 
     void
     solve(
-      char const who[],
-      integer    nrhs,
-      real_type  B[],
-      integer    ldB
+      string_view who,
+      integer     nrhs,
+      real_type   B[],
+      integer     ldB
     ) const override;
 
     bool
@@ -256,10 +256,10 @@ namespace lapack_wrapper {
 
     void
     t_solve(
-      char const who[],
-      integer    nrhs,
-      real_type  B[],
-      integer    ldB
+      string_view who,
+      integer     nrhs,
+      real_type   B[],
+      integer     ldB
     ) const override;
 
     /*\

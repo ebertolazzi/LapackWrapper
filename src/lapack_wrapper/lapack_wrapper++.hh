@@ -56,7 +56,7 @@ namespace lapack_wrapper {
 
   template <typename t_Value>
   inline
-  std::string
+  string
   print_matrix(
     integer       nr,
     integer       nc,
@@ -64,10 +64,10 @@ namespace lapack_wrapper {
     integer       ldA,
     t_Value       epsi=t_Value(1e-10)
   ) {
-    std::string out;
-    for ( integer i = 0; i < nr; ++i ) {
-      for ( integer j = 0; j < nc; ++j ) {
-        t_Value Aij = A[i+j*ldA];
+    string out;
+    for ( integer i{0}; i < nr; ++i ) {
+      for ( integer j{0}; j < nc; ++j ) {
+        t_Value Aij{ A[i+j*ldA] };
         if ( std::abs(Aij) < epsi )
           //out += fmt::format("{:>14} ",".");
           out += "             . ";
@@ -83,7 +83,7 @@ namespace lapack_wrapper {
 
   template <typename t_Value>
   inline
-  std::string
+  string
   print_matrix2(
     integer       nr,
     integer       nc,
@@ -91,10 +91,10 @@ namespace lapack_wrapper {
     integer       ldA,
     t_Value       epsi=t_Value(1e-10)
   ) {
-    std::string out;
-    for ( integer i = 0; i < nr; ++i ) {
-      for ( integer j = 0; j < nc; ++j ) {
-        t_Value Aij = A[i+j*ldA];
+    string out;
+    for ( integer i{0}; i < nr; ++i ) {
+      for ( integer j{0}; j < nc; ++j ) {
+        t_Value Aij{ A[i+j*ldA] };
         if ( std::abs(Aij) < epsi )
           //out += fmt::format("{:>8} ",".");
           out += "       . ";
@@ -110,7 +110,7 @@ namespace lapack_wrapper {
 
   template <typename t_Value>
   inline
-  std::string
+  string
   print_matrix( MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10 ) {
     return print_matrix(
       Amat.nrows(), Amat.ncols(), Amat.data(), Amat.ldim(), epsi
@@ -121,7 +121,7 @@ namespace lapack_wrapper {
 
   template <typename t_Value>
   inline
-  std::string
+  string
   print_matrix2( MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10 ) {
     return print_matrix2(
       Amat.nrows(), Amat.ncols(), Amat.data(), Amat.ldim(), epsi
@@ -132,7 +132,7 @@ namespace lapack_wrapper {
 
   template <typename t_Value>
   inline
-  std::string
+  string
   print_matrix_transpose(
     integer       nr,
     integer       nc,
@@ -140,10 +140,10 @@ namespace lapack_wrapper {
     integer       ldA,
     t_Value       epsi=t_Value(1e-10)
   ) {
-    std::string out;
-    for ( integer j = 0; j < nc; ++j ) {
-      for ( integer i = 0; i < nr; ++i ) {
-        t_Value Aij = A[i+j*ldA];
+    string out;
+    for ( integer j{0}; j < nc; ++j ) {
+      for ( integer i{0}; i < nr; ++i ) {
+        t_Value Aij{ A[i+j*ldA] };
         if ( std::abs(Aij) < epsi )
           //out += fmt::format("{:>14} ",".");
           out += "             . ";
@@ -159,7 +159,7 @@ namespace lapack_wrapper {
 
   template <typename t_Value>
   inline
-  std::string
+  string
   print_matrix_transpose2(
     integer       nr,
     integer       nc,
@@ -167,10 +167,10 @@ namespace lapack_wrapper {
     integer       ldA,
     t_Value       epsi=t_Value(1e-10)
   ) {
-    std::string out;
-    for ( integer j = 0; j < nc; ++j ) {
-      for ( integer i = 0; i < nr; ++i ) {
-        t_Value Aij = A[i+j*ldA];
+    string out;
+    for ( integer j{0}; j < nc; ++j ) {
+      for ( integer i{0}; i < nr; ++i ) {
+        t_Value Aij{ A[i+j*ldA] };
         if ( std::abs(Aij) < epsi )
           //out += fmt::format("{:>8} ",".");
           out += "       . ";
@@ -186,7 +186,7 @@ namespace lapack_wrapper {
 
   template <typename t_Value>
   inline
-  std::string
+  string
   print_matrix_transpose(
     MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10
   ) {
@@ -199,7 +199,7 @@ namespace lapack_wrapper {
 
   template <typename t_Value>
   inline
-  std::string
+  string
   print_matrix_transpose2(
     MatrixWrapper<t_Value> const & Amat, t_Value epsi=1e-10
   ) {
@@ -317,7 +317,7 @@ namespace lapack_wrapper {
     virtual
     bool
     solve( integer nrhs, real_type B[], integer ldB ) const {
-      for ( integer i = 0; i < nrhs; ++i )
+      for ( integer i{0}; i < nrhs; ++i )
         if ( !solve( B + i*ldB ) ) return false;
       return true;
     }
@@ -325,14 +325,14 @@ namespace lapack_wrapper {
     virtual
     bool
     t_solve( integer nrhs, real_type B[], integer ldB ) const {
-      for ( integer i = 0; i < nrhs; ++i )
+      for ( integer i{0}; i < nrhs; ++i )
         if ( !t_solve( B + i*ldB ) ) return false;
       return true;
     }
 
     virtual
     void
-    solve( char const who[], real_type xb[] ) const {
+    solve( string_view who, real_type xb[] ) const {
       UTILS_ASSERT(
         this->solve( xb ),
         "LinearSystemSolver::solve failed at {}\n", who
@@ -341,7 +341,7 @@ namespace lapack_wrapper {
 
     virtual
     void
-    t_solve( char const who[], real_type xb[] ) const {
+    t_solve( string_view who, real_type xb[] ) const {
       UTILS_ASSERT(
         this->t_solve( xb ),
         "LinearSystemSolver::t_solve failed at {}\n", who
@@ -350,7 +350,7 @@ namespace lapack_wrapper {
 
     virtual
     void
-    solve( char const who[], integer nrhs, real_type B[], integer ldB ) const {
+    solve( string_view who, integer nrhs, real_type B[], integer ldB ) const {
       UTILS_ASSERT(
         this->solve( nrhs, B, ldB ),
         "LinearSystemSolver::solve failed at {}\n", who
@@ -359,7 +359,7 @@ namespace lapack_wrapper {
 
     virtual
     void
-    t_solve( char const who[], integer nrhs, real_type B[], integer ldB ) const {
+    t_solve( string_view who, integer nrhs, real_type B[], integer ldB ) const {
       UTILS_ASSERT(
         this->t_solve( nrhs, B, ldB ),
         "LinearSystemSolver::solve failed at {}\n", who
@@ -369,7 +369,7 @@ namespace lapack_wrapper {
     virtual
     void
     factorize(
-      char const      /* who */ [],
+      string_view     /* who */   ,
       integer         /* NR  */   ,
       integer         /* NC  */   ,
       real_type const /* A   */ [],
@@ -399,7 +399,7 @@ namespace lapack_wrapper {
     { return solve( M.ncols(), M.data(), M.ldim() ); }
 
     void
-    solve( char const who[], MatrixWrapper<real_type> & M )
+    solve( string_view who, MatrixWrapper<real_type> & M )
     { this->solve( who, M.ncols(), M.data(), M.ldim() ); }
 
     bool
@@ -407,13 +407,13 @@ namespace lapack_wrapper {
     { return t_solve( M.ncols(), M.data(), M.ldim() ); }
 
     void
-    t_solve( char const who[], MatrixWrapper<real_type> & M )
+    t_solve( string_view who, MatrixWrapper<real_type> & M )
     { this->t_solve( who, M.ncols(), M.data(), M.ldim() ); }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     void
-    factorize( char const who[], MatrixWrapper<real_type> const & M ) {
+    factorize( string_view who, MatrixWrapper<real_type> const & M ) {
       this->factorize( who, M.nrows(), M.ncols(), M.data(), M.ldim() );
     }
 
@@ -425,15 +425,15 @@ namespace lapack_wrapper {
     virtual
     void
     t_factorize(
-      char const      who[],
+      string_view     who,
       integer         NR,
       integer         NC,
       real_type const A[],
       integer         LDA
     ) {
       Matrix<real_type> M(NC,NR);
-      for ( integer i = 0; i < NR; ++i )
-        for ( integer j = 0; j < NC; ++j )
+      for ( integer i{0}; i < NR; ++i )
+        for ( integer j{0}; j < NC; ++j )
           M(j,i) = A[i+j*LDA];
       this->factorize( who, M );
     }
@@ -447,14 +447,14 @@ namespace lapack_wrapper {
       integer         LDA
     ) {
       Matrix<real_type> M(NC,NR);
-      for ( integer i = 0; i < NR; ++i )
-        for ( integer j = 0; j < NC; ++j )
+      for ( integer i{0}; i < NR; ++i )
+        for ( integer j{0}; j < NC; ++j )
           M(j,i) = A[i+j*LDA];
       return this->factorize( M );
     }
 
     void
-    t_factorize( char const who[], MatrixWrapper<real_type> const & M ) {
+    t_factorize( string_view who, MatrixWrapper<real_type> const & M ) {
       this->t_factorize( who, M.nrows(), M.ncols(), M.data(), M.ldim() );
     }
 

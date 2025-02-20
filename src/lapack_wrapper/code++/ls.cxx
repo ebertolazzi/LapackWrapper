@@ -84,7 +84,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LSS_no_alloc<T>::factorize_nodim(
-    char const      who[],
+    string_view     who,
     real_type const A[],
     integer         LDA
   ) {
@@ -292,7 +292,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LSY_no_alloc<T>::factorize_nodim(
-    char const      who[],
+    string_view     who,
     real_type const A[],
     integer         LDA
   ) {
@@ -443,7 +443,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LSY<T>::factorize(
-    char const      who[],
+    string_view     who,
     integer         NR,
     integer         NC,
     real_type const A[],

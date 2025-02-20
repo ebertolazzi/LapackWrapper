@@ -31,7 +31,7 @@ namespace lapack_wrapper {
     integer const * jCol;
     real    const * vals;
     this->data(iRow, jCol, vals);
-    for ( size_t i = 0; i < size_t(this->get_nnz()); ++i)
+    for ( size_t i{0}; i < size_t(this->get_nnz()); ++i)
       res += fmt::format( "{}, {}, {}\n", iRow[i], jCol[i], vals[i] );
     return res;
   }
@@ -139,9 +139,9 @@ namespace lapack_wrapper {
     case -1:
     case -2:
       for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
-        integer i = rowsM[index];
-        integer j = colsM[index];
-        T const & v = valsM[index];
+        integer   i { rowsM[index] };
+        integer   j { colsM[index] };
+        T const & v { valsM[index] };
         bool do_push = true;
         switch ( lower_upper ) {
           case  1: do_push = j >= i; break;
@@ -155,18 +155,18 @@ namespace lapack_wrapper {
       break;
     case 3:
       for ( integer index{0}; index < Matrix.get_nnz(); ++index ) {
-        integer i = rowsM[index];
-        integer j = colsM[index];
-        T const & v = valsM[index];
+        integer   i { rowsM[index] };
+        integer   j { colsM[index] };
+        T const & v { valsM[index] };
         this->push_value_C( row_offs+i, col_offs+j, v );
         if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, v );
       }
       break;
     case -3:
       for ( integer index{0}; index < Matrix.get_nnz(); ++index ) {
-        integer i = rowsM[index];
-        integer j = colsM[index];
-        T const & v = valsM[index];
+        integer   i { rowsM[index] };
+        integer   j { colsM[index] };
+        T const & v { valsM[index] };
         this->push_value_C( row_offs+i, col_offs+j, v );
         if ( i != j ) this->push_value_C( row_offs+j, col_offs+i, -v );
       }
@@ -541,9 +541,9 @@ namespace lapack_wrapper {
   void
   SparseCCOOR<T>::get_matrix( MatW & M ) const {
     M.zero_fill();
-    for ( integer index = 0; index < m_nnz; ++index ) {
-      integer i = m_rows[index];
-      integer j = m_cols[index];
+    for ( integer index{0}; index < m_nnz; ++index ) {
+      integer i { m_rows[index] };
+      integer j { m_cols[index] };
       if ( m_fortran_indexing ) { --i; --j; }
       M(i,j) = m_vals[index];
     }
@@ -553,9 +553,9 @@ namespace lapack_wrapper {
   void
   SparseCCOOR<T>::get_matrix_symmetric( MatW & M ) const {
     M.zero_fill();
-    for ( integer index = 0; index < m_nnz; ++index ) {
-      integer i = m_rows[index];
-      integer j = m_cols[index];
+    for ( integer index{0}; index < m_nnz; ++index ) {
+      integer i { m_rows[index] };
+      integer j { m_cols[index] };
       if ( m_fortran_indexing ) { --i; --j; }
       T v = m_vals[index];
       M(i,j) = v;
@@ -567,9 +567,9 @@ namespace lapack_wrapper {
   void
   SparseCCOOR<T>::get_matrix_transposed( MatW & M ) const {
     M.zero_fill();
-    for ( integer index = 0; index < m_nnz; ++index ) {
-      integer i = m_rows[index];
-      integer j = m_cols[index];
+    for ( integer index{0}; index < m_nnz; ++index ) {
+      integer i { m_rows[index] };
+      integer j { m_cols[index] };
       if ( m_fortran_indexing ) { --i; --j; }
       M(j,i) = m_vals[index];
     }

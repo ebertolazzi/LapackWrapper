@@ -518,25 +518,16 @@ namespace Sparse_tool {
     //!
     template<typename MAT>
     void
-    read( char const fname[], MAT & M ) {
-      string  msg{ fmt::format(
+    read( string_view fname, MAT & M ) {
+      string msg{ fmt::format(
         "Sparse_tool::MatrixMarket::read\n"
         "In reading Matrix Market File, cannot open {}\n",
         fname
       ) };
-      ifstream file(fname);
+      ifstream file(fname.data());
       UTILS_ASSERT( file.is_open(), msg );
       read( file, M );
       file.close();
-    }
-
-    //!
-    //! Read the matrix in the template `MAT` class.
-    //!
-    template<typename MAT>
-    void
-    read( string_view fname, MAT & M ) {
-      read( fname.data(), M );
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -594,14 +585,14 @@ namespace Sparse_tool {
   static
   void
   MatrixMarket_save_to_file(
-    std::string               const & fname,
+    string_view                       fname,
     Sparse<std::complex<T>,M> const & A,
     real_type                         vType,
     MatrixType                        mType
   ) {
 
     std::ofstream file;
-    file.open( fname.c_str() );
+    file.open( fname.data() );
     file.precision(15);
     fmt::print( file,
       "%%MatrixMarket matrix coordinate {} {}\n"
@@ -694,12 +685,12 @@ namespace Sparse_tool {
   static
   void
   MatrixMarket_save_to_file(
-    std::string              const & fname,
+    string_view                      fname,
     Vector<std::complex<T> > const & V
   ) {
 
     std::ofstream file;
-    file.open( fname.c_str() );
+    file.open( fname.data() );
     file.precision(15);
 
     fmt::print( file,
@@ -738,7 +729,7 @@ namespace Sparse_tool {
       "{} 1\n",
       MM_HEADER, V.size()
     );
-    for ( integer i = 0; i < V.size(); ++i )
+    for ( integer i{0}; i < V.size(); ++i )
       fmt::print( file, "{}\n", V(i) );
 
     file.close();
@@ -755,12 +746,12 @@ namespace Sparse_tool {
   inline
   void
   MatrixMarket_save_to_file(
-    std::string   const & fname,
+    string_view           fname,
     SparsePattern const & A,
     MatrixType    const   mType
   ) {
     std::ofstream file;
-    file.open( fname.c_str() );
+    file.open( fname.data() );
     file.precision(15);
     fmt::print( file,
       "%%MatrixMarket matrix coordinate pattern {}\n"

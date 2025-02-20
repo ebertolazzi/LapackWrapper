@@ -60,7 +60,7 @@ namespace lapack_wrapper {
     QRP_no_alloc<real_type> m_QRP1;
     QR_no_alloc<real_type>  m_QR2;
 
-    void factorize( char const who[] );
+    void factorize( string_view who );
     bool factorize();
 
   public:
@@ -89,9 +89,9 @@ namespace lapack_wrapper {
       integer & Liwork
     ) const;
 
-    void factorize_nodim( char const who[], real_type const A[], integer LDA );
+    void factorize_nodim( string_view who, real_type const A[], integer LDA );
     bool factorize_nodim( real_type const A[], integer LDA );
-    void t_factorize_nodim( char const who[], real_type const A[], integer LDA );
+    void t_factorize_nodim( string_view who, real_type const A[], integer LDA );
     bool t_factorize_nodim( real_type const A[], integer LDA );
 
     bool
@@ -226,7 +226,7 @@ namespace lapack_wrapper {
     //!
     void
     factorize(
-      char      const who[],
+      string_view     who,
       integer         NR,
       integer         NC,
       real_type const A[],
@@ -262,7 +262,7 @@ namespace lapack_wrapper {
     //!
     void
     t_factorize(
-      char      const who[],
+      string_view     who,
       integer         NR,
       integer         NC,
       real_type const A[],

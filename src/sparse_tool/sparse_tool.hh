@@ -4815,8 +4815,7 @@ namespace Sparse_tool {
   to_string( VEC_EXPR const & v ) {
     integer sz1 = v.size() - 1;
     string res = "[ ";
-    for ( integer i = 0; i < sz1; ++i )
-      res += fmt::format( "{}, ", v(i) );
+    for ( integer i{0}; i < sz1; ++i ) res += fmt::format( "{}, ", v(i) );
     res += fmt::format( "{} ]", v(sz1) );
     return res;
   }

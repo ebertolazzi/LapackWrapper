@@ -83,7 +83,7 @@ namespace Sparse_tool {
     Vector<int>        m_J_vec;
 
     void
-    check( char const message[] ) {
+    check( string_view message ) {
       if ( m_mumps_struct.info[0] >= 0 ) return;
       fmt::print( cerr,
         "{}\n"

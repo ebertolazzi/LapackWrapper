@@ -104,13 +104,11 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SVD_no_alloc<T>::factorize_nodim(
-    char const      who[],
+    string_view     who,
     real_type const A[],
     integer         LDA
   ) {
-    integer info = gecopy(
-      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
-    );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
     UTILS_ASSERT(
       info == 0,
       "SVD_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
@@ -405,7 +403,7 @@ namespace lapack_wrapper {
       "B = {} x {}\n",
       m_M, m_N, m_P, m_N
     );
-    for ( integer i = 0; i < m_N; ++i ) {
+    for ( integer i{0}; i < m_N; ++i ) {
       T a = m_alpha_saved[i];
       T b = m_beta_saved[i];
       res += fmt::format(

@@ -242,7 +242,7 @@ main() {
 
   for ( char const **p = rMatrix; *p != nullptr; ++p ) {
     string fname = string("mm/")+*p;
-    ifstream file( fname.c_str() );
+    ifstream file( fname.data() );
     if ( !file.good() ) {
       cerr << "Cannot open file: " << fname << "\n";
       exit(0);

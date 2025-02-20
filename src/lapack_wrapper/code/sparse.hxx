@@ -28,6 +28,7 @@ namespace lapack_wrapper {
 
   using std::vector;
   using std::string;
+  using std::string_view;
 
   template <typename T> class MatrixWrapper;
 

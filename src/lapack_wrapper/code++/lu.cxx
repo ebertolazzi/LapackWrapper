@@ -37,13 +37,11 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LU_no_alloc<T>::factorize_nodim(
-    char const      who[],
+    string_view     who,
     real_type const A[],
     integer         LDA
   ) {
-    integer info = gecopy(
-      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
-    );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
     UTILS_ASSERT(
       info == 0,
       "LU::factorize[{}] gecopy(nRow={}, nCol={}, A, LDA={}, B, LDB={}) : INFO = {}\n",
@@ -52,9 +50,7 @@ namespace lapack_wrapper {
     info = getrf(
       m_nrows, m_ncols, m_Afactorized, m_nrows, m_i_pivot
     );
-    UTILS_ASSERT(
-      info == 0, "LU::factorize[{}] getrf INFO = {}\n", who, info
-    );
+    UTILS_ASSERT( info == 0, "LU::factorize[{}] getrf INFO = {}\n", who, info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -62,14 +58,10 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   LU_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
-    integer info = gecopy(
-      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
-    );
+    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
     bool ok = info == 0;
     if ( ok ) {
-      info = getrf(
-        m_nrows, m_ncols, m_Afactorized, m_nrows, m_i_pivot
-      );
+      info = getrf( m_nrows, m_ncols, m_Afactorized, m_nrows, m_i_pivot );
       ok = info == 0;
     }
     return ok;
@@ -79,7 +71,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  LU_no_alloc<T>::check_ls( char const who[] ) const {
+  LU_no_alloc<T>::check_ls( string_view who ) const {
     UTILS_ASSERT(
       m_nrows == m_ncols,
       "LU<T>::{}, rectangular matrix {} x {}\n", who, m_nrows, m_ncols
@@ -105,7 +97,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  LU_no_alloc<T>::solve( char const who[], real_type xb[] ) const {
+  LU_no_alloc<T>::solve( string_view who, real_type xb[] ) const {
     check_ls("solve");
     integer info = getrs(
       Transposition::NO,
@@ -134,7 +126,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  LU_no_alloc<T>::t_solve( char const who[], real_type xb[] ) const {
+  LU_no_alloc<T>::t_solve( string_view who, real_type xb[] ) const {
     check_ls( who );
     integer info = getrs(
       Transposition::YES,
@@ -164,10 +156,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LU_no_alloc<T>::solve(
-    char const who[],
-    integer    nrhs,
-    real_type  B[],
-    integer    ldB
+    string_view who,
+    integer     nrhs,
+    real_type   B[],
+    integer     ldB
   ) const {
     check_ls(who);
     integer info = getrs(
@@ -202,10 +194,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LU_no_alloc<T>::t_solve(
-    char const who[],
-    integer    nrhs,
-    real_type  B[],
-    integer    ldB
+    string_view who,
+    integer     nrhs,
+    real_type   B[],
+    integer     ldB
   ) const {
     check_ls( who );
     integer info = getrs(
@@ -303,22 +295,14 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LUPQ_no_alloc<T>::factorize_nodim(
-    char const      who[],
+    string_view     who,
     real_type const A[],
     integer         LDA
   ) {
-    integer info = gecopy(
-      m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC
-    );
-    UTILS_ASSERT(
-      info == 0, "LUPQ_no_alloc::factorize[{}] gecopy INFO = {}\n", who, info
-    );
-    info = getc2(
-      m_nRC, m_Afactorized, m_nRC, m_i_piv, m_j_piv
-    );
-    UTILS_ASSERT(
-      info == 0, "LUPQ_no_alloc::factorize[{}] getc2 INFO = {}\n", who, info
-    );
+    integer info = gecopy( m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC );
+    UTILS_ASSERT( info == 0, "LUPQ_no_alloc::factorize[{}] gecopy INFO = {}\n", who, info );
+    info = getc2( m_nRC, m_Afactorized, m_nRC, m_i_piv, m_j_piv );
+    UTILS_ASSERT( info == 0, "LUPQ_no_alloc::factorize[{}] getc2 INFO = {}\n", who, info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

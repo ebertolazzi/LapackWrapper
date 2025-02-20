@@ -84,7 +84,7 @@ namespace lapack_wrapper {
 
     void
     factorize(
-      char const []      /* who */,
+      string_view        /* who */,
       integer            /* NR  */,
       integer            /* NC  */,
       real_type const [] /* M[] */,

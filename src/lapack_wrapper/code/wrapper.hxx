@@ -980,9 +980,9 @@ namespace lapack_wrapper {
     string
     to_string( real_type eps = 0 ) const {
       string res{""};
-      for ( integer i = 0; i < m_nrows; ++i ) {
-        for ( integer j = 0; j < m_ncols; ++j ) {
-          real_type aij = (*this)(i,j);
+      for ( integer i{0}; i < m_nrows; ++i ) {
+        for ( integer j{0}; j < m_ncols; ++j ) {
+          real_type aij{ (*this)(i,j) };
           if ( std::abs( aij ) < eps ) res += ".              ";
           else                         res += fmt::format( "{:14} ", aij );
         }
@@ -1092,7 +1092,7 @@ namespace lapack_wrapper {
   inline
   void
   gemm(
-    char const               where[],
+    string_view              where,
     T                        alpha,
     MatrixWrapper<T> const & A,
     MatrixWrapper<T> const & B,
@@ -1181,7 +1181,7 @@ namespace lapack_wrapper {
   inline
   void
   gemm(
-    char const               where[],
+    string_view              where,
     T                        alpha,
     Transposition    const & TRANSA,
     MatrixWrapper<T> const & A,
@@ -1320,7 +1320,7 @@ namespace lapack_wrapper {
   inline
   void
   trmv(
-    char const               where[],
+    string_view              where,
     ULselect         const & UPLO,
     Transposition    const & TRANS,
     DiagonalType     const & DIAG,
@@ -1389,7 +1389,7 @@ namespace lapack_wrapper {
   inline
   void
   trsv(
-    char const               where[],
+    string_view              where,
     ULselect         const & UPLO,
     Transposition    const & TRANS,
     DiagonalType     const & DIAG,
@@ -1402,9 +1402,7 @@ namespace lapack_wrapper {
       "trsv at `{}` matrix is {} x {} expected square\n",
       where, A.nrows(), A.ncols()
     );
-    lapack_wrapper::trsv(
-      UPLO, TRANS, DIAG, A.nrows(), A.data(), A.ldim(), x, incx
-    );
+    lapack_wrapper::trsv( UPLO, TRANS, DIAG, A.nrows(), A.data(), A.ldim(), x, incx );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1471,7 +1469,7 @@ namespace lapack_wrapper {
   inline
   void
   trmm(
-    char const               where[],
+    string_view              where,
     SideMultiply     const & SIDE,
     ULselect         const & UPLO,
     Transposition    const & TRANS,
@@ -1558,7 +1556,7 @@ namespace lapack_wrapper {
   inline
   void
   trsm(
-    char const               where[],
+    string_view              where,
     SideMultiply     const & SIDE,
     ULselect         const & UPLO,
     Transposition    const & TRANS,

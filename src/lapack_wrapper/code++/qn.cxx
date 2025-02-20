@@ -52,8 +52,8 @@ namespace lapack_wrapper {
   string
   QN<T>::to_string() const {
     string res = "";
-    for ( integer i = 0; i < m_dim; ++i ) {
-      for ( integer j = 0; j < m_dim; ++j )
+    for ( integer i{0}; i < m_dim; ++i ) {
+      for ( integer j{0}; j < m_dim; ++j )
         res += fmt::format( "{:14} ", m_H[i+j*m_dim] );
       res += '\n';
     }

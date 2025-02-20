@@ -63,7 +63,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   TridiagonalSPD<T>::factorize(
-    char const      who[],
+    string_view     who,
     integer         N,
     real_type const _L[],
     real_type const _D[]
@@ -181,7 +181,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   TridiagonalLU<T>::factorize(
-    char const      who[],
+    string_view     who,
     integer         N,
     real_type const L[],
     real_type const D[],
@@ -280,7 +280,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  TridiagonalLU<T>::solve( char const who[], real_type xb[] ) const {
+  TridiagonalLU<T>::solve( string_view who, real_type xb[] ) const {
     integer info = gttrs(
       Transposition::NO,
       m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
@@ -309,7 +309,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   void
-  TridiagonalLU<T>::t_solve( char const who[], real_type xb[] ) const {
+  TridiagonalLU<T>::t_solve( string_view who, real_type xb[] ) const {
     integer info = gttrs(
       Transposition::YES,
       m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC
@@ -339,10 +339,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   TridiagonalLU<T>::solve(
-    char const who[],
-    integer    nrhs,
-    real_type  xb[],
-    integer    ldXB
+    string_view who,
+    integer     nrhs,
+    real_type   xb[],
+    integer     ldXB
   ) const {
     integer info = gttrs(
       Transposition::NO,
@@ -373,10 +373,10 @@ namespace lapack_wrapper {
   template <typename T>
   void
   TridiagonalLU<T>::t_solve(
-    char const who[],
-    integer    nrhs,
-    real_type  xb[],
-    integer    ldXB
+    string_view who,
+    integer     nrhs,
+    real_type   xb[],
+    integer     ldXB
   ) const {
     integer info = gttrs(
       Transposition::YES,
@@ -470,7 +470,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   TridiagonalQR<T>::factorize(
-    char const      who[],
+    string_view     who,
     integer         N,
     real_type const L[],
     real_type const D[],
