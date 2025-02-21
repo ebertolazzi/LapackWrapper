@@ -30,8 +30,8 @@ namespace Sparse_tool {
 
   private:
 
-    bool      verbose;
-    integer   nRow, nCol, nnz;
+    bool      verbose{false};
+    integer   nRow{0}, nCol{0}, nnz{0};
     integer   ICNTL[20];
     integer   INFO[20];
     real_type CNTL[10];

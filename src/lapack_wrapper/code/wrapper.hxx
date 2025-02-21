@@ -316,7 +316,7 @@ namespace lapack_wrapper {
       integer   nc,
       integer   irow,
       integer   icol
-    );
+    ) const;
 
     //!
     //! Zeroes a rectangular block of the stored matrix

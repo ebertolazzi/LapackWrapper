@@ -182,10 +182,10 @@ namespace lapack_wrapper {
 
     Malloc<real_type> m_allocReals;
 
-    integer     m_n, m_nD, m_ldAB;
-    real_type * m_AB;
+    integer     m_n{0}, m_nD{0}, m_ldAB{0};
+    real_type * m_AB{nullptr};
     ULselect    m_UPLO;
-    bool        m_is_factorized;
+    bool        m_is_factorized{false};
 
   public:
 

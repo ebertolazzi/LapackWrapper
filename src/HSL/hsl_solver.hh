@@ -178,7 +178,7 @@ namespace lapack_wrapper {
      *
      */
     bool
-    is_initialized()
+    is_initialized() const
     { return m_isInitialized; }
 
     /**
@@ -188,7 +188,7 @@ namespace lapack_wrapper {
      *
      */
     bool
-    is_factorized()
+    is_factorized() const
     { return m_isFactorized; }
   };
 

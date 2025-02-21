@@ -2662,7 +2662,7 @@ namespace Sparse_tool {
     //!
     //! Check if pattern is empty.
     //!
-    void empty(void) { SPARSE::sp_nnz = 0; }
+    bool empty(void) const { return SPARSE::sp_nnz == 0; }
 
     //!
     //! Insert `(i,j)` in the sparse pattern.
@@ -2976,7 +2976,7 @@ namespace Sparse_tool {
     //!
     //! Check if pattern is empty.
     //!
-    void empty(void) { SPARSE::sp_nnz = 0; }
+    bool empty(void) const { return SPARSE::sp_nnz == 0; }
 
     //!
     //! Order the internal structure to permit random access to nonzeros.

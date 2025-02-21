@@ -122,7 +122,7 @@ namespace lapack_wrapper {
 
     int ihlp = m_icntl[5];
     if ( ihlp <= 0 ) {
-      ihlp            = 1;
+      //ihlp            = 1;
       m_last_error    = "CPPMA48::init, wrong value of icntl[5] in MA48. Set to 1!";
       m_isInitialized = false;
       return false;

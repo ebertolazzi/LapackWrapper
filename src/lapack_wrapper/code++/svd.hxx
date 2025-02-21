@@ -62,13 +62,13 @@ namespace lapack_wrapper {
     using LinearSystemSolver<T>::solve;
     using LinearSystemSolver<T>::t_solve;
 
+    explicit
     SVD_no_alloc( SVD_USED _svd_used = USE_GESVD )
     : LinearSystemSolver<T>()
     , m_svd_used(_svd_used)
     {}
 
-    integer
-    get_Lwork( integer NR, integer NC ) const;
+    static integer get_Lwork( integer NR, integer NC );
 
     void
     no_allocate(
@@ -237,6 +237,7 @@ namespace lapack_wrapper {
     using SVD_no_alloc<T>::Vt_mul;
     using SVD_no_alloc<T>::no_allocate;
 
+    explicit
     SVD( SVD_USED _svd_used = SVD_no_alloc<T>::USE_GESVD )
     : SVD_no_alloc<T>(_svd_used) {}
 

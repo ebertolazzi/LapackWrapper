@@ -165,7 +165,7 @@ namespace lapack_wrapper {
     real_type const x[],
     real_type       beta,
     real_type       y[]
-  ) const {
+  ) {
     tridiag_axpy( N, alpha, _L, _D, _L, x, beta, y );
   }
 
@@ -402,7 +402,7 @@ namespace lapack_wrapper {
     real_type const x[],
     real_type       beta,
     real_type       y[]
-  ) const {
+  ) {
     tridiag_axpy( N, alpha, L, D, U, x, beta, y );
   }
 
@@ -568,7 +568,7 @@ namespace lapack_wrapper {
     real_type const x[],
     real_type       beta,
     real_type       y[]
-  ) const {
+  ) {
     tridiag_axpy( N, alpha, L, D, U, x, beta, y );
   }
 

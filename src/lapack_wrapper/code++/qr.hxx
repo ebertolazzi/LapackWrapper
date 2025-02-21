@@ -56,8 +56,7 @@ namespace lapack_wrapper {
 
     QR_no_alloc() : LinearSystemSolver<T>() {}
 
-    integer
-    get_Lwork_QR( integer NR, integer NC ) const;
+    static integer get_Lwork_QR( integer NR, integer NC );
 
     void
     no_allocate(
@@ -383,8 +382,7 @@ namespace lapack_wrapper {
 
     QRP_no_alloc() : QR_no_alloc<T>() {}
 
-    integer
-    get_Lwork_QRP( integer NR, integer NC ) const;
+    static integer get_Lwork_QRP( integer NR, integer NC );
 
     void
     no_allocate(

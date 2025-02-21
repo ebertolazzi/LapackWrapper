@@ -345,10 +345,6 @@ namespace lapack_wrapper {
   template <typename T>
   BandedSPD<T>::BandedSPD()
   : m_allocReals("_BandedSPD_reals")
-  , m_n(0)
-  , m_nD(0)
-  , m_ldAB(0)
-  , m_is_factorized(false)
   {}
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

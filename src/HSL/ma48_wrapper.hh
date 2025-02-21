@@ -104,7 +104,7 @@ namespace lapack_wrapper {
       int const i_Row[],
       int const j_Col[],
       bool      isFortranIndexing,
-      bool      isStroredSymmetric
+      bool      isStoredSymmetric
     ) override;
 
     /**

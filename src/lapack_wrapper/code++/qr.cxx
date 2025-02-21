@@ -34,7 +34,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   integer
-  QR_no_alloc<T>::get_Lwork_QR( integer NR, integer NC ) const {
+  QR_no_alloc<T>::get_Lwork_QR( integer NR, integer NC ) {
     real_type tmp; // get optimal allocation
     integer info = geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 );
     UTILS_ASSERT(
@@ -529,7 +529,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   integer
-  QRP_no_alloc<T>::get_Lwork_QRP( integer NR, integer NC ) const {
+  QRP_no_alloc<T>::get_Lwork_QRP( integer NR, integer NC ) {
     real_type tmp; // get optimal allocation
     integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
     UTILS_ASSERT(

@@ -67,8 +67,9 @@ namespace lapack_wrapper {
      *
      * \return The maximum from the residual vector.
      */
+    static
     real
-    getResidual( std::vector<real> const & _residualVec ) const {
+    getResidual( std::vector<real> const & _residualVec ) {
       typename std::vector<real>::const_iterator it = _residualVec.begin();
       real ret = real(0);
       while ( it != _residualVec.end() ) {

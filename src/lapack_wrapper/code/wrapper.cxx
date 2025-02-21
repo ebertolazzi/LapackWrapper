@@ -96,7 +96,7 @@ namespace lapack_wrapper {
     integer   nc,
     integer   irow,
     integer   icol
-  ) {
+  ) const {
     T * p = m_data+this->iaddr(irow,icol);
     for ( integer i = 0; i < nc; ++i, p += m_ldData )
       scal( nr, sc, p, 1 );
@@ -563,6 +563,7 @@ namespace lapack_wrapper {
     m_dim  = rhs.m_dim;
     m_data = m_mem.realloc( size_t(m_dim) );
     std::copy_n( rhs.m_data, rhs.m_dim, m_data );
+    return *this;
   }
 
   template class MatrixWrapper<real>;

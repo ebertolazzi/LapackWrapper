@@ -36,7 +36,7 @@ namespace lapack_wrapper {
 
   template <typename T>
   integer
-  SVD_no_alloc<T>::get_Lwork( integer NR, integer NC ) const {
+  SVD_no_alloc<T>::get_Lwork( integer NR, integer NC ) {
     integer minRC = std::min(NR,NC);
     real_type tmp;
     integer info = gesvd(

@@ -107,6 +107,7 @@ namespace lapack_wrapper {
     :|:
     \*/
 
+    static
     void
     axpy(
       integer         N,
@@ -116,7 +117,7 @@ namespace lapack_wrapper {
       real_type const x[],
       real_type       beta,
       real_type       y[]
-    ) const;
+    );
 
   };
 
@@ -233,6 +234,7 @@ namespace lapack_wrapper {
     :|:
     \*/
 
+    static
     void
     axpy(
       integer         N,
@@ -243,7 +245,7 @@ namespace lapack_wrapper {
       real_type const x[],
       real_type       beta,
       real_type       y[]
-    ) const;
+    );
 
   };
 
@@ -346,6 +348,7 @@ namespace lapack_wrapper {
     :|:
     \*/
 
+    static
     void
     axpy(
       integer         N,
@@ -356,7 +359,7 @@ namespace lapack_wrapper {
       real_type const x[],
       real_type       beta,
       real_type       y[]
-    ) const;
+    );
 
   };
 

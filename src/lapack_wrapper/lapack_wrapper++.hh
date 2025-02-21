@@ -252,9 +252,13 @@ namespace lapack_wrapper {
     using DiagMatrixWrapper<T>::m_data;
 
     DiagMatrix();
+
+    explicit
     DiagMatrix( DiagMatrix const & D );
 
+    explicit
     DiagMatrix( integer dim );
+
     void setup( integer dim );
 
     void
@@ -395,19 +399,19 @@ namespace lapack_wrapper {
     // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
     bool
-    solve( MatrixWrapper<real_type> & M )
+    solve( MatrixWrapper<real_type> & M ) const
     { return solve( M.ncols(), M.data(), M.ldim() ); }
 
     void
-    solve( string_view who, MatrixWrapper<real_type> & M )
+    solve( string_view who, MatrixWrapper<real_type> & M ) const
     { this->solve( who, M.ncols(), M.data(), M.ldim() ); }
 
     bool
-    t_solve( MatrixWrapper<real_type> & M )
+    t_solve( MatrixWrapper<real_type> & M ) const
     { return t_solve( M.ncols(), M.data(), M.ldim() ); }
 
     void
-    t_solve( string_view who, MatrixWrapper<real_type> & M )
+    t_solve( string_view who, MatrixWrapper<real_type> & M ) const
     { this->t_solve( who, M.ncols(), M.data(), M.ldim() ); }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
