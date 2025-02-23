@@ -664,7 +664,7 @@ namespace lapack_wrapper {
       "QRP_no_alloc::permute_rows, bad number of row, expected {} found {}\n",
       m_ncols, nr
     );
-    for ( integer j = 0; j < nc; ++j ) permute( C + ldC*j, 1 );
+    for ( integer j{0}; j < nc; ++j ) permute( C + ldC*j, 1 );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

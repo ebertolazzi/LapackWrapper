@@ -100,7 +100,7 @@ main() {
     r = b - A*x;
     fmt::print(
       "Verify Residual = {}\n",
-      r.template lpNorm<Eigen::Infinity>()
+      r.lpNorm<Eigen::Infinity>()
     );
 
   } catch ( exception const & exc ) {

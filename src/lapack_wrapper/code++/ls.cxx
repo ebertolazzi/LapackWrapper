@@ -146,7 +146,7 @@ namespace lapack_wrapper {
       m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
-    for ( integer i = 0; i < m_ncols; ++i )
+    for ( integer i{0}; i < m_ncols; ++i )
       copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
     integer nrc = m_nrows > m_ncols ? m_nrows : m_ncols;
     integer info = gelss(
@@ -202,7 +202,7 @@ namespace lapack_wrapper {
       m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
-    for ( integer i = 0; i < m_ncols; ++i )
+    for ( integer i{0}; i < m_ncols; ++i )
       copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
 
     integer info = gelss(
@@ -353,7 +353,7 @@ namespace lapack_wrapper {
       m_Work  = m_allocWork.realloc( size_t( L ) );
     }
     // save matrix
-    for ( integer i = 0; i < m_ncols; ++i )
+    for ( integer i{0}; i < m_ncols; ++i )
       copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
     integer nrc = m_nrows > m_ncols ? m_nrows : m_ncols;
     integer info = gelsy(
@@ -409,7 +409,7 @@ namespace lapack_wrapper {
       m_Work  = m_allocWork.realloc( size_t(L) );
     }
     // save matrix
-    for ( integer i = 0; i < m_ncols; ++i )
+    for ( integer i{0}; i < m_ncols; ++i )
       copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
     integer info = gelsy(
       m_ncols, m_nrows, nrhs,

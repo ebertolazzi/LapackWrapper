@@ -52,18 +52,16 @@ test1() {
   // solution
   // 0, 0, 7/2+(1/2)*sqrt(73), 7/2-(1/2)*sqrt(73)])
   // 0., 0., 7.772001872, -.772001872
-  real_type A[] = { 1, 2, 3, 4,
-                    4, 4, 4, 4,
-                    1, 2, 1, 2,
-                    0, 0, 1, 1 };
+  real_type A[]{ 1, 2, 3, 4,
+                 4, 4, 4, 4,
+                 1, 2, 1, 2,
+                 0, 0, 1, 1 };
   lapack_wrapper::Eigenvalues<real_type> E;
   E.setup( 4, A, 4 );
   vector<complex<real_type> > e;
   E.getEigenvalues( e );
 
-  vector<complex<real_type> >::const_iterator it;
-  for ( it = e.begin(); it != e.end(); ++it )
-    cout << *it << "\n";
+  for ( auto v : e ) cout << v << "\n";
 }
 
 static
@@ -71,22 +69,20 @@ void
 test2() {
   // solution
   // 0, 4, -2/3-I*sqrt(11)*(1/3), -2/3+I*sqrt(11)*(1/3)
-  real_type A[] = { 1, 2, 3, 4,
-                    4, 4, 4, 4,
-                    1, 2, 1, 2,
-                    0, 0, 1, 1 };
-  real_type B[] = { 3, 2, 1, 1,
-                    1, 1, 1, 1,
-                    4, 3, 2, 1,
-                    1,-1, 0, 1 };
+  real_type A[]{ 1, 2, 3, 4,
+                 4, 4, 4, 4,
+                 1, 2, 1, 2,
+                 0, 0, 1, 1 };
+  real_type B[]{ 3, 2, 1, 1,
+                 1, 1, 1, 1,
+                 4, 3, 2, 1,
+                 1,-1, 0, 1 };
   lapack_wrapper::GeneralizedEigenvalues<real_type> E;
   E.setup( 4, A, 4, B, 4 );
   vector<complex<real_type> > e;
   E.getEigenvalues( e );
 
-  vector<complex<real_type> >::const_iterator it;
-  for ( it = e.begin(); it != e.end(); ++it )
-    cout << *it << "\n";
+  for ( auto v : e ) cout << v << "\n";
 }
 
 static
@@ -98,14 +94,14 @@ test3() {
   [U,V,X,C,S] = gsvd(A,B)
   %[U,V,X,C,S] = gsvd(A,B,0)
   */
-  real_type A_data[] = { 1, 2, 3, 4,
-                         4, 4, 4, 4,
-                         1, 2, 1, 2,
-                         0, 0, 1, 1 };
-  real_type B_data[] = { 3, 2, 1, 1,
-                         1, 1, 1, 1,
-                         4, 3, 2, 1,
-                         1,-1, 0, 1 };
+  real_type A_data[]{ 1, 2, 3, 4,
+                      4, 4, 4, 4,
+                      1, 2, 1, 2,
+                      0, 0, 1, 1 };
+  real_type B_data[]{ 3, 2, 1, 1,
+                      1, 1, 1, 1,
+                      4, 3, 2, 1,
+                      1,-1, 0, 1 };
   real_type TMP_data[16], TMP1_data[16];
   lapack_wrapper::MatrixWrapper<real_type> A(A_data,4,4,4);
   lapack_wrapper::MatrixWrapper<real_type> B(B_data,4,4,4);
@@ -150,12 +146,12 @@ void
 test4() {
   /*
   */
-  real_type A_data[] = { 1, 2, 3, 4, 5,
-                         6, 7, 8, 9, 10,
-                         11,12,13,14,15 };
-  real_type B_data[] = { 8, 3, 4,
-                         1, 5, 9,
-                         6, 7, 2 };
+  real_type A_data[]{ 1, 2, 3, 4, 5,
+                      6, 7, 8, 9, 10,
+                      11,12,13,14,15 };
+  real_type B_data[]{ 8, 3, 4,
+                      1, 5, 9,
+                      6, 7, 2 };
   real_type TMP_data[100], TMP1_data[100], TMP2_data[100], TMP3_data[100];
   lapack_wrapper::MatrixWrapper<real_type> A(A_data,5,3,5);
   lapack_wrapper::MatrixWrapper<real_type> B(B_data,3,3,3);
@@ -202,7 +198,7 @@ void
 test5() {
   // solution
   // 0, 0, 7/2+(1/2)*sqrt(73), 7/2-(1/2)*sqrt(73)])
-  real_type A_data[] = {
+  real_type A_data[]{
     2, 0, 2, 0,
     0, 2, 4, 0,
     2, 4, 4, 1,
@@ -219,16 +215,16 @@ test5() {
 
   vector<vector< lapack_wrapper::Eigenvectors<real_type>::complex_type > > vecs;
   E.getLeftEigenvector( vecs );
-  for ( size_t n = 0; n < 4; ++n ) {
+  for ( size_t n{0}; n < 4; ++n ) {
     fmt::print( "vL[{}] = ", n );
-    for ( size_t i = 0; i < 4; ++i )
+    for ( size_t i{0}; i < 4; ++i )
       fmt::print( " {}", vecs[n][i] );
     fmt::print("\n");
   }
   E.getRightEigenvector( vecs );
-  for ( size_t n = 0; n < 4; ++n ) {
+  for ( size_t n{0}; n < 4; ++n ) {
     fmt::print( "vR[{}] = ", n );
-    for ( size_t i = 0; i < 4; ++i )
+    for ( size_t i{0}; i < 4; ++i )
       fmt::print( "{} ", vecs[n][i] );
     fmt::print("\n");
   }
@@ -239,14 +235,14 @@ void
 test6() {
   // solution
   // 0, 0, 7/2+(1/2)*sqrt(73), 7/2-(1/2)*sqrt(73)])
-  real_type A_data[] = { 1, 2, 3, 4,
-                         4, 4, 4, 4,
-                         1, 2, 1, 2,
-                         0, 0, 1, 1 };
-  real_type B_data[] = { 3, 2, 1, 1,
-                         1, 1, 1, 1,
-                         4, 3, 2, 1,
-                         1,-1, 0, 1 };
+  real_type A_data[]{ 1, 2, 3, 4,
+                      4, 4, 4, 4,
+                      1, 2, 1, 2,
+                      0, 0, 1, 1 };
+  real_type B_data[]{ 3, 2, 1, 1,
+                      1, 1, 1, 1,
+                      4, 3, 2, 1,
+                      1,-1, 0, 1 };
   lapack_wrapper::MatrixWrapper<real_type> A(A_data,4,4,4);
   lapack_wrapper::MatrixWrapper<real_type> B(B_data,4,4,4);
   lapack_wrapper::GeneralizedEigenvectors<real_type> E;
@@ -259,16 +255,16 @@ test6() {
 
   vector<vector< lapack_wrapper::GeneralizedEigenvectors<real_type>::complex_type > > vecs;
   E.getLeftEigenvector( vecs );
-  for ( size_t n = 0; n < 4; ++n ) {
+  for ( size_t n{0}; n < 4; ++n ) {
     fmt::print( "vL[{}] = ", n );
-    for ( size_t i = 0; i < 4; ++i )
+    for ( size_t i{0}; i < 4; ++i )
       fmt::print( "{} ", vecs[n][i] );
     fmt::print("\n");
   }
   E.getRightEigenvector( vecs );
-  for ( size_t n = 0; n < 4; ++n ) {
+  for ( size_t n{0}; n < 4; ++n ) {
     fmt::print( "vR[{}] = ", n );
-    for ( size_t i = 0; i < 4; ++i )
+    for ( size_t i{0}; i < 4; ++i )
       fmt::print( "{} ", vecs[n][i] );
     fmt::print("\n");
   }

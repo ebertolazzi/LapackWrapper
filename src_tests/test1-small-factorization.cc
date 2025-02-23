@@ -48,9 +48,9 @@ test1() {
 
   lapack_wrapper::QR<real_type> qr;
 
-  integer const M   = 3;
-  integer const N   = 5;
-  integer const LDA = 3;
+  constexpr integer M   = 3;
+  constexpr integer N   = 5;
+  constexpr integer LDA = 3;
   real_type A[] = {
     0.001,      2,     3,
     0.001,  0.001,     0,
@@ -59,7 +59,7 @@ test1() {
     0.000001,   5,     3
   };
 
-  lapack_wrapper::MatrixWrapper<real_type> Amat( A, M, N, LDA );
+  lapack_wrapper::MatrixWrapper<real_type> const Amat( A, M, N, LDA );
 
   msg.green(
     "\n\n\nTest1:\n\nInitial A\n" +
@@ -112,9 +112,9 @@ static
 void
 test2() {
   lapack_wrapper::QRP<real_type> qr;
-  integer const M   = 3;
-  integer const N   = 5;
-  integer const LDA = 3;
+  constexpr integer M   = 3;
+  constexpr integer N   = 5;
+  constexpr integer LDA = 3;
   real_type A[] = {
     0.001,      2,     3,
     0.001,  0.001,     0,
@@ -123,7 +123,7 @@ test2() {
     0.000001,   5,     3
   };
 
-  lapack_wrapper::MatrixWrapper<real_type> Amat( A, M, N, LDA );
+  lapack_wrapper::MatrixWrapper<real_type> const Amat( A, M, N, LDA );
 
   msg.green( "\n\n\nTest2:\n\nInitial A\n"+ lapack_wrapper::print_matrix( Amat ) );
 
@@ -174,10 +174,10 @@ static
 void
 test3() {
   lapack_wrapper::QRP<real_type> qr;
-  integer const M   = 5;
-  integer const N   = 5;
-  integer const LDA = 5;
-  real_type A[] = {
+  constexpr integer M   = 5;
+  constexpr integer N   = 5;
+  constexpr integer LDA = 5;
+  constexpr real_type A[] = {
     0.001,      2,     3,     2, 3,
     0.001,  0.001,     0, 0.001, 1e-10,
     0,      0.001,     0, 0.001, 1e-12,
@@ -263,8 +263,8 @@ test4() {
   lapack_wrapper::LSS<real_type>  lss;
   lapack_wrapper::LSY<real_type>  lsy;
 
-  integer const M   = 5;
-  integer const LDA = 5;
+  constexpr integer M   = 5;
+  constexpr integer LDA = 5;
   real_type A[] = {
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
@@ -330,8 +330,8 @@ test5() {
   lapack_wrapper::LSS<real_type>  lss;
   lapack_wrapper::LSY<real_type>  lsy;
 
-  integer const M   = 5;
-  integer const LDA = 5;
+  constexpr integer M   = 5;
+  constexpr integer LDA = 5;
   real_type A[] = {
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
@@ -373,10 +373,10 @@ test6() {
   lapack_wrapper::TridiagonalLU<real_type> lu;
   lapack_wrapper::TridiagonalQR<real_type> qr;
 
-  integer const N = 5;
-  real_type const D[] = { 1, 1, 2, -0.1, 0.1 };
-  real_type const L[] = { -0.1, -1, -2, -0.1 };
-  real_type const U[] = { -1, -10, -2, 0.1 };
+  constexpr integer   N{5};
+  constexpr real_type D[]{ 1, 1, 2, -0.1, 0.1 };
+  constexpr real_type L[]{ -0.1, -1, -2, -0.1 };
+  constexpr real_type U[]{ -1, -10, -2, 0.1 };
 
   real_type rhs[N], b[N];
   real_type x[N] = {1,2,3,4,5};
@@ -433,9 +433,9 @@ void
 test7() {
   lapack_wrapper::QRP<real_type> qrp;
 
-  integer const M   = 5;
-  integer const LDA = 5;
-  real_type A[] = {
+  constexpr integer M   = 5;
+  constexpr integer LDA = 5;
+  constexpr real_type A[]{
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
@@ -490,9 +490,9 @@ void
 test8() {
   lapack_wrapper::LSC<real_type> lsc;
 
-  integer const M   = 5;
-  integer const LDA = 5;
-  real_type A[] = {
+  constexpr integer M   = 5;
+  constexpr integer LDA = 5;
+  constexpr real_type A[]{
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
@@ -504,7 +504,7 @@ test8() {
   real_type x[M] = {1,2,3,4,5};
   //bool      rselect[M] = { true, true, true, true, true };
   //bool      rselect[M] = { false, false, false, false, false };
-  bool      rselect[M] = { true, false, true, true, true };
+  constexpr bool rselect[M] = { true, false, true, true, true };
   lapack_wrapper::gemv(
     Transposition::NO, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
@@ -552,9 +552,9 @@ void
 test9() {
   lapack_wrapper::PINV<real_type> pinv;
 
-  integer const M   = 5;
-  integer const LDA = 5;
-  real_type A[] = {
+  constexpr integer M   {5};
+  constexpr integer LDA {5};
+  constexpr real_type A[]{
     0.001,    1,     0,      2,  1,
     1e-9, -1e+9,  1e-9,  -1e-9,  1,
     1e-9, -1e+9,     1,  -1e-9,  1,
@@ -564,7 +564,7 @@ test9() {
   };
 
   real_type rhs[M], b[M], x[M];
-  real_type const xe[M] = {1,2,3,4,5};
+  real_type const xe[M]{1,2,3,4,5};
   lapack_wrapper::gemv(
     Transposition::NO, M, M, 1, A, LDA, xe, 1, 0, rhs, 1
   );
@@ -586,7 +586,7 @@ test9() {
   pinv.solve( x );
   //pinv.t_solve( 1, x, M );
 
-  real_type e[M] = { x[0]-xe[0],x[1]-xe[1],x[2]-xe[2],x[3]-xe[3],x[4]-xe[4]};
+  const real_type e[M]{ x[0]-xe[0],x[1]-xe[1],x[2]-xe[2],x[3]-xe[3],x[4]-xe[4]};
 
   lapack_wrapper::gemv(
     Transposition::NO, M, M, -1, A, LDA, x, 1, 1, b, 1
@@ -634,10 +634,10 @@ void
 test10() {
   lapack_wrapper::PINV<real_type> pinv;
 
-  integer const M   = 6;
-  integer const N   = 4;
-  integer const LDA = 6;
-  real_type A[] = {
+  constexpr integer M   = 6;
+  constexpr integer N   = 4;
+  constexpr integer LDA = 6;
+  constexpr real_type A[]{
     2,   1,  2,  1, 1, 1,
     2,   1,  2,  1, 1, 1,
     20, 10, 20, 10, 1, 1,
@@ -645,7 +645,7 @@ test10() {
   };
 
   real_type rhs[M], b[M], b2[2*M], x[N], x2[2*N];
-  real_type const xe[N] = {1,2,3,4};
+  constexpr real_type xe[N]{1,2,3,4};
   lapack_wrapper::gemv(
     Transposition::NO, M, N, 1, A, LDA, xe, 1, 0, rhs, 1
   );
@@ -665,7 +665,7 @@ test10() {
   pinv.mult_inv( b, 1, x, 1 );
   pinv.mult_inv( 2, b2, M, x2, N );
 
-  real_type e[N] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2] };
+  const real_type e[N]{ x[0]-xe[0], x[1]-xe[1], x[2]-xe[2] };
 
   lapack_wrapper::gemv(
     Transposition::NO, M, N, -1, A, LDA, x, 1, 1, b, 1
@@ -696,10 +696,10 @@ void
 test11() {
   lapack_wrapper::PINV<real_type> pinv;
 
-  integer const M   = 6;
-  integer const N   = 4;
-  integer const LDA = 6;
-  real_type A[] = {
+  constexpr integer M   = 6;
+  constexpr integer N   = 4;
+  constexpr integer LDA = 6;
+  constexpr real_type A[]{
     2,   1,  2,  1, 1, 1,
     2,   1,  2,  1, 1, 1,
     20, 10, 20, 10, 1, 1,
@@ -727,7 +727,7 @@ test11() {
   pinv.t_mult_inv( b, 1, x, 1 );
   pinv.t_mult_inv( 2, b2, N, x2, M );
 
-  real_type e[M] = { x[0]-xe[0], x[1]-xe[1], x[2]-xe[2], x[3]-xe[3] };
+  const real_type e[M]{ x[0]-xe[0], x[1]-xe[1], x[2]-xe[2], x[3]-xe[3] };
 
   lapack_wrapper::gemv( Transposition::YES, M, N, -1, A, LDA, x, 1, 1, b, 1 );
 
@@ -759,10 +759,10 @@ void
 test12() {
   lapack_wrapper::PINV<real_type> pinv;
 
-  integer const M   = 8;
-  integer const N   = 5;
-  integer const LDA = M;
-  real_type A[] = {
+  constexpr integer M   = 8;
+  constexpr integer N   = 5;
+  constexpr integer LDA = M;
+  constexpr real_type A[]{
     0.001, 1e-9,  1e-9,  1e-9, 1, 1, 0, 0,
     1,    -1e+9, -1e+9, -1e+9, 1, 1, 0, 0,
     0,     1e-9,     1,  1e-9, 1, 1, 0, 0,

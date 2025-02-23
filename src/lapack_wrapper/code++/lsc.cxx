@@ -74,7 +74,7 @@ namespace lapack_wrapper {
 
     // count row
     m_NRA = m_NRB = 0;
-    for ( integer i = 0; i < NR; ++i ) {
+    for ( integer i{0}; i < NR; ++i ) {
       if ( row_select[i] ) ++m_NRA; else ++m_NRB;
     }
 
@@ -87,7 +87,7 @@ namespace lapack_wrapper {
 
     integer LDA = m_NRA;
     m_NRA = m_NRB = 0;
-    for ( integer i = 0; i < NR; ++i ) {
+    for ( integer i{0}; i < NR; ++i ) {
       if ( row_select[i] ) {
         lapack_wrapper::copy( NC, M+i, ldM, m_Amat+m_NRA, LDA );
         m_to_rowA[m_NRA++] = i;
@@ -107,7 +107,7 @@ namespace lapack_wrapper {
     lapack_wrapper::zero( NN2, m_work, 1 );
 
     // A
-    for ( integer i = 0; i < m_NRA; ++i ) {
+    for ( integer i{0}; i < m_NRA; ++i ) {
       /*\
       :|:  / 0   A^T \
       :|:  |         |
@@ -120,7 +120,7 @@ namespace lapack_wrapper {
       m_work[ NCi*(NN+1) ] = -1;
     }
     // B
-    for ( integer i = 0; i < m_NRB; ++i ) {
+    for ( integer i{0}; i < m_NRB; ++i ) {
       integer           NCi = NC + m_NRA + i;
       real_type const * Mi  = M + m_to_rowB[i];
       lapack_wrapper::copy( NC, Mi, ldM, m_work+NCi,    NN );
@@ -148,7 +148,7 @@ namespace lapack_wrapper {
     \*/
     // A^T b
     if ( m_NRA > 0 ) {
-      for ( integer i = 0; i < m_NRA; ++i ) m_work[i] = xb[m_to_rowA[i]];
+      for ( integer i{0}; i < m_NRA; ++i ) m_work[i] = xb[m_to_rowA[i]];
       lapack_wrapper::gemv(
         Transposition::YES, m_NRA, m_NC,
         1.0, m_Amat, m_NRA,
@@ -158,7 +158,7 @@ namespace lapack_wrapper {
       lapack_wrapper::zero( m_NRA, m_rhs+m_NC, 1 );
     }
 
-    for ( integer i = 0; i < m_NRB; ++i )
+    for ( integer i{0}; i < m_NRB; ++i )
       m_rhs[m_NC+m_NRA+i] = xb[m_to_rowB[i]];
 
     bool ok = m_lu.solve( m_rhs );
@@ -191,7 +191,7 @@ namespace lapack_wrapper {
     :|:  \ B    0    0  /  \ lambda /   \   c   /
     \*/
     // A^T b
-    for ( integer i = 0; i < m_NRA; ++i )
+    for ( integer i{0}; i < m_NRA; ++i )
       lapack_wrapper::copy( nrhs, B+m_to_rowA[i], ldB, m_work+i, m_NRA );
 
 /*
@@ -218,7 +218,7 @@ namespace lapack_wrapper {
 
     lapack_wrapper::zero( m_NRA, m_rhs+m_NC, 1 );
 
-    for ( integer i = 0; i < m_NRB; ++i )
+    for ( integer i{0}; i < m_NRB; ++i )
       m_rhs[m_NC+m_NRA+i] = xb[m_to_rowB[i]];
 */
 

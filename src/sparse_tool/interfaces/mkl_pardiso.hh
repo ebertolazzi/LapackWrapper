@@ -167,7 +167,7 @@ namespace Sparse_tool {
         integer j = M.column();
         if ( cmp(i,j) ) ++R(i);
       }
-      for ( integer k = 0; k < n; ++k ) {
+      for ( integer k{0}; k < n; ++k ) {
         R(k+1) += R(k);
         perm(k) = k+1;
       }

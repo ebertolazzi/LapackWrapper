@@ -90,7 +90,7 @@
 #endif
 
 // loops
-#define SPARSELIB_LOOP(N,DO)   { for ( integer i = 0; i < N; ++i ) { DO; } }
+#define SPARSELIB_LOOP(N,DO)   { for ( integer i{0}; i < N; ++i ) { DO; } }
 #define SPARSELIB_V1LOOP(DO)   SPARSELIB_LOOP(this->size(),DO)
 #define SPARSELIB_V2LOOP(V,DO) SPARSELIB_LOOP(minIndex(V.size(),this->size()),DO)
 
@@ -1922,7 +1922,7 @@ namespace Sparse_tool {
     operator = ( real_type const & s ) {
       setZero();
       if ( s != 0 )
-        for ( integer k = 0; k < SBASE::sp_min_size; ++k )
+        for ( integer k{0}; k < SBASE::sp_min_size; ++k )
           (*this)(k,k) = s;
       return *this;
     }
@@ -1950,7 +1950,7 @@ namespace Sparse_tool {
     //!
     Matrix &
     operator += ( real_type const & s ) {
-      for ( integer k = 0; k < SBASE::sp_min_size; ++k )
+      for ( integer k{0}; k < SBASE::sp_min_size; ++k )
         (*this)(k,k) += s;
       return *this;
     }
@@ -1978,7 +1978,7 @@ namespace Sparse_tool {
     //!
     Matrix &
     operator -= ( real_type const & s ) {
-      for ( integer k = 0; k < SBASE::sp_min_size; ++k )
+      for ( integer k{0}; k < SBASE::sp_min_size; ++k )
         (*this)(k,k) -= s;
       return *this;
     }
@@ -2067,7 +2067,7 @@ namespace Sparse_tool {
     operator = ( Vector<TV> const & v ) {
       integer n = minIndex(v.size(), SBASE::sp_min_size );
       setZero();
-      for ( integer k = 0; k < n; ++k )
+      for ( integer k{0}; k < n; ++k )
         (*this)(k,k) = v(k);
       return *this;
     }
@@ -2101,7 +2101,7 @@ namespace Sparse_tool {
     Matrix &
     operator += ( Vector<TV> const & v ) {
       integer n = minIndex( v.size(), SBASE::sp_min_size );
-      for ( integer k = 0; k < n; ++k )
+      for ( integer k{0}; k < n; ++k )
         (*this)(k,k) += v(k);
       return *this;
     }
@@ -2135,7 +2135,7 @@ namespace Sparse_tool {
     Matrix &
     operator -= ( Vector<TV> const & v ) {
       integer n = minIndex(v.size(),  SBASE::sp_min_size);
-      for ( integer k = 0; k < n; ++k )
+      for ( integer k{0}; k < n; ++k )
         (*this)(k,k) -= v(k);
       return *this;
     }
@@ -2175,7 +2175,7 @@ namespace Sparse_tool {
     operator = ( VEC_EXPR const & e ) {
       integer n = minIndex(e.size(), SBASE::sp_min_size );
       setZero();
-      for ( integer k = 0; k < n; ++k )
+      for ( integer k{0}; k < n; ++k )
         (*this)(k,k) = e(k);
       return *this;
     }
@@ -2214,7 +2214,7 @@ namespace Sparse_tool {
     Matrix &
     operator += ( VEC_EXPR const & e ) {
       integer n = minIndex(e.size(), SBASE::sp_min_size );
-      for ( integer k = 0; k < n; ++k )
+      for ( integer k{0}; k < n; ++k )
         (*this)(k,k) += e(k);
       return *this;
     }
@@ -2254,7 +2254,7 @@ namespace Sparse_tool {
     Matrix &
     operator -= ( VEC_EXPR const & e ) {
       integer n = minIndex(e.size(),  SBASE::sp_min_size );
-      for ( integer k = 0; k < n; ++k )
+      for ( integer k{0}; k < n; ++k )
         (*this)(k,k) -= e(k);
       return *this;
     }
@@ -3463,7 +3463,7 @@ namespace Sparse_tool {
         integer j = M.column();
         if ( cmp(i, j) ) ++R(i);
       }
-      for ( integer k = 0; k < SPARSE::sp_nrows; ++k ) R(k+1) += R(k);
+      for ( integer k{0}; k < SPARSE::sp_nrows; ++k ) R(k+1) += R(k);
 
       // step 2: Fill matrix
       for ( M.Begin(); M.End(); M.Next() ) {
@@ -3593,7 +3593,7 @@ namespace Sparse_tool {
     void
     scaleColumn(integer nc, real_type const & val) {
       SPARSE::test_col(nc);
-      for ( integer i = 0; i < SPARSE::sp_nrows; ++i ) {
+      for ( integer i{0}; i < SPARSE::sp_nrows; ++i ) {
         integer pos = position(i,nc,true);
         if ( pos != SPARSE::sp_nnz ) A(pos) *= val;
       }
@@ -3854,7 +3854,7 @@ namespace Sparse_tool {
         integer j = M.column();
         if ( cmp(i,j) ) ++C(j);
       }
-      for ( integer k = 0; k < SPARSE::sp_ncols; ++k ) C(k+1) += C(k);
+      for ( integer k{0}; k < SPARSE::sp_ncols; ++k ) C(k+1) += C(k);
 
       // step 2: Fill matrix
       for ( M.Begin(); M.End(); M.Next() ) {
@@ -3976,7 +3976,7 @@ namespace Sparse_tool {
     void
     scaleRow( integer nr, real_type const & val ) {
       SPARSE::test_row(nr);
-      for ( integer j = 0; j < SPARSE::sp_ncols; ++j ) {
+      for ( integer j{0}; j < SPARSE::sp_ncols; ++j ) {
         integer pos = position(nr,j,true);
         if ( pos != SPARSE::sp_nnz ) A(pos) *= val;
       }

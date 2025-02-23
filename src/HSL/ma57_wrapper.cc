@@ -11,6 +11,8 @@
 
 namespace lapack_wrapper {
 
+  using std::copy_n;
+
   /*\
   :|:   ___      _    _ _      __  __           _
   :|:  | _ \_  _| |__| (_)__  |  \/  |___ _ __ | |__  ___ _ _ ___
@@ -20,13 +22,13 @@ namespace lapack_wrapper {
   template <typename real>
   bool
   MA57<real>::init(
-    int       Nnz,
-    int       N_Row,
-    int       N_Col,
-    int const iRow[],
-    int const jCol[],
-    bool      isFortranIndexing,
-    bool      isStoredSymmetric
+    int  const Nnz,
+    int  const N_Row,
+    int  const N_Col,
+    int  const i_Row[],
+    int  const j_Col[],
+    bool const isFortranIndexing,
+    bool const isStoredSymmetric
   ) {
     // Set dimension:
     m_nnz = Nnz;
@@ -38,18 +40,18 @@ namespace lapack_wrapper {
     }
     m_nrows = m_ncols = N_Row;
     // allocate memory:
-    m_i_Row.resize(size_t(m_nnz));
-    m_j_Col.resize(size_t(m_nnz));
-    m_iKeep.resize(size_t(5 * m_nrows + 2 * m_nnz + 42));
-    m_iPivotSeq.resize(size_t(5 * m_nrows));
+    m_i_Row.resize(static_cast<size_t>(m_nnz));
+    m_j_Col.resize(static_cast<size_t>(m_nnz));
+    m_iKeep.resize(static_cast<size_t>(5 * m_nrows + 2 * m_nnz + 42));
+    m_iPivotSeq.resize(static_cast<size_t>(5 * m_nrows));
 
     // Copy row and column arrays:
-    std::copy_n(iRow, m_nnz, m_i_Row.begin());
-    std::copy_n(jCol, m_nnz, m_j_Col.begin());
+    std::copy_n(i_Row, m_nnz, m_i_Row.begin());
+    std::copy_n(j_Col, m_nnz, m_j_Col.begin());
 
     if (!isFortranIndexing) {
       // Correct fortran indexing:
-      for ( size_t i = 0; i < size_t(m_nnz); ++i ) {
+      for ( integer i{0}; i < m_nnz; ++i ) {
         ++m_i_Row[i];
         ++m_j_Col[i];
       }
@@ -59,7 +61,7 @@ namespace lapack_wrapper {
     // Initialize MA57:
     lapack_wrapper::ma57i<real>( m_cntl, m_icntl );
     // Analyse the structure of the linear system:
-    int NiKeep = int(m_iKeep.size());
+    int const NiKeep{static_cast<int>(m_iKeep.size())};
     lapack_wrapper::ma57a<real>(
       m_nrows,
       m_nnz,
@@ -73,13 +75,13 @@ namespace lapack_wrapper {
       m_rinfo
     );
     // Restize memory for factorization:
-    m_fact.resize(size_t(2 * m_iinfo[8]));
-    m_ifact.resize(size_t(2 * m_iinfo[9]));
+    m_fact.resize(static_cast<size_t>(2 * m_iinfo[8]));
+    m_ifact.resize(static_cast<size_t>(2 * m_iinfo[9]));
     // Restize memory for workspace:
-    m_Work.resize(size_t(3 * m_nnz));
+    m_Work.resize(static_cast<size_t>(3 * m_nnz));
     // allocate reintinmet memory:
-    m_RHSRefinement.resize(size_t(m_nrows));
-    m_residualVec.resize(size_t(m_nrows));
+    m_RHSRefinement.resize(static_cast<size_t>(m_nrows));
+    m_residualVec.resize(static_cast<size_t>(m_nrows));
     m_isInitialized = true;
     m_isFactorized  = false;
     return true;
@@ -94,13 +96,13 @@ namespace lapack_wrapper {
       return false;
     }
 
-    m_a_stored.resize(size_t(m_nnz));
+    m_a_stored.resize(static_cast<size_t>(m_nnz));
     std::copy_n(ArrayA, m_nnz, m_a_stored.begin());
 
     // Now factorize the system:
-    int NiKeep = int(m_iKeep.size());
-    int lifact = int(m_ifact.size());
-    int lfact  = int(m_fact.size());
+    int const NiKeep = static_cast<int>(m_iKeep.size());
+    int const lifact = static_cast<int>(m_ifact.size());
+    int const lfact  = static_cast<int>(m_fact.size());
     lapack_wrapper::ma57b<real>(
       m_nrows,
       m_nnz,
@@ -125,11 +127,11 @@ namespace lapack_wrapper {
   template <typename real>
   bool
   MA57<real>::solve(
-    int        nrhs,
+    int  const nrhs,
     real const RHS[],
-    int        ldRHS,
+    int  const ldRHS,
     real       X[],
-    int        ldX
+    int  const ldX
   ) const {
     // Check valid call:
     if (!m_isInitialized) {
@@ -150,12 +152,12 @@ namespace lapack_wrapper {
             counter < m_MaxRefinements && std::abs(residual) > m_tolRes;
             ++counter ) {
         // Löse mit rechter Seite: (iterative reinfinement)
-        int lifact = int(m_ifact.size());
-        int lfact  = int(m_fact.size());
+        int lifact = static_cast<int>(m_ifact.size());
+        int lfact  = static_cast<int>(m_fact.size());
         lapack_wrapper::ma57d<real>(
           localjob,
           m_nrows,
-          int(m_a_stored.size()),
+          static_cast<int>(m_a_stored.size()),
           &m_a_stored.front(),
           &m_i_Row.front(),
           &m_j_Col.front(),
@@ -185,11 +187,11 @@ namespace lapack_wrapper {
     } else {
       // Solve with right side:
       if (RHS != X)
-        for (int j = 0; j < nrhs; ++j)
-           std::copy_n(RHS + j * ldRHS, m_nrows, X + j * ldX);
-      int lfact  = int(m_fact.size());
-      int lifact = int(m_ifact.size());
-      int NWork  = int(m_Work.size());
+        for (int j{0}; j < nrhs; ++j)
+           copy_n(RHS + j * ldRHS, m_nrows, X + j * ldX);
+      int const lfact  { static_cast<int>(m_fact.size())  };
+      int const lifact { static_cast<int>(m_ifact.size()) };
+      int const NWork  { static_cast<int>(m_Work.size())  };
       lapack_wrapper::ma57c<real>(
         m_job,
         m_nrows,

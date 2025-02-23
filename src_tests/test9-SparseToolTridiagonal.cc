@@ -40,11 +40,11 @@ class all_trid_test {
 
   Vector<real_type>     a, b, RES, RRES;
   TridMatrix<real_type> A;
-  real_type             scalar;
+  real_type             scalar{1};
 
   void
   test_diff( Vector<real_type> const & x, Vector<real_type> const & y ) {
-    real_type err = (x-y).template lpNorm<Eigen::Infinity>();
+    real_type err = (x-y).lpNorm<Eigen::Infinity>();
     test_diff(err);
   }
 
@@ -65,6 +65,7 @@ class all_trid_test {
 
 public:
 
+  explicit
   all_trid_test( integer n ) {
     cout << "all_trid_test_allocating..." << flush;
     A.resize( n );
@@ -75,10 +76,10 @@ public:
     cout << "done\n";
   }
 
-  ~all_trid_test() { }
+  ~all_trid_test() = default;
 
   void
-  preco(void) {
+  preco() {
     Sparse_tool::integer i;
     for ( i = 0; i < a.size(); ++i ) a[i] = 1.2+i*sqrt(2.0);
     for ( i = 0; i < b.size(); ++i ) b[i] = 1+i*sqrt(3.0);
@@ -89,7 +90,7 @@ public:
     scalar = sqrt(2.0);
   }
 
-  void do_all_tests(void) {
+  void do_all_tests() {
     cout << "*******************************\n"
          << "*******************************\n";
 
@@ -110,7 +111,7 @@ public:
 };
 
 void
-all_trid_test::test001(void) {
+all_trid_test::test001() {
   preco();
   cout << "\ntest(1)\n";
   Sparse_tool::integer N(A.nrows());
@@ -125,7 +126,7 @@ all_trid_test::test001(void) {
 }
 
 void
-all_trid_test::test002(void) {
+all_trid_test::test002() {
   preco();
   cout << "\ntest(2)\n";
   Sparse_tool::integer N(A.nrows());
@@ -139,7 +140,7 @@ all_trid_test::test002(void) {
 }
 
 void
-all_trid_test::test003(void) {
+all_trid_test::test003() {
   preco();
   cout << "\ntest(3)\n";
   Sparse_tool::integer N(A.nrows());
@@ -153,7 +154,7 @@ all_trid_test::test003(void) {
 }
 
 void
-all_trid_test::test004(void) {
+all_trid_test::test004() {
   preco();
   cout << "\ntest(4)\n";
   b   = A * a;

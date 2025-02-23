@@ -32,8 +32,8 @@ namespace lapack_wrapper {
 
   template <typename real>
   void
-  MA48<real>::load_error_string( int _info ) const {
-    switch (_info) {
+  MA48<real>::load_error_string( int const info ) const {
+    switch (info) {
     case -1:
       m_last_error = "MA48::factorize, Number of row or columns < 1";
       break;
@@ -83,13 +83,13 @@ namespace lapack_wrapper {
   template <typename real>
   bool
   MA48<real>::init(
-    int       Nnz,
-    int       N_Row,
-    int       N_Col,
-    int const i_Row[],
-    int const j_Col[],
-    bool      isFortranIndexing,
-    bool      isStoredSymmetric
+    int  const Nnz,
+    int  const N_Row,
+    int  const N_Col,
+    int  const i_Row[],
+    int  const j_Col[],
+    bool const isFortranIndexing,
+    bool const isStoredSymmetric
   ) {
     m_isFactorized = false;
     m_nnz          = Nnz;
@@ -97,18 +97,18 @@ namespace lapack_wrapper {
     m_ncols        = N_Col;
     m_la           = 3 * m_nnz;
     m_job          = 1;
-    m_a.resize(size_t(m_la));
-    m_irn.resize(size_t(m_la));
-    m_jcn.resize(size_t(m_la));
-    m_i_Row_stored.resize(size_t(m_nnz));
-    m_j_Col_stored.resize(size_t(m_nnz));
+    m_a.resize(static_cast<size_t>(m_la));
+    m_irn.resize(static_cast<size_t>(m_la));
+    m_jcn.resize(static_cast<size_t>(m_la));
+    m_i_Row_stored.resize(static_cast<size_t>(m_nnz));
+    m_j_Col_stored.resize(static_cast<size_t>(m_nnz));
 
     // Copy data:
-    std::copy_n( i_Row, m_nnz, m_i_Row_stored.begin() );
-    std::copy_n( j_Col, m_nnz, m_j_Col_stored.begin() );
+    copy_n( i_Row, m_nnz, m_i_Row_stored.begin() );
+    copy_n( j_Col, m_nnz, m_j_Col_stored.begin() );
     if ( !isFortranIndexing) {
       // Correct fortran indexing:
-      for ( size_t i = 0; i < size_t(m_nnz); ++i ) {
+      for ( integer i{0}; i < m_nnz; ++i ) {
         ++m_i_Row_stored[i];
         ++m_j_Col_stored[i];
       }
@@ -127,13 +127,13 @@ namespace lapack_wrapper {
       m_isInitialized = false;
       return false;
     }
-    int N_RC_Max = std::max( m_nrows, m_ncols );
-    int N_keep   = m_nrows + 5 * m_ncols + 4 * (m_ncols / ihlp) + 7;
-    int N_iw     = m_nrows * 6 + m_ncols * 3;
-    int N_w      = 4 * N_RC_Max;
-    m_keep.resize(size_t(N_keep));
-    m_iw.resize(size_t(N_iw));
-    m_w.resize(size_t(N_w));
+    int const N_RC_Max = std::max( m_nrows, m_ncols );
+    int const N_keep   = m_nrows + 5 * m_ncols + 4 * (m_ncols / ihlp) + 7;
+    int const N_iw     = m_nrows * 6 + m_ncols * 3;
+    int const N_w      = 4 * N_RC_Max;
+    m_keep.resize(static_cast<size_t>(N_keep));
+    m_iw.resize(static_cast<size_t>(N_iw));
+    m_w.resize(static_cast<size_t>(N_w));
     m_isInitialized = true;
     return true;
   }
@@ -173,9 +173,9 @@ namespace lapack_wrapper {
     if ( m_info[3] > m_la ) {
       // Increase internal workspace:
       m_la = m_info[3];
-      m_a.resize(size_t(m_la));
-      m_irn.resize(size_t(m_la));
-      m_jcn.resize(size_t(m_la));
+      m_a.resize(static_cast<size_t>(m_la));
+      m_irn.resize(static_cast<size_t>(m_la));
+      m_jcn.resize(static_cast<size_t>(m_la));
       std::copy_n( ArrayA, m_nnz, m_a.begin());
       std::copy(
         m_i_Row_stored.begin(),
@@ -241,7 +241,7 @@ namespace lapack_wrapper {
 
   template <typename real>
   bool
-  MA48<real>::solve( real const RHS[], real X[], bool transposed ) const {
+  MA48<real>::solve( real const RHS[], real X[], bool const itrans ) const {
     // Check valid call:
     if (!m_isInitialized) {
       m_last_error = "MA48::solve, Can not solve uninitialized system!";
@@ -256,7 +256,7 @@ namespace lapack_wrapper {
     lapack_wrapper::ma48c<real>(
       m_nrows,
       m_ncols,
-      transposed ? 1 : 0,
+      itrans ? 1 : 0,
       m_job,
       m_la,
       &m_a.front(),
@@ -279,23 +279,23 @@ namespace lapack_wrapper {
   template <typename real>
   bool
   MA48<real>::solve(
-    int        nrhs,
+    int  const nrhs,
     real const RHS[],
-    int        ldRHS,
+    int  const ldRHS,
     real       X[],
-    int        ldX
+    int  const ldX
   ) const {
-    bool ok = true;
+    bool ok{ true };
     if ( RHS == X ) {
       Malloc<real> mem("MA48<real>::solve");
-      real * tmpRHS = mem.realloc( size_t(m_nrows) );
-      for ( int j = 0; ok && j < nrhs; ++j ) {
-        real const * RHSj = RHS + j * ldRHS;
+      real * tmpRHS = mem.realloc( m_nrows );
+      for ( int j{0}; ok && j < nrhs; ++j ) {
+        real const * RHSj{ RHS + j * ldRHS };
         std::copy_n( RHSj, m_nrows, tmpRHS );
         ok = this->solve( tmpRHS, X + j * ldX, false );
       }
     } else {
-      for ( int j = 0; ok && j < nrhs; ++j )
+      for ( int j{0}; ok && j < nrhs; ++j )
         ok = this->solve(RHS + j * ldRHS, X + j * ldX, false);
     }
     return ok;
@@ -304,23 +304,23 @@ namespace lapack_wrapper {
   template <typename real>
   bool
   MA48<real>::solve_transposed(
-    int        nrhs,
+    int  const nrhs,
     real const RHS[],
-    int        ldRHS,
+    int  const ldRHS,
     real       X[],
-    int        ldX
+    int  const ldX
   ) const {
-    bool ok = true;
+    bool ok{true};
     if ( RHS == X ) {
-      std::vector<real> tmpRHS;
-      tmpRHS.resize(size_t(m_ncols));
-      for ( int j = 0; ok && j < nrhs; ++j ) {
-        real const * RHSj = RHS + j * ldRHS;
-        std::copy_n( RHSj, m_ncols, tmpRHS.begin() );
+      vector<real> tmpRHS;
+      tmpRHS.resize(static_cast<size_t>(m_ncols));
+      for ( int j{0}; ok && j < nrhs; ++j ) {
+        real const * RHSj{ RHS + j * ldRHS };
+        copy_n( RHSj, m_ncols, tmpRHS.begin() );
         ok = this->solve(&tmpRHS.front(), X + j * ldX, true);
       }
     } else {
-      for ( int j = 0; ok && j < nrhs; ++j )
+      for ( int j{0}; ok && j < nrhs; ++j )
         ok = this->solve(RHS + j * ldRHS, X + j * ldX, true);
     }
     return ok;

@@ -509,7 +509,7 @@ namespace lapack_wrapper {
   TridiagonalQR<T>::solve( real_type xb[] ) const {
     // A x = b --> Q A x = Q b --> R x = Q b
     // applico Q b
-    for ( integer i = 0; i < m_nRC-1; ++i )
+    for ( integer i{0}; i < m_nRC-1; ++i )
       rot( 1, &xb[i], 1, &xb[i+1], 1, m_C[i], m_S[i] );
     Rsolve( xb );
     return true;
@@ -535,9 +535,9 @@ namespace lapack_wrapper {
   TridiagonalQR<T>::solve( integer nrhs, real_type xb[], integer ldXB ) const {
     // A x = b --> Q A x = Q b --> R x = Q b
     // applico Q b
-    for ( integer i = 0; i < m_nRC-1; ++i )
+    for ( integer i{0}; i < m_nRC-1; ++i )
       rot( nrhs, &xb[i], ldXB, &xb[i+1], ldXB, m_C[i], m_S[i] );
-    for ( integer i = 0; i < nrhs; ++i )
+    for ( integer i{0}; i < nrhs; ++i )
       Rsolve( xb+i*ldXB );
     return true;
   }
@@ -548,7 +548,7 @@ namespace lapack_wrapper {
   bool
   TridiagonalQR<T>::t_solve( integer nrhs, real_type xb[], integer ldXB ) const {
     // A^T x = b --> A^T Q^T Q x = b --> R^T Q x = b --> R^T y = b  x = Q^T y
-    for ( integer i = 0; i < nrhs; ++i )
+    for ( integer i{0}; i < nrhs; ++i )
       RsolveTransposed(xb+i*ldXB);
     for ( integer i = m_nRC-2; i >= 0; --i )
       rot( nrhs, &xb[i], ldXB, &xb[i+1], ldXB, m_C[i], -m_S[i] );
@@ -610,7 +610,7 @@ namespace lapack_wrapper {
                    tmp(nrhs);
     T CC, SS;
 
-    for ( integer i = 0; i < m_nRC-1; ++i )
+    for ( integer i{0}; i < m_nRC-1; ++i )
       rot( nrhs, RHS+i, ldRHS, RHS+i+1, ldRHS, m_C[i], m_S[i] );
 
     copy( m_nRC,   m_BD,  1, &D.front(),  1 );
@@ -656,7 +656,7 @@ namespace lapack_wrapper {
       rot( nrhs, RHS+j, ldRHS, &tmp.front(), 1, CC, SS );
     }
 
-    for ( integer j = 0; j < nrhs; ++j ) {
+    for ( integer j{0}; j < nrhs; ++j ) {
       T * xb = RHS + j*ldRHS;
       xb[m_nRC-1] /= D[m_nRC-1];
       xb[m_nRC-2] = (xb[m_nRC-2]-U[m_nRC-2]*xb[m_nRC-1])/D[m_nRC-2];

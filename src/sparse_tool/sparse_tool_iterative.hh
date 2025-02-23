@@ -84,7 +84,7 @@ namespace Sparse_tool {
     U_C.resize( nr + 1 );
 
     L_R(0) = U_C(0) = 0;
-    for ( integer i = 0; i < nr; ++i ) {
+    for ( integer i{0}; i < nr; ++i ) {
       L_R(i+1) = L_R(i) + Lnnz(i);
       U_C(i+1) = U_C(i) + Unnz(i);
     }
@@ -118,7 +118,7 @@ namespace Sparse_tool {
     }
 
     // step 4: sort structure
-    for ( integer i = 0; i < nr; ++i ) {
+    for ( integer i{0}; i < nr; ++i ) {
       QuickSortI( L_J.data()+L_R(i), L_A.data()+L_R(i), L_R(i+1)-L_R(i) );
       QuickSortI( U_I.data()+U_C(i), U_A.data()+U_C(i), U_C(i+1)-U_C(i) );
     }
@@ -262,7 +262,7 @@ namespace Sparse_tool {
     ass_preco( VECTOR & x, VECTOR const & b ) const {
       VECTOR q(b.size()), r(x.size());
       x = b;
-      for ( integer i = 0; i < maxIter; ++i ) {
+      for ( integer i{0}; i < maxIter; ++i ) {
         r = b-Mat*x;
         q = r / P;
         x += real_type(0.5)*q;

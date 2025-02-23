@@ -41,13 +41,13 @@
 using namespace std;
 using real_type = double;
 
-static unsigned seed1 = 2;
+static unsigned seed1{2};
 static std::mt19937 generator(seed1);
 
 static
 real_type
 rand( real_type xmin, real_type xmax ) {
-  real_type random = real_type(generator())/generator.max();
+  real_type random{ static_cast<real_type>(generator())/generator.max() };
   return xmin + (xmax-xmin)*random;
 }
 

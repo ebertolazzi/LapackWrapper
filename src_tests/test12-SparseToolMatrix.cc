@@ -47,9 +47,8 @@ using namespace ::std;
 using Real = double;
 
 class all_matrix_test {
-
   Vector<Real>      a, b, c, res, rres;
-  Real              scalar;
+  Real              scalar{1};
   CRowMatrix<Real>  crow;
   CColMatrix<Real>  ccol;
   CCoorMatrix<Real> ccoor;
@@ -1068,7 +1067,7 @@ void
 test_timing() {
   Utils::TicToc tm;
 
-  integer const n = 10000;
+  constexpr integer n = 10000;
 
   Real scal = 1.23;
   Vector<Real> a(n), b(n), res(n), res1(n);
@@ -1120,13 +1119,13 @@ test_timing() {
     "hor__131.mtx",
     "af23560.mtx",
     "plat1919.mtx",
-    NULL
+    nullptr
   };
   char const **p = rMatrix;
 
   Vector<Real> v;
 
-  for (; *p != NULL; ++p ) {
+  for (; *p != nullptr; ++p ) {
 
     fmt::print( "TEST matrix = {}\n", *p );
     CCoorMatrix<Real> ccoor;
@@ -1166,11 +1165,11 @@ test_timing() {
 
     res = ccoor * v;
     res = res - crow * v;
-    fmt::print( "CCoor - CRow = {}\n", res.template lpNorm<Eigen::Infinity>() );
+    fmt::print( "CCoor - CRow = {}\n", res.lpNorm<Eigen::Infinity>() );
 
     res = ccoor * v;
     res = res - ccol * v;
-    fmt::print( "CCoor - CCol = {}\n", res.template lpNorm<Eigen::Infinity>() );
+    fmt::print( "CCoor - CCol = {}\n", res.lpNorm<Eigen::Infinity>() );
 
     integer cicle_repeat = 1 + 400000 / nr;
     test_CRow (cicle_repeat, crow,  v);

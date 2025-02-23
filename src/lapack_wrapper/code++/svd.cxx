@@ -195,7 +195,7 @@ namespace lapack_wrapper {
     // VT minRC x nCol
     real_type smin = m_rcond*m_Svec[0];
     Ut_mul( 1.0, xb, 1, 0.0, m_WorkSVD, 1 );
-    for ( integer i = 0; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
+    for ( integer i{0}; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
     V_mul( 1.0, m_WorkSVD, 1, 0.0, xb, 1 );
     return true;
   }
@@ -211,7 +211,7 @@ namespace lapack_wrapper {
     // VT minRC x nCol
     real_type smin = m_rcond*m_Svec[0];
     Vt_mul( 1.0, xb, 1, 0.0, m_WorkSVD, 1 );
-    for ( integer i = 0; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
+    for ( integer i{0}; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
     U_mul( 1.0, m_WorkSVD, 1, 0.0, xb, 1 );
     return true;
   }
@@ -388,8 +388,8 @@ namespace lapack_wrapper {
     this->allocate( m, n, p );
     lapack_wrapper::zero( m_N*m_M, m_A_saved, 1 );
     lapack_wrapper::zero( m_P*m_M, m_B_saved, 1 );
-    for ( integer k = 0; k < A_nnz; ++k ) A(A_row[k],A_col[k]) = A_values[k];
-    for ( integer k = 0; k < B_nnz; ++k ) B(B_row[k],B_col[k]) = B_values[k];
+    for ( integer k{0}; k < A_nnz; ++k ) A(A_row[k],A_col[k]) = A_values[k];
+    for ( integer k{0}; k < B_nnz; ++k ) B(B_row[k],B_col[k]) = B_values[k];
     compute();
   }
 

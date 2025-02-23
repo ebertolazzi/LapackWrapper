@@ -314,7 +314,7 @@ namespace lapack_wrapper {
     real_type       y[]
   ) const {
     real_type const * col = m_AB + m_nL;
-    for ( integer j = 0; j < m_n; ++j, col += m_ldAB ) {
+    for ( integer j{0}; j < m_n; ++j, col += m_ldAB ) {
       integer imin  = j-m_nU;
       integer imax  = std::min(j+m_nL,m_m-1);
       integer imin0 = imin > 0 ? imin : 0;

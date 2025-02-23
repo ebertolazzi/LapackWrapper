@@ -82,7 +82,7 @@ namespace lapack_wrapper {
       scal( m_nrows*m_ncols, sc, m_data, 1 );
     } else {
       T * p = m_data;
-      for ( integer i = 0; i < m_ncols; ++i, p += m_ldData )
+      for ( integer i{0}; i < m_ncols; ++i, p += m_ldData )
         scal( m_nrows, sc, p, 1 );
     }
   }
@@ -98,7 +98,7 @@ namespace lapack_wrapper {
     integer   icol
   ) const {
     T * p = m_data+this->iaddr(irow,icol);
-    for ( integer i = 0; i < nc; ++i, p += m_ldData )
+    for ( integer i{0}; i < nc; ++i, p += m_ldData )
       scal( nr, sc, p, 1 );
   }
 
@@ -147,8 +147,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::load_transposed( real_type const data_in[], integer ldData_in ) {
-    for ( integer i = 0; i < m_nrows; ++i )
-      for ( integer j = 0; j < m_ncols; ++j )
+    for ( integer i{0}; i < m_nrows; ++i )
+      for ( integer j{0}; j < m_ncols; ++j )
         m_data[i+j*m_ldData] = data_in[j+i*ldData_in];
   }
 
@@ -331,7 +331,7 @@ namespace lapack_wrapper {
     integer   const i_row[],
     integer         j
   ) {
-    for ( integer k = 0; k < nnz; ++k )
+    for ( integer k{0}; k < nnz; ++k )
       m_data[i_row[k]+j*m_ldData] = values[k];
   }
 
@@ -345,7 +345,7 @@ namespace lapack_wrapper {
     integer         i,
     integer   const j_col[]
   ) {
-    for ( integer k = 0; k < nnz; ++k )
+    for ( integer k{0}; k < nnz; ++k )
       m_data[i+j_col[k]*m_ldData] = values[k];
   }
 

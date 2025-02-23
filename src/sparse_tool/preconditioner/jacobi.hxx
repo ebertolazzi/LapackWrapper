@@ -88,7 +88,7 @@ namespace Sparse_tool {
       // step 1: initialize structure
       LU_R.resize( PRECO::pr_size + 1 );
       LU_R(0) = 0;
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) LU_R(i+1) = LU_R(i) + LUnnz(i);
+      for ( integer i{0}; i < PRECO::pr_size; ++i ) LU_R(i+1) = LU_R(i) + LUnnz(i);
 
       // step 2: allocate memory
       LU_A.resize( LU_R(PRECO::pr_size) );
@@ -103,7 +103,7 @@ namespace Sparse_tool {
       }
 
       // step 4: sort structure
-      for ( integer i = 0; i < PRECO::pr_size; ++i )
+      for ( integer i{0}; i < PRECO::pr_size; ++i )
         std::sort( LU_J.data()+LU_R(i), LU_J.data()+LU_R(i+1) );
 
       // insert values
@@ -126,7 +126,7 @@ namespace Sparse_tool {
           D(i) = val;
         }
       }
-      for ( integer i = 0; i < PRECO::pr_size; ++i )
+      for ( integer i{0}; i < PRECO::pr_size; ++i )
         UTILS_ASSERT(
           D(i) != real_type(0),
           "Sparse_tool: JACOBIpreconditioner::D({}) = {}, size = {}\n",

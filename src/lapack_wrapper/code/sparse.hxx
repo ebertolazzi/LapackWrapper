@@ -67,9 +67,9 @@ namespace lapack_wrapper {
       integer   incY
     ) const {
       if ( Utils::is_zero(beta) ) {
-        for ( integer i = 0; i < DimY; ++i ) y[i*incY] = 0;
+        for ( integer i{0}; i < DimY; ++i ) y[i*incY] = 0;
       } else if ( !Utils::is_zero(beta-1) ) {
-        for ( integer i = 0; i < DimY; ++i ) y[i*incY] *= beta;
+        for ( integer i{0}; i < DimY; ++i ) y[i*incY] *= beta;
       }
     }
 

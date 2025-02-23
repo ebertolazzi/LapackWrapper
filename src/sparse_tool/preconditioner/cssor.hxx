@@ -108,7 +108,7 @@ namespace Sparse_tool {
       B_R.resize( PRECO::pr_size + 1 );
 
       L_R(0) = U_C(0) = B_R(0) = 0;
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
+      for ( integer i{0}; i < PRECO::pr_size; ++i ) {
         L_R(i+1) = L_R(i) + Lnnz(i);
         U_C(i+1) = U_C(i) + Unnz(i);
         B_R(i+1) = B_R(i) + Bnnz(i);
@@ -138,7 +138,7 @@ namespace Sparse_tool {
       }
 
       // step 4: sort structure
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
+      for ( integer i{0}; i < PRECO::pr_size; ++i ) {
         std::sort( &L_J(L_R(i)), &L_J(L_R(i+1)) );
         std::sort( &U_I(U_C(i)), &U_I(U_C(i+1)) );
         std::sort( &B_J(B_R(i)), &B_J(B_R(i+1)) );
@@ -188,7 +188,7 @@ namespace Sparse_tool {
           D(i) = rval;
         }
       }
-      for ( integer i = 0; i < PRECO::pr_size; ++i )
+      for ( integer i{0}; i < PRECO::pr_size; ++i )
         UTILS_ASSERT(
           D(i) != real_type(0),
           "Sparse_tool: CSSORpreconditioner::D({}) = {}, size = {}\n",

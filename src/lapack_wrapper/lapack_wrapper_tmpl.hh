@@ -326,19 +326,19 @@ namespace lapack_wrapper {
   class MM {
   public:
     static inline void ass( t_Value const * A, t_Value const * B, t_Value * C ) {
-      for ( integer i = 0; i < N; ++i, B += LDB, C += LDC )
+      for ( integer i{0}; i < N; ++i, B += LDB, C += LDC )
         Mv<t_Value,M,K,LDA,1,1>::ass( A, B, C );
     }
     static inline void addTo( t_Value const * A, t_Value const * B, t_Value * C ) {
-      for ( integer i = 0; i < N; ++i, B += LDB, C += LDC )
+      for ( integer i{0}; i < N; ++i, B += LDB, C += LDC )
         Mv<t_Value,M,K,LDA,1,1>::addTo( A, B, C );
     }
     static inline void subTo( t_Value const * A, t_Value const * B, t_Value * C ) {
-      for ( integer i = 0; i < N; ++i, B += LDB, C += LDC )
+      for ( integer i{0}; i < N; ++i, B += LDB, C += LDC )
         Mv<t_Value,M,K,LDA,1,1>::subTo( A, B, C );
     }
     static inline void aMxpby( t_Value a, t_Value const * A, t_Value const * B, t_Value b, t_Value * C ) {
-      for ( integer i = 0; i < N; ++i, B += LDB, C += LDC )
+      for ( integer i{0}; i < N; ++i, B += LDB, C += LDC )
         Mv<t_Value,M,K,LDA,1,1>::aMxpby( a, A, B, b, C );
     }
   };

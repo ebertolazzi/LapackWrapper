@@ -1293,7 +1293,7 @@ namespace lapack_wrapper {
     real       B[],
     integer    LDB
   ) {
-    for ( integer k = 0; k < N; ++k )
+    for ( integer k{0}; k < N; ++k )
       copy( M, A + k*LDA, 1, B+k, LDB );
   }
 
@@ -1309,7 +1309,7 @@ namespace lapack_wrapper {
     doublereal       B[],
     integer          LDB
   ) {
-    for ( integer k = 0; k < N; ++k )
+    for ( integer k{0}; k < N; ++k )
       copy( M, A + k*LDA, 1, B+k, LDB );
   }
 }

@@ -409,8 +409,8 @@ namespace lapack_wrapper {
     m_cols.clear(); m_cols.reserve( size_t(m_nnz) );
     m_rows.clear(); m_rows.reserve( size_t(m_nnz) );
     integer offs = fi ? 1 : 0;
-    for ( integer j = 0; j < M; ++j ) {
-      for ( integer i = 0; i < N; ++i ) {
+    for ( integer j{0}; j < M; ++j ) {
+      for ( integer i{0}; i < N; ++i ) {
         m_rows.push_back( i+offs );
         m_cols.push_back( j+offs );
       }
@@ -430,8 +430,8 @@ namespace lapack_wrapper {
     m_cols.clear(); m_cols.reserve( size_t(m_nnz) );
     m_rows.clear(); m_rows.reserve( size_t(m_nnz) );
     integer offs = fi ? 1 : 0;
-    for ( integer i = 0; i < N; ++i ) {
-      for ( integer j = 0; j < M; ++j ) {
+    for ( integer i{0}; i < N; ++i ) {
+      for ( integer j{0}; j < M; ++j ) {
         m_rows.push_back( i+offs );
         m_cols.push_back( j+offs );
       }
@@ -447,7 +447,7 @@ namespace lapack_wrapper {
       M == m_nnz,
       "SparseCCOOR::fill(...) bad size input vector\n"
     );
-    for ( integer i = 0; i < m_nnz; ++i )
+    for ( integer i{0}; i < m_nnz; ++i )
       m_vals[i] = V[i];
   }
 

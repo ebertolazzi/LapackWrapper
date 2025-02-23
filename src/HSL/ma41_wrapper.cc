@@ -142,20 +142,20 @@ namespace lapack_wrapper {
   // private functionalities
   template <typename real>
   void
-  MA41<real>::load_matrix( integer nr ) {
+  MA41<real>::load_matrix( integer const nr ) {
     if ( verbose ) fmt::print( "MA41::load_matrix(...)\n");
     N  = nr;
-    NE = integer(A.size());
+    NE = static_cast<integer>(A.size());
 
     COLSCA . resize(N);
     ROWSCA . resize(N);
     IS     . resize(2 * NE + 11 * N + 1);
     S      . resize(2 * NE + 11 * N + 1);
 
-    fill(COLSCA . begin(), COLSCA . end(), integer(0) );
-    fill(ROWSCA . begin(), ROWSCA . end(), integer(0) );
-    fill(IS     . begin(), IS     . end(), integer(0) );
-    fill(S      . begin(), S      . end(), real(0) );
+    fill(COLSCA . begin(), COLSCA . end(), 0 );
+    fill(ROWSCA . begin(), ROWSCA . end(), 0 );
+    fill(IS     . begin(), IS     . end(), 0 );
+    fill(S      . begin(), S      . end(), 0 );
      // set pars
     lapack_wrapper::ma41i<real>(CNTL, ICNTL, KEEP);
     if ( verbose ) fmt::print( "done\n" );
@@ -174,12 +174,12 @@ namespace lapack_wrapper {
       IRN.data(),
       JCN.data(),
       A.data(),
-      NULL,
+      nullptr,
       COLSCA.data(),
       ROWSCA.data(),
       KEEP,
-      tmpIS.data(),  integer(tmpIS.size()),
-      S.data(),      integer(S.size()),
+      tmpIS.data(),  static_cast<integer>(tmpIS.size()),
+      S.data(),      static_cast<integer>(S.size()),
       CNTL, ICNTL, INFO, RINFO
     );
 
@@ -200,12 +200,12 @@ namespace lapack_wrapper {
       IRN.data(),
       JCN.data(),
       A.data(),
-      NULL,
+      nullptr,
       COLSCA.data(),
       ROWSCA.data(),
       KEEP,
-      IS.data(), integer(IS.size()),
-      S.data(),  integer(S.size()),
+      IS.data(), static_cast<integer>(IS.size()),
+      S.data(),  static_cast<integer>(S.size()),
       CNTL, ICNTL, INFO, RINFO
     );
 
@@ -219,7 +219,7 @@ namespace lapack_wrapper {
   template <typename real>
   void
   MA41<real>::solve( real RHS[] ) {
-    integer JOB = SOLVE;
+    integer const JOB = SOLVE;
     lapack_wrapper::ma41a<real>(
       JOB, N, NE,
       IRN.data(),
@@ -229,8 +229,8 @@ namespace lapack_wrapper {
       COLSCA.data(),
       ROWSCA.data(),
       KEEP,
-      IS.data(), integer(IS.size()),
-      S.data(),  integer(S.size()),
+      IS.data(), static_cast<integer>(IS.size()),
+      S.data(),  static_cast<integer>(S.size()),
       CNTL, ICNTL, INFO, RINFO
     );
 
@@ -238,7 +238,7 @@ namespace lapack_wrapper {
       msg_infor( std::cout );
       msg_error( std::cout );
     }
-  };
+  }
 
   template class MA41<float>;
   template class MA41<double>;

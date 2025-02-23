@@ -65,8 +65,8 @@ namespace lapack_wrapper {
     , m_data(data)
     { }
 
-    integer getDim()   const { return m_dim;}  //!< Number of elements
-    integer numElems() const { return m_dim;}  //!< Number of elements
+    [[nodiscard]] integer getDim()   const { return m_dim; }  //!< Number of elements
+    [[nodiscard]] integer numElems() const { return m_dim; }  //!< Number of elements
 
     real_type const * data() const { return m_data; }
     real_type       * data()       { return m_data; }
@@ -92,14 +92,14 @@ namespace lapack_wrapper {
     operator [] ( integer i )
     { return m_data[i]; }
 
-    DMatW const & operator = (real_type v) {
+    DMatW & operator = ( real_type v ) {
       fill( m_dim, m_data, v );
       return *this;
     }
 
     DMatW & operator = ( DMatW const & COPY );
 
-    string to_string() const;
+    [[nodiscard]] string to_string() const;
 
   };
 
@@ -141,6 +141,7 @@ namespace lapack_wrapper {
     real_type * m_data;    //!< pointer to matrix data
 
     #if defined(DEBUG) || defined(_DEBUG)
+    [[nodiscard]]
     integer
     iaddr( integer i,  integer j ) const {
       UTILS_ASSERT_TRACE(
@@ -195,7 +196,6 @@ namespace lapack_wrapper {
     );
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    explicit
     MatrixWrapper( MatrixWrapper<T> const & M )
     : m_nrows(M.m_nrows)
     , m_ncols(M.m_ncols)
@@ -203,19 +203,13 @@ namespace lapack_wrapper {
     , m_data(M.m_data)
     { }
 
-    MatrixWrapper<T> const &
-    operator = ( MatrixWrapper<T> const & rhs ) {
-      m_nrows  = rhs.m_nrows;
-      m_ncols  = rhs.m_ncols;
-      m_ldData = rhs.m_ldData;
-      m_data   = rhs.m_data;
-      return *this;
-    }
+    MatrixWrapper<T> &
+    operator = ( MatrixWrapper<T> const & rhs ) = default;
 
-    integer nrows()     const { return m_nrows; }  //!< Number of rows
-    integer ncols()     const { return m_ncols; }  //!< Number of columns
-    integer ldim()      const { return m_ldData; } //!< Leading dimension
-    integer num_elems() const { return m_nrows*m_ncols; } //!< Number of elements
+    [[nodiscard]] integer nrows()     const { return m_nrows; }  //!< Number of rows
+    [[nodiscard]] integer ncols()     const { return m_ncols; }  //!< Number of columns
+    [[nodiscard]] integer ldim()      const { return m_ldData; } //!< Leading dimension
+    [[nodiscard]] integer num_elems() const { return m_nrows*m_ncols; } //!< Number of elements
 
     // ALIAS
     #ifdef LAPACK_WRAPPER_USE_ALIAS
@@ -225,8 +219,8 @@ namespace lapack_wrapper {
     integer numElems() const { return num_elems(); } //!< Number of elements
     #endif
 
-    real_type const * data() const { return m_data; }
-    real_type       * data()       { return m_data; }
+    [[nodiscard]] real_type const * data() const { return m_data; }
+    [[nodiscard]] real_type       * data()       { return m_data; }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //!
@@ -501,7 +495,7 @@ namespace lapack_wrapper {
       );
       real_type const * pd = B;
       real_type       * pp = m_data + this->iaddr(irow,icol);
-      for ( integer i = 0; i < nc; ++i, pd += ldB, ++pp )
+      for ( integer i{0}; i < nc; ++i, pd += ldB, ++pp )
         lapack_wrapper::copy( nr, pd, 1, pp, m_ldData );
     }
 
@@ -530,7 +524,7 @@ namespace lapack_wrapper {
         "bad parameters\n",
         n, irow, icol
       );
-      for ( integer i = 0; i < n; ++i )
+      for ( integer i{0}; i < n; ++i )
         m_data[this->iaddr(irow+i,icol+i)] = D[i];
     }
 
@@ -915,7 +909,7 @@ namespace lapack_wrapper {
       );
       #endif
       real_type const * pc = m_data;
-      for ( integer i = 0; i < m_ncols; ++i, pc += m_ldData )
+      for ( integer i{0}; i < m_ncols; ++i, pc += m_ldData )
         lapack_wrapper::copy( m_nrows, pc, 1, out.m_data + i, out.m_ldData );
     }
 
@@ -973,13 +967,14 @@ namespace lapack_wrapper {
       );
       #endif
       real_type const * pc = m_data+this->iaddr(i_offs,j_offs);
-      for ( integer i = 0; i < to.m_ncols; ++i, pc += m_ldData )
+      for ( integer i{0}; i < to.m_ncols; ++i, pc += m_ldData )
         lapack_wrapper::copy( to.m_nrows, pc, 1, to.m_data + i, to.m_ldData );
     }
 
+    [[nodiscard]]
     string
     to_string( real_type eps = 0 ) const {
-      string res{""};
+      string res;
       for ( integer i{0}; i < m_nrows; ++i ) {
         for ( integer j{0}; j < m_ncols; ++j ) {
           real_type aij{ (*this)(i,j) };
@@ -1020,14 +1015,14 @@ namespace lapack_wrapper {
   inline
   void
   gemv(
-    T                        alpha,
+    T                const   alpha,
     Transposition    const & TRANSA,
     MatrixWrapper<T> const & A,
     T const                  v[],
-    integer                  incv,
-    T                        beta,
+    integer          const   incv,
+    T                const   beta,
     T                        c[],
-    integer                  incc
+    integer          const   incc
   ) {
     lapack_wrapper::gemv(
       TRANSA,
@@ -1057,13 +1052,13 @@ namespace lapack_wrapper {
   inline
   void
   gemv(
-    T                        alpha,
+    T                const   alpha,
     MatrixWrapper<T> const & A,
     T const                  v[],
-    integer                  incv,
-    T                        beta,
+    integer          const   incv,
+    T                const   beta,
     T                        c[],
-    integer                  incc
+    integer          const   incc
   ) {
     lapack_wrapper::gemv(
       Transposition::NO,
@@ -1092,11 +1087,11 @@ namespace lapack_wrapper {
   inline
   void
   gemm(
-    string_view              where,
-    T                        alpha,
+    string_view      const   where,
+    T                const   alpha,
     MatrixWrapper<T> const & A,
     MatrixWrapper<T> const & B,
-    T                        beta,
+    T                const   beta,
     MatrixWrapper<T>       & C
   ) {
     UTILS_ASSERT_DEBUG(
@@ -1137,10 +1132,10 @@ namespace lapack_wrapper {
   inline
   void
   gemm(
-    T                        alpha,
+    T                const   alpha,
     MatrixWrapper<T> const & A,
     MatrixWrapper<T> const & B,
-    T                        beta,
+    T                const   beta,
     MatrixWrapper<T>       & C
   ) {
     UTILS_ASSERT_DEBUG(
@@ -1181,13 +1176,13 @@ namespace lapack_wrapper {
   inline
   void
   gemm(
-    string_view              where,
-    T                        alpha,
+    string_view      const   where,
+    T                const   alpha,
     Transposition    const & TRANSA,
     MatrixWrapper<T> const & A,
     Transposition    const & TRANSB,
     MatrixWrapper<T> const & B,
-    T                        beta,
+    T                const   beta,
     MatrixWrapper<T>       & C
   ) {
     integer Ar = TRANSA == Transposition::NO ? A.nrows() : A.ncols();
@@ -1235,12 +1230,12 @@ namespace lapack_wrapper {
   inline
   void
   gemm(
-    T                        alpha,
+    T                const   alpha,
     Transposition    const & TRANSA,
     MatrixWrapper<T> const & A,
     Transposition    const & TRANSB,
     MatrixWrapper<T> const & B,
-    T                        beta,
+    T                const   beta,
     MatrixWrapper<T>       & C
   ) {
     integer Ar = TRANSA == Transposition::NO ? A.nrows() : A.ncols();
@@ -1291,7 +1286,7 @@ namespace lapack_wrapper {
     DiagonalType     const & DIAG,
     MatrixWrapper<T> const & A,
     T                        x[],
-    integer                  incx
+    integer          const   incx
   ) {
     UTILS_ASSERT_DEBUG(
       A.nrows() == A.ncols(),
@@ -1320,13 +1315,13 @@ namespace lapack_wrapper {
   inline
   void
   trmv(
-    string_view              where,
+    string_view      const   where,
     ULselect         const & UPLO,
     Transposition    const & TRANS,
     DiagonalType     const & DIAG,
     MatrixWrapper<T> const & A,
     T                        x[],
-    integer                  incx
+    integer          const   incx
   ) {
     UTILS_ASSERT_DEBUG(
       A.nrows() == A.ncols(),
@@ -1359,7 +1354,7 @@ namespace lapack_wrapper {
     DiagonalType     const & DIAG,
     MatrixWrapper<T> const & A,
     T                        x[],
-    integer                  incx
+    integer          const   incx
   ) {
     UTILS_ASSERT_DEBUG(
       A.nrows() == A.ncols(),
@@ -1389,13 +1384,13 @@ namespace lapack_wrapper {
   inline
   void
   trsv(
-    string_view              where,
+    string_view      const   where,
     ULselect         const & UPLO,
     Transposition    const & TRANS,
     DiagonalType     const & DIAG,
     MatrixWrapper<T> const & A,
     T                        x[],
-    integer                  incx
+    integer          const   incx
   ) {
     UTILS_ASSERT_DEBUG(
       A.nrows() == A.ncols(),
@@ -1430,7 +1425,7 @@ namespace lapack_wrapper {
     ULselect         const & UPLO,
     Transposition    const & TRANS,
     DiagonalType     const & DIAG,
-    T                        alpha,
+    T                const   alpha,
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
@@ -1469,12 +1464,12 @@ namespace lapack_wrapper {
   inline
   void
   trmm(
-    string_view              where,
+    string_view      const   where,
     SideMultiply     const & SIDE,
     ULselect         const & UPLO,
     Transposition    const & TRANS,
     DiagonalType     const & DIAG,
-    T                        alpha,
+    T                const    alpha,
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
@@ -1516,7 +1511,7 @@ namespace lapack_wrapper {
     ULselect         const & UPLO,
     Transposition    const & TRANS,
     DiagonalType     const & DIAG,
-    T                        alpha,
+    T                const   alpha,
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {
@@ -1556,12 +1551,12 @@ namespace lapack_wrapper {
   inline
   void
   trsm(
-    string_view              where,
+    string_view      const   where,
     SideMultiply     const & SIDE,
     ULselect         const & UPLO,
     Transposition    const & TRANS,
     DiagonalType     const & DIAG,
-    T                        alpha,
+    T                const   alpha,
     MatrixWrapper<T> const & A,
     MatrixWrapper<T>       & B
   ) {

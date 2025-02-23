@@ -46,7 +46,7 @@ main() {
 
     lapack_wrapper::BandedLU<lapack_wrapper::doublereal> BLU;
 
-    lapack_wrapper::integer const N  = 10;
+    constexpr lapack_wrapper::integer N  = 10;
     lapack_wrapper::doublereal D[]   = {1,2,3,4,5,6,7,8,9,10};
     lapack_wrapper::doublereal L0[]  = { 1,   1, 1,  1, 1,  1, 1, 1, 1};
     lapack_wrapper::doublereal L1[]  = { 1,  -1, 1, -1, 1, -1, 1, 1};

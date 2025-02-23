@@ -100,7 +100,7 @@ namespace lapack_wrapper {
     std::vector<integer> rBlocks;
     rBlocks.reserve(nblks+1);
     integer n{0};
-    for ( integer k = 0; k <= nblks; ++k, n += block_size )
+    for ( integer k{0}; k <= nblks; ++k, n += block_size )
       rBlocks.push_back(n);
     this->setup( nblks, &rBlocks.front() );
   }

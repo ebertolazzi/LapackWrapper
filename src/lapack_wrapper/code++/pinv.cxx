@@ -173,8 +173,8 @@ namespace lapack_wrapper {
     real_type const A[],
     integer         LDA
   ) {
-    for ( integer i = 0; i < m_nrows; ++i )
-      for ( integer j = 0; j < m_ncols; ++j )
+    for ( integer i{0}; i < m_nrows; ++i )
+      for ( integer j{0}; j < m_ncols; ++j )
         m_A_factored[i+j*m_nrows] = A[j+i*LDA];
     return this->factorize();
   }

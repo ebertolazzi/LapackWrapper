@@ -114,7 +114,7 @@ namespace lapack_wrapper {
   ) {
     this->allocate( NRC );
     lapack_wrapper::zero( NRC*NRC, m_A_saved, 1 );
-    for ( integer i = 0; i < nnz; ++i )
+    for ( integer i{0}; i < nnz; ++i )
       m_A_saved[row[i]+col[i]*NRC] += values[i];
     this->compute();
   }
@@ -268,7 +268,7 @@ namespace lapack_wrapper {
   ) {
     this->allocate( NRC );
     lapack_wrapper::zero( NRC*NRC, m_A_saved, 1 );
-    for ( integer i = 0; i < A_nnz; ++i )
+    for ( integer i{0}; i < A_nnz; ++i )
       m_A_saved[A_row[i]+A_col[i]*NRC] += A_values[i];
     this->compute();
   }
@@ -338,13 +338,13 @@ namespace lapack_wrapper {
         std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
         T const * vi = vr + m_N;
-        for ( integer j = 0; j < m_N; ++j ) {
+        for ( integer j{0}; j < m_N; ++j ) {
           // salvo vettore "gia" coniugato
           v.push_back( complex_type( vr[j], -vi[j] ) );
           v1.push_back( complex_type( vr[j], vi[j] ) );
         }
       } else {
-        for ( integer j = 0; j < m_N; ++j )
+        for ( integer j{0}; j < m_N; ++j )
           v.push_back( complex_type( vr[j], 0 ) );
       }
     }
@@ -366,12 +366,12 @@ namespace lapack_wrapper {
         std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
         T const * vi = vr + m_N;
-        for ( integer j = 0; j < m_N; ++j ) {
+        for ( integer j{0}; j < m_N; ++j ) {
           v.push_back( complex_type( vr[j], vi[j] ) );
           v1.push_back( complex_type( vr[j], -vi[j] ) );
         }
       } else {
-        for ( integer j = 0; j < m_N; ++j )
+        for ( integer j{0}; j < m_N; ++j )
           v.push_back( complex_type( vr[j], 0 ) );
       }
     }
@@ -483,9 +483,9 @@ namespace lapack_wrapper {
     this->allocate( NRC );
     lapack_wrapper::zero( NRC*NRC, m_A_saved, 1 );
     lapack_wrapper::zero( NRC*NRC, m_B_saved, 1 );
-    for ( integer i = 0; i < A_nnz; ++i )
+    for ( integer i{0}; i < A_nnz; ++i )
       m_A_saved[A_row[i]+A_col[i]*NRC] += A_values[i];
-    for ( integer i = 0; i < B_nnz; ++i )
+    for ( integer i{0}; i < B_nnz; ++i )
       m_B_saved[B_row[i]+B_col[i]*NRC] += B_values[i];
     this->compute();
   }
@@ -521,7 +521,7 @@ namespace lapack_wrapper {
   ) const {
     re.clear(); re.reserve( m_N );
     im.clear(); im.reserve( m_N );
-    for ( integer i = 0;i < m_N; ++i ) {
+    for ( integer i{0};i < m_N; ++i ) {
       re.push_back( m_alphaRe[i]/m_beta[i] );
       im.push_back( m_alphaIm[i]/m_beta[i] );
     }
@@ -535,7 +535,7 @@ namespace lapack_wrapper {
     std::vector<std::complex<real_type> > & eigs
   ) const {
     eigs.clear(); eigs.reserve( m_N );
-    for ( integer i = 0;i < m_N; ++i )
+    for ( integer i{0};i < m_N; ++i )
       eigs.push_back(
         std::complex<real_type>( m_alphaRe[i], m_alphaIm[i] ) / m_beta[i]
       );
@@ -676,9 +676,9 @@ namespace lapack_wrapper {
     this->allocate( NRC );
     lapack_wrapper::zero( NRC*NRC, m_A_saved, 1 );
     lapack_wrapper::zero( NRC*NRC, m_B_saved, 1 );
-    for ( integer i = 0; i < A_nnz; ++i )
+    for ( integer i{0}; i < A_nnz; ++i )
       m_A_saved[A_row[i]+A_col[i]*NRC] += A_values[i];
-    for ( integer i = 0; i < B_nnz; ++i )
+    for ( integer i{0}; i < B_nnz; ++i )
       m_B_saved[B_row[i]+B_col[i]*NRC] += B_values[i];
     this->compute();
   }
@@ -750,13 +750,13 @@ namespace lapack_wrapper {
         std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
         T const * vi = vr + m_N;
-        for ( integer j = 0; j < m_N; ++j ) {
+        for ( integer j{0}; j < m_N; ++j ) {
           // salvo vettore "gia" coniugato
           v.push_back( complex_type( vr[j], -vi[j] ) );
           v1.push_back( complex_type( vr[j], vi[j] ) );
         }
       } else {
-        for ( integer j = 0; j < m_N; ++j )
+        for ( integer j{0}; j < m_N; ++j )
           v.push_back( complex_type( vr[j], 0 ) );
       }
     }
@@ -778,12 +778,12 @@ namespace lapack_wrapper {
         std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
         T const * vi = vr + m_N;
-        for ( integer j = 0; j < m_N; ++j ) {
+        for ( integer j{0}; j < m_N; ++j ) {
           v.push_back( complex_type( vr[j], vi[j] ) );
           v1.push_back( complex_type( vr[j], -vi[j] ) );
         }
       } else {
-        for ( integer j = 0; j < m_N; ++j )
+        for ( integer j{0}; j < m_N; ++j )
           v.push_back( complex_type( vr[j], 0 ) );
       }
     }

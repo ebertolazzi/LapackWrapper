@@ -2215,7 +2215,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
       LAPACK_slacpy( const_cast<character*>("A"), &M, &N, A, &LDA, B, &LDB );
     #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-      for ( integer j = 0; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
+      for ( integer j{0}; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
       slacpy( "A", &M, &N, A, &LDA, B, &LDB );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -2247,7 +2247,7 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
       LAPACK_dlacpy( const_cast<character*>("A"), &M, &N, A, &LDA, B, &LDB );
     #elif defined(LAPACK_WRAPPER_USE_ATLAS)
-      for ( integer j = 0; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
+      for ( integer j{0}; j < N; ++j ) copy( M, A+j*LDA, 1, B+j*LDB, 1 );
     #elif defined(LAPACK_WRAPPER_USE_MKL)
       dlacpy( "A", &M, &N, A, &LDA, B, &LDB );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -2352,7 +2352,7 @@ namespace lapack_wrapper {
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-    for ( integer j = 0; j < N; ++j ) zero( M, A+j*LDA, 1 );
+    for ( integer j{0}; j < N; ++j ) zero( M, A+j*LDA, 1 );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     real zero{0}; slaset( "A", &M, &N, &zero, &zero, A, &LDA );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -2375,7 +2375,7 @@ namespace lapack_wrapper {
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-    for ( integer j = 0; j < N; ++j ) zero( M, A+j*LDA, 1 );
+    for ( integer j{0}; j < N; ++j ) zero( M, A+j*LDA, 1 );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     doublereal zero{0}; dlaset( "A", &M, &N, &zero, &zero, A, &LDA );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -2399,7 +2399,7 @@ namespace lapack_wrapper {
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-    for ( integer j = 0; j < N; ++j ) copy( M, &value, 0, A+j*LDA, 1 );
+    for ( integer j{0}; j < N; ++j ) copy( M, &value, 0, A+j*LDA, 1 );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     slaset( "A", &M, &N, &value, &value, A, &LDA );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -2423,7 +2423,7 @@ namespace lapack_wrapper {
   #elif defined(LAPACK_WRAPPER_USE_ATLAS)   || \
         defined(LAPACK_WRAPPER_USE_OPENBLAS)|| \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-    for ( integer j = 0; j < N; ++j ) copy( M, &value, 0, A+j*LDA, 1 );
+    for ( integer j{0}; j < N; ++j ) copy( M, &value, 0, A+j*LDA, 1 );
   #elif defined(LAPACK_WRAPPER_USE_MKL)
     dlaset( "A", &M, &N, &value, &value, A, &LDA );
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
@@ -2521,7 +2521,7 @@ namespace lapack_wrapper {
     UTILS_ASSERT( ierr == 0, "geadd, ierr = {}\n", ierr );
     real const * Aj = A;
     real       * Cj = C;
-    for ( integer j = 0; j < N; ++j, Aj += LDA, Cj += LDC ) {
+    for ( integer j{0}; j < N; ++j, Aj += LDA, Cj += LDC ) {
       lapack_wrapper::scal( M, beta,  Cj, 1 );
       lapack_wrapper::axpy( M, alpha, Aj, 1, Cj, 1 );
     }
@@ -2548,7 +2548,7 @@ namespace lapack_wrapper {
     UTILS_ASSERT( ierr == 0, "geadd, ierr = {}\n", ierr );
     doublereal const * Aj = A;
     doublereal       * Cj = C;
-    for ( integer j = 0; j < N; ++j, Aj += LDA, Cj += LDC ) {
+    for ( integer j{0}; j < N; ++j, Aj += LDA, Cj += LDC ) {
       lapack_wrapper::scal( M, beta,  Cj, 1 );
       lapack_wrapper::axpy( M, alpha, Aj, 1, Cj, 1 );
     }
@@ -3100,9 +3100,9 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
       LAPACK_F77NAME(slascl2)( &M, &N, const_cast<real*>(D), X, &LDX );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-      for ( integer i = 0; i < M; ++i ) {
+      for ( integer i{0}; i < M; ++i ) {
         real s = D[i];
-        for ( integer j = 0; j < N; ++j ) X[i+j*LDX] *= s;
+        for ( integer j{0}; j < N; ++j ) X[i+j*LDX] *= s;
       }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
       slascl2( &M, &N, const_cast<real*>(D), X, &LDX );
@@ -3128,9 +3128,9 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
       LAPACK_F77NAME(dlascl2)( &M, &N, const_cast<doublereal*>(D), X, &LDX );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-      for ( integer i = 0; i < M; ++i ) {
+      for ( integer i{0}; i < M; ++i ) {
         doublereal s = D[i];
-        for ( integer j = 0; j < N; ++j ) X[i+j*LDX] *= s;
+        for ( integer j{0}; j < N; ++j ) X[i+j*LDX] *= s;
       }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
       dlascl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );
@@ -3213,9 +3213,9 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
       LAPACK_F77NAME(slarscl2)( &M, &N, const_cast<real*>(D), X, &LDX );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-      for ( integer i = 0; i < M; ++i ) {
+      for ( integer i{0}; i < M; ++i ) {
         real s = D[i];
-        for ( integer j = 0; j < N; ++j ) X[i+j*LDX] /= s;
+        for ( integer j{0}; j < N; ++j ) X[i+j*LDX] /= s;
       }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
       slarscl2( &M, &N, const_cast<real*>(D), X, &LDX );
@@ -3241,9 +3241,9 @@ namespace lapack_wrapper {
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
       LAPACK_F77NAME(dlarscl2)( &M, &N, const_cast<doublereal*>(D), X, &LDX );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
-      for ( integer i = 0; i < M; ++i ) {
+      for ( integer i{0}; i < M; ++i ) {
         doublereal s = D[i];
-        for ( integer j = 0; j < N; ++j ) X[i+j*LDX] /= s;
+        for ( integer j{0}; j < N; ++j ) X[i+j*LDX] /= s;
       }
     #elif defined(LAPACK_WRAPPER_USE_MKL)
       dlarscl2( &M, &N, const_cast<doublereal*>(D), X, &LDX );

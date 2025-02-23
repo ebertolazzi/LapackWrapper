@@ -86,7 +86,7 @@ namespace Sparse_tool {
       U_C.resize( PRECO::pr_size + 1 );
 
       L_R(0) = U_C(0) = 0;
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
+      for ( integer i{0}; i < PRECO::pr_size; ++i ) {
         L_R(i+1) = L_R(i) + Lnnz(i);
         U_C(i+1) = U_C(i) + Unnz(i);
       }
@@ -115,7 +115,7 @@ namespace Sparse_tool {
       }
 
       // step 4: sort structure
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
+      for ( integer i{0}; i < PRECO::pr_size; ++i ) {
         std::sort( &L_J(L_R(i)), &L_J(L_R(i+1)) );
         std::sort( &U_I(U_C(i)), &U_I(U_C(i+1)) );
       }

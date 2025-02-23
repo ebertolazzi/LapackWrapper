@@ -93,7 +93,7 @@ namespace Sparse_tool {
       L_J.resize( N );
       U_A.resize( N );
       U_I.resize( N );
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) {
+      for ( integer i{0}; i < PRECO::pr_size; ++i ) {
         L_A[i] = mem(Lnnz[i]);
         L_J[i] = memi(Lnnz[i]);
         U_A[i] = mem(Unnz[i]);

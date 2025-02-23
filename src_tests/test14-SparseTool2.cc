@@ -62,7 +62,7 @@ using namespace ::Sparse_tool_load;
 using           ::Sparse_tool::integer;
 using namespace ::std;
 
-using VBASE = typename Vector<double>::V_base;
+using VBASE = Vector<double>::V_base;
 
 int
 main() {
@@ -93,7 +93,7 @@ main() {
     for ( integer i = 0; i < nr; ++i ) M.insert(i,i) = 1;
     M.internal_order();
 
-    Eigen::Map<VBASE> b1(NULL,0), b2(NULL,0), r(NULL,0), x(NULL,0);
+    Eigen::Map<VBASE> b1(nullptr,0), b2(nullptr,0), r(nullptr,0), x(nullptr,0);
     new (&b1) Eigen::Map<VBASE>(rhs.data(), nr);    b1.array() = 1;
     new (&b2) Eigen::Map<VBASE>(rhs.data()+nr, nc); b2.array() = 0;
     new (&r)  Eigen::Map<VBASE>(X.data(), nr);      r.array()  = 0;
@@ -115,7 +115,7 @@ main() {
       "res      = {}\n"
       "solution = {}\n"
       "residual = {}\n",
-      res, x, bf2.template lpNorm<Eigen::Infinity>()
+      res, x, bf2.lpNorm<Eigen::Infinity>()
     );
   } catch ( exception const & exc ) {
     msg.error( exc.what() );

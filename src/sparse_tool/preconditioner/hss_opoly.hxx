@@ -77,7 +77,7 @@ namespace Sparse_tool {
       // step 1: initialize structure
       A_R.resize( PRECO::pr_size + 1 );
       A_R(0) = 0;
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) A_R(i+1) = A_R(i) + Annz(i);
+      for ( integer i{0}; i < PRECO::pr_size; ++i ) A_R(i+1) = A_R(i) + Annz(i);
 
       // step 2: allocate memory
       A_A.resize( A_R(PRECO::pr_size) );
@@ -92,7 +92,7 @@ namespace Sparse_tool {
       }
 
       // step 4: sort structure
-      for ( integer i = 0; i < PRECO::pr_size; ++i ) std::sort( &A_J(A_R(i)), &A_J(A_R(i+1)) );
+      for ( integer i{0}; i < PRECO::pr_size; ++i ) std::sort( &A_J(A_R(i)), &A_J(A_R(i+1)) );
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
