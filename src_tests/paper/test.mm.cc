@@ -78,6 +78,6 @@ main() {
                      "bcsstk30.mtx",             // pattern
                      NULL };
 
-  for ( char **p = Matrix; *p != NULL; ++p ) testMM( string("mm/")+*p);
+  for ( char **p{Matrix}; *p != NULL; ++p ) testMM( string("mm/")+*p);
   return 0;
 }

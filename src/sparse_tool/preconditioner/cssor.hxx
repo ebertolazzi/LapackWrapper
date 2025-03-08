@@ -95,8 +95,8 @@ namespace Sparse_tool {
       D.setZero();
 
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
+        integer i{ A.row() };
+        integer j{ A.column() };
         ++Bnnz(i);
         if      ( i > j ) ++Lnnz(i);
         else if ( i < j ) ++Unnz(j);
@@ -130,8 +130,8 @@ namespace Sparse_tool {
 
       // step 3: fill structure
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
+        integer i{ A.row() };
+        integer j{ A.column() };
         B_J(B_R(i)+(--Bnnz(i))) = j;
         if      ( i > j ) L_J(L_R(i)+(--Lnnz(i))) = j;
         else if ( i < j ) U_I(U_C(j)+(--Unnz(j))) = i;
@@ -146,40 +146,40 @@ namespace Sparse_tool {
 
       // step 5: insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer   i    = A.row();
-        integer   j    = A.column();
-        real_type rval = A.value().real();
-        real_type ival = A.value().imag();
+        integer   i    { A.row() };
+        integer   j    { A.column() };
+        real_type rval { A.value().real() };
+        real_type ival { A.value().imag() };
         { // costruisco B
-          integer lo  = B_R(i);
-          integer hi  = B_R(i+1);
-          integer len = hi - lo;
+          integer lo  { B_R(i)   };
+          integer hi  { B_R(i+1) };
+          integer len { hi - lo  };
           while ( len > 0 ) {
-            integer half = len / 2;
-            integer mid  = lo + half;
+            integer half { len / 2   };
+            integer mid  { lo + half };
             if ( B_J(mid) < j ) { lo = mid + 1; len -= half + 1; }
             else                  len = half;
           }
           B_A(lo) = ival;
         }
         if ( i > j ) { // costruisco L
-          integer lo  = L_R(i);
-          integer hi  = L_R(i+1);
-          integer len = hi - lo;
+          integer lo  { L_R(i)   };
+          integer hi  { L_R(i+1) };
+          integer len { hi - lo  };
           while ( len > 0 ) {
-            integer half = len / 2;
-            integer mid  = lo + half;
+            integer half { len / 2   };
+            integer mid  { lo + half };
             if ( L_J(mid) < j ) { lo = mid + 1; len -= half + 1; }
             else                  len = half;
           }
           L_A(lo) = rval;
         } else if ( i < j ) { // costruisco U
-          integer lo  = U_C(j);
-          integer hi  = U_C(j+1);
-          integer len = hi - lo;
+          integer lo  { U_C(j)   };
+          integer hi  { U_C(j+1) };
+          integer len { hi - lo  };
           while ( len > 0 ) {
-            integer half = len / 2;
-            integer mid  = lo + half;
+            integer half { len / 2 };
+            integer mid  { lo + half };
             if ( U_I(mid) < i ) { lo = mid + 1; len -= half + 1; }
             else                  len = half;
           }
@@ -237,16 +237,16 @@ namespace Sparse_tool {
 
       x.setZero();
       y.setZero();
-      for ( integer ii = 0; ii < maxIter; ++ii ) {
+      for ( integer ii{0}; ii < maxIter; ++ii ) {
 
         // calcolo ((1/omega-1)*D-U)*x + B*y + b --------------------
         pC  = U_C.data();
         pI  = U_I.data();
         pUA = U_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          real_type xk = x(k);
+          real_type xk{ x(k) };
           x(k) = br(k) + omega1 * D(k) * xk;
-          for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pC[1] - pC[0]}; i_cnt > 0; --i_cnt )
             x(*pI++) -= *pUA++ * xk;
           ++pC;
         }
@@ -257,7 +257,7 @@ namespace Sparse_tool {
         pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
           real_type tt(0);
-          for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pBR[1] - pBR[0]}; i_cnt > 0; --i_cnt )
             tt += *pBA++ * y(*pBJ++);
           x(k) += tt;
           ++pBR;
@@ -269,7 +269,7 @@ namespace Sparse_tool {
         pLA = L_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
           real_type tt(0);
-          for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pR[1] - pR[0]}; i_cnt > 0; --i_cnt )
             tt += *pLA++ * x(*pJ++);
           x(k) = omega*(x(k)-tt)/D(k);
           ++pR;
@@ -280,9 +280,9 @@ namespace Sparse_tool {
         pI  = U_I.data();
         pUA = U_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
-          real_type yk = y(k);
+          real_type yk{ y(k) };
           y(k) = bi(k) + omega1 * D(k) * yk;
-          for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pC[1] - pC[0]}; i_cnt > 0; --i_cnt )
             y(*pI++) -= *pUA++ * yk;
           ++pC;
         }
@@ -293,7 +293,7 @@ namespace Sparse_tool {
         pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
           real_type tt(0);
-          for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pBR[1] - pBR[0]}; i_cnt > 0; --i_cnt )
             tt += *pBA++ * x(*pBJ++);
           y(k) -= tt;
           ++pBR;
@@ -305,14 +305,14 @@ namespace Sparse_tool {
         pLA = L_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
           real_type tt(0);
-          for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pR[1] - pR[0]}; i_cnt > 0; --i_cnt )
             tt += *pLA++ * y(*pJ++);
           y(k) = omega*(y(k)-tt)/D(k);
           ++pR;
         };
       }
 
-      for ( integer ii = 0; ii < maxIter; ++ii ) {
+      for ( integer ii{0}; ii < maxIter; ++ii ) {
 
         // calcolo ((1/omega-1)*D-L)*y - B*x + c -----------------------
         pR  = L_R.data() + PRECO::pr_size;
@@ -322,7 +322,7 @@ namespace Sparse_tool {
         do {
           --k; --pR;
           real_type tt(0);
-          for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pR[1] - pR[0]}; i_cnt > 0; --i_cnt )
             tt += *--pLA * y(*--pJ);
           y(k) = omega1*D(k)*y(k)+bi(k)-tt;
         } while ( k > 0 );
@@ -333,7 +333,7 @@ namespace Sparse_tool {
         pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
           real_type tt(0);
-          for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pBR[1] - pBR[0]}; i_cnt > 0; --i_cnt )
             tt += *pBA++ * x(*pBJ++);
           y(k) -= tt;
           ++pBR;
@@ -346,8 +346,8 @@ namespace Sparse_tool {
         k = PRECO::pr_size;
         do {
           --k; --pC;
-          real_type yk = y(k)*omega/D(k);
-          for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+          real_type yk{ y(k)*omega/D(k) };
+          for ( integer i_cnt{pC[1] - pC[0]}; i_cnt > 0; --i_cnt )
             y(*--pI) -= *--pUA * yk;
           y(k) = yk;
         } while ( k > 0 );
@@ -360,7 +360,7 @@ namespace Sparse_tool {
         do {
           --k; --pR;
           real_type tt(0);
-          for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pR[1] - pR[0]}; i_cnt > 0; --i_cnt )
             tt += *--pLA * x(*--pJ);
           x(k) = omega1*D(k)*x(k)+br(k)-tt;
         } while ( k > 0 );
@@ -371,7 +371,7 @@ namespace Sparse_tool {
         pBA = B_A.data();
         for ( k=0; k < PRECO::pr_size; ++k ) {
           real_type tt(0);
-          for ( integer i_cnt = pBR[1] - pBR[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pBR[1] - pBR[0]}; i_cnt > 0; --i_cnt )
             tt += *pBA++ * y(*pBJ++);
           x(k) += tt;
           ++pBR;
@@ -384,8 +384,8 @@ namespace Sparse_tool {
         k = PRECO::pr_size;
         do {
           --k; --pC;
-          real_type xk = x(k)*omega/D(k);
-          for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+          real_type xk{ x(k)*omega/D(k) };
+          for ( integer i_cnt{pC[1] - pC[0]}; i_cnt > 0; --i_cnt )
             x(*--pI) -= *--pUA * xk;
           x(k) = xk;
         } while ( k > 0 );

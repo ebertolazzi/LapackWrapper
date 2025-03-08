@@ -168,7 +168,7 @@ namespace lapack_wrapper {
 
     // analysis phase
     vector_integer tmpIS(2 * NE + 12 * N + 1);
-    integer JOB = ANALISYS;
+    integer JOB{ANALISYS};
     lapack_wrapper::ma41a<real>(
       JOB, N, NE,
       IRN.data(),
@@ -219,7 +219,7 @@ namespace lapack_wrapper {
   template <typename real>
   void
   MA41<real>::solve( real RHS[] ) {
-    integer const JOB = SOLVE;
+    integer const JOB{ SOLVE };
     lapack_wrapper::ma41a<real>(
       JOB, N, NE,
       IRN.data(),

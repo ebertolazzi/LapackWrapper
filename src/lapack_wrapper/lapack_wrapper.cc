@@ -71,9 +71,9 @@ namespace lapack_wrapper {
     integer       IPIV[]
   ) {
     // LU DECOMPOSITION, COLUMN INTERCHANGES
-    REAL * Ajj = A;
+    REAL * Ajj{A};
     for ( int j{0}; j < M; Ajj += LDA+1 ) {
-      integer const MX = iamax( N-j, Ajj, LDA );
+      integer const MX{ iamax( N-j, Ajj, LDA ) };
       IPIV[j] = MX + j; // C-based
       if ( j < IPIV[j] ) swap( M, A + j*LDA, 1, A + IPIV[j]*LDA, 1 );
       if ( Utils::is_zero(Ajj[0]) ) return j;
@@ -147,9 +147,9 @@ namespace lapack_wrapper {
     integer       IPIV[]
   ) {
     // LU DECOMPOSITION, ROW INTERCHANGES
-    REAL * Ajj = A;
-    for ( int j{0}; j < N; Ajj += LDA+1 ) {
-      integer const MX = iamax( M-j, Ajj, 1 );
+    REAL * Ajj{A};
+    for ( integer j{0}; j < N; Ajj += LDA+1 ) {
+      integer const MX{iamax( M-j, Ajj, 1 )};
       IPIV[j] = MX + j; // C-based
       if ( j < IPIV[j] ) swap( N, A + j, LDA, A + IPIV[j], LDA );
       if ( Utils::is_zero(Ajj[0]) ) return j;
@@ -186,7 +186,7 @@ namespace lapack_wrapper {
       // APPLY INTERCHANGES TO PREVIOUS BLOCKS
       integer const jjB{ j+JB };
       REAL * Aj{ A+jjB*LDA };
-      for ( integer i = j; i < jjB; ++i ) {
+      for ( integer i{j}; i < jjB; ++i ) {
         integer IP{ IPIV[i] += j };
         if ( i < IP ) {
           swap( j,     A + i,  LDA, A + IP,  LDA );
@@ -269,10 +269,10 @@ namespace lapack_wrapper {
       std::fill( line.begin()+i, line.end(), T(0) );
       std::fill( r.begin(), r.end(), T(0) );
       line[i] = lambda;
-      for ( integer j = i; j < N; ++j ) {
+      for ( integer j{i}; j < N; ++j ) {
         T S;
         T C;
-        T * pTjj = &Tmat[j*(N+1)];
+        T * pTjj{ &Tmat[j*(N+1)] };
         rotg( *pTjj, line[j], C, S );
         if ( N-j-1 > 0 ) rot( N-j-1, pTjj+N, N, &line[j+1], 1, C, S );
         rot( nrhs, RHS+j, ldRHS, &r.front(), 1, C, S );
@@ -303,10 +303,10 @@ namespace lapack_wrapper {
     integer       JPIV[]
   ) {
     // Set constants to control overflow
-    integer INFO   = 0;
-    T       EPS    = lamch<T>("P");
-    T       SMLNUM = lamch<T>("S") / EPS;
-    T       SMIN   = 0;
+    integer INFO   { 0 };
+    T       EPS    { lamch<T>("P") };
+    T       SMLNUM { lamch<T>("S") / EPS };
+    T       SMIN   { 0 };
     // Factorize A using complete pivoting.
     // Set pivots less than SMIN to SMIN.
     T * Aii{A};

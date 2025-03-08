@@ -75,8 +75,8 @@ namespace Sparse_tool {
       Unnz.setZero();
 
       for ( P.Begin(); P.End(); P.Next() ) {
-        integer i = P.row();
-        integer j = P.column();
+        integer const i { P.row()    };
+        integer const j { P.column() };
         if      ( i > j ) ++Lnnz(i);
         else if ( i < j ) ++Unnz(j);
       }
@@ -108,10 +108,10 @@ namespace Sparse_tool {
 
       // step 3: fill structure
       for ( P.Begin(); P.End(); P.Next() ) {
-        integer i = P.row();
-        integer j = P.column();
-        if      ( i > j ) { integer ii = --Lnnz(i); L_J(L_R(i)+ii) = j; }
-        else if ( i < j ) { integer jj = --Unnz(j); U_I(U_C(j)+jj) = i; }
+        integer const i { P.row()    };
+        integer const j { P.column() };
+        if      ( i > j ) { integer const ii{--Lnnz(i)}; L_J(L_R(i)+ii) = j; }
+        else if ( i < j ) { integer const jj{--Unnz(j)}; U_I(U_C(j)+jj) = i; }
       }
 
       // step 4: sort structure
@@ -122,27 +122,27 @@ namespace Sparse_tool {
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
-        real_type val = A.value().real(); // (i,j);
+        integer   i   { A.row()          };
+        integer   j   { A.column()       };
+        real_type val { A.value().real() }; // (i,j);
         if ( i > j ) {
-          integer lo  = L_R(i);
-          integer hi  = L_R(i+1);
-          integer len = hi - lo;
+          integer lo  { L_R(i)   };
+          integer hi  { L_R(i+1) };
+          integer len { hi - lo  };
           while ( len > 0 ) {
-            integer half = len / 2;
-            integer mid  = lo + half;
+            integer half { len / 2 };
+            integer mid  { lo + half };
             if ( L_J(mid) < j ) { lo = mid + 1; len -= half + 1; }
             else                  len = half;
           }
           L_A(lo) = val;
         } else if ( i < j ) {
-          integer lo  = U_C(j);
-          integer hi  = U_C(j+1);
-          integer len = hi - lo;
+          integer lo  { U_C(j) };
+          integer hi  { U_C(j+1) };
+          integer len { hi - lo };
           while ( len > 0 ) {
-            integer half = len / 2;
-            integer mid  = lo + half;
+            integer half { len / 2 };
+            integer mid  { lo + half };
             if ( U_I(mid) < i ) { lo = mid + 1; len -= half + 1; }
             else                  len = half;
           }
@@ -175,12 +175,12 @@ namespace Sparse_tool {
       */
 
       // build LDU decomposition
-      integer LRk1 = L_R(1);
-      integer UCk1 = U_C(1);
-      for ( integer k = 1; k < PRECO::pr_size; ++k ) {
+      integer LRk1 { L_R(1) };
+      integer UCk1 { U_C(1) };
+      for ( integer k{1}; k < PRECO::pr_size; ++k ) {
         integer kk;
-        integer LRk = LRk1; LRk1 = L_R(k+1);
-        integer UCk = UCk1; UCk1 = U_C(k+1);
+        integer LRk{LRk1}; LRk1 = L_R(k+1);
+        integer UCk{UCk1}; UCk1 = U_C(k+1);
 
         //  W = M21^T  ---- l^T = D^(-1)U^(-T) M21^T
         for ( kk = LRk; kk < LRk1; ++kk ) W(L_J(kk)) = L_A(kk);
@@ -189,19 +189,19 @@ namespace Sparse_tool {
         #define LDU_FAST
         #ifdef LDU_FAST
         for ( kk = LRk; kk < LRk1; ++kk ) {
-          integer j = L_J(kk);
+          integer j{L_J(kk)};
         #else
-        for ( integer j = 1; j < k; ++j ) {
+        for ( integer j{1}; j < k; ++j ) {
         #endif
-          integer UCj  = U_C(j);
-          integer UCj1 = U_C(j+1);
-          real_type bf   = 0;
-          for ( integer jj = UCj; jj < UCj1; ++jj ) bf += W(U_I(jj))*U_A(jj);
+          integer   UCj  { U_C(j) };
+          integer   UCj1 { U_C(j+1) };
+          real_type bf   { 0 };
+          for ( integer jj{UCj}; jj < UCj1; ++jj ) bf += W(U_I(jj))*U_A(jj);
           W(j) -= bf;
         }
         //  l^T = D^(-1) W;   W = 0---- l^T = D^(-1)U^(-T) M21^T
         #ifdef LDU_FAST
-        for ( kk = LRk; kk < LRk1; ++kk ) { integer j = L_J(kk); L_A(kk) = W(j) / D(j); W(j) = 0; }
+        for ( kk = LRk; kk < LRk1; ++kk ) { integer j{L_J(kk)}; L_A(kk) = W(j) / D(j); W(j) = 0; }
         #else
         for ( kk = LRk; kk < LRk1; ++kk ) L_A(kk) = W(L_J(kk)) / D(L_J(kk));
         W = 0;
@@ -213,14 +213,14 @@ namespace Sparse_tool {
         //  W = L^(-1) W  ---- u   = D^(-1)L^(-1) M12
         #ifdef LDU_FAST
         for ( kk = UCk; kk < UCk1; ++kk ) {
-          integer i = U_I(kk);
+          integer i{ U_I(kk) };
         #else
-        for ( integer i = 1; i < k; ++i ) {
+        for ( integer i{1}; i < k; ++i ) {
         #endif
-          integer LRi  = L_R(i);
-          integer LRi1 = L_R(i+1);
-          real_type bf{0};
-          for ( integer ii = LRi; ii < LRi1; ++ii ) bf += W(L_J(ii))*L_A(ii);
+          integer   LRi  { L_R(i) };
+          integer   LRi1 { L_R(i+1) };
+          real_type bf   { 0 };
+          for ( integer ii{ LRi }; ii < LRi1; ++ii ) bf += W(L_J(ii))*L_A(ii);
           W(i) -= bf;
         }
 
@@ -229,7 +229,7 @@ namespace Sparse_tool {
         D(k) -= bf;
 
         #ifdef LDU_FAST
-        for ( kk = UCk; kk < UCk1; ++kk ) { integer i = U_I(kk); U_A(kk) = W(i) / D(i); W(i) = 0; }
+        for ( kk = UCk; kk < UCk1; ++kk ) { integer i{U_I(kk)}; U_A(kk) = W(i) / D(i); W(i) = 0; }
         #else
         for ( kk = UCk; kk < UCk1; ++kk ) U_A(kk) = W(U_I(kk)) / D(U_I(kk));
         W = 0;
@@ -275,15 +275,15 @@ namespace Sparse_tool {
       res = v;
 
       // solve L
-      integer   const * pR  = L_R.data();
-      integer   const * pJ  = L_J.data();
-      real_type const * pLA = L_A.data();
+      integer   const * pR  { L_R.data() };
+      integer   const * pJ  { L_J.data() };
+      real_type const * pLA { L_A.data() };
       integer k;
 
       for ( k=1; k < PRECO::pr_size; ++k ) {
         ++pR;
         typename VECTOR::real_type tt(0);
-        for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+        for ( integer i_cnt{ pR[1] - pR[0] }; i_cnt > 0; --i_cnt )
           tt += *pLA++ * res(*pJ++);
         res(k) -= tt;
       };
@@ -292,14 +292,14 @@ namespace Sparse_tool {
       for ( k = 0; k < PRECO::pr_size; ++k ) res(k) /= D(k);
 
       // solve U
-      integer   const * pC  = U_C.data() + PRECO::pr_size;
-      integer   const * pI  = U_I.data() + *pC;
-      real_type const * pUA = U_A.data() + *pC;
+      integer   const * pC  { U_C.data() + PRECO::pr_size };
+      integer   const * pI  { U_I.data() + *pC };
+      real_type const * pUA { U_A.data() + *pC };
 
       do {
-        typename VECTOR::real_type resk = res(--k);
+        typename VECTOR::real_type resk{ res(--k) };
         --pC;
-        for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+        for ( integer i_cnt{ pC[1] - pC[0] }; i_cnt > 0; --i_cnt )
           res(*--pI) -= *--pUA * resk;
       } while ( k > 1 );
 

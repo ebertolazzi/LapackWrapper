@@ -75,12 +75,12 @@ namespace lapack_wrapper {
     real_type const s[],
     real_type       epsi
   ) {
-    real_type sy   = dot( m_dim, s, 1, y, 1 );
-    real_type slen = nrm2( m_dim, s, 1 );
-    real_type ylen = nrm2( m_dim, y, 1 );
+    real_type sy   { dot( m_dim, s, 1, y, 1 ) };
+    real_type slen { nrm2( m_dim, s, 1 ) };
+    real_type ylen { nrm2( m_dim, y, 1 ) };
     if ( sy >= epsi*slen*ylen ) {
       mult( y, m_z );
-      real_type yHy = dot( m_dim, m_z, 1, y, 1 );
+      real_type yHy{ dot( m_dim, m_z, 1, y, 1 ) };
       syr( ULselect::LOWER, m_dim, (1+yHy/sy)/sy, s, 1, m_H, m_dim );
       syr2( ULselect::LOWER, m_dim, -1/sy, s, 1, m_z, 1, m_H, m_dim );
     }
@@ -101,12 +101,12 @@ namespace lapack_wrapper {
     real_type const s[],
     real_type       epsi
   ) {
-    real_type sy   = dot( m_dim, s, 1, y, 1 );
-    real_type slen = nrm2( m_dim, s, 1 );
-    real_type ylen = nrm2( m_dim, y, 1 );
+    real_type sy   { dot( m_dim, s, 1, y, 1 ) };
+    real_type slen { nrm2( m_dim, s, 1 ) };
+    real_type ylen { nrm2( m_dim, y, 1 ) };
     if ( sy >= epsi*slen*ylen ) {
       mult( y, m_z );
-      real_type yHy = dot( m_dim, m_z, 1, y, 1 );
+      real_type yHy{ dot( m_dim, m_z, 1, y, 1 ) };
       syr( ULselect::LOWER, m_dim, -1/yHy, m_z, 1, m_H, m_dim );
       syr( ULselect::LOWER, m_dim,   1/sy, s,   1, m_H, m_dim );
     }
@@ -130,9 +130,9 @@ namespace lapack_wrapper {
     // z <- y - H * s
     copy( m_dim, y, 1, m_z, 1 );
     mult( real_type(-1), s, 1, real_type(1), m_z, 1 );
-    real_type sz   = dot( m_dim, s, 1, m_z, 1 );
-    real_type slen = nrm2( m_dim, s, 1 );
-    real_type zlen = nrm2( m_dim, m_z, 1 );
+    real_type sz   { dot( m_dim, s, 1, m_z, 1 ) };
+    real_type slen { nrm2( m_dim, s, 1 ) };
+    real_type zlen { nrm2( m_dim, m_z, 1 ) };
     if ( std::abs(sz) >= epsi*slen*zlen )
       syr( ULselect::LOWER, m_dim, 1/sz, m_z, 1, m_H, m_dim );
   }

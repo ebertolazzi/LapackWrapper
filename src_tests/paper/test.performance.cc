@@ -38,8 +38,8 @@ extern "C" {
 using namespace ::SparseToolLoad;
 using namespace ::std;
 
-#define LOOP(N)   for ( integer i = 0; i < N; ++i )
-#define REPEAT(N) for ( integer iii = 0; iii < N; ++iii )
+#define LOOP(N)   for ( integer i{0}; i < N; ++i )
+#define REPEAT(N) for ( integer iii{0}; iii < N; ++iii )
 
 using Real = double;
 
@@ -92,11 +92,11 @@ test_CRow(
   Real timea = tm . milliseconds();
 
   int n = v.size();
-  double const * pv = &v(0);
-  double       * pr = &res(0);
-  double const * pA = &A(0);
-  int    const * pR = &R(0);
-  int    const * pJ = &J(0);
+  double const * pv { &v(0) };
+  double       * pr { &res(0) };
+  double const * pA { &A(0) };
+  int    const * pR { &R(0) };
+  int    const * pJ { &J(0) };
 
   sleep(1);
   tm . start();
@@ -136,11 +136,11 @@ test_CCol(
   Real timea = tm.milliseconds();
 
   int n = v.size();
-  double const * pv = &v(0);
-  double       * pr = &res(0);
-  double const * pA = &A(0);
-  int    const * pR = &R(0);
-  int    const * pJ = &J(0);
+  double const * pv { &v(0) };
+  double       * pr { &res(0) };
+  double const * pA { &A(0) };
+  int    const * pR { &R(0) };
+  int    const * pJ { &J(0) };
 
   sleep(1);
   tm . start();
@@ -178,11 +178,11 @@ test_CCoor(
   Real timea = tm.milliseconds();
 
   int n = v.size();
-  double const * pv = &v(0);
-  double       * pr = &res(0);
-  double const * pA = &A(0);
-  int    const * pR = &R(0);
-  int    const * pJ = &J(0);
+  double const * pv { &v(0)   };
+  double       * pr { &res(0) };
+  double const * pA { &A(0)   };
+  int    const * pR { &R(0)   };
+  int    const * pJ { &J(0)   };
 
   sleep(1);
   tm.start();
@@ -260,10 +260,10 @@ main() {
     std::copy( crow.getA().begin(), crow.getA().end(), A.begin() );
     std::copy( crow.getR().begin(), crow.getR().end(), R.begin() );
     std::copy( crow.getJ().begin(), crow.getJ().end(), J.begin() );
-    for ( integer i = 0; i < R.size(); ++i ) ++R[i];
-    for ( integer i = 0; i < J.size(); ++i ) ++J[i];
+    for ( integer i{0}; i < R.size(); ++i ) ++R[i];
+    for ( integer i{0}; i < J.size(); ++i ) ++J[i];
 
-    integer const nr = ccoor.nrows();
+    integer const nr{ ccoor.nrows() };
 
     v.resize(n);
     res.resize(n);
@@ -289,7 +289,7 @@ main() {
     res -= ccoor * v;
     cout << "CCoor - SPARSKIT = " << normi(res) << '\n';
 
-    integer cicle_repeat = 1 + 1000000 / nr;
+    integer cicle_repeat{ 1 + 1000000 / nr };
     test_CRow (cicle_repeat, mHandle, crow,  v);
     test_CCol (cicle_repeat, mHandle, ccol,  v);
     test_CCoor(cicle_repeat, mHandle, ccoor, v);

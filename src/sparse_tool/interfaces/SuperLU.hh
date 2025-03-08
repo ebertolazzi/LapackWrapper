@@ -165,9 +165,9 @@ namespace Sparse_tool {
       this->nCol = A.ncols();
       this->nnz  = A.nnz();
       // Create matrix A in the format expected by SuperLU.
-      T const   * AA = static_cast<T const *>(A.getA().data());
-      int const * II = reinterpret_cast<int const *>(A.getI().data());
-      int const * CC = reinterpret_cast<int const *>(A.getC().data());
+      T const   * AA { static_cast<T const *>(A.getA().data()) };
+      int const * II { reinterpret_cast<int const *>(A.getI().data()) };
+      int const * CC { reinterpret_cast<int const *>(A.getC().data()) };
       Create_CompCol_Matrix(
         slu_A, A.nrows(), A.ncols(), A.nnz(),
         const_cast<double *>(AA),
@@ -219,10 +219,10 @@ namespace Sparse_tool {
         &slu_AC
       );
 
-      integer panel_size = sp_ienv(1);
-      integer relax      = sp_ienv(2);
+      integer panel_size { sp_ienv(1) };
+      integer relax      { sp_ienv(2) };
       //cout << "dgstrf.\n";
-      int info = this->SuperLU_factor(
+      int info{ this->SuperLU_factor(
         slu_options, slu_AC, relax, panel_size,
         slu_etree.data(), nullptr, 0,
         slu_perm_c.data(),
@@ -232,7 +232,7 @@ namespace Sparse_tool {
         slu_glu,
       #endif
         slu_stats
-      );
+      ) };
 
       // Free un-wanted storage
       Destroy_SuperMatrix_Store(&slu_A);

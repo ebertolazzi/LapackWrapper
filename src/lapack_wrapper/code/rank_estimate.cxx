@@ -156,22 +156,13 @@ namespace lapack_wrapper {
     T       SVAL[3]
   ) {
 
-    integer MN = std::min(M, N);
+    integer const MN{ std::min(M, N) };
     std::vector<T> Wmin( MN ), Wmax( MN );
 
     // Test the input scalar arguments.
-    UTILS_ASSERT(
-      M >= 0 && N >= 0,
-      "rankEstimate, bad size matrix {} x {}\n", M, N
-    );
-    UTILS_ASSERT(
-      LDA >= max_index(1,M),
-      "rankEstimate, bad leading dimension ldA = {}\n", LDA
-    );
-    UTILS_ASSERT(
-      RCOND >= 0,
-      "rankEstimate, bad condision number rcond = {}\n", RCOND
-    );
+    UTILS_ASSERT( M >= 0 && N >= 0,      "rankEstimate, bad size matrix {} x {}\n",         M, N  );
+    UTILS_ASSERT( LDA >= max_index(1,M), "rankEstimate, bad leading dimension ldA = {}\n",  LDA   );
+    UTILS_ASSERT( RCOND >= 0,            "rankEstimate, bad condision number rcond = {}\n", RCOND );
 
     // Quick return if possible
     SVAL[0] = 0;
@@ -180,7 +171,7 @@ namespace lapack_wrapper {
     if ( MN == 0 ) return 0;
 
     // Determine RANK using incremental condition estimation
-    integer RANK = 0;
+    integer RANK{0};
     T SMAX = std::abs( A[0] );
     if ( SMAX > 0 ) {
       T SMIN   = SMAX;

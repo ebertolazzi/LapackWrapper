@@ -67,16 +67,16 @@ using VBASE = Vector<double>::V_base;
 int
 main() {
   integer iter, nr = 7, nc = 4, nnz = 12;
-  integer I[] = { 0, 4, 5, 1, 4, 5, 2, 4, 6, 3, 4, 6 };
-  integer J[] = { 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 };
-  integer V[] = { 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2 };
+  integer I[]{ 0, 4, 5, 1, 4, 5, 2, 4, 6, 3, 4, 6 };
+  integer J[]{ 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 };
+  integer V[]{ 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2 };
 
   try {
     CCoorMatrix<double> A(nr,nc),   M(nr+nc,nr+nc);
     Vector<double>      rhs(nr+nc), X(nr+nc), bf1(nr), bf2(nc);
 
     // build matrix A
-    for ( integer i = 0; i < nnz; ++i ) A.insert(I[i],J[i]) = V[i];
+    for ( integer i{0}; i < nnz; ++i ) A.insert(I[i],J[i]) = V[i];
     A.internal_order();
 
     // build block matrix
@@ -86,11 +86,12 @@ main() {
     //   |  A^T   0  |
     //   \           /
     for ( A.Begin(); A.End(); A.Next() ) {
-      integer i = A.row(), j = A.column();
+      integer const i{A.row()};
+      integer const j{A.column()};
       M.insert(i,j+nr) = A.value();
       M.insert(j+nr,i) = A.value();
     }
-    for ( integer i = 0; i < nr; ++i ) M.insert(i,i) = 1;
+    for ( integer i{0}; i < nr; ++i ) M.insert(i,i) = 1;
     M.internal_order();
 
     Eigen::Map<VBASE> b1(nullptr,0), b2(nullptr,0), r(nullptr,0), x(nullptr,0);

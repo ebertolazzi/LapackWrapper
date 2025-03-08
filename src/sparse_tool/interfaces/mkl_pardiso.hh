@@ -163,8 +163,8 @@ namespace Sparse_tool {
 
       // step 1: Evaluate not zero pattern
       for ( M.Begin(); M.End();  M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer i{M.row()};
+        integer j{M.column()};
         if ( cmp(i,j) ) ++R(i);
       }
       for ( integer k{0}; k < n; ++k ) {
@@ -174,10 +174,10 @@ namespace Sparse_tool {
 
       // step 2: Fill matrix
       for ( M.Begin(); M.End(); M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer i{M.row()};
+        integer j{M.column()};
         if ( cmp(i,j) ) {
-          integer ii = --R(i);
+          integer ii{--R(i)};
           M.assign(A(ii));
           J(ii) = j;
         }

@@ -2517,10 +2517,10 @@ namespace lapack_wrapper {
       appleblas_sgeadd( CblasColMajor, CblasNoTrans, CblasNoTrans,
                         M, N, alpha, A, LDA, beta, B, LDB, C, LDC );
   #else
-    integer ierr = gecopy( M, N, B, LDB, C, LDC );
+    integer ierr{ gecopy( M, N, B, LDB, C, LDC ) };
     UTILS_ASSERT( ierr == 0, "geadd, ierr = {}\n", ierr );
-    real const * Aj = A;
-    real       * Cj = C;
+    real const * Aj{A};
+    real       * Cj{C};
     for ( integer j{0}; j < N; ++j, Aj += LDA, Cj += LDC ) {
       lapack_wrapper::scal( M, beta,  Cj, 1 );
       lapack_wrapper::axpy( M, alpha, Aj, 1, Cj, 1 );
@@ -2544,10 +2544,10 @@ namespace lapack_wrapper {
       appleblas_dgeadd( CblasColMajor, CblasNoTrans, CblasNoTrans,
                         M, N, alpha, A, LDA, beta, B, LDB, C, LDC );
   #else
-    integer ierr = gecopy( M, N, B, LDB, C, LDC );
+    integer ierr{gecopy( M, N, B, LDB, C, LDC )};
     UTILS_ASSERT( ierr == 0, "geadd, ierr = {}\n", ierr );
-    doublereal const * Aj = A;
-    doublereal       * Cj = C;
+    doublereal const * Aj{A};
+    doublereal       * Cj{C};
     for ( integer j{0}; j < N; ++j, Aj += LDA, Cj += LDC ) {
       lapack_wrapper::scal( M, beta,  Cj, 1 );
       lapack_wrapper::axpy( M, alpha, Aj, 1, Cj, 1 );
@@ -6308,7 +6308,7 @@ namespace lapack_wrapper {
         &info
       );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-      integer lw = std::max(3*n,std::max(m,p))+n;
+      integer lw{ std::max(3*n,std::max(m,p)) + n };
       if ( lwork < 0 ) {
         work[0] = real(lw);
       } else {
@@ -6330,7 +6330,7 @@ namespace lapack_wrapper {
         );
       }
       #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-      integer lw = std::max(3*n,std::max(m,p))+n;
+      integer lw{ std::max(3*n,std::max(m,p))+n };
       if ( lwork < 0 ) {
         work[0] = real(lw);
       } else {
@@ -6450,7 +6450,7 @@ namespace lapack_wrapper {
         &info
       );
     #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
-      integer lw = std::max(3*n,std::max(m,p))+n;
+      integer lw{ std::max(3*n,std::max(m,p))+n };
       if ( lwork < 0 ) {
         work[0] = doublereal(lw);
       } else {
@@ -6472,7 +6472,7 @@ namespace lapack_wrapper {
         );
       }
     #elif defined(LAPACK_WRAPPER_USE_BLASFEO)
-      integer lw = std::max(3*n,std::max(m,p))+n;
+      integer lw{ std::max(3*n,std::max(m,p))+n };
       if ( lwork < 0 ) {
         work[0] = doublereal(lw);
       } else {

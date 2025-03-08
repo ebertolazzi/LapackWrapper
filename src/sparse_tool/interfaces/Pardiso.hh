@@ -222,7 +222,7 @@ namespace Sparse_tool {
 
       // step 0: Count nonzero
       n = M.nrows();
-      integer nnz = 0;
+      integer nnz{ 0 };
       for ( M.Begin(); M.End(); M.Next() )
         if ( cmp(M.row(), M.column() ) ) ++nnz;
 
@@ -233,18 +233,18 @@ namespace Sparse_tool {
 
       // step 1: Evaluate not zero pattern
       for ( M.Begin(); M.End();  M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer i{ M.row() };
+        integer j{ M.column() };
         if ( cmp(i,j) ) ++R(i);
       }
       for ( integer k{0}; k < n; ++k ) R(k+1) += R(k);
 
       // step 2: Fill matrix
       for ( M.Begin(); M.End(); M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer i{ M.row() };
+        integer j{ M.column() };
         if ( cmp(i,j) ) {
-          integer ii = --R(i);
+          integer ii{--R(i)};
           M.assign(A(ii));
           J(ii) = j;
         }
@@ -276,7 +276,7 @@ namespace Sparse_tool {
     /* -------------------------------------------------------------------- */
     void
     check_matrix() const {
-      integer error = 0;
+      integer error{0};
       F77NAME(pardiso_chkmatrix)( &mtype, &n,
                                   &A.front(), &R.front(), &J.front(), &error );
       UTILS_ASSERT(
@@ -294,7 +294,7 @@ namespace Sparse_tool {
     /* -------------------------------------------------------------------- */
     void
     check_rhs( integer nrhs, real_or_complex const b[] ) const {
-      integer error = 0;
+      integer error{ 0 };
       F77NAME(pardiso_chkvec)( &n, &nrhs, b, &error );
       UTILS_ASSERT(
         error == 0,
@@ -310,7 +310,7 @@ namespace Sparse_tool {
     /* -------------------------------------------------------------------- */
     void
     stats( integer nrhs, real_or_complex const b[] ) const {
-      integer error = 0;
+      integer error{ 0 };
       F77NAME(pardiso_printstats)(
         &mtype, &n,
         &A.front(), &R.front(), &J.front(),
@@ -329,9 +329,9 @@ namespace Sparse_tool {
     /* -------------------------------------------------------------------- */
     void
     reorder( integer * perm = nullptr ) {
-      integer phase = 11;
-      integer error = 0;
-      integer idum  = 0; // Integer placeholder.
+      integer phase { 11 };
+      integer error { 0  };
+      integer idum  { 0  }; // Integer placeholder.
       double  ddum[2];   // Double placeholder.
 
       // Check whether the user has provided a permutation vector.
@@ -356,9 +356,9 @@ namespace Sparse_tool {
     /* -------------------------------------------------------------------- */
     void
     factorize() {
-      integer phase = 22;
-      integer error = 0;
-      integer idum  = 0; // Integer placeholder.
+      integer phase { 22 };
+      integer error { 0  };
+      integer idum  { 0  }; // Integer placeholder.
       double  ddum[2];   // Double placeholder.
       // iparm[1]  = 0; /* 0 = minimum degree, 2 = nested dissection */
       // iparm[11] = 0; /* 1 = solve transposed system */
@@ -388,10 +388,10 @@ namespace Sparse_tool {
     // the solution(s) in the matrix X.
     void
     solve( integer nrhs, real_or_complex const b[], real_or_complex x[] ) {
-      integer phase = 33;
-      integer idum  = 0; // Integer placeholder.
+      integer phase { 33 };
+      integer idum  { 0  }; // Integer placeholder.
       iparm[7] = 1;       /* Max numbers of iterative refinement steps. */
-      integer error = 0;
+      integer error { 0 };
       F77NAME(pardiso)(
         pt, &maxfct, &mnum, &mtype, &phase,
         &n, (real*)&A.front(), &R.front(), &J.front(), &idum, &nrhs,
@@ -415,10 +415,10 @@ namespace Sparse_tool {
     /* -------------------------------------------------------------------- */
     void
     free() {
-      integer idum  = 0; // Integer placeholder.
-      real    ddum[2];   // Double placeholder.
-      integer phase = -1; /* Release internal memory. */
-      integer error = 0;
+      integer idum  { 0  }; // Integer placeholder.
+      real    ddum[2];      // Double placeholder.
+      integer phase { -1 }; /* Release internal memory. */
+      integer error { 0  };
       F77NAME(pardiso)(
         pt, &maxfct, &mnum, &mtype, &phase,
         &n, ddum, &R.front(), &J.front(), &idum, &idum,

@@ -62,7 +62,7 @@ namespace Sparse_tool {
     );
 
     // step 0: compute necessary memory
-    integer nr = A.nrows();
+    integer nr{A.nrows()};
     Vector<integer> Lnnz( nr ), Unnz( nr );
 
     D.resize( nr );
@@ -73,8 +73,8 @@ namespace Sparse_tool {
 
     // cout nnz
     for ( A.Begin(); A.End(); A.Next() ) {
-      integer i = A.row();
-      integer j = A.column();
+      integer i{ A.row() };
+      integer j{ A.column() };
       if      ( i > j ) ++Lnnz(i);
       else if ( i < j ) ++Unnz(j);
     }
@@ -101,15 +101,15 @@ namespace Sparse_tool {
 
     // step 3: fill structure
     for ( A.Begin(); A.End(); A.Next() ) {
-      integer   i = A.row();
-      integer   j = A.column();
-      real_type a = A.value();
+      integer   const i{A.row()};
+      integer   const j{A.column()};
+      real_type const a{A.value()};
       if ( i > j ) {
-        integer ipos = L_R(i)+(--Lnnz(i));
+        integer const ipos{L_R(i)+(--Lnnz(i))};
         L_J(ipos) = j;
         L_A(ipos) = a;
       } else if ( i < j ) {
-        integer ipos = U_C(j)+(--Unnz(j));
+        integer const ipos{U_C(j)+(--Unnz(j))};
         U_I(ipos) = i;
         U_A(ipos) = a;
       } else {
@@ -137,14 +137,14 @@ namespace Sparse_tool {
     Vector<integer>   const & L_J,
     Vector<real_type>       & x
   ) {
-    integer nr = D.size();
+    integer nr{ static_cast<integer>( D.size() ) };
     // solve (eta*D+L) x(n+1) = x(n)
-    integer   const * pR  = L_R.data();
-    integer   const * pJ  = L_J.data();
-    real_type const * pLA = L_A.data();
-    for ( integer k=0; k < nr; ++k ) {
+    integer   const * pR  { L_R.data() };
+    integer   const * pJ  { L_J.data() };
+    real_type const * pLA { L_A.data() };
+    for ( integer k{0}; k < nr; ++k ) {
       real_type tt(0);
-      for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+      for ( integer i_cnt{ pR[1] - pR[0] }; i_cnt > 0; --i_cnt )
         tt += *pLA++ * x(*pJ++);
       x(k) -= tt;
       x(k) /= eta*D(k);
@@ -167,18 +167,18 @@ namespace Sparse_tool {
   ) {
 
     // calcolo b-(U+(1-1/omega)*D)*x
-    integer nr  = D.size();
-    integer nnz = U_I.size();
-    integer   const * pC  = U_C.data()+nr;
-    integer   const * pI  = U_I.data()+nnz;
-    real_type const * pUA = U_A.data()+nnz;
+    integer   const   nr  { static_cast<integer>(D.size()) };
+    integer   const   nnz { static_cast<integer>(U_I.size()) };
+    integer   const * pC  { U_C.data()+nr };
+    integer   const * pI  { U_I.data()+nnz };
+    real_type const * pUA { U_A.data()+nnz };
 
-    integer k = nr;
+    integer k{nr};
     while ( k-- > 0 ) {
       x(k) /= eta*D(k);
       --pC;
-      real_type xk = x(k);
-      for ( integer i_cnt = pC[1] - pC[0]; i_cnt > 0; --i_cnt )
+      real_type xk{ x(k) };
+      for ( integer i_cnt{ pC[1] - pC[0] }; i_cnt > 0; --i_cnt )
         x(*--pI) -= *--pUA * xk;
     }
   }

@@ -76,9 +76,9 @@ main() {
     //SORpreconditioner<double>   P; // P will be the incomplete LDU preconditioner
     SSORpreconditioner<double>   P; // P will be the incomplete LDU preconditioner
     b = -1.0/(n*n); // h^2
-    for ( integer i=1; i<n; ++i ) {
-      for ( integer j=1; j<n; ++j ) {
-        integer ii = ipos( i, j, n, n );
+    for ( integer i{1}; i<n; ++i ) {
+      for ( integer j{1}; j<n; ++j ) {
+        integer ii{ ipos( i, j, n, n ) };
         A.insert(ii,ii) = 4;
         if ( i > 1   ) A.insert(ii,ipos( i-1, j, n, n )) = -1;
         if ( i < n-1 ) A.insert(ii,ipos( i+1, j, n, n )) = -1;

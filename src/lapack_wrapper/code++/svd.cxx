@@ -37,9 +37,9 @@ namespace lapack_wrapper {
   template <typename T>
   integer
   SVD_no_alloc<T>::get_Lwork( integer NR, integer NC ) {
-    integer minRC = std::min(NR,NC);
+    integer minRC{ std::min(NR,NC) };
     real_type tmp;
-    integer info = gesvd(
+    integer info{ gesvd(
       JobType::REDUCED,
       JobType::REDUCED,
       NR, NC,
@@ -48,9 +48,9 @@ namespace lapack_wrapper {
       nullptr, NR,
       nullptr, minRC,
       &tmp, -1
-    );
+    ) };
     UTILS_ASSERT( info == 0, "SVD::allocate, in gesvd info = {}\n", info );
-    integer L = integer(tmp);
+    integer L{ integer(tmp) };
     info = gesdd(
       JobType::REDUCED,
       NR, NC,
@@ -80,9 +80,9 @@ namespace lapack_wrapper {
     m_nrows = NR;
     m_ncols = NC;
     m_minRC = std::min( NR, NC );
-    integer ibf   = (m_minRC*(NR+NC+1)+NR*NC);
-    integer Lmin  = ibf+this->get_Lwork( NR, NC );
-    integer Limin = 8*m_minRC;
+    integer ibf   { (m_minRC*(NR+NC+1)+NR*NC) };
+    integer Lmin  { ibf+this->get_Lwork( NR, NC ) };
+    integer Limin { 8*m_minRC };
     m_LworkSVD = Lwork - ibf;
     UTILS_ASSERT(
       Lwork >= Lmin && Liwork >= Limin,
@@ -90,7 +90,7 @@ namespace lapack_wrapper {
       "Lwork must be >= {} and Liwork >= {}\n",
       NR, NC, Lwork, Liwork, Lmin, Limin
     );
-    real_type * ptr = Work;
+    real_type * ptr{ Work };
     m_Afactorized = ptr; ptr += NR*NC;
     m_Umat        = ptr; ptr += m_minRC*NR;
     m_VTmat       = ptr; ptr += m_minRC*NC;
@@ -108,7 +108,7 @@ namespace lapack_wrapper {
     real_type const A[],
     integer         LDA
   ) {
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
     UTILS_ASSERT(
       info == 0,
       "SVD_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
@@ -154,9 +154,7 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   SVD_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
-    integer info = gecopy(
-      m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows
-    );
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
     if ( info != 0 ) return false;
     switch ( m_svd_used ) {
     case USE_GESVD:
@@ -193,7 +191,7 @@ namespace lapack_wrapper {
     // U*S*VT*x=b --> VT^T S^+ U^T b
     // U  nRow x minRC
     // VT minRC x nCol
-    real_type smin = m_rcond*m_Svec[0];
+    real_type smin{ m_rcond*m_Svec[0] };
     Ut_mul( 1.0, xb, 1, 0.0, m_WorkSVD, 1 );
     for ( integer i{0}; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
     V_mul( 1.0, m_WorkSVD, 1, 0.0, xb, 1 );
@@ -209,7 +207,7 @@ namespace lapack_wrapper {
     // U*S*VT*x=b --> VT^T S^+ U^T b
     // U  nRow x minRC
     // VT minRC x nCol
-    real_type smin = m_rcond*m_Svec[0];
+    real_type smin{ m_rcond*m_Svec[0] };
     Vt_mul( 1.0, xb, 1, 0.0, m_WorkSVD, 1 );
     for ( integer i{0}; i < m_minRC; ++i ) m_WorkSVD[i] /= std::max(m_Svec[i],smin);
     U_mul( 1.0, m_WorkSVD, 1, 0.0, xb, 1 );
@@ -226,9 +224,9 @@ namespace lapack_wrapper {
   void
   SVD<T>::allocate( integer NR, integer NC ) {
     if ( m_nrows != NR || m_ncols != NC ) {
-      integer minRC = std::min(NR,NC);
-      integer L     = NR*NC+minRC*(NR+NC+1)+this->get_Lwork( NR, NC );
-      integer L1    = 8*minRC;
+      integer minRC { std::min(NR,NC) };
+      integer L     { NR*NC+minRC*(NR+NC+1)+this->get_Lwork( NR, NC ) };
+      integer L1    { 8*minRC };
       this->no_allocate(
         NR, NC,
         L,  m_allocReals.realloc( size_t(L) ),
@@ -254,7 +252,7 @@ namespace lapack_wrapper {
   GeneralizedSVD<T>::allocate( integer m, integer n, integer p ) {
     integer k, l;
     real    wL;
-    integer info = ggsvd(
+    integer info{ ggsvd(
       true, true, true, m, n, p, k, l,
       nullptr, m,
       nullptr, p,
@@ -266,7 +264,7 @@ namespace lapack_wrapper {
       &wL,
       -1,
       nullptr
-    );
+    ) };
     UTILS_ASSERT(
       info == 0,
       "GeneralizedSVD<T>::allocate(m={},n={},p={}) failed, info = {}\n",
@@ -300,7 +298,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedSVD<T>::compute() {
-    integer info = ggsvd(
+    integer info{ ggsvd(
       true, true, true,
       m_M, m_N, m_P, m_K, m_L,
       m_A_saved, m_M,
@@ -313,7 +311,7 @@ namespace lapack_wrapper {
       m_Work,
       m_Lwork,
       m_IWork
-    );
+    ) };
     UTILS_ASSERT(
       info == 0, "GeneralizedSVD<T>::compute() failed, info = {}\n", info
     );
@@ -338,7 +336,7 @@ namespace lapack_wrapper {
     real_type const B[], integer ldB
   ) {
     this->allocate( m, n, p );
-    integer info = gecopy( m, n, A, ldA, m_A_saved, m );
+    integer info{ gecopy( m, n, A, ldA, m_A_saved, m ) };
     UTILS_ASSERT(
       info == 0,
       "GeneralizedSVD<T>::setup(...) failed to copy A, info = {}\n", info
@@ -356,9 +354,9 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedSVD<T>::setup( MatW const & A, MatW const & B ) {
-    integer m = A.nrows();
-    integer n = A.ncols();
-    integer p = B.nrows();
+    integer m{ static_cast<integer>( A.nrows() ) };
+    integer n{ static_cast<integer>( A.ncols() ) };
+    integer p{ static_cast<integer>( B.nrows() ) };
     UTILS_ASSERT(
       n == B.ncols(),
       "GeneralizedSVD<T>::setup( A, B ) incompatible matrices\n"

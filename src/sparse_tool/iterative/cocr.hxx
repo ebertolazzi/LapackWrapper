@@ -59,7 +59,7 @@ namespace Sparse_tool {
 
     using vType = typename vector_type::real_type;
 
-    integer     neq = b.size();
+    integer     neq{ b.size() };
     vector_type p(neq), q(neq), qt(neq), r(neq), rt(neq), Art(neq);
     real_type   resid;
     vType       rho, mu, alpha, beta;

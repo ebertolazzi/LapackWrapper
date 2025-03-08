@@ -159,7 +159,7 @@ namespace Sparse_tool {
 
         // coordinate or array ?
         for ( unsigned i{2}; i < nstr; ++i ) {
-          char const * p = m_str[i];
+          char const * p{ m_str[i] };
           if      ( strcmp( p, "coordinate")     == 0 ) cType = MM_COORDINATE;
           else if ( strcmp( p, "array")          == 0 ) cType = MM_ARRAY;
 

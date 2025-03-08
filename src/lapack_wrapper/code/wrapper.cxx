@@ -81,7 +81,7 @@ namespace lapack_wrapper {
     if ( m_ldData == m_nrows ) {
       scal( m_nrows*m_ncols, sc, m_data, 1 );
     } else {
-      T * p = m_data;
+      T * p{ m_data };
       for ( integer i{0}; i < m_ncols; ++i, p += m_ldData )
         scal( m_nrows, sc, p, 1 );
     }
@@ -97,7 +97,7 @@ namespace lapack_wrapper {
     integer   irow,
     integer   icol
   ) const {
-    T * p = m_data+this->iaddr(irow,icol);
+    T * p { m_data+this->iaddr(irow,icol) };
     for ( integer i{0}; i < nc; ++i, p += m_ldData )
       scal( nr, sc, p, 1 );
   }
@@ -133,13 +133,8 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::load( real_type const data_in[], integer ldData_in ) {
-    integer info = gecopy(
-      m_nrows, m_ncols, data_in, ldData_in, m_data, m_ldData
-    );
-    UTILS_ASSERT(
-      info == 0,
-      "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info
-    );
+    integer info{ gecopy( m_nrows, m_ncols, data_in, ldData_in, m_data, m_ldData ) };
+    UTILS_ASSERT( info == 0, "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -160,14 +155,8 @@ namespace lapack_wrapper {
     #ifndef LAPACK_WRAPPER_NO_DEBUG
     check(A);
     #endif
-    integer info = gecopy(
-      A.nrows(), A.ncols(), A.data(), A.ldim(),
-      m_data, m_ldData
-    );
-    UTILS_ASSERT(
-      info == 0,
-      "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info
-    );
+    integer info{ gecopy( A.nrows(), A.ncols(), A.data(), A.ldim(), m_data, m_ldData ) };
+    UTILS_ASSERT( info == 0, "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -199,7 +188,7 @@ namespace lapack_wrapper {
     integer   const * pCols;
     real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
-    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+    for ( integer idx{0}; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx],pCols[idx]) ] = pValues[idx];
   }
 
@@ -215,7 +204,7 @@ namespace lapack_wrapper {
     integer   const * pCols;
     real_type const * pValues;
     sp.get_data( pCols, pRows, pValues ); // read index transposed
-    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+    for ( integer idx{0}; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx],pCols[idx]) ] = pValues[idx];
   }
 
@@ -231,7 +220,7 @@ namespace lapack_wrapper {
     integer   const * pCols;
     real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
-    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+    for ( integer idx{0}; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
   }
 
@@ -247,7 +236,7 @@ namespace lapack_wrapper {
     integer   const * pCols;
     real_type const * pValues;
     sp.get_data( pCols, pRows, pValues ); // read index transposed
-    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+    for ( integer idx{0}; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] = pValues[idx];
   }
 
@@ -261,7 +250,7 @@ namespace lapack_wrapper {
     real_type const vals[],
     integer         nnz
   ) {
-    for ( integer idx = 0; idx < nnz; ++idx )
+    for ( integer idx{0}; idx < nnz; ++idx )
       m_data[ this->iaddr(rows[idx],cols[idx]) ] = vals[idx];
   }
 
@@ -275,10 +264,10 @@ namespace lapack_wrapper {
     real_type const vals[],
     integer         nnz
   ) {
-    for ( integer idx = 0; idx < nnz; ++idx ) {
-      integer   ii = rows[idx];
-      integer   jj = cols[idx];
-      real_type rr = vals[idx];
+    for ( integer idx{0}; idx < nnz; ++idx ) {
+      integer   ii { rows[idx] };
+      integer   jj { cols[idx] };
+      real_type rr { vals[idx] };
       m_data[ this->iaddr(ii,jj) ] = rr;
       if ( ii != jj ) m_data[ this->iaddr(jj,ii) ] = rr;
     }
@@ -296,7 +285,7 @@ namespace lapack_wrapper {
     real_type const vals[],
     integer         nnz
   ) {
-    for ( integer idx = 0; idx < nnz; ++idx )
+    for ( integer idx{0}; idx < nnz; ++idx )
       m_data[ this->iaddr(i_offs+rows[idx],j_offs+cols[idx]) ] = vals[idx];
   }
 
@@ -312,10 +301,10 @@ namespace lapack_wrapper {
     real_type const vals[],
     integer         nnz
   ) {
-    for ( integer idx = 0; idx < nnz; ++idx ) {
-      integer   ii = i_offs+rows[idx];
-      integer   jj = j_offs+cols[idx];
-      real_type rr = vals[idx];
+    for ( integer idx{0}; idx < nnz; ++idx ) {
+      integer   ii { i_offs+rows[idx] };
+      integer   jj { j_offs+cols[idx] };
+      real_type rr { vals[idx] };
       m_data[ this->iaddr(ii,jj) ] = rr;
       if ( ii != jj ) m_data[ this->iaddr(jj,ii) ] = rr;
     }
@@ -387,7 +376,7 @@ namespace lapack_wrapper {
     integer   const * pCols;
     real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
-    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+    for ( integer idx{0}; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx],pCols[idx]) ] += pValues[idx];
   }
 
@@ -403,7 +392,7 @@ namespace lapack_wrapper {
     integer   const * pCols;
     real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
-    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+    for ( integer idx{0}; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx],pCols[idx]) ] += alpha * pValues[idx];
   }
 
@@ -420,7 +409,7 @@ namespace lapack_wrapper {
     integer   const * pCols;
     real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
-    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+    for ( integer idx{0}; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] += pValues[idx];
   }
 
@@ -438,7 +427,7 @@ namespace lapack_wrapper {
     integer   const * pCols;
     real_type const * pValues;
     sp.get_data( pRows, pCols, pValues );
-    for ( integer idx = 0; idx < sp.get_nnz(); ++idx )
+    for ( integer idx{0}; idx < sp.get_nnz(); ++idx )
       m_data[ this->iaddr(pRows[idx]+i_offs,pCols[idx]+j_offs) ] += alpha * pValues[idx];
   }
 
@@ -462,8 +451,7 @@ namespace lapack_wrapper {
   : MatrixWrapper<T>( nullptr, rhs.m_nrows, rhs.m_ncols, rhs.m_nrows )
   , m_mem("Matrix")
   {
-    size_t sz = rhs.m_nrows*rhs.m_ncols;
-    m_data = m_mem.realloc( sz );
+    m_data = m_mem.realloc( rhs.m_nrows*rhs.m_ncols );
     gecopy(
       rhs.m_nrows, rhs.m_ncols, rhs.m_data, rhs.m_ldData,
       m_data, m_ldData
@@ -475,7 +463,7 @@ namespace lapack_wrapper {
   : MatrixWrapper<T>( nullptr, nr, nc, nr )
   , m_mem("Matrix")
   {
-    m_data = m_mem.realloc( size_t(nr*nc) );
+    m_data = m_mem.realloc( nr*nc );
   }
 
   template <typename T>
@@ -489,15 +477,11 @@ namespace lapack_wrapper {
   template <typename T>
   Matrix<T> const &
   Matrix<T>::operator = ( Matrix<T> const & rhs ) {
-    size_t sz = rhs.m_nrows*rhs.m_ncols;
-    m_data   = m_mem.realloc( sz );
+    m_data   = m_mem.realloc( rhs.m_nrows * rhs.m_ncols );
     m_nrows  = rhs.m_nrows;
     m_ncols  = rhs.m_ncols;
     m_ldData = rhs.m_nrows;
-    gecopy(
-      rhs.m_nrows, rhs.m_ncols, rhs.m_data, rhs.m_ldData,
-      m_data, m_ldData
-    );
+    gecopy( rhs.m_nrows, rhs.m_ncols, rhs.m_data, rhs.m_ldData, m_data, m_ldData );
     return *this;
   }
 

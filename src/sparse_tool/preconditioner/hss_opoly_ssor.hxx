@@ -67,8 +67,8 @@ namespace Sparse_tool {
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
+        integer i{A.row()};
+        integer j{A.column()};
         Amat.insert(i,j) = A.value().real() + A.value().imag();
       }
 
@@ -84,11 +84,11 @@ namespace Sparse_tool {
       As1 = Amat*v;
       preco.ass_preco(_y,As1);
       s1 = rreal_type(4.)*v - rreal_type(10./3.)*_y;
-      for ( integer n = 2; n <= mdegree; ++n ) {
-        rreal_type delta = ((3*n+6)*n+2.0)/((n+0.5)*(n+1));
-        rreal_type a = -4+(6*n+10.0)/((n+2)*(n+2));
-        rreal_type b = 2-delta;
-        rreal_type c = -1+delta;
+      for ( integer n{2}; n <= mdegree; ++n ) {
+        rreal_type delta { ((3*n+6)*n+2.0)/((n+0.5)*(n+1)) };
+        rreal_type a     { -4+(6*n+10.0)/((n+2)*(n+2)) };
+        rreal_type b     { 2-delta };
+        rreal_type c     { -1+delta };
         As1 = Amat*s1;
         preco.ass_preco(_y,As1);
         _y = a*(_y-v)+b*s1+c*s0;
@@ -120,14 +120,14 @@ namespace Sparse_tool {
     template <typename VECTOR>
     void
     ass_preco( VECTOR & _y, VECTOR const & v ) const {
-      for ( integer k=0; k < neq; ++k ) tmp2(k) = v(k).real();
+      for ( integer k{0}; k < neq; ++k ) tmp2(k) = v(k).real();
       preco.ass_preco( tmp1, tmp2 ); tmp1 *= 0.5;
       multiply_by_poly( tmp2, tmp1 );
-      for ( integer k=0; k < neq; ++k ) { _y(k) = real_type(tmp2(k),_y(k).imag()); tmp2(k) = v(k).imag(); }
+      for ( integer k{0}; k < neq; ++k ) { _y(k) = std::complex(tmp2(k),_y(k).imag()); tmp2(k) = v(k).imag(); }
       preco.ass_preco( tmp1, tmp2 ); tmp1 *= 0.5;
       multiply_by_poly( tmp2, tmp1 );
-      real_type cst = real_type(0.5,-0.5);
-      for ( integer k=0; k < neq; ++k ) { _y(k) = real_type(_y(k).real(),tmp2(k)); _y(k) *= cst; }
+      std::complex<real_type> cst{0.5,-0.5};
+      for ( integer k{0}; k < neq; ++k ) { _y(k) = std::complex(_y(k).real(),tmp2(k)); _y(k) *= cst; }
     }
   };
 

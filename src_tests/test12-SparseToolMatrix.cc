@@ -55,8 +55,8 @@ class all_matrix_test {
 
   void
   test_diff(Vector<Real> const & x, Vector<Real> const & y) {
-    Real err = 0;
-    for ( integer i = 0; i < x.size(); ++i ) {
+    Real err{0};
+    for ( integer i{0}; i < x.size(); ++i ) {
       Real bf = x[i] - y[i];
       err += bf > 0 ? bf : -bf;
     }
@@ -69,7 +69,7 @@ class all_matrix_test {
       cout << " OK! " << err << '\n';
     } else {
       cout << " ************** ERR = " << err << '\n';
-      for ( integer i = 0; i < res.size(); ++i )
+      for ( integer i{0}; i < res.size(); ++i )
         cout << i << " err = "
              << setw(15) << setprecision(10) << res[i] - rres[i] << " "
              << setw(15) << setprecision(10) << res[i] << " "
@@ -80,20 +80,20 @@ class all_matrix_test {
 
   void
   add_S_mul_M_mul_V( Vector<Real> & Res, Real const s, Vector<Real> const & av ) {
-    for ( integer k = 0; k < ccoor.nnz(); ++k ) {
-      integer i = ccoor.getI()(k);
-      integer j = ccoor.getJ()(k);
-      Real    v = ccoor.getA()(k);
+    for ( integer k{0}; k < ccoor.nnz(); ++k ) {
+      integer i{ ccoor.getI()(k) };
+      integer j{ ccoor.getJ()(k) };
+      Real    v{ ccoor.getA()(k) };
       Res(i) += s * v * av(j);
     }
   }
 
   void
   add_S_mul_Mt_mul_V( Vector<Real> & Res, Real const s, Vector<Real> const & av ) {
-    for ( integer k = 0; k < ccoor.nnz(); ++k ) {
-      integer i = ccoor.getI()(k);
-      integer j = ccoor.getJ()(k);
-      Real    v = ccoor.getA()(k);
+    for ( integer k{0}; k < ccoor.nnz(); ++k ) {
+      integer i{ ccoor.getI()(k) };
+      integer j{ ccoor.getJ()(k) };
+      Real    v{ ccoor.getA()(k) };
       Res(j) += s * v * av(i);
     }
   }
@@ -102,7 +102,7 @@ public:
 
   all_matrix_test() : a(10), b(10), c(10), res(10), rres(10) {
     ccoor.resize( 10, 10 );
-    for ( integer i = 0; i < 10; ++i ) {
+    for ( integer i{0}; i < 10; ++i ) {
       ccoor.insert(i,i)        = 10;
       ccoor.insert(i,(i+4)%10) = -1;
       ccoor.insert((i+4)%10,i) = -1.3;
@@ -933,8 +933,8 @@ void all_matrix_test::test010(void) {
 //********************************************************************
 //********************************************************************
 
-#define LOOP(N)   for ( integer i = 0; i < N; ++i )
-#define REPEAT(N) for ( integer iii = 0; iii < N; ++iii )
+#define LOOP(N)   for ( integer i{0}; i < N; ++i )
+#define REPEAT(N) for ( integer iii{0}; iii < N; ++iii )
 
 using Real = double;
 
@@ -972,13 +972,13 @@ test_CRow(
 
   tm.tic();
   REPEAT(N) {
-    integer const * R = crow.getR().data();
-    integer const * J = crow.getJ().data();
-    Real    const * A = crow.getA().data();
+    integer const * R { crow.getR().data() };
+    integer const * J { crow.getJ().data() };
+    Real    const * A { crow.getA().data() };
 
-    for ( integer i = 0; i < crow.nrows(); ++i, ++R ) {
-      integer n = R[1]-R[0];
-      Real tmp = 0;
+    for ( integer i{0}; i < crow.nrows(); ++i, ++R ) {
+      integer n{ R[1]-R[0] };
+      Real tmp{0};
       while ( n-- > 0 ) tmp += *A++ * v(*J++);
       res(i) = tmp;
     }
@@ -1007,18 +1007,18 @@ test_CCol(
   tm.tic();
   REPEAT(N) res = ccol * v;
   tm.toc();
-  Real timea = tm.elapsed_ms();
+  Real timea{ tm.elapsed_ms() };
 
   tm.tic();
   REPEAT(N) {
-    integer const * I = ccol.getI().data();
-    integer const * C = ccol.getC().data();
-    Real    const * A = ccol.getA().data();
+    integer const * I { ccol.getI().data() };
+    integer const * C { ccol.getC().data() };
+    Real    const * A { ccol.getA().data() };
 
     res = 0;
-    for ( integer i = 0; i < ccol.ncols(); ++i, ++C ) {
-      Real tmp = v(i);
-      integer n = C[1]-C[0];
+    for ( integer i{0}; i < ccol.ncols(); ++i, ++C ) {
+      Real    tmp { v(i) };
+      integer n   { C[1]-C[0] };
       while ( n-- > 0 ) res(*I++) += *A++ * tmp;
     }
   }
@@ -1044,19 +1044,19 @@ test_CCoor(
   tm.tic();
   REPEAT(N) { res = ccoor * v; }
   tm.toc();
-  Real timea = tm.elapsed_ms();
+  Real timea{ tm.elapsed_ms() };
 
   tm.tic();
   REPEAT(N) {
-    integer const * I = ccoor.getI().data();
-    integer const * J = ccoor.getJ().data();
-    Real    const * A = ccoor.getA().data();
+    integer const * I { ccoor.getI().data() };
+    integer const * J { ccoor.getJ().data() };
+    Real    const * A { ccoor.getA().data() };
     res = 0;
-    for ( integer i = 0; i < ccoor.nnz(); ++i )
+    for ( integer i{0}; i < ccoor.nnz(); ++i )
       res(*I++) += *A++ * v(*J++);
   }
   tm.toc();
-  Real timeb = tm.elapsed_ms();
+  Real timeb{ tm.elapsed_ms() };
 
   cout << "CCoorMatrix: ";
   out( N, ccoor.nnz(), timea, timeb );
@@ -1067,7 +1067,7 @@ void
 test_timing() {
   Utils::TicToc tm;
 
-  constexpr integer n = 10000;
+  constexpr integer n{10000};
 
   Real scal = 1.23;
   Vector<Real> a(n), b(n), res(n), res1(n);
@@ -1153,7 +1153,7 @@ test_timing() {
     fmt::print( "TO CROW {}[ms]\n", timea );
     fmt::print( "TO CCOL {}[ms]\n", timeb );
 
-    integer const nr = ccoor.nrows();
+    integer const nr{ ccoor.nrows() };
 
     v.resize(nr);
     res.resize(nr);
@@ -1171,7 +1171,7 @@ test_timing() {
     res = res - ccol * v;
     fmt::print( "CCoor - CCol = {}\n", res.lpNorm<Eigen::Infinity>() );
 
-    integer cicle_repeat = 1 + 400000 / nr;
+    integer cicle_repeat{1 + 400000 / nr};
     test_CRow (cicle_repeat, crow,  v);
     test_CCol (cicle_repeat, ccol,  v);
     test_CCoor(cicle_repeat, ccoor, v);

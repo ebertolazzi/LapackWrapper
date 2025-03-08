@@ -69,8 +69,8 @@ namespace Sparse_tool {
       Annz.setZero();
 
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        //integer j = A.column();
+        integer i{A.row()};
+        //integer j{A.column()};
         ++Annz(i);
       }
 
@@ -86,8 +86,8 @@ namespace Sparse_tool {
 
       // step 3: fill structure
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
+        integer i{ A.row() };
+        integer j{ A.column() };
         A_J(A_R(i)+(--Annz(i))) = j;
       }
 
@@ -96,14 +96,14 @@ namespace Sparse_tool {
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i   = A.row();
-        integer j   = A.column();
-        integer lo  = A_R(i);
-        integer hi  = A_R(i+1);
-        integer len = hi - lo;
+        integer i   { A.row()    };
+        integer j   { A.column() };
+        integer lo  { A_R(i)     };
+        integer hi  { A_R(i+1)   };
+        integer len { hi - lo    };
         while ( len > 0 ) {
-          integer half = len / 2;
-          integer mid  = lo + half;
+          integer half { len / 2 };
+          integer mid  { lo + half };
           if ( A_J(mid) < j ) { lo = mid + 1; len -= half + 1; }
           else                  len = half;
         }
@@ -115,30 +115,30 @@ namespace Sparse_tool {
     void
     multiply_by_poly( Vector<real_type> & _y, Vector<real_type> const & v ) const {
       // s0 = 1.5*v; s1 = 4*v - 10/3 * A*v
-      integer  const *   pR = A_R.data();
-      integer  const *   pJ = A_J.data();
-      rreal_type const * pA = A_A.data();
-      for ( integer k=0; k < PRECO::pr_size; ++k, ++pR ) {
+      integer    const * pR { A_R.data() };
+      integer    const * pJ { A_J.data() };
+      rreal_type const * pA { A_A.data() };
+      for ( integer k{0}; k < PRECO::pr_size; ++k, ++pR ) {
         real_type Av(0,0);
-        for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+        for ( integer i_cnt{pR[1] - pR[0]}; i_cnt > 0; --i_cnt )
           Av += *pA++ * v(*pJ++);
         s1(k) = 1.5 * v(k);
         _y(k) = 4.0 * v(k) - (10./3.) * Av;
       };
-      for ( integer n = 2; n <= mdegree; ++n ) {
+      for ( integer n{2}; n <= mdegree; ++n ) {
         s0 = s1;
         s1 = _y;
-        rreal_type delta = ((6*n+12)*n+4.0)/((2*n+1)*(n+2)*(n+2));
-        rreal_type a = -4+(6*n+10.0)/((n+2)*(n+2));
-        rreal_type b = 2-delta;
-        rreal_type c = -1+delta;
+        rreal_type delta { ((6*n+12)*n+4.0)/((2*n+1)*(n+2)*(n+2)) };
+        rreal_type a     { -4+(6*n+10.0)/((n+2)*(n+2)) };
+        rreal_type b     { 2-delta };
+        rreal_type c     { delta-1 };
 
         pR = A_R.data();
         pJ = A_J.data();
         pA = A_A.data();
-        for ( integer k=0; k < PRECO::pr_size; ++k, ++pR ) {
-          real_type As1(0,0);
-          for ( integer i_cnt = pR[1] - pR[0]; i_cnt > 0; --i_cnt )
+        for ( integer k{0}; k < PRECO::pr_size; ++k, ++pR ) {
+          real_type As1{0};
+          for ( integer i_cnt{pR[1] - pR[0]}; i_cnt > 0; --i_cnt )
             As1  += *pA++ * s1(*pJ++);
             _y(k) = a*(As1-v(k))+b*s1(k)+c*s0(k);
         };

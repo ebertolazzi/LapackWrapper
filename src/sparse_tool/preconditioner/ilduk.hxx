@@ -68,7 +68,7 @@ namespace Sparse_tool {
       );
 
       // step 0: count necessary memory
-      integer N = PRECO::pr_size = A.nrows();
+      integer N{ PRECO::pr_size = A.nrows() };
 
       memi.allocate( 4 * N + 2*A.nnz() );
       mem.allocate( 2*A.nnz() );
@@ -82,8 +82,8 @@ namespace Sparse_tool {
       std::fill_n( U_size, N, integer(0) );
 
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
+        integer i{ A.row() };
+        integer j{ A.column() };
         if      ( i > j ) ++Lnnz[i];
         else if ( i < j ) ++Unnz[j];
       }
@@ -108,9 +108,9 @@ namespace Sparse_tool {
 
       // step 2: insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
-        typename MAT::real_type const val = A.value(); // (i,j);
+        integer i{ A.row() };
+        integer j{ A.column() };
+        typename MAT::real_type const val{ A.value() }; // (i,j);
         if      ( i > j ) { integer & Ls = L_size[i]; L_A[i][Ls] = val; L_J[i][Ls] = j; ++Ls; }
         else if ( i < j ) { integer & Us = U_size[j]; U_A[j][Us] = val; U_I[j][Us] = i; ++Us; }
         else              D(i) = val;
@@ -139,43 +139,43 @@ namespace Sparse_tool {
       */
 
       // build LDU decomposition
-      for ( integer k = 1; k < PRECO::pr_size; ++k ) {
+      for ( integer k{1}; k < PRECO::pr_size; ++k ) {
         integer kk;
-        real_type *  L_Ak = L_A[k];
-        integer *    L_Jk = L_J[k];
-        integer & L_sizek = L_size[k];
-        real_type *  U_Ak = U_A[k];
-        integer *    U_Ik = U_I[k];
-        integer & U_sizek = U_size[k];
+        real_type *  L_Ak { L_A[k]    };
+        integer *    L_Jk { L_J[k]    };
+        integer & L_sizek { L_size[k] };
+        real_type *  U_Ak { U_A[k]    };
+        integer *    U_Ik { U_I[k]    };
+        integer & U_sizek { U_size[k] };
 
         // W = M21^T  ---- l^T = D^(-1)U^(-T) M21^T
         for ( kk = 0; kk < L_sizek; ++kk ) W(L_Jk[kk]) = L_Ak[kk];
 
         // W = U^(-T) W ---- l^T = D^(-1)U^(-T) M21^T
         for ( kk = 0; kk < L_sizek; ++kk ) {
-          integer        j = L_Jk[kk];
-          integer       nj = U_size[j];
-          real_type * U_Aj = U_A[j];
-          integer *   U_Ij = U_I[j];
+          integer        j { L_Jk[kk] };
+          integer       nj { U_size[j] };
+          real_type * U_Aj { U_A[j] };
+          integer   * U_Ij { U_I[j] };
           real_type bf{0};
-          for ( integer jj = 0; jj < nj; ++jj ) bf += W(U_Ij[jj])*U_Aj[jj];
+          for ( integer jj{0}; jj < nj; ++jj ) bf += W(U_Ij[jj])*U_Aj[jj];
           W(j) -= bf;
         }
         // l^T = D^(-1) W;   W = 0 ---- l^T = D^(-1)U^(-T) M21^T
         for ( kk = 0; kk < L_sizek; ++kk )
-          { integer j = L_Jk[kk]; L_Ak[kk] = W(j) / D(j); W(j) = 0; }
+          { integer j{L_Jk[kk]}; L_Ak[kk] = W(j) / D(j); W(j) = 0; }
 
         // W = M12  ----  u = D^(-1)L^(-1) M12
         for ( kk = 0; kk < U_sizek; ++kk ) W(U_Ik[kk]) = U_Ak[kk];
 
         // W = L^(-1) W  ----  u = D^(-1)L^(-1) M12
         for ( kk = 0; kk < U_sizek; ++kk ) {
-          integer        i = U_Ik[kk];
-          integer       ni = L_size[i];
-          real_type * L_Ai = L_A[i];
-          integer *   L_Ji = L_J[i];
+          integer        i { U_Ik[kk] };
+          integer       ni { L_size[i] };
+          real_type * L_Ai { L_A[i] };
+          integer   * L_Ji { L_J[i] };
           real_type bf{0};
-          for ( integer ii = 0; ii < ni; ++ii ) bf += W(L_Ji[ii])*L_Ai[ii];
+          for ( integer ii{0}; ii < ni; ++ii ) bf += W(L_Ji[ii])*L_Ai[ii];
           W(i) -= bf;
         }
 
@@ -184,7 +184,7 @@ namespace Sparse_tool {
         D(k) -= bf;
 
         for ( kk = 0; kk < U_sizek; ++kk )
-          { integer i = U_Ik[kk]; U_Ak[kk] = W(i) / D(i); W(i) = 0; }
+          { integer i{U_Ik[kk]}; U_Ak[kk] = W(i) / D(i); W(i) = 0; }
 
         UTILS_ASSERT(
           D(k) != real_type(0),
@@ -222,9 +222,9 @@ namespace Sparse_tool {
       integer k{0};
       // solve L
       while ( ++k < PRECO::pr_size ) {
-        integer i_cnt = L_size[k];
-        real_type const * pA = L_A[k];
-        integer   const * pJ = L_J[k];
+        integer           i_cnt { L_size[k] };
+        real_type const * pA    { L_A[k] };
+        integer   const * pJ    { L_J[k] };
         real_type bf{0};
         while ( i_cnt-- > 0 ) bf += *pA++ * v(*pJ++);
         v(k) -= bf;
@@ -235,10 +235,10 @@ namespace Sparse_tool {
 
       // solve U
       do {
-        typename VECTOR::real_type vk = v(--k);
-        integer i_cnt = U_size[k];
-        real_type const * pA = U_A[k];
-        integer   const * pI = U_I[k];
+        typename VECTOR::real_type vk{v(--k)};
+        integer           i_cnt { U_size[k] };
+        real_type const * pA    { U_A[k]    };
+        integer   const * pI    { U_I[k]    };
         while ( i_cnt-- > 0 ) v(*pI++) -= *pA++ * vk;
       } while ( k > 1 );
 

@@ -41,7 +41,7 @@ namespace lapack_wrapper {
     real_type const A[],
     integer         LDA
   ) {
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
     UTILS_ASSERT(
       info == 0,
       "LU::factorize[{}] gecopy(nRow={}, nCol={}, A, LDA={}, B, LDB={}) : INFO = {}\n",
@@ -58,8 +58,8 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   LU_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
-    bool ok = info == 0;
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
+    bool ok{ info == 0 };
     if ( ok ) {
       info = getrf( m_nrows, m_ncols, m_Afactorized, m_nrows, m_i_pivot );
       ok = info == 0;
@@ -85,11 +85,11 @@ namespace lapack_wrapper {
   bool
   LU_no_alloc<T>::solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
-    integer info = getrs(
+    integer info{ getrs(
       Transposition::NO,
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
-    );
+    ) };
     return info == 0;
   }
 
@@ -99,11 +99,11 @@ namespace lapack_wrapper {
   void
   LU_no_alloc<T>::solve( string_view who, real_type xb[] ) const {
     check_ls("solve");
-    integer info = getrs(
+    integer info{ getrs(
       Transposition::NO,
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
-    );
+    ) };
     UTILS_ASSERT( info == 0, "LU::solve, getrs INFO = {}\nat {}\n", info, who );
   }
 
@@ -114,11 +114,11 @@ namespace lapack_wrapper {
   bool
   LU_no_alloc<T>::t_solve( real_type xb[] ) const {
     if ( m_nrows != m_ncols ) return false;
-    integer info = getrs(
+    integer info{ getrs(
       Transposition::YES,
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
-    );
+    ) };
     return info == 0;
   }
 
@@ -128,11 +128,11 @@ namespace lapack_wrapper {
   void
   LU_no_alloc<T>::t_solve( string_view who, real_type xb[] ) const {
     check_ls( who );
-    integer info = getrs(
+    integer info{ getrs(
       Transposition::YES,
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
-    );
+    ) };
     UTILS_ASSERT( info == 0, "LU::t_solve, getrs INFO = {}\nat {}\n", info, who );
   }
 
@@ -143,11 +143,11 @@ namespace lapack_wrapper {
   bool
   LU_no_alloc<T>::solve( integer nrhs, real_type B[], integer ldB ) const {
     if ( m_nrows != m_ncols ) return false;
-    integer info = getrs(
+    integer info{ getrs(
       Transposition::NO,
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
-    );
+    ) };
     return info == 0;
   }
 
@@ -162,11 +162,11 @@ namespace lapack_wrapper {
     integer     ldB
   ) const {
     check_ls(who);
-    integer info = getrs(
+    integer info{ getrs(
       Transposition::NO,
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
-    );
+    ) };
     UTILS_ASSERT( info == 0, "LU::solve getrs INFO = {}\nat {}\n", info, who );
   }
 
@@ -181,11 +181,11 @@ namespace lapack_wrapper {
     integer    ldB
   ) const {
     if ( m_nrows != m_ncols ) return false;
-    integer info = getrs(
+    integer info{ getrs(
       Transposition::YES,
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
-    );
+    ) };
     return info >= 0;
   }
 
@@ -200,11 +200,11 @@ namespace lapack_wrapper {
     integer     ldB
   ) const {
     check_ls( who );
-    integer info = getrs(
+    integer info{ getrs(
       Transposition::YES,
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
-    );
+    ) };
     UTILS_ASSERT( info >= 0, "LU::t_solve getrs INFO = {}\nat {}\n", info );
   }
 
@@ -214,10 +214,10 @@ namespace lapack_wrapper {
   typename LU_no_alloc<T>::real_type
   LU_no_alloc<T>::cond1( real_type norm1 ) const {
     real_type rcond;
-    integer info = gecon1(
+    integer info{ gecon1(
       m_nrows, m_Afactorized, m_nrows,
       norm1, rcond, m_Work, m_Iwork
-    );
+    ) };
     UTILS_ASSERT( info == 0, "LU::cond1, gecon1 return info = {}\n", info );
     return rcond;
   }
@@ -228,10 +228,10 @@ namespace lapack_wrapper {
   typename LU_no_alloc<T>::real_type
   LU_no_alloc<T>::condInf( real_type normInf ) const {
     real_type rcond;
-    integer info = geconInf(
+    integer info { geconInf(
       m_nrows, m_Afactorized, m_nrows,
       normInf, rcond, m_Work, m_Iwork
-    );
+    ) };
     UTILS_ASSERT( info == 0, "LU::condInf, geconInf return info = {}\n", info );
     return rcond;
   }
@@ -244,8 +244,8 @@ namespace lapack_wrapper {
     if ( m_nrows != NR || m_ncols != NC ) {
       m_nrows = NR;
       m_ncols = NC;
-      integer NRC = NR*NC;
-      integer NW  = 2*(NR+NC);
+      integer NRC { NR*NC };
+      integer NW  { 2*(NR+NC) };
       m_allocReals.reallocate( size_t(NRC+NW) );
       m_allocIntegers.reallocate( size_t(2*NR) );
 
@@ -299,7 +299,7 @@ namespace lapack_wrapper {
     real_type const A[],
     integer         LDA
   ) {
-    integer info = gecopy( m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC );
+    integer info{ gecopy( m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC ) };
     UTILS_ASSERT( info == 0, "LUPQ_no_alloc::factorize[{}] gecopy INFO = {}\n", who, info );
     info = getc2( m_nRC, m_Afactorized, m_nRC, m_i_piv, m_j_piv );
     UTILS_ASSERT( info == 0, "LUPQ_no_alloc::factorize[{}] getc2 INFO = {}\n", who, info );
@@ -310,14 +310,10 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   LUPQ_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
-    integer info = gecopy(
-      m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC
-    );
-    bool ok = info == 0;
+    integer info{ gecopy( m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC ) };
+    bool ok{ info == 0 };
     if ( ok ) {
-      info = getc2(
-        m_nRC, m_Afactorized, m_nRC, m_i_piv, m_j_piv
-      );
+      info = getc2( m_nRC, m_Afactorized, m_nRC, m_i_piv, m_j_piv );
       ok = info == 0;
     }
     return ok;
@@ -458,7 +454,7 @@ namespace lapack_wrapper {
   void
   LUPQ<T>::allocate( integer NRC ) {
     if ( m_nRC != NRC ) {
-      integer NRC2 = NRC*NRC;
+      integer NRC2{ NRC*NRC };
       this->no_allocate(
         NRC,
         NRC2,  m_allocReals.realloc( size_t(NRC2) ),

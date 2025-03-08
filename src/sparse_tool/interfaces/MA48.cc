@@ -132,7 +132,7 @@ namespace Sparse_tool {
       this->INFO[3] > A_work.size() && kkk < 10;
       ++kkk
     ) {
-      size_t newsz = size_t(this->INFO[3]);
+      integer newsz{ this->INFO[3] };
       // Increase internal workspace:
       A_work.resize( newsz );
       std::fill( A_work.begin(), A_work.end(), 0 );
@@ -221,7 +221,7 @@ namespace Sparse_tool {
   void
   MA48<T>::solve( real_type X[], real_type const RHS[], bool transposed ) {
     real_type ERROR[3];
-    integer   NM = std::max(this->nRow,this->nCol);
+    integer   NM{std::max(this->nRow,this->nCol)};
     W.resize(2*NM);
     HSL::ma48c<real_type>(
       this->nRow, this->nCol, (transposed ? 1 : 0), 1,

@@ -129,15 +129,15 @@ namespace Sparse_tool {
 
   template<typename T>
   struct precision_trait {
-    static unsigned const precisionRank     = 0;     //!< precision rank
-    static bool     const knowPrecisionRank = false; //!< is rank known ?
+    static unsigned const precisionRank     {0};     //!< precision rank
+    static bool     const knowPrecisionRank {false}; //!< is rank known ?
   };
 
   #define SPARSELIB_DECLARE_PRECISION(T,rank)         \
     template<>                                        \
     struct precision_trait< T > {                     \
-      static unsigned const precisionRank     = rank; \
-      static bool     const knowPrecisionRank = true; \
+      static unsigned const precisionRank     {rank}; \
+      static bool     const knowPrecisionRank {true}; \
     };
 
   SPARSELIB_DECLARE_PRECISION(int,100)
@@ -1065,8 +1065,8 @@ namespace Sparse_tool {
     if ( total_elems <= 1 ) return;
     if ( total_elems <= MAX_THRESH ) goto insert_sort;
     {
-      integer lo = 0;
-      integer hi = total_elems - 1;
+      integer lo{ 0 };
+      integer hi{ total_elems - 1 };
 
       stack_node stack[128];
       stack_node *top = stack;
@@ -1099,9 +1099,9 @@ namespace Sparse_tool {
           }
         }
 
-        integer Pivot     = I_mid;
-        integer left_ptr  = lo + 1;
-        integer right_ptr = hi - 1;
+        integer Pivot     { I_mid  };
+        integer left_ptr  { lo + 1 };
+        integer right_ptr { hi - 1 };
 
         /* Here's the famous ``collapse the walls'' section of quicksort. *\
          * Gotta like those tight inner loops!  They are the main reason  *
@@ -1161,8 +1161,8 @@ namespace Sparse_tool {
 
   insert_sort:
 
-    for ( integer i = 1; i < total_elems; ++i ) {
-      for ( integer j = i; j > 0; --j ) {
+    for ( integer i{1}; i < total_elems; ++i ) {
+      for ( integer j{i}; j > 0; --j ) {
         if ( GT(I[j], I[j-1]) ) break;
         swap( I[j], I[j-1] );
         swap( A[j], A[j-1] );
@@ -1195,8 +1195,8 @@ namespace Sparse_tool {
     if ( total_elems <= MAX_THRESH ) goto insert_sort;
 
     {
-      integer lo = 0;
-      integer hi = total_elems - 1;
+      integer lo{ 0 };
+      integer hi{ total_elems - 1 };
 
       stack_node stack[128];
       stack_node *top = stack;
@@ -1229,10 +1229,10 @@ namespace Sparse_tool {
           }
         }
 
-        integer IPivot    = I_mid;
-        integer JPivot    = J_mid;
-        integer left_ptr  = lo + 1;
-        integer right_ptr = hi - 1;
+        integer IPivot    { I_mid  };
+        integer JPivot    { J_mid  };
+        integer left_ptr  { lo + 1 };
+        integer right_ptr { hi - 1 };
 
         /* Here's the famous ``collapse the walls'' section of quicksort. *\
          * Gotta like those tight inner loops!  They are the main reason  *
@@ -1292,8 +1292,8 @@ namespace Sparse_tool {
 
   insert_sort:
 
-    for ( integer i = 1; i < total_elems; ++i ) {
-      for ( integer j = i; j > 0; --j ) {
+    for ( integer i{1}; i < total_elems; ++i ) {
+      for ( integer j{i}; j > 0; --j ) {
         if ( GT(I[j], J[j], I[j-1], J[j-1]) ) break;
         swap( I[j], I[j-1] );
         swap( J[j], J[j-1] );
@@ -1328,11 +1328,11 @@ namespace Sparse_tool {
     if ( total_elems <= MAX_THRESH ) goto insert_sort;
 
     {
-      integer lo = 0;
-      integer hi = total_elems - 1;
+      integer lo{ 0 };
+      integer hi{ total_elems - 1 };
 
       stack_node stack[128];
-      stack_node *top = stack;
+      stack_node *top{ stack };
 
       while ( top >= stack ) { // Stack not empty
 
@@ -1369,10 +1369,10 @@ namespace Sparse_tool {
           }
         }
 
-        integer IPivot    = I_mid;
-        integer JPivot    = J_mid;
-        integer left_ptr  = lo + 1;
-        integer right_ptr = hi - 1;
+        integer IPivot    { I_mid  };
+        integer JPivot    { J_mid  };
+        integer left_ptr  { lo + 1 };
+        integer right_ptr { hi - 1 };
 
         /* Here's the famous ``collapse the walls'' section of quicksort. *\
          * Gotta like those tight inner loops!  They are the main reason  *
@@ -1433,8 +1433,8 @@ namespace Sparse_tool {
 
   insert_sort:
 
-    for ( integer i = 1; i < total_elems; ++i ) {
-      for ( integer j = i; j > 0; --j ) {
+    for ( integer i{1}; i < total_elems; ++i ) {
+      for ( integer j{i}; j > 0; --j ) {
         if ( GT(I[j], J[j], I[j-1], J[j-1]) ) break;
         swap( I[j], I[j-1] );
         swap( J[j], J[j-1] );
@@ -1737,7 +1737,7 @@ namespace Sparse_tool {
     //!
     template <typename T>
     void assign( T & rhs ) const {
-      Matrix const * This = static_cast<Matrix const *>(this);
+      Matrix const * This{ static_cast<Matrix const *>(this) };
       This -> assign(rhs);
     }
 
@@ -2031,7 +2031,7 @@ namespace Sparse_tool {
     //!
     Matrix &
     operator /= ( real_type const & s)
-    { real_type ss = 1/s; scale_values(ss); return * this; }
+    { real_type ss{1/s}; scale_values(ss); return * this; }
 
     // ------------------------
     //!
@@ -2065,7 +2065,7 @@ namespace Sparse_tool {
     template <typename TV> inline
     Matrix &
     operator = ( Vector<TV> const & v ) {
-      integer n = minIndex(v.size(), SBASE::sp_min_size );
+      integer const n{ minIndex(v.size(), SBASE::sp_min_size ) };
       setZero();
       for ( integer k{0}; k < n; ++k )
         (*this)(k,k) = v(k);
@@ -2100,7 +2100,7 @@ namespace Sparse_tool {
     template <typename TV> inline
     Matrix &
     operator += ( Vector<TV> const & v ) {
-      integer n = minIndex( v.size(), SBASE::sp_min_size );
+      integer const n{ minIndex( v.size(), SBASE::sp_min_size ) };
       for ( integer k{0}; k < n; ++k )
         (*this)(k,k) += v(k);
       return *this;
@@ -2134,7 +2134,7 @@ namespace Sparse_tool {
     template <typename TV> inline
     Matrix &
     operator -= ( Vector<TV> const & v ) {
-      integer n = minIndex(v.size(),  SBASE::sp_min_size);
+      integer const n{ minIndex(v.size(),  SBASE::sp_min_size) };
       for ( integer k{0}; k < n; ++k )
         (*this)(k,k) -= v(k);
       return *this;
@@ -2173,7 +2173,7 @@ namespace Sparse_tool {
     template <typename VEC_EXPR> inline
     Matrix &
     operator = ( VEC_EXPR const & e ) {
-      integer n = minIndex(e.size(), SBASE::sp_min_size );
+      integer const n{ minIndex(e.size(), SBASE::sp_min_size ) };
       setZero();
       for ( integer k{0}; k < n; ++k )
         (*this)(k,k) = e(k);
@@ -2213,7 +2213,7 @@ namespace Sparse_tool {
     template <typename VEC_EXPR> inline
     Matrix &
     operator += ( VEC_EXPR const & e ) {
-      integer n = minIndex(e.size(), SBASE::sp_min_size );
+      integer const n{ minIndex(e.size(), SBASE::sp_min_size ) };
       for ( integer k{0}; k < n; ++k )
         (*this)(k,k) += e(k);
       return *this;
@@ -2253,7 +2253,7 @@ namespace Sparse_tool {
     inline
     Matrix &
     operator -= ( VEC_EXPR const & e ) {
-      integer n = minIndex(e.size(),  SBASE::sp_min_size );
+      integer const n{ minIndex(e.size(),  SBASE::sp_min_size ) };
       for ( integer k{0}; k < n; ++k )
         (*this)(k,k) -= e(k);
       return *this;
@@ -2491,8 +2491,8 @@ namespace Sparse_tool {
       resize( M.nrows(), M.ncols(), nz );
 
       for ( M.Begin(); M.End(); M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer const i{ M.row() };
+        integer const j{ M.column() };
         if ( cmp(i,j) ) insert(i,j);
       }
       internal_order();
@@ -2671,7 +2671,7 @@ namespace Sparse_tool {
     insert( integer i, integer j ) {
       SPARSE::test_index(i,j);
       if ( I.size() <= SPARSE::sp_nnz ) {
-        integer newdim = SPARSE::sp_nnz + (SPARSE::sp_nnz>>3) + 100;
+        integer newdim{ SPARSE::sp_nnz + (SPARSE::sp_nnz>>3) + 100 };
         I.conservativeResize( newdim );
         J.conservativeResize( newdim );
       }
@@ -2844,8 +2844,8 @@ namespace Sparse_tool {
       resize( M.nrows(), M.ncols(), nz );
 
       for ( M.Begin(); M.End(); M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer i{ M.row() };
+        integer j{ M.column() };
         if ( cmp(i,j) ) M.assign( insert(i,j) );
       }
       internal_order();
@@ -3009,14 +3009,14 @@ namespace Sparse_tool {
 
       integer nc{0};
       C(0) = 0;
-      for ( integer k = 1; k < SPARSE::sp_nnz; ++k ) {
+      for ( integer k{1}; k < SPARSE::sp_nnz; ++k ) {
         UTILS_ASSERT(
           J(k-1) <= J(k),
           "CCoorMatrix::internal_order() internal error\n"
           "J({}) is not <= J({})\n",
           k-1, k
         );
-        integer kk = J(k) - J(k-1);
+        integer kk{ J(k) - J(k-1) };
         while ( kk-- > 0 ) C(++nc) = k;
       }
       UTILS_ASSERT(
@@ -3035,13 +3035,13 @@ namespace Sparse_tool {
     integer
     position( integer i, integer j ) const {
       SPARSE::test_index(i,j);
-      integer lo  = C(j);
-      integer hi  = C(j+1);
-      integer len = hi - lo;
+      integer lo  { C(j) };
+      integer hi  { C(j+1) };
+      integer len { hi - lo };
 
       while ( len > 0 ) {
-        integer half = len / 2;
-        integer mid  = lo + half;
+        integer half { len / 2   };
+        integer mid  { lo + half };
         if ( I(mid) < i ) {
           lo = mid + 1;
           len -= half + 1;
@@ -3058,7 +3058,7 @@ namespace Sparse_tool {
     insert( integer i, integer j ) {
       SPARSE::test_index(i,j);
       if ( I.size() <= SPARSE::sp_nnz ) {
-        integer newdim = SPARSE::sp_nnz + (SPARSE::sp_nnz>>3) + 100;
+        integer newdim{ SPARSE::sp_nnz + (SPARSE::sp_nnz>>3) + 100 };
         I.conservativeResize( newdim );
         J.conservativeResize( newdim );
         A.conservativeResize( newdim+1 );
@@ -3092,21 +3092,15 @@ namespace Sparse_tool {
 
     real_type const &
     operator ()( integer i, integer j ) const {
-      integer pos = position(i,j);
-      UTILS_ASSERT(
-        pos != SPARSE::sp_nnz,
-        "CCoorMatrix({},{}) referring to a non existent element", i, j
-      );
+      integer pos{ position(i,j) };
+      UTILS_ASSERT( pos != SPARSE::sp_nnz, "CCoorMatrix({},{}) referring to a non existent element", i, j );
       return A(pos);
     }
 
     real_type &
     operator ()( integer i, integer j ) {
-      integer pos = position(i,j);
-      UTILS_ASSERT(
-        pos != SPARSE::sp_nnz,
-        "CCoorMatrix({},{}) referring to a non existent element", i, j
-      );
+      integer pos{ position(i,j) };
+      UTILS_ASSERT( pos != SPARSE::sp_nnz, "CCoorMatrix({},{}) referring to a non existent element", i, j );
       return A(pos);
     }
 
@@ -3157,9 +3151,9 @@ namespace Sparse_tool {
         res.size() >= SPARSE::sp_nrows,
         "Sparse_tool: [res += s * (A * x)] result vector too small"
       );
-      integer   const * pI = I.data();
-      integer   const * pJ = J.data();
-      real_type const * pA = A.data();
+      integer   const * pI { I.data() };
+      integer   const * pJ { J.data() };
+      real_type const * pA { A.data() };
       SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pI++) += s * *pA++ * x(*pJ++) );
     }
 
@@ -3181,9 +3175,9 @@ namespace Sparse_tool {
         res.size() >= SPARSE::sp_ncols,
         "Sparse_tool: [res += s * (A^T * x)] result vector too small"
       );
-      integer   const * pI = I.data();
-      integer   const * pJ = J.data();
-      real_type const * pA = A.data();
+      integer   const * pI { I.data() };
+      integer   const * pJ { J.data() };
+      real_type const * pA { A.data() };
       SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pJ++) += s * *pA++ * x(*pI++) );
     }
 
@@ -3201,9 +3195,9 @@ namespace Sparse_tool {
         res.size() >= SPARSE::sp_nrows,
         "Sparse_tool: [res += s * (A * x)] result vector too small"
       );
-      integer   const * pI = I.data();
-      integer   const * pJ = J.data();
-      real_type const * pA = A.data();
+      integer   const * pI { I.data() };
+      integer   const * pJ { J.data() };
+      real_type const * pA { A.data() };
       SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pI++) += s * *pA++ * x(*pJ++) );
     }
 
@@ -3221,9 +3215,9 @@ namespace Sparse_tool {
         res.size() >= SPARSE::sp_ncols,
         "Sparse_tool: [res += s * (A^T * x)] result vector too small"
       );
-      integer   const * pI = I.data();
-      integer   const * pJ = J.data();
-      real_type const * pA = A.data();
+      integer   const * pI { I.data() };
+      integer   const * pJ { J.data() };
+      real_type const * pA { A.data() };
       SPARSELIB_LOOP( SPARSE::sp_nnz, res(*pJ++) += s * *pA++ * x(*pI++) );
     }
 
@@ -3274,10 +3268,10 @@ namespace Sparse_tool {
       res.size() >= nrows,
       "Sparse_tool: [res += s * (A * x)] result vector too small"
     );
-    integer const * R = RR.data();
-    integer const * J = JJ.data();
-    T       const * A = AA.data();
-    for ( integer ir = 0; ir < nrows; ++ir, ++R ) {
+    integer const * R { RR.data() };
+    integer const * J { JJ.data() };
+    T       const * A { AA.data() };
+    for ( integer ir{0}; ir < nrows; ++ir, ++R ) {
       T bf(0);
       SPARSELIB_LOOP( R[1] - R[0], bf += *A++ * x(*J++) );
       res(ir) += s * bf;
@@ -3316,11 +3310,11 @@ namespace Sparse_tool {
       res.size() >= nrows,
       "Sparse_tool: [res += s * (A^T * x)] result vector too small"
     );
-    integer const * R = RR.data();
-    integer const * J = JJ.data();
-    T       const * A = AA.data();
-    for ( integer ir = 0; ir < nrows; ++ir, ++R ) {
-      T bf = s*x(ir);
+    integer const * R { RR.data() };
+    integer const * J { JJ.data() };
+    T       const * A { AA.data() };
+    for ( integer ir{0}; ir < nrows; ++ir, ++R ) {
+      T bf { s*x(ir) };
       SPARSELIB_LOOP( R[1] - R[0], res(*J++) += *A++ * bf );
     }
   }
@@ -3459,18 +3453,18 @@ namespace Sparse_tool {
 
       // step 1: Evaluate not zero pattern
       for ( M.Begin(); M.End();  M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer i{M.row()};
+        integer j{M.column()};
         if ( cmp(i, j) ) ++R(i);
       }
       for ( integer k{0}; k < SPARSE::sp_nrows; ++k ) R(k+1) += R(k);
 
       // step 2: Fill matrix
       for ( M.Begin(); M.End(); M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer i{M.row()};
+        integer j{M.column()};
         if ( cmp(i,j) ) {
-          integer ii = --R(i);
+          integer ii{--R(i)};
           M.assign(A(ii));
           J(ii) = j;
         }
@@ -3585,8 +3579,8 @@ namespace Sparse_tool {
     void
     scaleRow( integer nr, real_type const & val ) {
       SPARSE::test_row(nr);
-      real_type * pA = A.data() + R(nr);
-      real_type * pB = A.data() + R(nr+1);
+      real_type * pA { A.data() + R(nr) };
+      real_type * pB { A.data() + R(nr+1) };
       while ( pA < pB ) *pA++ *= val;
     }
 
@@ -3594,7 +3588,7 @@ namespace Sparse_tool {
     scaleColumn(integer nc, real_type const & val) {
       SPARSE::test_col(nc);
       for ( integer i{0}; i < SPARSE::sp_nrows; ++i ) {
-        integer pos = position(i,nc,true);
+        integer pos{ position(i,nc,true) };
         if ( pos != SPARSE::sp_nnz ) A(pos) *= val;
       }
     }
@@ -3609,12 +3603,12 @@ namespace Sparse_tool {
     integer
     position( integer i, integer j ) const {
       SPARSE::test_index(i,j);
-      integer lo  = R(i);
-      integer hi  = R(i+1);
-      integer len = hi - lo;
+      integer lo  { R(i) };
+      integer hi  { R(i+1) };
+      integer len { hi - lo };
       while (len > 0) {
-        integer half = len / 2;
-        integer mid = lo + half;
+        integer half { len / 2 };
+        integer mid  { lo + half };
         if ( J(mid) < j ) {
           lo = mid + 1;
           len -= half + 1;
@@ -3630,7 +3624,7 @@ namespace Sparse_tool {
 
     real_type const &
     operator ()( integer i, integer j ) const {
-      integer pos = position(i,j);
+      integer pos{ position(i,j) };
       UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
         "CRowMatrix({},{}) referring to a non existent element\n", i, j
@@ -3640,7 +3634,7 @@ namespace Sparse_tool {
 
     real_type &
     operator ()( integer i, integer j ) {
-      integer pos = position(i,j);
+      integer pos{ position(i,j) };
       UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
         "CRowMatrix({},{}) referring to a non existent element\n", i, j
@@ -3850,18 +3844,18 @@ namespace Sparse_tool {
 
       // step 1: Evaluate not zero
       for ( M.Begin(); M.End(); M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer i{ M.row() };
+        integer j{ M.column() };
         if ( cmp(i,j) ) ++C(j);
       }
       for ( integer k{0}; k < SPARSE::sp_ncols; ++k ) C(k+1) += C(k);
 
       // step 2: Fill matrix
       for ( M.Begin(); M.End(); M.Next() ) {
-        integer i = M.row();
-        integer j = M.column();
+        integer i{ M.row() };
+        integer j{ M.column() };
         if ( cmp(i,j) ) {
-          integer jj = --C(j);
+          integer jj{ --C(j) };
           M.assign(A(jj));
           I(jj) = i;
         }
@@ -3977,7 +3971,7 @@ namespace Sparse_tool {
     scaleRow( integer nr, real_type const & val ) {
       SPARSE::test_row(nr);
       for ( integer j{0}; j < SPARSE::sp_ncols; ++j ) {
-        integer pos = position(nr,j,true);
+        integer pos{ position(nr,j,true) };
         if ( pos != SPARSE::sp_nnz ) A(pos) *= val;
       }
     }
@@ -3985,8 +3979,8 @@ namespace Sparse_tool {
     void
     scaleColumn( integer nc, real_type const & val ) {
       SPARSE::test_col(nc);
-      real_type * pA = A.data() + C(nc);
-      real_type * pB = A.data() + C(nc+1);
+      real_type * pA { A.data() + C(nc) };
+      real_type * pB { A.data() + C(nc+1) };
       while ( pA < pB ) *pA++ *= val;
     }
 
@@ -4000,12 +3994,12 @@ namespace Sparse_tool {
     integer
     position( integer i, integer j ) const {
       SPARSE::test_index(i,j);
-      integer lo  = C(j);
-      integer hi  = C(j+1);
-      integer len = hi - lo;
+      integer lo  { C(j) };
+      integer hi  { C(j+1) };
+      integer len { hi - lo };
       while (len > 0) {
-        integer half = len / 2;
-        integer mid = lo + half;
+        integer half { len / 2 };
+        integer mid  { lo + half };
         if ( I(mid) < i ) {
           lo = mid + 1;
           len -= half + 1;
@@ -4021,7 +4015,7 @@ namespace Sparse_tool {
 
     real_type const &
     operator () (integer i, integer j) const {
-      integer pos = position(i,j);
+      integer pos{ position(i,j) };
       UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
         "CColMatrix({},{}) referring to a non existent element\n", i, j
@@ -4031,7 +4025,7 @@ namespace Sparse_tool {
 
     real_type &
     operator () (integer i, integer j) {
-      integer pos = position(i,j);
+      integer pos{ position(i,j) };
       UTILS_ASSERT(
         pos != SPARSE::sp_nnz,
         "CColMatrix({},{}) referring to a non existent element\n", i, j
@@ -4608,7 +4602,7 @@ namespace Sparse_tool {
     real_type const &
     operator () ( integer i, integer j ) const {
       SPARSE::test_index(i,j);
-      integer kk = ((j+1)-i);
+      integer kk{ (j+1)-i };
       UTILS_ASSERT(
         kk < 3,
         "TridMatrix({},{}) index out of range\n", i, j
@@ -4619,7 +4613,7 @@ namespace Sparse_tool {
     real_type &
     operator () ( integer i, integer j ) {
       SPARSE::test_index(i,j);
-      integer kk = ((j+1)-i);
+      integer kk{ (j+1)-i };
       UTILS_ASSERT(
         kk < 3,
         "TridMatrix({},{}) index out of range\n", i, j
@@ -4631,7 +4625,7 @@ namespace Sparse_tool {
     value( integer i, integer j ) const {
       static const T zero(0);
       SPARSE::test_index(i,j);
-      integer kk = ((j+1)-i);
+      integer kk{ (j+1)-i };
       if ( kk < 3 ) return A( kk*SPARSE::sp_nrows+i-1);
       else          return zero;
     }
@@ -4700,7 +4694,7 @@ namespace Sparse_tool {
       );
       TMP = s*x;
       res += D.array() * TMP.array();
-      integer nn = SPARSE::sp_nrows-1;
+      integer nn{ SPARSE::sp_nrows-1 };
       res.head(nn).array() += U.array() * TMP.tail(nn).array();
       res.tail(nn).array() += L.array() * TMP.head(nn).array();
     }
@@ -4813,7 +4807,7 @@ namespace Sparse_tool {
   inline
   string
   to_string( VEC_EXPR const & v ) {
-    integer sz1 = v.size() - 1;
+    integer sz1{ static_cast<integer>( v.size() - 1 ) };
     string res = "[ ";
     for ( integer i{0}; i < sz1; ++i ) res += fmt::format( "{}, ", v(i) );
     res += fmt::format( "{} ]", v(sz1) );

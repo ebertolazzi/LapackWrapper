@@ -32,16 +32,16 @@ namespace Sparse_tool {
   void init_MUMPS( int argc, char *argv[] );
   void end_MUMPS();
 
-  static int const JOB_END           = -2;
-  static int const JOB_INIT          = -1;
-  static int const JOB_ANALYSIS      =  1;
-  static int const JOB_FACTORIZATION =  2;
-  static int const JOB_SOLVE         =  3;
-  static int const USE_COMM_WORLD    = -987654;
+  static int const JOB_END           { -2 };
+  static int const JOB_INIT          { -1 };
+  static int const JOB_ANALYSIS      {  1 };
+  static int const JOB_FACTORIZATION {  2 };
+  static int const JOB_SOLVE         {  3 };
+  static int const USE_COMM_WORLD    { -987654 };
 
-  static int const MATRIX_GE   = 0;
-  static int const MATRIX_SPD  = 1;
-  static int const MATRIX_SYMM = 2;
+  static int const MATRIX_GE   { 0 };
+  static int const MATRIX_SPD  { 1 };
+  static int const MATRIX_SYMM { 2 };
 
   template <typename T> struct MUMPSType {};
 
@@ -127,7 +127,7 @@ namespace Sparse_tool {
       m_I_vec.resize( m_nnz );
       m_J_vec.resize( m_nnz );
       m_A_vec.resize( m_nnz );
-      integer ii = 0;
+      integer ii{0};
       for ( Mat.Begin(); Mat.End(); Mat.Next(), ++ii ) {
         m_I_vec(ii) = Mat.row()    + 1;
         m_J_vec(ii) = Mat.column() + 1;

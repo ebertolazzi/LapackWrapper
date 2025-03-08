@@ -69,8 +69,8 @@ namespace lapack_wrapper {
     m_NR = NR;
     m_NC = NC;
     // dimension of the big system
-    integer NN  = NR+NC;
-    integer NN2 = NN*NN;
+    integer NN  { NR+NC };
+    integer NN2 { NN*NN };
 
     // count row
     m_NRA = m_NRB = 0;
@@ -85,7 +85,7 @@ namespace lapack_wrapper {
     m_to_rowA = m_allocIntegers( size_t(m_NRA) );
     m_to_rowB = m_allocIntegers( size_t(m_NRB) );
 
-    integer LDA = m_NRA;
+    integer LDA { m_NRA };
     m_NRA = m_NRB = 0;
     for ( integer i{0}; i < NR; ++i ) {
       if ( row_select[i] ) {
@@ -113,16 +113,16 @@ namespace lapack_wrapper {
       :|:  |         |
       :|:  \ A   -I  /
       \*/
-      integer           NCi = NC + i;
-      real_type const * Mi  = M + m_to_rowA[i];;
+      integer           NCi { NC + i };
+      real_type const * Mi  { M + m_to_rowA[i] };
       lapack_wrapper::copy( NC, Mi, ldM, m_work+NCi,    NN );
       lapack_wrapper::copy( NC, Mi, ldM, m_work+NCi*NN, 1  );
       m_work[ NCi*(NN+1) ] = -1;
     }
     // B
     for ( integer i{0}; i < m_NRB; ++i ) {
-      integer           NCi = NC + m_NRA + i;
-      real_type const * Mi  = M + m_to_rowB[i];
+      integer           NCi { NC + m_NRA + i };
+      real_type const * Mi  { M + m_to_rowB[i] };
       lapack_wrapper::copy( NC, Mi, ldM, m_work+NCi,    NN );
       lapack_wrapper::copy( NC, Mi, ldM, m_work+NCi*NN, 1  );
     }

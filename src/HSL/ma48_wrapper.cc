@@ -127,10 +127,10 @@ namespace lapack_wrapper {
       m_isInitialized = false;
       return false;
     }
-    int const N_RC_Max = std::max( m_nrows, m_ncols );
-    int const N_keep   = m_nrows + 5 * m_ncols + 4 * (m_ncols / ihlp) + 7;
-    int const N_iw     = m_nrows * 6 + m_ncols * 3;
-    int const N_w      = 4 * N_RC_Max;
+    int const N_RC_Max { std::max( m_nrows, m_ncols ) };
+    int const N_keep   { m_nrows + 5 * m_ncols + 4 * (m_ncols / ihlp) + 7 };
+    int const N_iw     { m_nrows * 6 + m_ncols * 3 };
+    int const N_w      { 4 * N_RC_Max };
     m_keep.resize(static_cast<size_t>(N_keep));
     m_iw.resize(static_cast<size_t>(N_iw));
     m_w.resize(static_cast<size_t>(N_w));
@@ -288,7 +288,7 @@ namespace lapack_wrapper {
     bool ok{ true };
     if ( RHS == X ) {
       Malloc<real> mem("MA48<real>::solve");
-      real * tmpRHS = mem.realloc( m_nrows );
+      real * tmpRHS{ mem.realloc( m_nrows ) };
       for ( int j{0}; ok && j < nrhs; ++j ) {
         real const * RHSj{ RHS + j * ldRHS };
         std::copy_n( RHSj, m_nrows, tmpRHS );

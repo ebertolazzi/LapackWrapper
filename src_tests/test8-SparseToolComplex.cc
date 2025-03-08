@@ -92,9 +92,9 @@ testSparseTool( istream_type & mm_file ) {
   fmt::print("solve (ildu) ... ");
   tm.tic();
 
-  double               epsi    = 1e-15;
-  Sparse_tool::integer maxIter = 200;
-  //Sparse_tool::integer maxSubIter = 50;
+  double               epsi    { 1e-15 };
+  Sparse_tool::integer maxIter { 200 };
+  //Sparse_tool::integer maxSubIter{50};
   Sparse_tool::integer iter;
   double  res = bicgstab( A, rhs, x, preco, epsi, maxIter, iter, &cout );
   //double   res = gmres( A, rhs, x, preco, epsi, maxSubIter, maxIter, iter, &cout );
@@ -129,7 +129,7 @@ testSparseTool( istream_type & mm_file ) {
 
 int
 main() {
-  char const * rMatrix[] = {
+  char const * rMatrix[]{
     //"conf5_4-8x8-05.mtx.gz", // no
     //"dielFilterV2clx.mtx.gz", // 607232, ok 52 gmres, 11 bcgstab
     //"dielFilterV3clx.mtx.gz", // 420408, ok 53 gmres, ok 11 bicgstab

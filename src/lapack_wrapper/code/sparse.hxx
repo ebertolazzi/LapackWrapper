@@ -559,7 +559,7 @@ namespace lapack_wrapper {
       integer offs{0};
       if ( fi ) ++offs;
       if ( m_fortran_indexing ) --offs;
-      for ( integer index = 0; index < NNZ; ++index ) {
+      for ( integer index{0}; index < NNZ; ++index ) {
         i[index]   = i_type(m_rows[index]+offs);
         j[index]   = i_type(m_cols[index]+offs);
         val[index] = r_type(m_vals[index]);
@@ -580,7 +580,7 @@ namespace lapack_wrapper {
       i.clear(); i.reserve( m_nnz );
       j.clear(); j.reserve( m_nnz );
       v.clear(); v.reserve( m_nnz );
-      for ( integer index = 0; index < m_nnz; ++index ) {
+      for ( integer index{0}; index < m_nnz; ++index ) {
         i.push_back( i_type(m_rows[index]+offs) );
         j.push_back( i_type(m_cols[index]+offs) );
         v.push_back( r_type(m_vals[index]) );

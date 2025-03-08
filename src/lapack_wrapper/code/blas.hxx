@@ -273,9 +273,9 @@ namespace lapack_wrapper {
     integer const IPIV[],
     integer       INC
   ) {
-    integer info(0);
-    integer K1 = I1+1;
-    integer K2 = I2+1;
+    integer info { 0 };
+    integer K1   { I1+1 };
+    integer K2   { I2+1 };
     #if defined(LAPACK_WRAPPER_USE_MKL)
       slaswp( &NCOL, A, &LDA, &K1, &K2, IPIV, &INC );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)
@@ -308,9 +308,9 @@ namespace lapack_wrapper {
     integer const IPIV[],
     integer       INC
   ) {
-    integer info(0);
-    integer K1 = I1+1;
-    integer K2 = I2+1;
+    integer info { 0 };
+    integer K1   { I1+1 };
+    integer K2   { I2+1 };
     #if defined(LAPACK_WRAPPER_USE_MKL)
       dlaswp( &NCOL, A, &LDA, &K1, &K2, IPIV, &INC );
     #elif defined(LAPACK_WRAPPER_USE_OPENBLAS)

@@ -100,9 +100,9 @@ namespace lapack_wrapper {
     std::copy_n(ArrayA, m_nnz, m_a_stored.begin());
 
     // Now factorize the system:
-    int const NiKeep = static_cast<int>(m_iKeep.size());
-    int const lifact = static_cast<int>(m_ifact.size());
-    int const lfact  = static_cast<int>(m_fact.size());
+    int const NiKeep { static_cast<int>(m_iKeep.size()) };
+    int const lifact { static_cast<int>(m_ifact.size()) };
+    int const lfact  { static_cast<int>(m_fact.size())  };
     lapack_wrapper::ma57b<real>(
       m_nrows,
       m_nnz,
@@ -148,7 +148,7 @@ namespace lapack_wrapper {
       std::copy_n( RHS, m_nrows, m_RHSRefinement.begin() );
       real residual = 10.0;
       int  localjob = 0;
-      for ( int counter = 0;
+      for ( int counter{0};
             counter < m_MaxRefinements && std::abs(residual) > m_tolRes;
             ++counter ) {
         // Löse mit rechter Seite: (iterative reinfinement)

@@ -78,6 +78,6 @@ main() {
                       "af23560.mtx",
                       "plat1919.mtx",
                       NULL };
-  for ( char **p = rMatrix; *p != NULL; ++p ) testSLU( string("mm/")+*p);
+  for ( char **p{rMatrix}; *p != NULL; ++p ) testSLU( string("mm/")+*p);
   return 0;
 }

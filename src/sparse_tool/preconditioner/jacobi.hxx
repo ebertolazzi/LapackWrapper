@@ -80,8 +80,8 @@ namespace Sparse_tool {
       D.setZero();
 
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
+        integer i{ A.row()    };
+        integer j{ A.column() };
         if ( i != j ) ++LUnnz(i);
       }
 
@@ -97,8 +97,8 @@ namespace Sparse_tool {
 
       // step 3: fill structure
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
+        integer i{ A.row()    };
+        integer j{ A.column() };
         if ( i != j ) LU_J(LU_R(i)+(--LUnnz(i))) = j;
       }
 
@@ -108,16 +108,16 @@ namespace Sparse_tool {
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
-        real_type val = A.value(); // (i,j);
+        integer   i   { A.row()    };
+        integer   j   { A.column() };
+        real_type val { A.value()  }; // (i,j);
         if ( i != j ) { // costruisco LU
-          integer lo  = LU_R(i);
-          integer hi  = LU_R(i+1);
-          integer len = hi - lo;
+          integer lo  { LU_R(i)   };
+          integer hi  { LU_R(i+1) };
+          integer len { hi - lo   };
           while ( len > 0 ) {
-            integer half = len / 2;
-            integer mid  = lo + half;
+            integer half { len / 2   };
+            integer mid  { lo + half };
             if ( LU_J(mid) < j ) { lo = mid + 1; len -= half + 1; }
             else                   len = half;
           }
@@ -161,16 +161,16 @@ namespace Sparse_tool {
         "`x` and `b` cant be the same\n"
       );
       x = omega*(b.array()/D.array());
-      for ( integer ii = 0; ii < maxIter; ++ii ) {
+      for ( integer ii{0}; ii < maxIter; ++ii ) {
 
         // calcolo (D/omega)^{-1} [ ((1/omega-1)*D-L-U)*x + b ];
-        integer   const * _pR = LU_R.data();
-        integer   const * _pJ = LU_J.data();
-        real_type const * _pA = LU_A.data();
+        integer   const * _pR { LU_R.data() };
+        integer   const * _pJ { LU_J.data() };
+        real_type const * _pA { LU_A.data() };
 
-        for ( integer k=0; k < PRECO::pr_size; ++k ) {
+        for ( integer k{0}; k < PRECO::pr_size; ++k ) {
           real_type tt(0);
-          for ( integer i_cnt = _pR[1] - _pR[0]; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{_pR[1] - _pR[0]}; i_cnt > 0; --i_cnt )
             tt += *_pA++ * x(*_pJ++);
           TMP(k) = b(k) + omega1 * D(k) * x(k) - tt;
           ++_pR;

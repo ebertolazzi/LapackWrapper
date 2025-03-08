@@ -81,8 +81,8 @@ namespace Sparse_tool {
     */
 
     // ----------------------------------------------------------------------
-    integer nc = sp.ncols() + 1;
-    integer nr = sp.nrows() + 1;
+    integer nc{ sp.ncols() + 1 };
+    integer nr{ sp.nrows() + 1 };
 
     double ysize = (xsize*nr) / nc;
 

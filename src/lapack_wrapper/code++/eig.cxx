@@ -40,13 +40,11 @@ namespace lapack_wrapper {
     m_N = Nin;
     // calcolo memoria ottimale
     real_type Lworkdummy;
-    integer info = geev(
+    integer info { geev(
       false, false, Nin, nullptr, Nin,
       nullptr, nullptr, nullptr, Nin, nullptr, Nin, &Lworkdummy, -1
-    );
-    UTILS_ASSERT(
-      info == 0, "Eigenvalues<T>::allocate, call geev return info = {}\n", info
-    );
+    ) };
+    UTILS_ASSERT( info == 0, "Eigenvalues<T>::allocate, call geev return info = {}\n", info );
     m_Lwork = integer( Lworkdummy );
     m_mem.reallocate( size_t( m_Lwork + (2+m_N) * m_N) );
     m_Re      = m_mem( size_t(m_N) );
@@ -60,14 +58,12 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvalues<T>::compute( ) {
-    integer info = geev(
+    integer info { geev(
       false, false, m_N, m_A_saved, m_N,
       m_Re, m_Im, nullptr, m_N, nullptr, m_N,
       m_Work, m_Lwork
-    );
-    UTILS_ASSERT(
-      info == 0, "Eigenvalues<T>::compute, call geev return info = {}\n", info
-    );
+    ) };
+    UTILS_ASSERT( info == 0, "Eigenvalues<T>::compute, call geev return info = {}\n", info );
   }
 
 
@@ -81,10 +77,8 @@ namespace lapack_wrapper {
     integer         ldData
   ) {
     this->allocate( NRC );
-    integer info = gecopy( NRC, NRC, data, ldData, m_A_saved, NRC );
-    UTILS_ASSERT(
-      info == 0, "Eigenvalues<T>::setup, call gecopy return info = {}\n", info
-    );
+    integer info { gecopy( NRC, NRC, data, ldData, m_A_saved, NRC ) };
+    UTILS_ASSERT( info == 0, "Eigenvalues<T>::setup, call gecopy return info = {}\n", info );
     this->compute();
   }
 
@@ -94,10 +88,8 @@ namespace lapack_wrapper {
   void
   Eigenvalues<T>::setup( MatW const & M ) {
     this->allocate( M.nrows() );
-    integer info = gecopy( m_N, m_N, M.data(), M.ldim(), m_A_saved, m_N );
-    UTILS_ASSERT(
-      info == 0, "Eigenvalues<T>::setup, call gecopy return info = {}\n", info
-    );
+    integer info { gecopy( m_N, m_N, M.data(), M.ldim(), m_A_saved, m_N ) };
+    UTILS_ASSERT( info == 0, "Eigenvalues<T>::setup, call gecopy return info = {}\n", info );
     this->compute();
   }
 
@@ -150,7 +142,7 @@ namespace lapack_wrapper {
   ) const {
     re.clear(); re.reserve( m_N );
     im.clear(); im.reserve( m_N );
-    for ( int i = 0; i < m_N; ++i ) {
+    for ( int i{0}; i < m_N; ++i ) {
       re.push_back( m_Re[i] );
       im.push_back( m_Im[i] );
     }
@@ -164,7 +156,7 @@ namespace lapack_wrapper {
     std::vector<std::complex<real_type> > & eigs
   ) const {
     eigs.clear(); eigs.reserve( m_N );
-    for ( int i = 0; i < m_N; ++i )
+    for ( int i{0}; i < m_N; ++i )
       eigs.push_back( std::complex<real_type>( m_Re[i], m_Im[i]) );
   }
 
@@ -178,9 +170,9 @@ namespace lapack_wrapper {
   Eigenvectors<T>::allocate( integer Nin ) {
     m_N = Nin;
     // calcolo memoria ottimale
-    integer doLwork    = -1;
-    T       Lworkdummy = 1;
-    integer info = geev(
+    integer doLwork    { -1 };
+    T       Lworkdummy {  1 };
+    integer info { geev(
       true, true,
       m_N,
       nullptr, m_N,
@@ -188,10 +180,8 @@ namespace lapack_wrapper {
       m_VL, m_N,
       m_VR, m_N,
       &Lworkdummy, doLwork
-    );
-    UTILS_ASSERT(
-      info == 0, "Eigenvectors::allocate, call geev return info = {}\n", info
-    );
+    ) };
+    UTILS_ASSERT( info == 0, "Eigenvectors::allocate, call geev return info = {}\n", info );
     m_Lwork = integer(Lworkdummy);
     m_mem.reallocate( size_t( m_Lwork + (2+3*m_N) * m_N) );
     m_Re      = m_mem( size_t(m_N) );
@@ -207,7 +197,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   Eigenvectors<T>::compute( ) {
-    integer info = geev(
+    integer info { geev(
       m_VL != nullptr,
       m_VR != nullptr,
       m_N,
@@ -216,11 +206,8 @@ namespace lapack_wrapper {
       m_VL,      m_N,
       m_VR,      m_N,
       m_Work,    m_Lwork
-    );
-    UTILS_ASSERT(
-      info == 0,
-      "GeneralizedEigenvectors::compute, call geev return info = {}\n", info
-    );
+    ) };
+    UTILS_ASSERT( info == 0, "GeneralizedEigenvectors::compute, call geev return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -233,11 +220,8 @@ namespace lapack_wrapper {
     integer         ldA
   ) {
     this->allocate( NRC );
-    integer info = gecopy( NRC, NRC, A_data, ldA, m_A_saved, NRC );
-    UTILS_ASSERT(
-      info == 0,
-      "Eigenvectors::setup, call gecopy return info = {}\n", info
-    );
+    integer info{ gecopy( NRC, NRC, A_data, ldA, m_A_saved, NRC ) };
+    UTILS_ASSERT( info == 0, "Eigenvectors::setup, call gecopy return info = {}\n", info );
     this->compute();
   }
 
@@ -247,11 +231,8 @@ namespace lapack_wrapper {
   void
   Eigenvectors<T>::setup( MatW const & A ) {
     this->allocate( A.nrows() );
-    integer info = gecopy( m_N, m_N, A.data(), A.ldim(),  m_A_saved, m_N );
-    UTILS_ASSERT(
-      info == 0,
-      "Eigenvectors::setup, call gecopy return info = {}\n", info
-    );
+    integer info { gecopy( m_N, m_N, A.data(), A.ldim(),  m_A_saved, m_N ) };
+    UTILS_ASSERT( info == 0, "Eigenvectors::setup, call gecopy return info = {}\n", info );
     this->compute();
   }
 
@@ -304,7 +285,7 @@ namespace lapack_wrapper {
   ) const {
     re.clear(); re.reserve( m_N );
     im.clear(); im.reserve( m_N );
-    for ( int i = 0; i < m_N; ++i ) {
+    for ( int i{0}; i < m_N; ++i ) {
       re.push_back( m_Re[i] );
       im.push_back( m_Im[i] );
     }
@@ -318,7 +299,7 @@ namespace lapack_wrapper {
     std::vector<std::complex<real_type> > & eigs
   ) const {
     eigs.clear(); eigs.reserve( m_N );
-    for ( int i = 0;i < m_N; ++i )
+    for ( int i{0};i < m_N; ++i )
       eigs.push_back( std::complex<real_type>( m_Re[i], m_Im[i]) );
   }
 
@@ -330,14 +311,14 @@ namespace lapack_wrapper {
     std::vector<std::vector<complex_type> > & vecs
   ) const {
     vecs.resize( size_t(m_N) );
-    for ( integer n = 0; n < m_N; ++n ) {
+    for ( integer n{0}; n < m_N; ++n ) {
       std::vector<complex_type> & v = vecs[n];
       v.clear(); v.reserve( m_N );
-      T const * vr = m_VL + n * m_N;
+      T const * vr{ m_VL + n * m_N };
       if ( m_Im[n] > 0 ) {
         std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
-        T const * vi = vr + m_N;
+        T const * vi{ vr + m_N };
         for ( integer j{0}; j < m_N; ++j ) {
           // salvo vettore "gia" coniugato
           v.push_back( complex_type( vr[j], -vi[j] ) );
@@ -358,14 +339,14 @@ namespace lapack_wrapper {
     std::vector<std::vector<complex_type> > & vecs
   ) const {
     vecs.resize( size_t(m_N) );
-    for ( integer n = 0; n < m_N; ++n ) {
+    for ( integer n{0}; n < m_N; ++n ) {
       std::vector<complex_type> & v = vecs[n];
       v.clear(); v.reserve( m_N );
-      T const * vr = m_VR + n * m_N;
+      T const * vr { m_VR + n * m_N };
       if ( m_Im[n] > 0 ) {
         std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
-        T const * vi = vr + m_N;
+        T const * vi { vr + m_N };
         for ( integer j{0}; j < m_N; ++j ) {
           v.push_back( complex_type( vr[j], vi[j] ) );
           v1.push_back( complex_type( vr[j], -vi[j] ) );
@@ -388,15 +369,12 @@ namespace lapack_wrapper {
     m_N = Nin;
     // calcolo memoria ottimale
     real_type Lworkdummy;
-    integer info = ggev(
+    integer info { ggev(
       false, false, Nin, nullptr, Nin, nullptr, Nin,
       nullptr, nullptr, nullptr,
       nullptr, Nin, nullptr, Nin, &Lworkdummy, -1
-    );
-    UTILS_ASSERT(
-      info == 0,
-      "GeneralizedEigenvalues::allocate, call geev return info = {}\n", info
-    );
+    ) };
+    UTILS_ASSERT( info == 0, "GeneralizedEigenvalues::allocate, call geev return info = {}\n", info );
     m_Lwork = integer(Lworkdummy);
     m_mem.reallocate( size_t( m_Lwork + (3+2*m_N) * m_N) );
     m_alphaRe = m_mem( size_t(m_N) );
@@ -412,7 +390,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvalues<T>::compute( ) {
-    integer info = ggev(
+    integer info { ggev(
       false, false,
       m_N,
       m_A_saved, m_N,
@@ -420,11 +398,8 @@ namespace lapack_wrapper {
       m_alphaRe, m_alphaIm, m_beta,
       nullptr, m_N, nullptr, m_N,
       m_Work, m_Lwork
-    );
-    UTILS_ASSERT(
-      info == 0,
-      "GeneralizedEigenvalues::compute, call geev return info = {}\n", info
-    );
+    ) };
+    UTILS_ASSERT( info == 0, "GeneralizedEigenvalues::compute, call geev return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -439,8 +414,8 @@ namespace lapack_wrapper {
     integer         ldB
   ) {
     this->allocate( NRC );
-    integer info1 = gecopy( NRC, NRC, A_data, ldA, m_A_saved, NRC );
-    integer info2 = gecopy( NRC, NRC, B_data, ldB, m_B_saved, NRC );
+    integer info1 { gecopy( NRC, NRC, A_data, ldA, m_A_saved, NRC ) };
+    integer info2 { gecopy( NRC, NRC, B_data, ldB, m_B_saved, NRC ) };
     UTILS_ASSERT(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvalues::setup, call gecopy return info1 = {}, info2 = {}\n",
@@ -455,8 +430,8 @@ namespace lapack_wrapper {
   void
   GeneralizedEigenvalues<T>::setup( MatW const & A, MatW const & B ) {
     this->allocate( A.nrows() );
-    integer info1 = gecopy( m_N, m_N, A.data(), A.ldim(), m_A_saved, m_N );
-    integer info2 = gecopy( m_N, m_N, B.data(), B.ldim(), m_B_saved, m_N );
+    integer info1 { gecopy( m_N, m_N, A.data(), A.ldim(), m_A_saved, m_N ) };
+    integer info2 { gecopy( m_N, m_N, B.data(), B.ldim(), m_B_saved, m_N ) };
     UTILS_ASSERT(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvalues::setup, call gecopy return info1 = {}, info2 = {}\n",
@@ -553,9 +528,9 @@ namespace lapack_wrapper {
   GeneralizedEigenvectors<T>::allocate( integer Nin ) {
     m_N = Nin;
     // calcolo memoria ottimale
-    integer doLwork    = -1;
-    T       Lworkdummy = 1;
-    integer info = ggevx(
+    integer doLwork    { -1 };
+    T       Lworkdummy {  1 };
+    integer info { ggevx(
       BalanceType::PERMUTE_AND_SCALE,
       false, false,
       SenseType::EIGENVALUES_AND_EIGENVECTORS,
@@ -567,11 +542,8 @@ namespace lapack_wrapper {
       nullptr, nullptr,
       &Lworkdummy, doLwork,
       nullptr, nullptr
-    );
-    UTILS_ASSERT(
-      info == 0,
-      "GeneralizedEigenvectors::allocate, call geev return info = {}\n", info
-    );
+    ) };
+    UTILS_ASSERT( info == 0, "GeneralizedEigenvectors::allocate, call geev return info = {}\n", info );
     m_Lwork = integer(Lworkdummy);
     m_mem_real.reallocate( size_t( m_Lwork + (7+4*m_N) * m_N) );
     m_mem_int.reallocate( size_t( 2*m_N + 6 ) );
@@ -596,7 +568,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   GeneralizedEigenvectors<T>::compute( ) {
-    integer info = ggevx(
+    integer info{ ggevx(
       BalanceType::PERMUTE_ONLY, // ATTENZIONE LA SCALATURA NON FUNZIONA
       m_VL != nullptr,
       m_VR != nullptr,
@@ -613,11 +585,8 @@ namespace lapack_wrapper {
       m_rconde,  m_rcondv,
       m_Work,    m_Lwork,
       m_iWork,   m_bWork
-    );
-    UTILS_ASSERT(
-      info == 0,
-      "GeneralizedEigenvectors::compute, call ggevx return info = {}\n", info
-    );
+    ) };
+    UTILS_ASSERT( info == 0, "GeneralizedEigenvectors::compute, call ggevx return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -632,8 +601,8 @@ namespace lapack_wrapper {
     integer         ldB
   ) {
     this->allocate( NRC );
-    integer info1 = gecopy( NRC, NRC, A_data, ldA, m_A_saved, NRC );
-    integer info2 = gecopy( NRC, NRC, B_data, ldB, m_B_saved, NRC );
+    integer info1 { gecopy( NRC, NRC, A_data, ldA, m_A_saved, NRC ) };
+    integer info2 { gecopy( NRC, NRC, B_data, ldB, m_B_saved, NRC ) };
     UTILS_ASSERT(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvectors::setup, call gecopy return info1 = {}, info2 = {}\n",
@@ -648,8 +617,8 @@ namespace lapack_wrapper {
   void
   GeneralizedEigenvectors<T>::setup( MatW const & A, MatW const & B ) {
     this->allocate( A.nrows() );
-    integer info1 = gecopy( m_N, m_N, A.data(), A.ldim(), m_A_saved, m_N );
-    integer info2 = gecopy( m_N, m_N, B.data(), B.ldim(), m_B_saved, m_N );
+    integer info1 { gecopy( m_N, m_N, A.data(), A.ldim(), m_A_saved, m_N ) };
+    integer info2 { gecopy( m_N, m_N, B.data(), B.ldim(), m_B_saved, m_N ) };
     UTILS_ASSERT(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvectors::setup, call gecopy return info1 = {}, info2 = {}\n",
@@ -714,7 +683,7 @@ namespace lapack_wrapper {
   ) const {
     re.clear(); re.reserve( m_N );
     im.clear(); im.reserve( m_N );
-    for ( int i = 0; i < m_N; ++i ) {
+    for ( int i{0}; i < m_N; ++i ) {
       re.push_back( m_alphaRe[i] / m_beta[i] );
       im.push_back( m_alphaIm[i] / m_beta[i] );
     }
@@ -728,7 +697,7 @@ namespace lapack_wrapper {
     std::vector<std::complex<real_type> > & eigs
   ) const {
     eigs.clear(); eigs.reserve( m_N );
-    for ( int i = 0; i < m_N; ++i )
+    for ( int i{0}; i < m_N; ++i )
       eigs.push_back(
         std::complex<real_type>( m_alphaRe[i], m_alphaIm[i] ) / m_beta[i]
       );
@@ -742,14 +711,14 @@ namespace lapack_wrapper {
     std::vector<std::vector<complex_type> > & vecs
   ) const {
     vecs.resize( size_t(m_N) );
-    for ( integer n = 0; n < m_N; ++n ) {
+    for ( integer n{0}; n < m_N; ++n ) {
       std::vector<complex_type> & v = vecs[n];
       v.clear(); v.reserve( size_t(m_N) );
-      T const * vr = m_VL + n * m_N;
+      T const * vr { m_VL + n * m_N };
       if ( m_alphaIm[n] > 0 ) {
         std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
-        T const * vi = vr + m_N;
+        T const * vi { vr + m_N };
         for ( integer j{0}; j < m_N; ++j ) {
           // salvo vettore "gia" coniugato
           v.push_back( complex_type( vr[j], -vi[j] ) );
@@ -770,14 +739,14 @@ namespace lapack_wrapper {
     std::vector<std::vector<complex_type> > & vecs
   ) const {
     vecs.resize( size_t(m_N) );
-    for ( integer n = 0; n < m_N; ++n ) {
+    for ( integer n{0}; n < m_N; ++n ) {
       std::vector<complex_type> & v = vecs[n];
       v.clear(); v.reserve( size_t(m_N) );
-      T const * vr = m_VR + n * m_N;
+      T const * vr { m_VR + n * m_N };
       if ( m_alphaIm[n] > 0 ) {
         std::vector<complex_type> & v1 = vecs[++n];
         v1.clear(); v1.reserve( m_N );
-        T const * vi = vr + m_N;
+        T const * vi { vr + m_N };
         for ( integer j{0}; j < m_N; ++j ) {
           v.push_back( complex_type( vr[j], vi[j] ) );
           v1.push_back( complex_type( vr[j], -vi[j] ) );

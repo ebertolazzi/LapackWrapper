@@ -176,7 +176,7 @@ static void print_double_matrix( char const * name, int m_A, int n_A,
 // ============================================================================
 static void print_double_vector( char const * name, int n_v, double * buff_v ) {
   printf( "%s = [\n", name );
-  for( int i = 0; i < n_v; i++ ) {
+  for( int i{0}; i < n_v; i++ ) {
     printf( "%le\n", buff_v[ i ] );
   }
   printf( "\n" );
@@ -186,7 +186,7 @@ static void print_double_vector( char const * name, int n_v, double * buff_v ) {
 // ============================================================================
 static void print_int_vector( char const * name, int n_v, int * buff_v ) {
   printf( "%s = [\n", name );
-  for( int i = 0; i < n_v; i++ ) {
+  for( int i{0}; i < n_v; i++ ) {
     printf( "%d\n", buff_v[ i ] );
   }
   printf( "];\n" );
@@ -194,14 +194,14 @@ static void print_int_vector( char const * name, int n_v, int * buff_v ) {
 
 // ============================================================================
 static void init_pvt( int n_p, int * buff_p ) {
-  for( int i = 0; i < n_p; i++ ) {
+  for( int i{0}; i < n_p; i++ ) {
     buff_p[ i ] = ( i + 1 );
   }
 }
 
 // ============================================================================
 static void set_pvt_to_zero( int n_p, int * buff_p ) {
-  for( int i = 0; i < n_p; i++ ) {
+  for( int i{0}; i < n_p; i++ ) {
     buff_p[ i ] = 0;
   }
 }

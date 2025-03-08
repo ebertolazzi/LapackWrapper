@@ -114,9 +114,9 @@ testSparseTool( istream_type & mm_file ) {
   fmt::print("solve  (bicgstab) ...\n");
   tm.tic();
 
-  double               epsi       = 1e-15;
-  Sparse_tool::integer maxIter    = 1000;
-  Sparse_tool::integer maxSubIter = 50;
+  double               epsi       { 1e-15 };
+  Sparse_tool::integer maxIter    { 1000 };
+  Sparse_tool::integer maxSubIter { 50 };
   Sparse_tool::integer iter;
   //double  res = bicgstab( A, rhs, x, preco, epsi, maxIter, iter, &cout );
   double  res = gmres( A, rhs, x, preco, epsi, maxSubIter, maxIter, iter, &cout );
@@ -214,7 +214,7 @@ testSparseTool( istream_type & mm_file ) {
 
 int
 main() {
-  char const * rMatrix[] = {
+  char const * rMatrix[]{
     //"af23560.mtx", // MA48 fails
     //"memplus.mtx", //
     //"fidap005.mtx",

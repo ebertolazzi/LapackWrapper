@@ -14,22 +14,22 @@ namespace Sparse_tool {
     Vector<real_type>           & y,
     Vector<real_type>     const & v
   ) {
-    real_type a0 = 3.0/2.0;
-    real_type a1 = -10.0/3.0;
-    real_type b1 = 4;
+    real_type a0 { 3.0/2.0 };
+    real_type a1 { -10.0/3.0 };
+    real_type b1 { 4 };
     // s0 = 1.5*v; s1 = 4*v - 10/3 * A*v
     s1  = a0*v;
     y   = b1*v;
     y  += a1*A*v;
-    for ( integer i_n = 2; i_n <= mdegree; ++i_n ) {
+    for ( integer i_n{2}; i_n <= mdegree; ++i_n ) {
       s0 = s1;
       s1 = y;
-      real_type n     = i_n;
-      real_type n2sq  = (n+2)*(n+2);
-      real_type Delta = 2*((3*n+6)*n+2)/((2*n+1)*n2sq);
-      real_type c     = Delta-1;
-      real_type b     = 2-Delta;
-      real_type a     = 2*(3*n+5)/n2sq-4;
+      real_type n     { i_n };
+      real_type n2sq  { (n+2)*(n+2) };
+      real_type Delta { 2*((3*n+6)*n+2)/((2*n+1)*n2sq) };
+      real_type c     { Delta-1 };
+      real_type b     { 2-Delta };
+      real_type a     { 2*(3*n+5)/n2sq-4 };
       // y = a*(A*s1-v)+b*s1+c*s0;
       y  = b*s1+c*s0-a*v;
       y += a*A*s1;
@@ -88,7 +88,7 @@ namespace Sparse_tool {
       A.nrows(), A.ncols(), b.size(), x.size()
     );
 
-    integer neq = b.size();
+    integer neq{ static_cast<integer>(b.size()) };
 
     // memorizzo matrice scalata
     CRowMatrix<real_type> Ascaled(A);
@@ -101,8 +101,8 @@ namespace Sparse_tool {
     // step 0: compute necessary memory
     dScale.setZero();
     for ( Ascaled.Begin(); Ascaled.End(); Ascaled.Next() ) {
-      integer i = Ascaled.row();
-      //integer j = A.column();
+      integer i{ Ascaled.row() };
+      //integer j{ A.column() };
       dScale(i) += abs(Ascaled.value());
     }
 
@@ -110,8 +110,8 @@ namespace Sparse_tool {
 
     // scale matrix values
     for ( Ascaled.Begin(); Ascaled.End(); Ascaled.Next() ) {
-      integer i = Ascaled.row();
-      integer j = Ascaled.column();
+      integer i{ Ascaled.row() };
+      integer j{ Ascaled.column() };
       Ascaled.value() /= dScale(i)*dScale(j);
     }
 
@@ -133,16 +133,14 @@ namespace Sparse_tool {
 
       resid = r.template lpNorm<Eigen::Infinity>();
       if ( pStream != nullptr )
-        fmt::print( *pStream,
-          "[cg_poly] iter = {:4} residual = {:.6}\n", iter, resid
-        );
+        fmt::print( *pStream, "[cg_poly] iter = {:4} residual = {:.6}\n", iter, resid );
 
       if ( resid <= epsi ) break;
 
       // prodotto matrice vettore
       Ap = Ascaled * p;
 
-      real_type alpha = rho/Ap.dot(p);
+      real_type alpha{ rho/Ap.dot(p) };
       x += alpha * p;
       r -= alpha * Ap;
 

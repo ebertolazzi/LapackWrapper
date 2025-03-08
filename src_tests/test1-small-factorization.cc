@@ -48,10 +48,10 @@ test1() {
 
   lapack_wrapper::QR<real_type> qr;
 
-  constexpr integer M   = 3;
-  constexpr integer N   = 5;
-  constexpr integer LDA = 3;
-  real_type A[] = {
+  constexpr integer M   {3};
+  constexpr integer N   {5};
+  constexpr integer LDA {3};
+  real_type A[]{
     0.001,      2,     3,
     0.001,  0.001,     0,
     0,      0.001,     0,
@@ -74,7 +74,7 @@ test1() {
   fmt::print( "\nR=\n{}", lapack_wrapper::print_matrix( M, M, R, M ) );
 
   real_type rhs[M], b[M];
-  real_type x[N] = {1,2,3,4,5};
+  real_type x[N]{1,2,3,4,5};
   lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, rhs, 1 );
   lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, b,   1 );
 
@@ -95,7 +95,7 @@ test1() {
   );
 
   lapack_wrapper::gemv( -1.0, Amat, x, 1, 1.0, b, 1 );
-  real_type res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res{ lapack_wrapper::nrm2( M, b, 1 ) };
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print(
@@ -112,10 +112,10 @@ static
 void
 test2() {
   lapack_wrapper::QRP<real_type> qr;
-  constexpr integer M   = 3;
-  constexpr integer N   = 5;
-  constexpr integer LDA = 3;
-  real_type A[] = {
+  constexpr integer M   {3};
+  constexpr integer N   {5};
+  constexpr integer LDA {3};
+  real_type A[]{
     0.001,      2,     3,
     0.001,  0.001,     0,
     0,      0.001,     0,
@@ -135,7 +135,7 @@ test2() {
   fmt::print( "\nR=\n{}", lapack_wrapper::print_matrix( M, M, R, M ) );
 
   real_type rhs[M], b[M];
-  real_type x[N] = {1,2,3,4,5};
+  real_type x[N]{1,2,3,4,5};
   lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, rhs, 1 );
   lapack_wrapper::gemv( 1.0, Amat, x, 1, 0.0, b,   1 );
 
@@ -157,7 +157,7 @@ test2() {
   );
 
   lapack_wrapper::gemv( -1.0, Amat, x, 1, 1.0, b, 1 );
-  real_type res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res{ lapack_wrapper::nrm2( M, b, 1 ) };
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print(
@@ -174,10 +174,10 @@ static
 void
 test3() {
   lapack_wrapper::QRP<real_type> qr;
-  constexpr integer M   = 5;
-  constexpr integer N   = 5;
-  constexpr integer LDA = 5;
-  constexpr real_type A[] = {
+  constexpr integer M   {5};
+  constexpr integer N   {5};
+  constexpr integer LDA {5};
+  constexpr real_type A[]{
     0.001,      2,     3,     2, 3,
     0.001,  0.001,     0, 0.001, 1e-10,
     0,      0.001,     0, 0.001, 1e-12,
@@ -197,13 +197,9 @@ test3() {
   fmt::print( "\nR=\n{}", lapack_wrapper::print_matrix( M, M, R, M ) );
 
   real_type rhs[M], b[M];
-  real_type x[N] = {1,2,3,4,5};
-  lapack_wrapper::gemv(
-    Transposition::NO, M, N, 1, A, LDA, x, 1, 0, rhs, 1
-  );
-  lapack_wrapper::gemv(
-    Transposition::NO, M, N, 1, A, LDA, x, 1, 0, b, 1
-  );
+  real_type x[N]{1,2,3,4,5};
+  lapack_wrapper::gemv( Transposition::NO, M, N, 1, A, LDA, x, 1, 0, rhs, 1 );
+  lapack_wrapper::gemv( Transposition::NO, M, N, 1, A, LDA, x, 1, 0, b, 1 );
 
   fmt::print(
     "\nLS solution of A x = b\n\n"
@@ -228,7 +224,7 @@ test3() {
     lapack_wrapper::print_matrix( 1, M, b, 1 )
   );
 
-  real_type res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res{ lapack_wrapper::nrm2( M, b, 1 ) };
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print( "‖res‖₂ = {}\n", res );
@@ -263,9 +259,9 @@ test4() {
   lapack_wrapper::LSS<real_type>  lss;
   lapack_wrapper::LSY<real_type>  lsy;
 
-  constexpr integer M   = 5;
-  constexpr integer LDA = 5;
-  real_type A[] = {
+  constexpr integer M   {5};
+  constexpr integer LDA {5};
+  real_type A[]{
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
@@ -274,7 +270,7 @@ test4() {
   };
 
   real_type rhs[M], b[M], res;
-  real_type x[M] = {1,2,3,4,5};
+  real_type x[M]{1,2,3,4,5};
   lapack_wrapper::gemv(
     Transposition::NO, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
@@ -330,9 +326,9 @@ test5() {
   lapack_wrapper::LSS<real_type>  lss;
   lapack_wrapper::LSY<real_type>  lsy;
 
-  constexpr integer M   = 5;
-  constexpr integer LDA = 5;
-  real_type A[] = {
+  constexpr integer M   {5};
+  constexpr integer LDA {5};
+  real_type A[]{
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
     0,      0.001,     0,   0.001,  1e-12,
@@ -341,13 +337,9 @@ test5() {
   };
 
   real_type rhs[M], b[M], res;
-  real_type x[M] = {1,2,3,4,5};
-  lapack_wrapper::gemv(
-    Transposition::YES, M, M, 1, A, LDA, x, 1, 0, rhs, 1
-  );
-  lapack_wrapper::gemv(
-    Transposition::YES, M, M, 1, A, LDA, x, 1, 0, b, 1
-  );
+  real_type x[M]{1,2,3,4,5};
+  lapack_wrapper::gemv( Transposition::YES, M, M, 1, A, LDA, x, 1, 0, rhs, 1 );
+  lapack_wrapper::gemv( Transposition::YES, M, M, 1, A, LDA, x, 1, 0, b, 1 );
 
   msg.green( fmt::format(
     "\n\n\nTest5:\n\nInitial A\n{}\n",
@@ -379,7 +371,7 @@ test6() {
   constexpr real_type U[]{ -1, -10, -2, 0.1 };
 
   real_type rhs[N], b[N];
-  real_type x[N] = {1,2,3,4,5};
+  real_type x[N]{1,2,3,4,5};
   qr.axpy( N, 1.0, L, D, U, x, 0.0, rhs );
   qr.axpy( N, 1.0, L, D, U, x, 0.0, b   );
 
@@ -420,7 +412,7 @@ test6() {
     lapack_wrapper::print_matrix( 1, N, b, 1 )
   );
 
-  real_type res = lapack_wrapper::nrm2( N, b, 1 );
+  real_type res{ lapack_wrapper::nrm2( N, b, 1 ) };
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print( "‖res‖₂ = {}\n", res );
@@ -433,8 +425,8 @@ void
 test7() {
   lapack_wrapper::QRP<real_type> qrp;
 
-  constexpr integer M   = 5;
-  constexpr integer LDA = 5;
+  constexpr integer M   {5};
+  constexpr integer LDA {5};
   constexpr real_type A[]{
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
@@ -444,13 +436,9 @@ test7() {
   };
 
   real_type rhs[M], b[M];
-  real_type x[M] = {1,2,3,4,5};
-  lapack_wrapper::gemv(
-    Transposition::YES, M, M, 1, A, LDA, x, 1, 0, rhs, 1
-  );
-  lapack_wrapper::gemv(
-    Transposition::YES, M, M, 1, A, LDA, x, 1, 0, b, 1
-  );
+  real_type x[M]{1,2,3,4,5};
+  lapack_wrapper::gemv( Transposition::YES, M, M, 1, A, LDA, x, 1, 0, rhs, 1 );
+  lapack_wrapper::gemv( Transposition::YES, M, M, 1, A, LDA, x, 1, 0, b, 1 );
 
   msg.green( fmt::format(
     "\n\n\nTest7:\n\nInitial A\n{}\n",
@@ -477,7 +465,7 @@ test7() {
     lapack_wrapper::print_matrix( 1, M, b, 1 )
   );
 
-  real_type res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res{ lapack_wrapper::nrm2( M, b, 1 ) };
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print( "‖res‖₂ = {}\n", res );
@@ -490,8 +478,8 @@ void
 test8() {
   lapack_wrapper::LSC<real_type> lsc;
 
-  constexpr integer M   = 5;
-  constexpr integer LDA = 5;
+  constexpr integer M   {5};
+  constexpr integer LDA {5};
   constexpr real_type A[]{
     0.001,      2,     3,       2,      3,
     0.001,  0.001,     0,   0.001,  1e-10,
@@ -501,10 +489,10 @@ test8() {
   };
 
   real_type rhs[M], b[M];
-  real_type x[M] = {1,2,3,4,5};
-  //bool      rselect[M] = { true, true, true, true, true };
-  //bool      rselect[M] = { false, false, false, false, false };
-  constexpr bool rselect[M] = { true, false, true, true, true };
+  real_type x[M]{1,2,3,4,5};
+  //bool      rselect[M]{ true, true, true, true, true };
+  //bool      rselect[M]{ false, false, false, false, false };
+  constexpr bool rselect[M]{ true, false, true, true, true };
   lapack_wrapper::gemv(
     Transposition::NO, M, M, 1, A, LDA, x, 1, 0, rhs, 1
   );
@@ -538,7 +526,7 @@ test8() {
     lapack_wrapper::print_matrix( 1, M, b, 1 )
   );
 
-  real_type res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res{ lapack_wrapper::nrm2( M, b, 1 ) };
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print( "‖res‖₂ = {}\n", res );
@@ -601,7 +589,7 @@ test9() {
     lapack_wrapper::print_matrix( 1, M, b, 1 )
   );
 
-  real_type res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res{ lapack_wrapper::nrm2( M, b, 1 ) };
   UTILS_WARNING( res < 1e-6, "\n\n\n\ntest failed! res = {}\n\n\n\n", res );
 
   fmt::print( "‖res‖₂ = {}\n", res );
@@ -634,9 +622,9 @@ void
 test10() {
   lapack_wrapper::PINV<real_type> pinv;
 
-  constexpr integer M   = 6;
-  constexpr integer N   = 4;
-  constexpr integer LDA = 6;
+  constexpr integer M   {6};
+  constexpr integer N   {4};
+  constexpr integer LDA {6};
   constexpr real_type A[]{
     2,   1,  2,  1, 1, 1,
     2,   1,  2,  1, 1, 1,
@@ -683,7 +671,7 @@ test10() {
     lapack_wrapper::print_matrix( 1, M, b, 1 )
   );
 
-  real_type res = lapack_wrapper::nrm2( M, b, 1 );
+  real_type res{ lapack_wrapper::nrm2( M, b, 1 ) };
   UTILS_ASSERT( res < 1e-6, "test failed! res = {}\n", res );
 
   fmt::print( "‖res‖₂ = {}\n", res );
@@ -696,9 +684,9 @@ void
 test11() {
   lapack_wrapper::PINV<real_type> pinv;
 
-  constexpr integer M   = 6;
-  constexpr integer N   = 4;
-  constexpr integer LDA = 6;
+  constexpr integer M   {6};
+  constexpr integer N   {4};
+  constexpr integer LDA {6};
   constexpr real_type A[]{
     2,   1,  2,  1, 1, 1,
     2,   1,  2,  1, 1, 1,
@@ -707,7 +695,7 @@ test11() {
   };
 
   real_type rhs[N], b[N], b2[2*N], x[M], x2[2*M];
-  real_type const xe[M] = {1,2,3,4,5,6};
+  real_type const xe[M]{1,2,3,4,5,6};
   lapack_wrapper::gemv( Transposition::YES, M, N, 1, A, LDA, xe, 1, 0, rhs, 1 );
   lapack_wrapper::copy( N, rhs, 1, b, 1 );
   lapack_wrapper::copy( N, rhs, 1, b2, 1 );
@@ -743,7 +731,7 @@ test11() {
     lapack_wrapper::print_matrix( 1, N, b, 1 )
   );
 
-  real_type res = lapack_wrapper::nrm2( N, b, 1 );
+  real_type res{ lapack_wrapper::nrm2( N, b, 1 ) };
   UTILS_WARNING(
     res < 1e-6,
     "\n\n\n\n\ntest failed! res = {}\n\n\n\n", res
@@ -759,9 +747,9 @@ void
 test12() {
   lapack_wrapper::PINV<real_type> pinv;
 
-  constexpr integer M   = 8;
-  constexpr integer N   = 5;
-  constexpr integer LDA = M;
+  constexpr integer M   {8};
+  constexpr integer N   {5};
+  constexpr integer LDA {M};
   constexpr real_type A[]{
     0.001, 1e-9,  1e-9,  1e-9, 1, 1, 0, 0,
     1,    -1e+9, -1e+9, -1e+9, 1, 1, 0, 0,
@@ -804,7 +792,7 @@ R1
   real_type MAT[M*M], MAT1[M*M], MM[M*M];
 
   real_type rhs[N];
-  real_type const xe[M] = {1,2,3,4,5,6,7,8};
+  real_type const xe[M]{1,2,3,4,5,6,7,8};
   lapack_wrapper::gemv( Transposition::YES, M, N, 1, A, LDA, xe, 1, 0, rhs, 1 );
 
   msg.green( fmt::format(
@@ -820,7 +808,7 @@ R1
   lapack_wrapper::geid( M, M, MAT, M );
 
   pinv.mult_inv( M, MAT, M, MAT1, N );
-  //for ( integer i = 0; i < M; ++i )
+  //for ( integer i{0}; i < M; ++i )
   //  pinv.mult_inv( MAT+M*i, 1, MAT1+N*i, 1 );
 
   msg.blue( fmt::format(
@@ -857,7 +845,7 @@ R1
   lapack_wrapper::geid( N, N, MAT, N );
 
   pinv.t_mult_inv( N, MAT, N, MAT1, M );
-  //for ( integer i = 0; i < N; ++i )
+  //for ( integer i{0}; i < N; ++i )
   //  pinv.t_mult_inv( MAT+N*i, 1, MAT1+M*i, 1 );
 
   msg.blue( fmt::format(

@@ -58,8 +58,8 @@ namespace Sparse_tool {
 
       // insert values
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
+        integer i{ A.row() };
+        integer j{ A.column() };
         Amat.insert(i,j) = A.value().real() + A.value().imag();
       }
 
@@ -86,8 +86,8 @@ namespace Sparse_tool {
     void
     ass_preco( VECTOR & _y, VECTOR const & v ) const {
       preco.ass_preco(_y,v);
-      real_type cst = real_type(0.5,-0.5);
-      for ( integer k=0; k < neq; ++k ) _y(k) *= cst;
+      std::complex<real_type> cst{0.5,-0.5};
+      for ( integer k{0}; k < neq; ++k ) _y(k) *= cst;
     }
   };
 

@@ -66,7 +66,7 @@ namespace lapack_wrapper {
 
     integer
     iaddr( integer i, integer j ) const {
-      integer d = (i-j+m_nL+m_nU);
+      integer d{ i - j + m_nL + m_nU };
       return d+j*m_ldAB;
     }
 

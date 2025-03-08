@@ -62,7 +62,7 @@ namespace Sparse_tool {
     using std::abs;
     using vType = typename vector_type::real_type;
 
-    integer neq = b.size();
+    integer neq{ static_cast<integer>(b.size()) };
     vector_type p(neq), s(neq), t(neq), v(neq), r(neq), rtilde(neq);
 
     iter = 1;
@@ -80,7 +80,7 @@ namespace Sparse_tool {
 
     r /= P;
 
-    real_type resid = r.template lpNorm<Eigen::Infinity>();
+    real_type resid{ r.template lpNorm<Eigen::Infinity>() };
     if ( pStream != nullptr )
       fmt::print( *pStream,
         "[bicgstab] initial (preconditioned) residual   = {}\n",

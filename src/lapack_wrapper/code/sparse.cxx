@@ -83,8 +83,8 @@ namespace lapack_wrapper {
     case 3:
       for ( integer j{0}; j < Matrix.ncols(); ++j ) {
         for ( integer i{0}; i < Matrix.nrows(); ++i ) {
-          integer ii = i;
-          integer jj = j;
+          integer ii{i};
+          integer jj{j};
           if ( transpose ) std::swap( ii, jj );
           T const & v = Matrix(i,j);
           this->push_value_C( ii, jj, v );
@@ -95,8 +95,8 @@ namespace lapack_wrapper {
     case -3:
       for ( integer j{0}; j < Matrix.ncols(); ++j ) {
         for ( integer i{0}; i < Matrix.nrows(); ++i ) {
-          integer ii = i;
-          integer jj = j;
+          integer ii{i};
+          integer jj{j};
           if ( transpose ) std::swap( ii, jj );
           T const & v{ Matrix(i,j) };
           this->push_value_C( ii, jj, v );
@@ -138,7 +138,7 @@ namespace lapack_wrapper {
     case 2:
     case -1:
     case -2:
-      for ( integer index = 0; index < Matrix.get_nnz(); ++index ) {
+      for ( integer index{0}; index < Matrix.get_nnz(); ++index ) {
         integer   i { rowsM[index] };
         integer   j { colsM[index] };
         T const & v { valsM[index] };
@@ -253,10 +253,10 @@ namespace lapack_wrapper {
       }
     } else {
       this->y_manage( beta, DimY, y, incY );
-      integer offs = m_fortran_indexing ? -1 : 0;
-      for ( integer idx = 0; idx < m_nnz; ++idx ) {
-        integer i = m_rows[idx] + offs;
-        integer j = m_cols[idx] + offs;
+      integer offs{ m_fortran_indexing ? -1 : 0 };
+      for ( integer idx{0}; idx < m_nnz; ++idx ) {
+        integer i{ m_rows[idx] + offs };
+        integer j{ m_cols[idx] + offs };
         y[ i * incY ] += alpha * m_vals[idx] * x[ j * incX ];
       }
     }
@@ -304,10 +304,10 @@ namespace lapack_wrapper {
       }
     } else {
       this->y_manage( beta, DimY, y, incY );
-      integer offs = m_fortran_indexing ? -1 : 0;
-      for ( integer idx = 0; idx < m_nnz; ++idx ) {
-        integer j = m_rows[idx] + offs;
-        integer i = m_cols[idx] + offs;
+      integer offs{ m_fortran_indexing ? -1 : 0 };
+      for ( integer idx{0}; idx < m_nnz; ++idx ) {
+        integer j{ m_rows[idx] + offs };
+        integer i{ m_cols[idx] + offs };
         y[ i * incY ] += alpha * m_vals[idx] * x[ j * incX ];
       }
     }
@@ -332,11 +332,11 @@ namespace lapack_wrapper {
       DimX, DimY, m_nrows, m_ncols
     );
     this->y_manage( beta, DimY, y, incY );
-    integer offs = m_fortran_indexing ? -1 : 0;
-    for ( integer idx = 0; idx < m_nnz; ++idx ) {
-      integer   i   = m_rows[idx] + offs;
-      integer   j   = m_cols[idx] + offs;
-      real_type tmp = alpha * m_vals[idx];
+    integer offs{ m_fortran_indexing ? -1 : 0 };
+    for ( integer idx{ 0}; idx < m_nnz; ++idx ) {
+      integer   i   { m_rows[idx] + offs };
+      integer   j   { m_cols[idx] + offs };
+      real_type tmp { alpha * m_vals[idx] };
       if ( i == j ) {
         y[ i * incY ] += tmp * x[ j * incX ];
       } else {
@@ -408,7 +408,7 @@ namespace lapack_wrapper {
     m_vals.resize( size_t(m_nnz) );
     m_cols.clear(); m_cols.reserve( size_t(m_nnz) );
     m_rows.clear(); m_rows.reserve( size_t(m_nnz) );
-    integer offs = fi ? 1 : 0;
+    integer offs{ fi ? 1 : 0 };
     for ( integer j{0}; j < M; ++j ) {
       for ( integer i{0}; i < N; ++i ) {
         m_rows.push_back( i+offs );
@@ -429,7 +429,7 @@ namespace lapack_wrapper {
     m_vals.resize( size_t(m_nnz) );
     m_cols.clear(); m_cols.reserve( size_t(m_nnz) );
     m_rows.clear(); m_rows.reserve( size_t(m_nnz) );
-    integer offs = fi ? 1 : 0;
+    integer offs{ fi ? 1 : 0 };
     for ( integer i{0}; i < N; ++i ) {
       for ( integer j{0}; j < M; ++j ) {
         m_rows.push_back( i+offs );

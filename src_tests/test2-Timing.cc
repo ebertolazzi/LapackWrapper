@@ -68,12 +68,12 @@ testMM() {
   baseValue.allocate(N*N*10);
   baseIndex.allocate(N*10);
 
-  real_type * M1 = baseValue(N*N);
-  real_type * M2 = baseValue(N*N);
-  real_type * M3 = baseValue(N*N);
+  real_type * M1 { baseValue(N*N) };
+  real_type * M2 { baseValue(N*N) };
+  real_type * M3 { baseValue(N*N) };
 
-  for ( int i = 0; i < N; ++i ) {
-    for ( int j = 0; j < N; ++j ) {
+  for ( int i{0}; i < N; ++i ) {
+    for ( int j{0}; j < N; ++j ) {
       M1[i+j*N] = rand(-1,1);
       M2[i+j*N] = rand(-1,1);
       M3[i+j*N] = rand(-1,1);
@@ -85,7 +85,7 @@ testMM() {
   // ===========================================================================
 
   tm.tic();
-  for ( int i = 0; i < N_TIMES; ++i ) {
+  for ( int i{0}; i < N_TIMES; ++i ) {
     gemm(
       Transposition::NO,
       Transposition::NO,
@@ -102,7 +102,7 @@ testMM() {
   // ===========================================================================
 
   tm.tic();
-  for ( int i = 0; i < N_TIMES; ++i ) {
+  for ( int i{0}; i < N_TIMES; ++i ) {
     MM<real_type,N,N,N,N,N,N>::subTo(M1,M2,M3);
     memcpy( M2, M3, N*N*sizeof(real_type) );
     //Vec2<real_type,N*N,1,1>::copy(M3,M2);
@@ -131,14 +131,14 @@ testMv() {
   baseValue.allocate(N*N*10);
   baseIndex.allocate(N*10);
 
-  real_type * M = baseValue(N*N);
-  real_type * V = baseValue(N);
-  real_type * R = baseValue(N);
+  real_type * M { baseValue(N*N) };
+  real_type * V { baseValue(N) };
+  real_type * R { baseValue(N) };
 
-  for ( int i = 0; i < N; ++i ) {
+  for ( int i{0}; i < N; ++i ) {
     V[i] = rand(-1,1);
     R[i] = rand(-1,1);
-    for ( int j = 0; j < N; ++j ) {
+    for ( int j{0}; j < N; ++j ) {
       M[i+j*N] = rand(-1,1);
     }
   }
@@ -148,7 +148,7 @@ testMv() {
   // ===========================================================================
 
   tm.tic();
-  for ( int i = 0; i < N_TIMES; ++i ) {
+  for ( int i{0}; i < N_TIMES; ++i ) {
     gemv(
       Transposition::NO,
       N, N,
@@ -165,7 +165,7 @@ testMv() {
   // ===========================================================================
 
   tm.tic();
-  for ( int i = 0; i < N_TIMES; ++i ) {
+  for ( int i{0}; i < N_TIMES; ++i ) {
     Mv<real_type,N,N,N,N,N>::subTo(M,V,R);
     memcpy( V, R, N*sizeof(real_type) );
     //Vec2<real_type,N*N,1,1>::copy(M3,M2);
@@ -194,12 +194,12 @@ testCopy() {
   baseValue.allocate(N*N*10);
   baseIndex.allocate(N*10);
 
-  real_type * M1 = baseValue(N*N);
-  real_type * M2 = baseValue(N*N);
-  real_type * M3 = baseValue(N*N);
+  real_type * M1 { baseValue(N*N) };
+  real_type * M2 { baseValue(N*N) };
+  real_type * M3 { baseValue(N*N) };
 
-  for ( int i = 0; i < N; ++i ) {
-    for ( int j = 0; j < N; ++j ) {
+  for ( int i{0}; i < N; ++i ) {
+    for ( int j{0}; j < N; ++j ) {
       M1[i+j*N] = rand(-1,1);
       M2[i+j*N] = rand(-1,1);
       M3[i+j*N] = rand(-1,1);
@@ -211,7 +211,7 @@ testCopy() {
   // ===========================================================================
 
   tm.tic();
-  for ( int i = 0; i < N_TIMES; ++i ) {
+  for ( int i{0}; i < N_TIMES; ++i ) {
     gecopy( N, N, M1, N, M2, N );
     M1[0] += M2[0];
     gecopy( N, N, M1, N, M2, N );

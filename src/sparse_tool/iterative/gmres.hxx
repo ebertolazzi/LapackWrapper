@@ -103,9 +103,9 @@ namespace Sparse_tool {
       A.nrows(), A.ncols(), b.size(), x.size()
     );
 
-    real_type resid = 0;
-    integer   m1    = m+1;
-    integer   neq   = b.size();
+    real_type resid { 0 };
+    integer   m1    { m+1 };
+    integer   neq   { static_cast<integer>(b.size()) };
     vector_type w(neq), r(neq), H(m1*m1), s(m1), cs(m1), sn(m1);
 
     Eigen::Matrix<typename vector_type::real_type,Eigen::Dynamic,Eigen::Dynamic> v(neq,m+1);
@@ -127,13 +127,13 @@ namespace Sparse_tool {
           r.template lpNorm<Eigen::Infinity>()
         );
 
-      real_type beta = r.norm();
+      real_type beta{ r.norm() };
       if ( beta <= epsi ) goto fine;
 
-      typename vector_type::real_type betax = beta;
+      typename vector_type::real_type betax{beta};
       v.col(0) = r / betax;
       s(0)     = beta;
-      for ( integer k = 1; k <= m; ++k ) s(k) = 0;
+      for ( integer k{1}; k <= m; ++k ) s(k) = 0;
 
       integer i{0};
       do {
@@ -165,13 +165,13 @@ namespace Sparse_tool {
       } while ( i < m && iter <= maxIter && resid > epsi );
 
       // Backsolve:
-      for ( int ii = i-1; ii >= 0; --ii ) {
+      for ( int ii{ i-1 }; ii >= 0; --ii ) {
         s(ii) /= H(ii*m1+ii);
-        for ( int jj = ii - 1; jj >= 0; --jj )
+        for ( int jj{ ii - 1 }; jj >= 0; --jj )
           s(jj) -= H(jj*m1+ii) * s(ii);
       }
 
-      for ( integer jj = 0; jj < i; ++jj )
+      for ( integer jj{0}; jj < i; ++jj )
         x += v.col(jj) * s(jj);
 
     } while ( iter <= maxIter );

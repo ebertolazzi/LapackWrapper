@@ -36,11 +36,8 @@ namespace lapack_wrapper {
   integer
   QR_no_alloc<T>::get_Lwork_QR( integer NR, integer NC ) {
     real_type tmp; // get optimal allocation
-    integer info = geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 );
-    UTILS_ASSERT(
-      info == 0,
-      "QR_no_alloc::get_Lwork_QR call lapack_wrapper::geqrf return info = {}\n", info
-    );
+    integer info { geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 ) };
+    UTILS_ASSERT( info == 0, "QR_no_alloc::get_Lwork_QR call lapack_wrapper::geqrf return info = {}\n", info );
     return std::max( integer(tmp), std::max( NR, NC ) );
   }
 
@@ -58,14 +55,14 @@ namespace lapack_wrapper {
     m_ncols      = NC;
     m_nReflector = std::min(NR,NC);
     m_LworkQR    = this->get_Lwork_QR( NR, NC );
-    integer Lwmin = m_LworkQR + NR*NC + m_nReflector;
+    integer Lwmin{ m_LworkQR + NR*NC + m_nReflector };
     UTILS_ASSERT(
       Lwork >= Lwmin,
       "QR_no_alloc::no_allocate( NR = {}, NC = {}, Lwork {}, .. )\n"
       "Lwork must be >= {}\n",
       NR, NC, Lwork, Lwmin
     );
-    real_type * ptr = Work;
+    real_type * ptr{ Work };
     m_Afactorized = ptr; ptr += NR*NC;
     m_Tau         = ptr; ptr += m_nReflector;
     m_WorkQR      = ptr;
@@ -80,7 +77,7 @@ namespace lapack_wrapper {
     real_type const A[],
     integer         LDA
   ) {
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
     UTILS_ASSERT(
       info == 0,
       "QR_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
@@ -99,8 +96,8 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   QR_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
-    bool ok = info == 0;
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
+    bool ok{ info == 0 };
     if ( ok ) {
       info = geqrf( m_nrows, m_ncols, m_Afactorized, m_nrows, m_Tau, m_WorkQR, m_LworkQR );
       ok = info == 0;
@@ -133,7 +130,7 @@ namespace lapack_wrapper {
       nRefl, NR, NC, ldC,
       m_nrows, m_ncols
     );
-    integer info = ormqr(
+    integer info{ ormqr(
       SIDE, TRANS,
       NR, NC,
       nRefl,  // numero riflettori usati nel prodotto Q
@@ -141,7 +138,7 @@ namespace lapack_wrapper {
       m_Tau,
       C, ldC,
       m_WorkQR, m_LworkQR
-    );
+    ) };
     UTILS_ASSERT(
       info == 0,
       "QR_no_alloc::applyQ call lapack_wrapper::ormqr return info = {} Lwork = {}\n",
@@ -339,7 +336,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR_no_alloc<T>::getR( real_type R[], integer ldR ) const {
-    integer minRC = std::min( m_nrows, m_ncols );
+    integer minRC{ std::min( m_nrows, m_ncols ) };
     gezero( minRC, minRC, R, ldR );
     for ( integer i{0}; i < minRC; ++i )
       for ( integer j{i}; j < minRC; ++j )
@@ -351,7 +348,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR_no_alloc<T>::getRt( real_type R[], integer ldR ) const {
-    integer minRC = std::min( m_nrows, m_ncols );
+    integer minRC{ std::min( m_nrows, m_ncols ) };
     gezero( minRC, minRC, R, ldR );
     for ( integer i{0}; i < minRC; ++i )
       for ( integer j{i}; j < minRC; ++j )
@@ -363,7 +360,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR_no_alloc<T>::getR( Matrix<T> & R ) const {
-    integer minRC = std::min( m_nrows, m_ncols );
+    integer minRC{ std::min( m_nrows, m_ncols ) };
     R.setup( minRC, minRC );
     R.zero_fill();
     for ( integer i{0}; i < minRC; ++i )
@@ -376,7 +373,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QR_no_alloc<T>::getRt( Matrix<T> & R ) const {
-    integer minRC = std::min( m_nrows, m_ncols );
+    integer minRC{ std::min( m_nrows, m_ncols ) };
     R.setup( minRC, minRC );
     R.zero_fill();
     for ( integer i{0}; i < minRC; ++i )
@@ -513,7 +510,7 @@ namespace lapack_wrapper {
   void
   QR<T>::allocate( integer NR, integer NC ) {
     if ( m_nrows != NR || m_ncols != NC ) {
-      integer Lwork = NR*NC + std::min( NR, NC ) + this->get_Lwork_QR( NR, NC );
+      integer Lwork{ NR*NC + std::min( NR, NC ) + this->get_Lwork_QR( NR, NC ) };
       this->no_allocate( NR, NC, Lwork, m_allocReals.realloc( size_t(Lwork) ) );
     }
   }
@@ -531,14 +528,14 @@ namespace lapack_wrapper {
   integer
   QRP_no_alloc<T>::get_Lwork_QRP( integer NR, integer NC ) {
     real_type tmp; // get optimal allocation
-    integer info = geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 );
+    integer info { geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 ) };
     UTILS_ASSERT(
       info == 0,
       "QRP::get_Lwork_QRP call lapack_wrapper::geqp3 return info = {}\n", info
     );
 
-    integer maxRC = std::max( NR, NC );
-    integer L     = std::max( integer(tmp), maxRC );
+    integer maxRC { std::max( NR, NC ) };
+    integer L     { std::max( integer(tmp), maxRC ) };
     return L;
   }
 
@@ -557,7 +554,7 @@ namespace lapack_wrapper {
 
     m_LworkQR = this->get_Lwork_QRP( NR, NC );
 
-    integer Lwmin = m_LworkQR + NR*NC + NR+NC;
+    integer Lwmin{ m_LworkQR + NR*NC + NR+NC };
 
     UTILS_ASSERT(
       Liwork >= NC && Lwork >= Lwmin,
@@ -572,7 +569,7 @@ namespace lapack_wrapper {
 
     m_JPVT = iWork;
 
-    real_type * ptr = Work;
+    real_type * ptr{ Work };
     m_WorkQR      = ptr; ptr += m_LworkQR;
     m_WorkPermute = ptr; ptr += std::max(NR,NC);
     m_Afactorized = ptr; ptr += NR*NC;
@@ -590,7 +587,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     // calcolo fattorizzazione QR della matrice A
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
     UTILS_ASSERT(
       info == 0,
       "QRP_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
@@ -614,7 +611,7 @@ namespace lapack_wrapper {
   bool
   QRP_no_alloc<T>::factorize_nodim( real_type const A[], integer LDA ) {
     // calcolo fattorizzazione QR della matrice A
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows );
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
     bool ok = info == 0;
     if ( ok ) {
       std::fill_n( m_JPVT, m_ncols, integer(0) );
@@ -777,7 +774,7 @@ namespace lapack_wrapper {
   void
   QRP<T>::allocate( integer NR, integer NC ) {
     if ( m_nrows != NR || m_ncols != NC ) {
-      integer Lwork = this->get_Lwork_QRP( NR, NC ) + NR*NC + NR+NC;
+      integer Lwork{ this->get_Lwork_QRP( NR, NC ) + NR*NC + NR+NC };
       this->no_allocate(
         NR, NC,
         Lwork, m_allocReals.realloc( size_t(Lwork) ),

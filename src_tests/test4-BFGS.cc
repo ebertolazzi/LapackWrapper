@@ -70,7 +70,7 @@ main() {
     bfgs.update( y3, s3, epsi );
     fmt::print( "\n\n{}\n", bfgs.to_string() );
 
-    for ( int i = 0; i < 90; ++i ) {
+    for ( int i{0}; i < 90; ++i ) {
       bfgs.update( y1, s1, epsi );
       bfgs.update( y2, s2, epsi );
       bfgs.update( y3, s3, epsi );

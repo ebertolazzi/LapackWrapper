@@ -42,8 +42,8 @@ namespace lapack_wrapper {
     integer & Lwork,
     integer & Liwork
   ) const {
-    integer L1 = m_QRP1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1);
-    integer L2 = m_QR2.get_Lwork_QR( NC, NC )   + (NC+1)*(NC+1);
+    integer L1{ m_QRP1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1) };
+    integer L2{ m_QR2.get_Lwork_QR( NC, NC )   + (NC+1)*(NC+1) };
     Lwork  = L1 + L2 + (NR+NC)*NC;
     Liwork = NC;
   }
@@ -70,14 +70,14 @@ namespace lapack_wrapper {
 
     m_LWorkQRP1 = m_QRP1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1);
     m_LWorkQR2  = m_QR2.get_Lwork_QR( NC, NC )   + (NC+1)*(NC+1);
-    integer Ltot = m_LWorkQRP1 + m_LWorkQR2 + (NR+NC)*NC;
+    integer Ltot{ m_LWorkQRP1 + m_LWorkQR2 + (NR+NC)*NC };
     UTILS_ASSERT(
       Lwork >= Ltot && Liwork >= NC,
       "PINV_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {},...)\n"
       "Lwork must be >= {} and Liwork >= {}\n",
       NR, NC, Lwork, Liwork, Ltot, NC
     );
-    real_type * ptr = Work;
+    real_type * ptr{ Work };
     m_A_factored = ptr; ptr += NR*NC;
     m_Rt         = ptr; ptr += NC*NC;
     m_QRP1.no_allocate( NR, NC, m_LWorkQRP1, ptr, Liwork, iWork ); ptr += m_LWorkQRP1;
@@ -99,7 +99,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     // copy matrix and scale
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_A_factored, m_nrows );
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_A_factored, m_nrows ) };
     UTILS_ASSERT(
       info == 0,
       "{}, call to gecopy( N = {}, M = {}, A, LDA = {}, B, LDB = {}\n"
@@ -137,7 +137,7 @@ namespace lapack_wrapper {
     m_QRP1.getRt( m_Rt, m_ncols );
 
     m_rank = m_ncols;
-    real_type threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
+    real_type threshold{ absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi };
     for ( integer i{1}; i < m_rank; ++i ) {
       if ( std::abs(m_Rt[i*(m_ncols+1)]) < threshold )
         { m_rank = i; break; }
@@ -160,7 +160,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     // copy matrix and scale
-    integer info = gecopy( m_nrows, m_ncols, A, LDA, m_A_factored, m_nrows );
+    integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_A_factored, m_nrows ) };
     if ( info != 0 ) return false;
     return this->factorize();
   }
@@ -186,15 +186,15 @@ namespace lapack_wrapper {
   PINV_no_alloc<T>::factorize() {
 
     // perform QR factorization
-    bool ok = m_QRP1.factorize_nodim( m_A_factored, m_nrows );
+    bool ok{ m_QRP1.factorize_nodim( m_A_factored, m_nrows ) };
     if ( !ok ) return false;
 
     // evaluate rank
     m_QRP1.getRt( m_Rt, m_ncols );
 
     m_rank = m_ncols;
-    real_type threshold = absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi;
-    for ( integer i = 1; i < m_rank; ++i ) {
+    real_type threshold{ absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi };
+    for ( integer i{1}; i < m_rank; ++i ) {
       if ( std::abs(m_Rt[i*(m_ncols+1)]) < threshold )
         { m_rank = i; break; }
     }
@@ -286,7 +286,7 @@ namespace lapack_wrapper {
       nrhs, ldB, ldX, m_nrows, m_ncols
     );
 
-    integer msize = m_rcmax*nrhs;
+    integer msize{ m_rcmax * nrhs };
     if ( L_mm_work < msize ) {
       L_mm_work = msize;
       mm_work   = m_alloc_work.realloc( size_t(L_mm_work) );
@@ -383,7 +383,7 @@ namespace lapack_wrapper {
       nrhs, ldB, ldX, m_ncols, m_nrows
     );
 
-    integer msize = m_rcmax*nrhs;
+    integer msize{ m_rcmax * nrhs };
     if ( L_mm_work < msize ) {
       L_mm_work = msize;
       mm_work   = m_alloc_work.realloc( size_t(L_mm_work) );
@@ -416,7 +416,7 @@ namespace lapack_wrapper {
   void
   PINV_no_alloc<T>::info( ostream_type & stream ) const {
     Malloc<integer> memi("PINV_no_alloc<T>::info");
-    integer * jpvt = memi.malloc( size_t(m_ncols) );
+    integer * jpvt{ memi.malloc( size_t(m_ncols) ) };
     m_QRP1.getPerm( jpvt );
     fmt::print( stream,
       "PINV INFO\n"
@@ -431,8 +431,7 @@ namespace lapack_wrapper {
 
     if ( m_rank < m_ncols ) {
       Malloc<real_type> mem("PINV_no_alloc<T>::info");
-      size_t dim = size_t( m_rank * m_rank );
-      real_type * R1 = mem.malloc( dim );
+      real_type * R1{ mem.malloc( m_rank * m_rank ) };
       m_QR2.getR( R1, m_rank );
       fmt::print( stream,
         "R1\n{}\n",

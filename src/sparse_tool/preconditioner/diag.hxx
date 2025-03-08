@@ -44,8 +44,8 @@ namespace Sparse_tool {
       D.resize( A.nrows() );
       D.fill(1);
       for ( A.Begin(); A.End(); A.Next() ) {
-        integer i = A.row();
-        integer j = A.column();
+        integer i{A.row()};
+        integer j{A.column()};
         if ( i == j ) D(i) = A.value();
       }
     }

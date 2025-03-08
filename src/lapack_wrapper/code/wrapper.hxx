@@ -442,8 +442,8 @@ namespace lapack_wrapper {
       integer         icol = 0
     ) {
       if ( nr == 0 || nc == 0 ) return;
-      integer inr = irow + nr;
-      integer inc = icol + nc;
+      integer inr { irow + nr };
+      integer inc { icol + nc };
       UTILS_ASSERT(
         inr <= m_nrows &&
         inc <= m_ncols &&
@@ -453,15 +453,8 @@ namespace lapack_wrapper {
         "must be icol + nc ({}) <= ncols ({})\n",
         nr, nc, irow, icol, inr, m_nrows, inc, m_ncols
       );
-      integer info = gecopy(
-        nr, nc,
-        B, ldB,
-        m_data + this->iaddr(irow,icol), m_ldData
-      );
-      UTILS_ASSERT(
-        info == 0,
-        "load_block call lapack_wrapper::gecopy return info = {}\n", info
-      );
+      integer info{ gecopy( nr, nc, B, ldB, m_data + this->iaddr(irow,icol), m_ldData ) };
+      UTILS_ASSERT( info == 0, "load_block call lapack_wrapper::gecopy return info = {}\n", info );
     }
 
     //!
@@ -493,8 +486,8 @@ namespace lapack_wrapper {
         "bad parameters\n",
         nr, nc, irow, icol
       );
-      real_type const * pd = B;
-      real_type       * pp = m_data + this->iaddr(irow,icol);
+      real_type const * pd { B };
+      real_type       * pp { m_data + this->iaddr(irow,icol) };
       for ( integer i{0}; i < nc; ++i, pd += ldB, ++pp )
         lapack_wrapper::copy( nr, pd, 1, pp, m_ldData );
     }
@@ -908,7 +901,7 @@ namespace lapack_wrapper {
         "get_transposed(...) incompatible matrices\n"
       );
       #endif
-      real_type const * pc = m_data;
+      real_type const * pc{ m_data };
       for ( integer i{0}; i < m_ncols; ++i, pc += m_ldData )
         lapack_wrapper::copy( m_nrows, pc, 1, out.m_data + i, out.m_ldData );
     }
@@ -966,7 +959,7 @@ namespace lapack_wrapper {
         i_offs, j_offs, m_nrows, m_ncols
       );
       #endif
-      real_type const * pc = m_data+this->iaddr(i_offs,j_offs);
+      real_type const * pc{ m_data+this->iaddr(i_offs,j_offs) };
       for ( integer i{0}; i < to.m_ncols; ++i, pc += m_ldData )
         lapack_wrapper::copy( to.m_nrows, pc, 1, to.m_data + i, to.m_ldData );
     }
@@ -1185,10 +1178,10 @@ namespace lapack_wrapper {
     T                const   beta,
     MatrixWrapper<T>       & C
   ) {
-    integer Ar = TRANSA == Transposition::NO ? A.nrows() : A.ncols();
-    integer Ac = TRANSA == Transposition::NO ? A.ncols() : A.nrows();
-    integer Br = TRANSB == Transposition::NO ? B.nrows() : B.ncols();
-    integer Bc = TRANSB == Transposition::NO ? B.ncols() : B.nrows();
+    integer Ar { TRANSA == Transposition::NO ? A.nrows() : A.ncols() };
+    integer Ac { TRANSA == Transposition::NO ? A.ncols() : A.nrows() };
+    integer Br { TRANSB == Transposition::NO ? B.nrows() : B.ncols() };
+    integer Bc { TRANSB == Transposition::NO ? B.ncols() : B.nrows() };
     UTILS_ASSERT_DEBUG(
       C.nrows() == Ar && C.ncols() == Bc && Ac == Br,
       "gemm, at `{}' inconsistent dimensions:"
@@ -1238,10 +1231,10 @@ namespace lapack_wrapper {
     T                const   beta,
     MatrixWrapper<T>       & C
   ) {
-    integer Ar = TRANSA == Transposition::NO ? A.nrows() : A.ncols();
-    integer Ac = TRANSA == Transposition::NO ? A.ncols() : A.nrows();
-    integer Br = TRANSB == Transposition::NO ? B.nrows() : B.ncols();
-    integer Bc = TRANSB == Transposition::NO ? B.ncols() : B.nrows();
+    integer Ar { TRANSA == Transposition::NO ? A.nrows() : A.ncols() };
+    integer Ac { TRANSA == Transposition::NO ? A.ncols() : A.nrows() };
+    integer Br { TRANSB == Transposition::NO ? B.nrows() : B.ncols() };
+    integer Bc { TRANSB == Transposition::NO ? B.ncols() : B.nrows() };
     UTILS_ASSERT_DEBUG(
       C.nrows() == Ar && C.ncols() == Bc && Ac == Br,
       "gemm, inconsistent dimensions:"
