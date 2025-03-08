@@ -47,12 +47,12 @@ main() {
     lapack_wrapper::BandedLU<lapack_wrapper::doublereal> BLU;
 
     constexpr lapack_wrapper::integer N{10};
-    lapack_wrapper::doublereal D []{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    lapack_wrapper::doublereal L0[]{ 1,   1, 1,  1, 1,  1, 1, 1, 1 };
-    lapack_wrapper::doublereal L1[]{ 1,  -1, 1, -1, 1, -1, 1, 1 };
-    lapack_wrapper::doublereal L2[]{ 1,-1.4, 1, -1, 1, -1, 1 };
-    lapack_wrapper::doublereal U0[]{-1,  -1,-1, -1,-1, -1,-1, -1,-1 };
-    lapack_wrapper::doublereal U1[]{ 1,  -1, 1, -1, 1, -1, 1, -1 };
+    constexpr lapack_wrapper::doublereal D []{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    constexpr lapack_wrapper::doublereal L0[]{ 1,   1, 1,  1, 1,  1, 1, 1, 1 };
+    constexpr lapack_wrapper::doublereal L1[]{ 1,  -1, 1, -1, 1, -1, 1, 1 };
+    constexpr lapack_wrapper::doublereal L2[]{ 1,-1.4, 1, -1, 1, -1, 1 };
+    constexpr lapack_wrapper::doublereal U0[]{-1,  -1,-1, -1,-1, -1,-1, -1,-1 };
+    constexpr lapack_wrapper::doublereal U1[]{ 1,  -1, 1, -1, 1, -1, 1, -1 };
     lapack_wrapper::doublereal rhs[N];
 
     BLU.setup( N, N, 3, 2 );

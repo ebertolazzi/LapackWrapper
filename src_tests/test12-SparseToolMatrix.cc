@@ -57,7 +57,7 @@ class all_matrix_test {
   test_diff(Vector<Real> const & x, Vector<Real> const & y) {
     Real err{0};
     for ( integer i{0}; i < x.size(); ++i ) {
-      Real bf = x[i] - y[i];
+      Real const bf{x[i] - y[i]};
       err += bf > 0 ? bf : -bf;
     }
     test_diff(err);
@@ -81,9 +81,9 @@ class all_matrix_test {
   void
   add_S_mul_M_mul_V( Vector<Real> & Res, Real const s, Vector<Real> const & av ) {
     for ( integer k{0}; k < ccoor.nnz(); ++k ) {
-      integer i{ ccoor.getI()(k) };
-      integer j{ ccoor.getJ()(k) };
-      Real    v{ ccoor.getA()(k) };
+      integer const i{ ccoor.getI()(k) };
+      integer const j{ ccoor.getJ()(k) };
+      Real    const v{ ccoor.getA()(k) };
       Res(i) += s * v * av(j);
     }
   }
@@ -91,9 +91,9 @@ class all_matrix_test {
   void
   add_S_mul_Mt_mul_V( Vector<Real> & Res, Real const s, Vector<Real> const & av ) {
     for ( integer k{0}; k < ccoor.nnz(); ++k ) {
-      integer i{ ccoor.getI()(k) };
-      integer j{ ccoor.getJ()(k) };
-      Real    v{ ccoor.getA()(k) };
+      integer const i{ ccoor.getI()(k) };
+      integer const j{ ccoor.getJ()(k) };
+      Real    const v{ ccoor.getA()(k) };
       Res(j) += s * v * av(i);
     }
   }
@@ -114,17 +114,16 @@ public:
     ccol = ccoor;
   }
 
-  ~all_matrix_test() {}
+  ~all_matrix_test() = default;
 
-  void preco(void) {
-    integer i;
-    for ( i = 0; i < a.size(); ++i ) a[i] = 1.2+i*sqrt(2.0);
-    for ( i = 0; i < b.size(); ++i ) b[i] = 1+i*sqrt(3.0);
+  void preco() {
+    for ( integer i{0}; i < a.size(); ++i ) a[i] = 1.2+i*sqrt(2.0);
+    for ( integer i{0}; i < b.size(); ++i ) b[i] = 1+i*sqrt(3.0);
     c = a;
     scalar = sqrt(2.0);
   }
 
-  void do_all_tests(void) {
+  void do_all_tests() {
     cout << "*******************************\n"
          << "*******************************\n"
          << "MATRIX TESTS\n";
@@ -207,7 +206,7 @@ public:
 
 };
 
-void all_matrix_test::test001(void) {
+void all_matrix_test::test001() {
   preco();
 
   cout << "test(1)\n";
@@ -957,7 +956,7 @@ out(
 static
 void
 test_CRow(
-  integer                  N,
+  integer          const   N,
   CRowMatrix<Real> const & crow,
   Vector<Real>     const & v
 ) {
@@ -968,7 +967,7 @@ test_CRow(
   tm.tic();
   REPEAT(N) res = crow * v;
   tm.toc();
-  Real timea = tm.elapsed_ms();
+  Real const timea{tm.elapsed_ms()};
 
   tm.tic();
   REPEAT(N) {
@@ -984,7 +983,7 @@ test_CRow(
     }
   }
   tm.toc();
-  Real timeb = tm.elapsed_ms();
+  Real const timeb{tm.elapsed_ms()};
 
   cout << "CRowMatrix:  ";
   out(N, crow.nnz(), timea, timeb);
@@ -996,7 +995,7 @@ test_CRow(
 static
 void
 test_CCol(
-  integer                  N,
+  integer          const   N,
   CColMatrix<Real> const & ccol,
   Vector<Real>     const & v
 ) {
@@ -1007,7 +1006,7 @@ test_CCol(
   tm.tic();
   REPEAT(N) res = ccol * v;
   tm.toc();
-  Real timea{ tm.elapsed_ms() };
+  Real const timea{ tm.elapsed_ms() };
 
   tm.tic();
   REPEAT(N) {
@@ -1017,13 +1016,13 @@ test_CCol(
 
     res = 0;
     for ( integer i{0}; i < ccol.ncols(); ++i, ++C ) {
-      Real    tmp { v(i) };
-      integer n   { C[1]-C[0] };
+      Real const tmp { v(i) };
+      integer    n   { C[1]-C[0] };
       while ( n-- > 0 ) res(*I++) += *A++ * tmp;
     }
   }
   tm.toc();
-  Real timeb = tm.elapsed_ms();
+  Real const timeb{ tm.elapsed_ms() };
 
   cout << "CColMatrix:  ";
   out( N, ccol.nnz(), timea, timeb );
@@ -1033,7 +1032,7 @@ test_CCol(
 static
 void
 test_CCoor(
-  integer                   N,
+  integer           const   N,
   CCoorMatrix<Real> const & ccoor,
   Vector<Real>      const & v
 ) {
@@ -1044,7 +1043,7 @@ test_CCoor(
   tm.tic();
   REPEAT(N) { res = ccoor * v; }
   tm.toc();
-  Real timea{ tm.elapsed_ms() };
+  Real const timea{ tm.elapsed_ms() };
 
   tm.tic();
   REPEAT(N) {
@@ -1056,7 +1055,7 @@ test_CCoor(
       res(*I++) += *A++ * v(*J++);
   }
   tm.toc();
-  Real timeb{ tm.elapsed_ms() };
+  Real const timeb{ tm.elapsed_ms() };
 
   cout << "CCoorMatrix: ";
   out( N, ccoor.nnz(), timea, timeb );

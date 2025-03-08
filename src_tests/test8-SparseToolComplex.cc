@@ -92,8 +92,8 @@ testSparseTool( istream_type & mm_file ) {
   fmt::print("solve (ildu) ... ");
   tm.tic();
 
-  double               epsi    { 1e-15 };
-  Sparse_tool::integer maxIter { 200 };
+  constexpr double               epsi    { 1e-15 };
+  constexpr Sparse_tool::integer maxIter { 200 };
   //Sparse_tool::integer maxSubIter{50};
   Sparse_tool::integer iter;
   double  res = bicgstab( A, rhs, x, preco, epsi, maxIter, iter, &cout );

@@ -60,14 +60,17 @@ using namespace ::std;
 
 inline
 integer
-ipos( integer i, integer j, integer nx, integer /* ny */ ) {
+ipos( integer const i, integer const j, integer const nx, integer /* ny */ ) {
   return (i-1)+(j-1)*(nx-1);
 }
 
 int
 main() {
   try {
-    integer                    iter, maxiter = 1000, n = 100, neq = (n-1)*(n-1);
+    integer           iter;
+    constexpr integer maxiter{ 1000};
+    constexpr integer n{100};
+    constexpr integer neq{(n-1)*(n-1)};
     CCoorMatrix<double>        A(neq,neq,5*neq); // initialize matrix A with reseved rom for 5*neq nonzeros
     Vector<double>             b(neq), x(neq), r(neq);   // initialize r.h.s. and solution vector
     //ILDUpreconditioner<double> P; // P will be the incomplete LDU preconditioner
@@ -78,7 +81,7 @@ main() {
     b = -1.0/(n*n); // h^2
     for ( integer i{1}; i<n; ++i ) {
       for ( integer j{1}; j<n; ++j ) {
-        integer ii{ ipos( i, j, n, n ) };
+        integer const ii{ ipos( i, j, n, n ) };
         A.insert(ii,ii) = 4;
         if ( i > 1   ) A.insert(ii,ipos( i-1, j, n, n )) = -1;
         if ( i < n-1 ) A.insert(ii,ipos( i+1, j, n, n )) = -1;

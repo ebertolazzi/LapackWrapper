@@ -66,12 +66,15 @@ using VBASE = Vector<double>::V_base;
 
 int
 main() {
-  integer iter, nr = 7, nc = 4, nnz = 12;
   integer I[]{ 0, 4, 5, 1, 4, 5, 2, 4, 6, 3, 4, 6 };
   integer J[]{ 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 };
   integer V[]{ 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2 };
 
   try {
+    integer nnz {12};
+    integer nc  {4};
+    integer nr  {7};
+    integer iter;
     CCoorMatrix<double> A(nr,nc),   M(nr+nc,nr+nc);
     Vector<double>      rhs(nr+nc), X(nr+nc), bf1(nr), bf2(nc);
 

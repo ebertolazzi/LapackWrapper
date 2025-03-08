@@ -68,12 +68,9 @@ namespace lapack_wrapper {
     case 6:
     case 7:
       m_last_error = "CPPMA48::factorize";
-      if ((m_info[0] & 0x01) != 0)
-        m_last_error += "\nOne or more row or columns indices are out of range or one or more entries are for the same position in the matrix, or both are true";
-      if ((m_info[0] & 0x02) != 0)
-        m_last_error += "\nThe matrix is rank deficient";
-      if ((m_info[0] & 0x04) != 0)
-        m_last_error += "\nNot possible to choose all pivots from diagonal";
+      if ((m_info[0] & 0x01) != 0) m_last_error += "\nOne or more row or columns indices are out of range or one or more entries are for the same position in the matrix, or both are true";
+      if ((m_info[0] & 0x02) != 0) m_last_error += "\nThe matrix is rank deficient";
+      if ((m_info[0] & 0x04) != 0) m_last_error += "\nNot possible to choose all pivots from diagonal";
       break;
     }
   }

@@ -22,9 +22,7 @@
 
 #include <iostream>
 
-namespace fmt {
-  template <typename TYPE> struct formatter<std::complex<TYPE>> : ostream_formatter {};
-}
+template <typename TYPE> struct fmt::formatter<std::complex<TYPE>> : ostream_formatter {};
 
 #ifdef __GNUC__
 #pragma GCC diagnostic push
@@ -52,10 +50,10 @@ test1() {
   // solution
   // 0, 0, 7/2+(1/2)*sqrt(73), 7/2-(1/2)*sqrt(73)])
   // 0., 0., 7.772001872, -.772001872
-  real_type A[]{ 1, 2, 3, 4,
-                 4, 4, 4, 4,
-                 1, 2, 1, 2,
-                 0, 0, 1, 1 };
+  constexpr real_type A[]{ 1, 2, 3, 4,
+                           4, 4, 4, 4,
+                           1, 2, 1, 2,
+                           0, 0, 1, 1 };
   lapack_wrapper::Eigenvalues<real_type> E;
   E.setup( 4, A, 4 );
   vector<complex<real_type> > e;
@@ -69,14 +67,14 @@ void
 test2() {
   // solution
   // 0, 4, -2/3-I*sqrt(11)*(1/3), -2/3+I*sqrt(11)*(1/3)
-  real_type A[]{ 1, 2, 3, 4,
-                 4, 4, 4, 4,
-                 1, 2, 1, 2,
-                 0, 0, 1, 1 };
-  real_type B[]{ 3, 2, 1, 1,
-                 1, 1, 1, 1,
-                 4, 3, 2, 1,
-                 1,-1, 0, 1 };
+  constexpr real_type A[]{ 1, 2, 3, 4,
+                           4, 4, 4, 4,
+                           1, 2, 1, 2,
+                           0, 0, 1, 1 };
+  constexpr real_type B[]{ 3, 2, 1, 1,
+                           1, 1, 1, 1,
+                           4, 3, 2, 1,
+                           1,-1, 0, 1 };
   lapack_wrapper::GeneralizedEigenvalues<real_type> E;
   E.setup( 4, A, 4, B, 4 );
   vector<complex<real_type> > e;
@@ -103,10 +101,10 @@ test3() {
                       4, 3, 2, 1,
                       1,-1, 0, 1 };
   real_type TMP_data[16], TMP1_data[16];
-  lapack_wrapper::MatrixWrapper<real_type> A(A_data,4,4,4);
-  lapack_wrapper::MatrixWrapper<real_type> B(B_data,4,4,4);
-  lapack_wrapper::MatrixWrapper<real_type> TMP(TMP_data,4,4,4);
-  lapack_wrapper::MatrixWrapper<real_type> TMP1(TMP1_data,4,4,4);
+  lapack_wrapper::MatrixWrapper<real_type> const A(A_data,4,4,4);
+  lapack_wrapper::MatrixWrapper<real_type> const B(B_data,4,4,4);
+  lapack_wrapper::MatrixWrapper<real_type>       TMP(TMP_data,4,4,4);
+  lapack_wrapper::MatrixWrapper<real_type>       TMP1(TMP1_data,4,4,4);
 
   lapack_wrapper::GeneralizedSVD<real_type> E;
   E.setup( A, B );
@@ -153,12 +151,12 @@ test4() {
                       1, 5, 9,
                       6, 7, 2 };
   real_type TMP_data[100], TMP1_data[100], TMP2_data[100], TMP3_data[100];
-  lapack_wrapper::MatrixWrapper<real_type> A(A_data,5,3,5);
-  lapack_wrapper::MatrixWrapper<real_type> B(B_data,3,3,3);
-  lapack_wrapper::MatrixWrapper<real_type> TMP(TMP_data,5,3,5);
-  lapack_wrapper::MatrixWrapper<real_type> TMP1(TMP1_data,5,3,5);
-  lapack_wrapper::MatrixWrapper<real_type> TMP2(TMP2_data,3,3,3);
-  lapack_wrapper::MatrixWrapper<real_type> TMP3(TMP3_data,3,3,3);
+  lapack_wrapper::MatrixWrapper<real_type> const A(A_data,5,3,5);
+  lapack_wrapper::MatrixWrapper<real_type> const B(B_data,3,3,3);
+  lapack_wrapper::MatrixWrapper<real_type>       TMP(TMP_data,5,3,5);
+  lapack_wrapper::MatrixWrapper<real_type>       TMP1(TMP1_data,5,3,5);
+  lapack_wrapper::MatrixWrapper<real_type>       TMP2(TMP2_data,3,3,3);
+  lapack_wrapper::MatrixWrapper<real_type>       TMP3(TMP3_data,3,3,3);
 
   lapack_wrapper::GeneralizedSVD<real_type> E;
   E.setup( A, B );

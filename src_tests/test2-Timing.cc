@@ -46,8 +46,8 @@ static std::mt19937 generator(seed1);
 
 static
 real_type
-rand( real_type xmin, real_type xmax ) {
-  real_type random{ static_cast<real_type>(generator())/generator.max() };
+rand( real_type const xmin, real_type const xmax ) {
+  real_type const random{ static_cast<real_type>(generator())/std::mt19937::max() };
   return xmin + (xmax-xmin)*random;
 }
 
@@ -56,9 +56,8 @@ using namespace lapack_wrapper;
 template <int N>
 void
 testMM() {
-
-  int    N_TIMES = 100;
-  double to_ps   = 1000000.0/N_TIMES;
+  constexpr int    N_TIMES{100};
+  constexpr double to_ps{1000000.0/N_TIMES};
 
   fmt::print("\nSize N = {}\n",N);
 
@@ -119,9 +118,8 @@ testMM() {
 template <int N>
 void
 testMv() {
-
-  int     N_TIMES = 1000;
-  double  to_ps   = 1000000.0/N_TIMES;
+  constexpr int    N_TIMES {1000};
+  constexpr double to_ps   {1000000.0/N_TIMES};
 
   fmt::print("\nSize N = {}\n",N);
 
@@ -182,9 +180,8 @@ testMv() {
 template <int N>
 void
 testCopy() {
-
-  int     N_TIMES = 10000;
-  double  to_ps   = 1000000.0/N_TIMES;
+  constexpr int    N_TIMES{10000};
+  constexpr double to_ps{1000000.0/N_TIMES};
 
   fmt::print("\nSize N = {}\n",N);
 

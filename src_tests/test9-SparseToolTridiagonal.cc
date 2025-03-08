@@ -44,7 +44,7 @@ class all_trid_test {
 
   void
   test_diff( Vector<real_type> const & x, Vector<real_type> const & y ) {
-    real_type err{ (x-y).lpNorm<Eigen::Infinity>() };
+    real_type const err{ (x-y).lpNorm<Eigen::Infinity>() };
     test_diff(err);
   }
 
@@ -66,7 +66,7 @@ class all_trid_test {
 public:
 
   explicit
-  all_trid_test( integer n ) {
+  all_trid_test( integer const n ) {
     cout << "all_trid_test_allocating..." << flush;
     A.resize( n );
     a.resize( n );
@@ -114,7 +114,7 @@ void
 all_trid_test::test001() {
   preco();
   cout << "\ntest(1)\n";
-  Sparse_tool::integer N(A.nrows());
+  Sparse_tool::integer const N(A.nrows());
 
   RES = A * a;
   for ( Sparse_tool::integer i{0}; i < N; ++i ) {
@@ -129,7 +129,7 @@ void
 all_trid_test::test002() {
   preco();
   cout << "\ntest(2)\n";
-  Sparse_tool::integer N(A.nrows());
+  Sparse_tool::integer const N(A.nrows());
   RES = b + A * a;
   for ( Sparse_tool::integer i{0}; i < N; ++i ) {
     RRES[i] = b[i] + A(i,i) * a[i];
@@ -143,7 +143,7 @@ void
 all_trid_test::test003() {
   preco();
   cout << "\ntest(3)\n";
-  Sparse_tool::integer N(A.nrows());
+  Sparse_tool::integer const N(A.nrows());
   RES = b - A * a;
   for ( Sparse_tool::integer i{0}; i < N; ++i ) {
     RRES[i] = b[i] - A(i,i) * a[i];

@@ -175,10 +175,10 @@ namespace lapack_wrapper {
           m_iinfo,
           m_rinfo
         );
-        residual = this->getResidual(m_residualVec);
+        residual = MA57<real>::getResidual(m_residualVec);
         localjob = 2;
-        if(m_iinfo[0] < 0) return false;
-        if (counter >= m_MaxRefinements - 1) {
+        if ( m_iinfo[0] < 0 ) return false;
+        if ( counter >= m_MaxRefinements - 1 ) {
           m_last_error = "Refinement of HSL MA57 failed (Maxiter)";
           if ( residual > real(1e-5) ) return false;
           fmt::print("Residual: {:g}\n", residual);

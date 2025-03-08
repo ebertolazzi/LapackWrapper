@@ -552,7 +552,7 @@ test9() {
   };
 
   real_type rhs[M], b[M], x[M];
-  real_type const xe[M]{1,2,3,4,5};
+  constexpr real_type xe[M]{1,2,3,4,5};
   lapack_wrapper::gemv(
     Transposition::NO, M, M, 1, A, LDA, xe, 1, 0, rhs, 1
   );
@@ -695,7 +695,7 @@ test11() {
   };
 
   real_type rhs[N], b[N], b2[2*N], x[M], x2[2*M];
-  real_type const xe[M]{1,2,3,4,5,6};
+  constexpr real_type xe[M]{1,2,3,4,5,6};
   lapack_wrapper::gemv( Transposition::YES, M, N, 1, A, LDA, xe, 1, 0, rhs, 1 );
   lapack_wrapper::copy( N, rhs, 1, b, 1 );
   lapack_wrapper::copy( N, rhs, 1, b2, 1 );
@@ -790,9 +790,8 @@ R1
 */
 
   real_type MAT[M*M], MAT1[M*M], MM[M*M];
-
   real_type rhs[N];
-  real_type const xe[M]{1,2,3,4,5,6,7,8};
+  constexpr real_type xe[M]{1,2,3,4,5,6,7,8};
   lapack_wrapper::gemv( Transposition::YES, M, N, 1, A, LDA, xe, 1, 0, rhs, 1 );
 
   msg.green( fmt::format(

@@ -43,19 +43,18 @@ int
 main() {
 
   try {
+    constexpr lapack_wrapper::doublereal s1[]{1,2,3};
+    constexpr lapack_wrapper::doublereal y1[]{11./3.,-6./3.,13./3.};
 
-    lapack_wrapper::doublereal s1[] = {1,2,3};
-    lapack_wrapper::doublereal y1[] = {11./3.,-6./3.,13./3.};
+    constexpr lapack_wrapper::doublereal s2[]{1,0,1};
+    constexpr lapack_wrapper::doublereal y2[]{3,-2,3};
 
-    lapack_wrapper::doublereal s2[] = {1,0,1};
-    lapack_wrapper::doublereal y2[] = {3,-2,3};
-
-    lapack_wrapper::doublereal s3[] = {0,-1,1};
-    lapack_wrapper::doublereal y3[] = {7/3.,-6/3.,8/3.};
+    constexpr lapack_wrapper::doublereal s3[]{0,-1,1};
+    constexpr lapack_wrapper::doublereal y3[]{7/3.,-6/3.,8/3.};
 
     lapack_wrapper::BFGS<lapack_wrapper::doublereal> bfgs;
 
-    lapack_wrapper::doublereal epsi = 1e-8;
+    constexpr lapack_wrapper::doublereal epsi{1e-8};
 
     bfgs.allocate(3);
     bfgs.init();

@@ -66,10 +66,10 @@ using Real = double;
 static
 void
 out(
-  integer N,
-  integer nnz,
-  Real    ta,
-  Real    tb
+  integer const N,
+  integer const nnz,
+  Real    const ta,
+  Real    const tb
 ) {
   fmt::print(
     "N={:<3} TIME ({:.5}:{:.5}) FP({:.5}:{:.5}) (sparselib:hand made)\n",
@@ -82,7 +82,7 @@ out(
 static
 void
 test_CRow(
-  integer N,
+  integer          const   N,
   CRowMatrix<Real> const & crow,
   Vector<Real>     const & v
 ) {
@@ -121,7 +121,7 @@ test_CRow(
 static
 void
 test_CCol(
-  integer                  N,
+  integer          const   N,
   CColMatrix<Real> const & ccol,
   Vector<Real>     const & v
 ) {
@@ -158,7 +158,7 @@ test_CCol(
 static
 void
 test_CCoor(
-  integer                   N,
+  integer           const   N,
   CCoorMatrix<Real> const & ccoor,
   Vector<Real>      const & v
 ) {

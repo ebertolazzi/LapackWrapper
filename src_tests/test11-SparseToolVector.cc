@@ -55,7 +55,7 @@ static Utils::Console msg(&std::cout);
 
 inline
 Real
-power2( Real a )
+power2( Real const a )
 { return a*a; }
 
 class all_vector_test {
@@ -90,18 +90,21 @@ class all_vector_test {
 
 public:
 
-  all_vector_test(integer n) : a(n), b(n), c(n), res(n), rres(n) { }
-  ~all_vector_test() {}
+  explicit
+  all_vector_test( integer const n ) : a(n), b(n), c(n), res(n), rres(n) { }
 
-  void preco(void) {
-    integer i;
-    for ( i = 0; i < a.size(); ++i ) a[i] = 1.2+i*sqrt(2.0);
-    for ( i = 0; i < b.size(); ++i ) b[i] = 1+i*sqrt(3.0);
+  ~all_vector_test() = default;
+
+  void
+  preco() {
+    for ( size_t i{0}; i < a.size(); ++i ) a[i] = 1.2+i*sqrt(2.0);
+    for ( size_t i{0}; i < b.size(); ++i ) b[i] = 1+i*sqrt(3.0);
     c = a;
     scalar = sqrt(2.0);
   }
 
-  void do_all_tests(void) {
+  void
+  do_all_tests() {
     cout << "*******************************\n"
          << "*******************************\n"
          << "VECTOR TESTS\n";
@@ -204,7 +207,7 @@ public:
 
 
 void
-all_vector_test::test001(void) {
+all_vector_test::test001() {
   cout << "test(1)\n";
 
   scalar = 1.2345;
@@ -267,7 +270,7 @@ all_vector_test::test001(void) {
 # define MIN3(A,B,C) static_cast<integer>( std::min( std::min( A.size(), B.size() ), C.size() ) )
 
 void
-all_vector_test::test002(void) {
+all_vector_test::test002() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(2)\n";
@@ -276,7 +279,7 @@ all_vector_test::test002(void) {
 
 
 void
-all_vector_test::test003(void) {
+all_vector_test::test003() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(3)\n";
@@ -285,7 +288,7 @@ all_vector_test::test003(void) {
 
 
 void
-all_vector_test::test004(void) {
+all_vector_test::test004() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(4)\n";
@@ -294,7 +297,7 @@ all_vector_test::test004(void) {
 
 
 void
-all_vector_test::test005(void) {
+all_vector_test::test005() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(5)\n";
@@ -303,7 +306,7 @@ all_vector_test::test005(void) {
 
 
 void
-all_vector_test::test006(void) {
+all_vector_test::test006() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(6)\n";
@@ -312,7 +315,7 @@ all_vector_test::test006(void) {
 
 
 void
-all_vector_test::test007(void) {
+all_vector_test::test007() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(7)\n";
@@ -321,7 +324,7 @@ all_vector_test::test007(void) {
 
 
 void
-all_vector_test::test008(void) {
+all_vector_test::test008() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(8)\n";
@@ -330,7 +333,7 @@ all_vector_test::test008(void) {
 
 
 void
-all_vector_test::test009(void) {
+all_vector_test::test009() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(9)\n";
@@ -339,7 +342,7 @@ all_vector_test::test009(void) {
 
 
 void
-all_vector_test::test010(void) {
+all_vector_test::test010() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(10)\n";
@@ -348,7 +351,7 @@ all_vector_test::test010(void) {
 
 
 void
-all_vector_test::test011(void) {
+all_vector_test::test011() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(11)\n";
@@ -357,7 +360,7 @@ all_vector_test::test011(void) {
 
 
 void
-all_vector_test::test012(void) {
+all_vector_test::test012() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(12)\n";
@@ -366,7 +369,7 @@ all_vector_test::test012(void) {
 
 
 void
-all_vector_test::test013(void) {
+all_vector_test::test013() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(13)\n";
@@ -375,7 +378,7 @@ all_vector_test::test013(void) {
 
 
 void
-all_vector_test::test014(void) {
+all_vector_test::test014() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(14)\n";
@@ -384,7 +387,7 @@ all_vector_test::test014(void) {
 
 
 void
-all_vector_test::test015(void) {
+all_vector_test::test015() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(15)\n";
@@ -394,7 +397,7 @@ all_vector_test::test015(void) {
   // combined test
 
 void
-all_vector_test::test016(void) {
+all_vector_test::test016() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(16)\n";
@@ -403,7 +406,7 @@ all_vector_test::test016(void) {
 
 
 void
-all_vector_test::test017(void) {
+all_vector_test::test017() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(17)\n";
@@ -412,7 +415,7 @@ all_vector_test::test017(void) {
 
 
 void
-all_vector_test::test018(void) {
+all_vector_test::test018() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(18)\n";
@@ -421,7 +424,7 @@ all_vector_test::test018(void) {
 
 
 void
-all_vector_test::test019(void) {
+all_vector_test::test019() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(19)\n";
@@ -430,7 +433,7 @@ all_vector_test::test019(void) {
   //-----------------
 
 void
-all_vector_test::test020(void) {
+all_vector_test::test020() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(20)\n";
@@ -439,7 +442,7 @@ all_vector_test::test020(void) {
 
 
 void
-all_vector_test::test021(void) {
+all_vector_test::test021() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(21)\n";
@@ -448,7 +451,7 @@ all_vector_test::test021(void) {
 
 
 void
-all_vector_test::test022(void) {
+all_vector_test::test022() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(22)\n";
@@ -457,7 +460,7 @@ all_vector_test::test022(void) {
 
 
 void
-all_vector_test::test023(void) {
+all_vector_test::test023() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(23)\n";
@@ -466,7 +469,7 @@ all_vector_test::test023(void) {
   //-----------------
 
 void
-all_vector_test::test024(void) {
+all_vector_test::test024() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(24)\n";
@@ -475,7 +478,7 @@ all_vector_test::test024(void) {
 
 
 void
-all_vector_test::test025(void) {
+all_vector_test::test025() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(25)\n";
@@ -484,7 +487,7 @@ all_vector_test::test025(void) {
 
 
 void
-all_vector_test::test026(void) {
+all_vector_test::test026() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(26)\n";
@@ -493,7 +496,7 @@ all_vector_test::test026(void) {
 
 
 void
-all_vector_test::test027(void) {
+all_vector_test::test027() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(27)\n";
@@ -502,7 +505,7 @@ all_vector_test::test027(void) {
   //-----------------
 
 void
-all_vector_test::test028(void) {
+all_vector_test::test028() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(28)\n";
@@ -511,7 +514,7 @@ all_vector_test::test028(void) {
 
 
 void
-all_vector_test::test029(void) {
+all_vector_test::test029() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(29)\n";
@@ -520,7 +523,7 @@ all_vector_test::test029(void) {
 
 
 void
-all_vector_test::test030(void) {
+all_vector_test::test030() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(30)\n";
@@ -529,7 +532,7 @@ all_vector_test::test030(void) {
 
 
 void
-all_vector_test::test031(void) {
+all_vector_test::test031() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(31)\n";
@@ -539,7 +542,7 @@ all_vector_test::test031(void) {
 // FUNCTIONS
 
 void
-all_vector_test::test032(void) {
+all_vector_test::test032() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(32)\n";
@@ -547,7 +550,7 @@ all_vector_test::test032(void) {
 }
 
 void
-all_vector_test::test033(void) {
+all_vector_test::test033() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(33)\n";
@@ -555,7 +558,7 @@ all_vector_test::test033(void) {
 }
 
 void
-all_vector_test::test034(void) {
+all_vector_test::test034() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(34)\n";
@@ -563,7 +566,7 @@ all_vector_test::test034(void) {
 }
 
 void
-all_vector_test::test035(void) {
+all_vector_test::test035() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(35)\n";
@@ -571,7 +574,7 @@ all_vector_test::test035(void) {
 }
 
 void
-all_vector_test::test036(void) {
+all_vector_test::test036() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(36)\n";
@@ -580,7 +583,7 @@ all_vector_test::test036(void) {
 }
 
 void
-all_vector_test::test037(void) {
+all_vector_test::test037() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(37)\n";
@@ -589,7 +592,7 @@ all_vector_test::test037(void) {
 }
 
 void
-all_vector_test::test038(void) {
+all_vector_test::test038() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(38)\n";
@@ -597,7 +600,7 @@ all_vector_test::test038(void) {
 }
 
 void
-all_vector_test::test039(void) {
+all_vector_test::test039() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(39)\n";
@@ -605,7 +608,7 @@ all_vector_test::test039(void) {
 }
 
 void
-all_vector_test::test040(void) {
+all_vector_test::test040() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(40)\n";
@@ -613,7 +616,7 @@ all_vector_test::test040(void) {
 }
 
 void
-all_vector_test::test041(void) {
+all_vector_test::test041() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(41)\n";
@@ -621,7 +624,7 @@ all_vector_test::test041(void) {
 }
 
 void
-all_vector_test::test042(void) {
+all_vector_test::test042() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(42)\n";
@@ -629,7 +632,7 @@ all_vector_test::test042(void) {
 }
 
 void
-all_vector_test::test043(void) {
+all_vector_test::test043() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(43)\n";
@@ -637,7 +640,7 @@ all_vector_test::test043(void) {
 }
 
 void
-all_vector_test::test044(void) {
+all_vector_test::test044() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(44)\n";
@@ -645,7 +648,7 @@ all_vector_test::test044(void) {
 }
 
 void
-all_vector_test::test045(void) {
+all_vector_test::test045() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(45)\n";
@@ -653,7 +656,7 @@ all_vector_test::test045(void) {
 }
 
 void
-all_vector_test::test046(void) {
+all_vector_test::test046() {
   preco();
   integer const sz{ MIN2(a,res) };
   cout << "\ntest(46)\n";
@@ -661,7 +664,7 @@ all_vector_test::test046(void) {
 }
 
 void
-all_vector_test::test047(void) {
+all_vector_test::test047() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(47)\n";
@@ -669,7 +672,7 @@ all_vector_test::test047(void) {
 }
 
 void
-all_vector_test::test048(void) {
+all_vector_test::test048() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(48)\n";
@@ -677,7 +680,7 @@ all_vector_test::test048(void) {
 }
 
 void
-all_vector_test::test049(void) {
+all_vector_test::test049() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(49)\n";
@@ -686,7 +689,7 @@ all_vector_test::test049(void) {
 }
 
 void
-all_vector_test::test050(void) {
+all_vector_test::test050() {
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(50)\n";
@@ -698,7 +701,7 @@ all_vector_test::test050(void) {
 }
 
 void
-all_vector_test::test051(void) {
+all_vector_test::test051() {
   preco();
   cout << "\ntest(51) norm1(vector)" << flush;
   Real const bfa{a.array().abs().sum()};
@@ -708,17 +711,17 @@ all_vector_test::test051(void) {
 }
 
 void
-all_vector_test::test052(void) {
+all_vector_test::test052() {
   preco();
   cout << "\ntest(52) norm2(vector)" << flush;
   Real const bfa{ a.norm() };
   Real       bfb{ 0 };
-  for ( integer i{0}; i < a.size(); ++i) bfb += static_cast<Real>(power2(a[i]));
+  for ( integer i{0}; i < a.size(); ++i) bfb += power2(a[i]);
   test_diff(abs(bfa-sqrt(bfb)));
 }
 
 void
-all_vector_test::test053(void) {
+all_vector_test::test053() {
   preco();
   cout << "\ntest(53) normi(vector)" << flush;
   Real const bfa{ a.lpNorm<Eigen::Infinity>()};
@@ -729,7 +732,7 @@ all_vector_test::test053(void) {
 }
 
 void
-all_vector_test::test054(void) {
+all_vector_test::test054() {
   preco();
   cout << "\ntest(54) maxval(vector)" << flush;
   Real const bfa{ a.maxCoeff()};
@@ -740,7 +743,7 @@ all_vector_test::test054(void) {
 }
 
 void
-all_vector_test::test055(void) {
+all_vector_test::test055() {
   preco();
   cout << "\ntest(55) minval(vector)" << flush;
   Real const bfa{ a.minCoeff() };
@@ -751,7 +754,7 @@ all_vector_test::test055(void) {
 }
 
 void
-all_vector_test::test056(void) {
+all_vector_test::test056() {
   preco();
   cout << "\ntest(56) dot(vector,vector)" << flush;
   Real const bfa{ a.dot(b) };
@@ -761,14 +764,14 @@ all_vector_test::test056(void) {
 }
 
 void
-all_vector_test::test057(void) { // specializations
+all_vector_test::test057() { // specializations
   preco();
   cout << "\ntest(57) norm1(a) - sum(abs(a)) = " << flush;
   test_diff( a.lpNorm<1>() - abs(a.array()).sum() );
 }
 
 void
-all_vector_test::test058(void) {
+all_vector_test::test058() {
   preco();
   cout << "\ntest(58) dist(vector,vector)" << flush;
   Real const bfa{ (a-b).norm() };
@@ -778,7 +781,7 @@ all_vector_test::test058(void) {
 }
 
 void
-all_vector_test::test059(void) {
+all_vector_test::test059() {
   preco();
   cout << "\ntest(59) dist2(vector,vector)" << flush;
   Real const bfa{ (a-b).norm() };
@@ -788,7 +791,7 @@ all_vector_test::test059(void) {
 }
 
 void
-all_vector_test::test060(void) {
+all_vector_test::test060() {
   preco();
   cout << "\ntest(60) normp(vector,scalar)" << flush;
   Real const bfa{ pow(a.array().pow(scalar).sum(),1/scalar) };
@@ -801,7 +804,7 @@ all_vector_test::test060(void) {
 }
 
 void
-all_vector_test::test061(void) { // specializations
+all_vector_test::test061() { // specializations
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(61)\n";
@@ -810,7 +813,7 @@ all_vector_test::test061(void) { // specializations
 }
 
 void
-all_vector_test::test062(void) { // specializations
+all_vector_test::test062() { // specializations
   preco();
   integer const sz{ MIN3(a,b,res) };
   cout << "\ntest(62)\n";
@@ -819,7 +822,7 @@ all_vector_test::test062(void) { // specializations
 }
 
 void
-all_vector_test::test063(void) {
+all_vector_test::test063() {
   preco();
   cout << "\ntest(63) sum(1.0+abs(vector))" << flush;
   Real const bfa{ (1.0+abs(b.array())).sum() };
@@ -829,7 +832,7 @@ all_vector_test::test063(void) {
 }
 
 void
-all_vector_test::test064(void) {
+all_vector_test::test064() {
   preco();
   cout << "\ntest(64) prod(1.0+abs(vector))" << flush;
   Real const bfa{ (1.0+abs(b.array())).prod() };

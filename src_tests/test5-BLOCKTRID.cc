@@ -46,20 +46,19 @@ void
 test1() {
 
   lapack_wrapper::BlockTridiagonalSymmetic<doublereal> BT;
-  integer rBlocks[]{ 0, 2, 5, 7};
+  constexpr integer rBlocks[]{ 0, 2, 5, 7};
   BT.setup( 3, rBlocks );
 
-  doublereal D0[]{ 2, 1, 1, 1};
-  doublereal D1[]{ 2, 0, 1,
-                   0, 0, 0,
-                   1, 0, 2};
-  doublereal D2[]{ 2, 0,
-                   0, 1};
-
-  doublereal L0[]{ 1, 1, 0,
-                   0, 1, 1 };
-  doublereal L1[]{ 1, 1, 1,
-                   1, 1, 1 };
+  constexpr doublereal D0[]{ 2, 1, 1, 1};
+  constexpr doublereal D1[]{ 2, 0, 1,
+                             0, 0, 0,
+                             1, 0, 2};
+  constexpr doublereal D2[]{ 2, 0,
+                             0, 1};
+  constexpr doublereal L0[]{ 1, 1, 0,
+                             0, 1, 1 };
+  constexpr doublereal L1[]{ 1, 1, 1,
+                             1, 1, 1 };
 
   doublereal rhs[]{
     5, 4, 6, 4, 6, 5, 4,
@@ -86,10 +85,10 @@ void
 test2() {
 
   lapack_wrapper::BlockTridiagonalSymmetic<doublereal> BT;
-  integer rBlocks[]{ 0, 2, 5, 7};
+  constexpr integer rBlocks[]{ 0, 2, 5, 7};
   BT.setup( 3, rBlocks );
 
-  integer ii[]{
+  constexpr integer ii[]{
     1, 2, 1, 2,
     3, 5, 3, 5,
     6, 7,
@@ -97,7 +96,7 @@ test2() {
     6, 6, 6, 7, 7, 7
   };
 
-  integer jj[]{
+  constexpr integer jj[]{
     1, 1, 2, 2,
     3, 3, 5, 5,
     6, 7,
@@ -105,7 +104,7 @@ test2() {
     3, 4, 5, 3, 4, 5
   };
 
-  doublereal vals[]{
+  constexpr doublereal vals[]{
     2, 1, 1, 1,
     2, 1, 1, 2,
     2, 1,
