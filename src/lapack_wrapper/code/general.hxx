@@ -12,7 +12,7 @@
  |                                                                          |
  |      Enrico Bertolazzi                                                   |
  |      Dipartimento di Ingegneria Industriale                              |
- |      Universita` degli Studi di Trento                                   |
+ |      Università degli Studi di Trento                                    |
  |      email: enrico.bertolazzi@unitn.it                                   |
  |                                                                          |
 \*--------------------------------------------------------------------------*/
@@ -2082,6 +2082,7 @@ namespace lapack_wrapper {
     case 'R': equ = EquilibrationType::EQUILIBRATE_ROWS;    break;
     case 'C': equ = EquilibrationType::EQUILIBRATE_COLUMNS; break;
     case 'B': equ = EquilibrationType::EQUILIBRATE_BOTH;    break;
+    default:                                                break;
     }
   }
 
@@ -2124,6 +2125,7 @@ namespace lapack_wrapper {
     case 'R': equ = EquilibrationType::EQUILIBRATE_ROWS;    break;
     case 'C': equ = EquilibrationType::EQUILIBRATE_COLUMNS; break;
     case 'B': equ = EquilibrationType::EQUILIBRATE_BOTH;    break;
+    default:                                                break;
     }
   }
 

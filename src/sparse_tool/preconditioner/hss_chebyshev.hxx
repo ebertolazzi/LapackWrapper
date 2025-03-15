@@ -159,7 +159,7 @@ namespace Sparse_tool {
           real_type As1(0,0);
           for ( integer i_cnt{pR[1] - pR[0]}; i_cnt > 0; --i_cnt )
             As1  += *pA++ * s1(*pJ++);
-            _y(k) = aa*(As1-v(k))+bb*s1(k)+cc*s0(k);
+          _y(k) = aa*(As1-v(k))+bb*s1(k)+cc*s0(k);
         };
       }
     }

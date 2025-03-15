@@ -33,7 +33,7 @@
  |                                                                          |
  |      Enrico Bertolazzi                                                   |
  |      Dipartimento di Ingegneria Meccanica e Strutturale                  |
- |      Universita` degli Studi di Trento                                   |
+ |      Università degli Studi di Trento                                    |
  |      Via Mesiano 77, I-38050 Trento, Italy                               |
  |                                                                          |
 \*--------------------------------------------------------------------------*/

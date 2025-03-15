@@ -8,7 +8,7 @@
 
   Affiliations:
   Dipartimento di Ingegneria Industriale
-  Universita` degli Studi di Trento
+  Università degli Studi di Trento 
   enrico.bertolazzi@unitn.it
 */
 
@@ -199,11 +199,17 @@ namespace Sparse_tool {
 
       switch ( cType ) {
       case MM_COORDINATE:
-        sscanf( m_line, "%u%u%u", &m_nrows, &m_ncols, &m_nnz );
+        {
+          std::istringstream data(m_line);
+          data >> m_nrows >> m_ncols >> m_nnz;
+        }
         break;
       case MM_ARRAY:
-        sscanf( m_line, "%u%u", &m_nrows, &m_ncols );
-        m_nnz = m_nrows * m_ncols;
+        {
+          std::istringstream data(m_line);
+          data >> m_nrows >> m_ncols;
+          m_nnz = m_nrows * m_ncols;
+        }
         break;
       //default:
       //  break;

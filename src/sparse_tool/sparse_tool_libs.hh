@@ -9,7 +9,7 @@
 
   \par Affiliations:
        Dipartimento di Ingegneria Industriale<br>
-       Universita` degli Studi di Trento<br>
+       Università degli Studi di Trento <br>
        enrico.bertolazzi\@unitn.it
 
 */

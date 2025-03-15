@@ -12,7 +12,7 @@
  |                                                                          |
  |      Enrico Bertolazzi                                                   |
  |      Dipartimento di Ingegneria Industriale                              |
- |      Universita` degli Studi di Trento                                   |
+ |      Università degli Studi di Trento                                    |
  |      email: enrico.bertolazzi@unitn.it                                   |
  |                                                                          |
 \*--------------------------------------------------------------------------*/
@@ -30,7 +30,7 @@ namespace lapack_wrapper {
     integer const * iRow;
     integer const * jCol;
     real    const * vals;
-    this->data(iRow, jCol, vals);
+    this->get_data(iRow, jCol, vals);
     for ( size_t i{0}; i < size_t(this->get_nnz()); ++i)
       res += fmt::format( "{}, {}, {}\n", iRow[i], jCol[i], vals[i] );
     return res;

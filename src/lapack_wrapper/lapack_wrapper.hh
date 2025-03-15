@@ -12,7 +12,7 @@
  |                                                                          |
  |      Enrico Bertolazzi                                                   |
  |      Dipartimento di Ingegneria Industriale                              |
- |      Universita` degli Studi di Trento                                   |
+ |      Università degli Studi di Trento                                    |
  |      email: enrico.bertolazzi@unitn.it                                   |
  |                                                                          |
 \*--------------------------------------------------------------------------*/
@@ -217,8 +217,8 @@
       #include "../openblas/lapack.h"
     #else
       // must use subdirectory to avoid conflict with atlas/lapack...
-      #include <openblas/cblas.h>
-      #include <openblas/lapack.h>
+      #include <cblas.h>
+      #include <lapack.h>
     #endif
   #else
     // on linux/osx the defaul is too use SYSTEM openblas
@@ -659,7 +659,7 @@ namespace lapack_wrapper {
   { return LAPACK_F77NAME(slamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { return BLASFUNC(slamch)( const_cast<character*>(WHAT) ); }
+  { return BLASFUNC(slamch)( const_cast<character*>(WHAT), strlen(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
   { return real(slamch_( const_cast<character*>(WHAT) )); }
   #else
@@ -675,7 +675,7 @@ namespace lapack_wrapper {
   { return LAPACK_F77NAME(dlamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { return BLASFUNC(dlamch)( const_cast<character*>(WHAT) ); }
+  { return BLASFUNC(dlamch)( const_cast<character*>(WHAT), strlen(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
   { return dlamch_( const_cast<character*>(WHAT) ); }
   #else
