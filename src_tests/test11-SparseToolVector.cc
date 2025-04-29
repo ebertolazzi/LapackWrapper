@@ -97,8 +97,10 @@ public:
 
   void
   preco() {
-    for ( size_t i{0}; i < a.size(); ++i ) a[i] = 1.2+i*sqrt(2.0);
-    for ( size_t i{0}; i < b.size(); ++i ) b[i] = 1+i*sqrt(3.0);
+    integer adim{ static_cast<integer>(a.size()) };
+    integer bdim{ static_cast<integer>(b.size()) };
+    for ( integer i{0}; i < adim; ++i ) a[i] = 1.2+i*sqrt(2.0);
+    for ( integer i{0}; i < bdim; ++i ) b[i] = 1+i*sqrt(3.0);
     c = a;
     scalar = sqrt(2.0);
   }

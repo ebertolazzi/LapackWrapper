@@ -659,11 +659,11 @@ namespace lapack_wrapper {
   { return LAPACK_F77NAME(slamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { return BLASFUNC(slamch)( const_cast<character*>(WHAT), strlen(WHAT) ); }
+  { return BLASFUNC(slamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
   { return real(slamch_( const_cast<character*>(WHAT) )); }
   #else
-  { return LAPACKNAME(slamch)( const_cast<character*>(WHAT) ); }
+  { return LAPACKNAME(slamch)( const_cast<character*>(WHAT), strlen(WHAT) ); }
   #endif
 
   template <>
@@ -675,11 +675,11 @@ namespace lapack_wrapper {
   { return LAPACK_F77NAME(dlamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_OPENBLAS) || \
         defined(LAPACK_WRAPPER_USE_BLASFEO)
-  { return BLASFUNC(dlamch)( const_cast<character*>(WHAT), strlen(WHAT) ); }
+  { return BLASFUNC(dlamch)( const_cast<character*>(WHAT) ); }
   #elif defined(LAPACK_WRAPPER_USE_ACCELERATE)
   { return dlamch_( const_cast<character*>(WHAT) ); }
   #else
-  { return LAPACKNAME(dlamch)( const_cast<character*>(WHAT) ); }
+  { return LAPACKNAME(dlamch)( const_cast<character*>(WHAT), strlen(WHAT) ); }
   #endif
 
   #endif

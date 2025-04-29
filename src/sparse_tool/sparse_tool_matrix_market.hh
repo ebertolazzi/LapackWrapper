@@ -317,8 +317,6 @@ namespace Sparse_tool {
 
       read_header( stream );
 
-      static char const *fmts[4]{ "%d%d", "%d%d%d", "%d%d%lf", "%d%d%lf%lf" };
-
       UTILS_ASSERT0(
         cType == MM_COORDINATE,
         "Sparse_tool::MatrixMarket::read\n"
@@ -344,14 +342,22 @@ namespace Sparse_tool {
 
         integer i{0}, j{0};
         double  re{0}, im{0};
-        sscanf( m_line, fmts[vType], &i, &j, &re, &im );
+        {
+          std::istringstream iss(m_line);
+          switch( vType ) {
+          case MM_PATTERN: iss >> i >> j; break;
+          case MM_INTEGER:
+          case MM_REAL:    iss >> i >> j >> re; break;
+          case MM_COMPLEX: iss >> i >> j >> re >> im; break;
+          }
+        }
 
         UTILS_ASSERT(
           i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
           "Sparse_tool::MatrixMarket::read\n"
           "In reading Matrix Market File, bad pattern ({},{}) = (r:{},i:{})index on line {}\n"
           "Read: <<{}>>\n",
-          i, j, re, im,  m_num_line, m_line
+          i, j, re, im, m_num_line, m_line
         );
         --i; --j; // zero base index
 
