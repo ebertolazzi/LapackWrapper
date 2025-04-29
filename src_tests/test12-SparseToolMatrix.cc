@@ -962,7 +962,7 @@ test_CRow(
 ) {
 
   Utils::TicToc tm;
-  Vector<Real> res( v.size() );
+  Vector<Real> res( static_cast<integer>(v.size()) );
 
   tm.tic();
   REPEAT(N) res = crow * v;
@@ -1001,7 +1001,7 @@ test_CCol(
 ) {
 
   Utils::TicToc tm;
-  Vector<Real> res( v.size() );
+  Vector<Real> res( static_cast<integer>(v.size()) );
 
   tm.tic();
   REPEAT(N) res = ccol * v;
@@ -1038,7 +1038,7 @@ test_CCoor(
 ) {
 
   Utils::TicToc tm;
-  Vector<Real> res( v.size() );
+  Vector<Real> res( static_cast<integer>(v.size()) );
 
   tm.tic();
   REPEAT(N) { res = ccoor * v; }
