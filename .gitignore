@@ -19,3 +19,4 @@ third_parties/Eigen/.gitlab
 .idea
 cmake-build-debug
 /Xcode
+.DS_Store
