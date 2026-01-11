@@ -20,3 +20,4 @@ third_parties/Eigen/.gitlab
 cmake-build-debug
 /Xcode
 .DS_Store
+.cache
