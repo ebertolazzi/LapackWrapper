@@ -189,6 +189,8 @@ if ( UTILS_ENABLE_TESTS )
     test12-SparseToolMatrix
     test13-SparseTool1
     test14-SparseTool2
+    test15-LapackWrapper-regressions
+    test16-LapackWrapper-coverage
   )
 
   add_custom_target( "${PROJECT_NAME}_all_tests" ALL )

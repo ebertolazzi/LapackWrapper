@@ -496,10 +496,10 @@ namespace lapack_wrapper {
 
   template <typename T>
   DiagMatrix<T>::DiagMatrix( DiagMatrix<T> const & D )
-  : MatrixWrapper<T>( nullptr, D.dim )
+  : DiagMatrixWrapper<T>( nullptr, D.m_dim )
   {
-    this->data = m_mem.realloc( size_t(D.dim) );
-    std::copy_n( D.data, D.dim, this->data );
+    this->m_data = m_mem.realloc( size_t(D.m_dim) );
+    std::copy_n( D.m_data, D.m_dim, this->m_data );
   }
 
   template <typename T>
@@ -550,11 +550,15 @@ namespace lapack_wrapper {
     return *this;
   }
 
+  template class DiagMatrixWrapper<real>;
+  template class DiagMatrixWrapper<doublereal>;
   template class MatrixWrapper<real>;
   template class MatrixWrapper<doublereal>;
 
   template class Matrix<real>;
   template class Matrix<doublereal>;
+  template class DiagMatrix<real>;
+  template class DiagMatrix<doublereal>;
 
 }
 

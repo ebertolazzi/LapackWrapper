@@ -46,7 +46,7 @@ namespace lapack_wrapper {
     integer NRC    { NR*NC };
     integer Lwmin  { 2*NRC+minRC };
     UTILS_ASSERT(
-      Lwork >= 2*NRC,
+      Lwork >= Lwmin,
       "LSS_no_alloc( NR = {}, NC = {}, LWork = {}, ...)\n"
       "LWork must be >= {}\n",
       NR, NC, Lwork, Lwmin
@@ -247,11 +247,12 @@ namespace lapack_wrapper {
   ) {
     integer NRC   { NR*NC };
     integer Lwmin { 2*NRC };
+    integer Lipiv { std::max(NR,NC) };
     UTILS_ASSERT(
-      Lwork >= 2*NRC && Liwork >= NC,
+      Lwork >= 2*NRC && Liwork >= Lipiv,
       "LSS_no_alloc( NR = {}, NC = {}, LWork = {}, ..., Liwork = {})\n"
       "LWork must be >= {} and Liwork must be >= {}\n",
-      NR, NC, Lwork, Liwork, Lwmin, NC
+      NR, NC, Lwork, Liwork, Lwmin, Lipiv
     );
     m_nrows    = NR;
     m_ncols    = NC;
@@ -320,6 +321,7 @@ namespace lapack_wrapper {
     }
     // save matrix
     copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1 );
+    std::fill_n( m_jpvt, size_t(m_ncols), integer(0) );
     integer nrc { m_nrows > m_ncols ? m_nrows : m_ncols };
     integer info { gelsy(
       m_nrows, m_ncols, 1,
@@ -345,6 +347,7 @@ namespace lapack_wrapper {
     // save matrix
     for ( integer i{0}; i < m_ncols; ++i )
       copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
+    std::fill_n( m_jpvt, size_t(m_nrows), integer(0) );
     integer nrc { m_nrows > m_ncols ? m_nrows : m_ncols };
     integer info { gelsy(
       m_ncols, m_nrows, 1,
@@ -373,6 +376,7 @@ namespace lapack_wrapper {
     }
     // save matrix
     copy( m_nrows*m_ncols, m_Amat, 1, m_AmatWork, 1 );
+    std::fill_n( m_jpvt, size_t(m_ncols), integer(0) );
     integer info { gelsy(
       m_nrows, m_ncols, nrhs,
       m_AmatWork, m_nrows,
@@ -401,6 +405,7 @@ namespace lapack_wrapper {
     // save matrix
     for ( integer i{0}; i < m_ncols; ++i )
       copy( m_nrows, m_Amat+i*m_nrows, 1, m_AmatWork+i, m_ncols );
+    std::fill_n( m_jpvt, size_t(m_nrows), integer(0) );
     integer info { gelsy(
       m_ncols, m_nrows, nrhs,
       m_AmatWork, m_ncols,
@@ -420,10 +425,11 @@ namespace lapack_wrapper {
   LSY<T>::allocate( integer NR, integer NC ) {
     if ( m_nrows != NR || m_ncols != NC ) {
       integer Lwork{ 2*NR*NC };
+      integer Liwork{ std::max(NR,NC) };
       this->no_allocate(
         NR, NC,
         Lwork, m_allocReals.realloc( size_t(Lwork) ),
-        NC,    m_allocInts.realloc( size_t(NC) )
+        Liwork, m_allocInts.realloc( size_t(Liwork) )
       );
     }
   }

@@ -93,7 +93,7 @@ namespace lapack_wrapper {
     { return m_data[i]; }
 
     DMatW & operator = ( real_type v ) {
-      fill( m_dim, m_data, v );
+      fill( m_dim, m_data, 1, v );
       return *this;
     }
 

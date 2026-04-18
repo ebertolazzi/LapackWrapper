@@ -136,7 +136,7 @@ namespace lapack_wrapper {
 
     void
     mul_Qt( MatrixWrapper<T> & C ) const {
-      this->mul_Q( C.nrows(), C.ncols(), C.data(), C.ldim() );
+      this->mul_Qt( C.nrows(), C.ncols(), C.data(), C.ldim() );
     }
 
     // -------------------------------------------------------------------------

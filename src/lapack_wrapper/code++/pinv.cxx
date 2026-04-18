@@ -136,14 +136,14 @@ namespace lapack_wrapper {
     // evaluate rank
     m_QRP1.getRt( m_Rt, m_ncols );
 
-    m_rank = m_ncols;
+    m_rank = 0;
     real_type threshold{ absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi };
-    for ( integer i{1}; i < m_rank; ++i ) {
-      if ( std::abs(m_Rt[i*(m_ncols+1)]) < threshold )
-        { m_rank = i; break; }
+    for ( integer i{0}; i < m_ncols; ++i ) {
+      if ( std::abs(m_Rt[i*(m_ncols+1)]) <= threshold ) break;
+      ++m_rank;
     }
 
-    if ( m_rank < m_ncols ) {
+    if ( m_rank > 0 && m_rank < m_ncols ) {
       // allocate for QR factorization
       m_QR2.no_allocate( m_ncols, m_rank, m_LWorkQR2, m_WorkQR2 );
       // perform QR factorization
@@ -192,14 +192,14 @@ namespace lapack_wrapper {
     // evaluate rank
     m_QRP1.getRt( m_Rt, m_ncols );
 
-    m_rank = m_ncols;
+    m_rank = 0;
     real_type threshold{ absmax( m_ncols, m_Rt, m_ncols+1 ) * m_epsi };
-    for ( integer i{1}; i < m_rank; ++i ) {
-      if ( std::abs(m_Rt[i*(m_ncols+1)]) < threshold )
-        { m_rank = i; break; }
+    for ( integer i{0}; i < m_ncols; ++i ) {
+      if ( std::abs(m_Rt[i*(m_ncols+1)]) <= threshold ) break;
+      ++m_rank;
     }
 
-    if ( m_rank < m_ncols ) {
+    if ( m_rank > 0 && m_rank < m_ncols ) {
       // allocate for QR factorization
       m_QR2.no_allocate( m_ncols, m_rank, m_LWorkQR2, m_WorkQR2 );
       // perform QR factorization
@@ -231,6 +231,11 @@ namespace lapack_wrapper {
     copy( m_nrows, b, incb, mm_work, 1 );
 
     m_QRP1.Qt_mul( mm_work );
+
+    if ( m_rank == 0 ) {
+      fill( m_ncols, x, incx, real_type(0) );
+      return true;
+    }
 
     if ( m_rank < m_ncols ) {
       /*
@@ -299,6 +304,11 @@ namespace lapack_wrapper {
 
     m_QRP1.Qt_mul( m_nrows, nrhs, mm_work, m_nrows );
 
+    if ( m_rank == 0 ) {
+      gezero( m_ncols, nrhs, X, ldX );
+      return true;
+    }
+
     #if 0
     fmt::print(
       "Q^T rhs\n{}",
@@ -349,6 +359,11 @@ namespace lapack_wrapper {
 
     m_QRP1.inv_permute( mm_work );
 
+    if ( m_rank == 0 ) {
+      fill( m_nrows, x, incx, real_type(0) );
+      return true;
+    }
+
     if ( m_rank < m_ncols ) {
       m_QR2.Qt_mul( mm_work );
       m_QR2.invR_mul( mm_work );
@@ -394,6 +409,11 @@ namespace lapack_wrapper {
       gezero( m_nrows-m_ncols, nrhs, mm_work+m_ncols, m_nrows );
 
     m_QRP1.inv_permute_rows( m_ncols, nrhs, mm_work, m_nrows );
+
+    if ( m_rank == 0 ) {
+      gezero( m_nrows, nrhs, X, ldX );
+      return true;
+    }
 
     if ( m_rank < m_ncols ) {
       m_QR2.Qt_mul( m_ncols, nrhs, mm_work, m_nrows );

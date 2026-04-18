@@ -104,7 +104,7 @@ namespace lapack_wrapper {
     { m_rcond = r; }
 
     real_type U    ( integer i, integer j ) const { return m_Umat[i+j*m_nrows]; }
-    real_type V    ( integer i, integer j ) const { return m_VTmat[j+i*m_ncols]; }
+    real_type V    ( integer i, integer j ) const { return m_VTmat[j+i*m_minRC]; }
     real_type sigma( integer i )            const { return m_Svec[i]; }
 
     //! `y <- alpha * U * x + beta * y`
@@ -158,7 +158,7 @@ namespace lapack_wrapper {
       gemv(
         Transposition::YES,
         m_minRC, m_ncols,
-        alpha, m_VTmat, m_nrows,
+        alpha, m_VTmat, m_minRC,
         x, incx,
         beta, y, incy
       );
@@ -177,7 +177,7 @@ namespace lapack_wrapper {
       gemv(
         Transposition::NO,
         m_minRC, m_ncols,
-        alpha, m_VTmat, m_nrows,
+        alpha, m_VTmat, m_minRC,
         x, incx,
         beta, y, incy
       );
