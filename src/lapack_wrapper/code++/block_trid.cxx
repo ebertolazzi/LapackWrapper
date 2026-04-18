@@ -402,7 +402,8 @@ namespace lapack_wrapper {
 
       if ( info != 0 ) return false;
     }
-    return m_is_factorized;
+    m_is_factorized = true;
+    return true;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

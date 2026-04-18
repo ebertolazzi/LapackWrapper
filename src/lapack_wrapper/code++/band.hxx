@@ -21,6 +21,14 @@
 /// file: band.hxx
 ///
 
+/*!
+ * \file band.hxx
+ * \brief Solvers for dense banded linear systems.
+ *
+ * This header provides LU and SPD factorizations specialized for matrices with
+ * a narrow band structure stored in LAPACK band format.
+ */
+
 namespace lapack_wrapper {
 
   //============================================================================
@@ -31,7 +39,12 @@ namespace lapack_wrapper {
   :|:  | |_) | (_| | | | | (_| |  __/ (_| | |__| |_| |
   :|:  |____/ \__,_|_| |_|\__,_|\___|\__,_|_____\___/
   \*/
-  //! base class for linear systema solver
+  /*!
+   * \brief LU factorization for a general banded matrix.
+   *
+   * The matrix is assembled directly in LAPACK compact band storage and can
+   * then be factorized and solved repeatedly.
+   */
   template <typename T>
   class BandedLU : public LinearSystemSolver<T> {
   public:
@@ -52,6 +65,8 @@ namespace lapack_wrapper {
   public:
 
     using LinearSystemSolver<T>::factorize;
+    using LinearSystemSolver<T>::solve;
+    using LinearSystemSolver<T>::t_solve;
 
     BandedLU() = default;
     ~BandedLU() override = default;
@@ -174,7 +189,12 @@ namespace lapack_wrapper {
   :|:  | |_) | (_| | | | | (_| |  __/ (_| |___) |  __/| |_| |
   :|:  |____/ \__,_|_| |_|\__,_|\___|\__,_|____/|_|   |____/
   \*/
-  //! base class for linear systema solver
+  /*!
+   * \brief Cholesky-like factorization for symmetric positive definite bands.
+   *
+   * Only one triangular part is stored, according to the selected `UPLO`
+   * convention.
+   */
   template <typename T>
   class BandedSPD : public LinearSystemSolver<T> {
   public:
@@ -190,6 +210,8 @@ namespace lapack_wrapper {
   public:
 
     using LinearSystemSolver<T>::factorize;
+    using LinearSystemSolver<T>::solve;
+    using LinearSystemSolver<T>::t_solve;
 
     BandedSPD();
     ~BandedSPD() override;

@@ -88,6 +88,7 @@ namespace lapack_wrapper {
     bool const isFortranIndexing,
     bool const isStoredSymmetric
   ) {
+    static_cast<void>( isStoredSymmetric );
     m_isFactorized = false;
     m_nnz          = Nnz;
     m_nrows        = N_Row;

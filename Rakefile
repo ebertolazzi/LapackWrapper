@@ -18,6 +18,15 @@ def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
   File.open(file, 'w+'){|f| f << text.gsub(text_to_replace, text_to_put_in_place)}
 end
 
+def RunCTestSuite()
+  return unless COMPILE_EXECUTABLE
+
+  FileUtils.cd "build"
+  puts "run CTEST for LAPACK WRAPPER".yellow
+  sh "ctest --output-on-failure"
+  FileUtils.cd ".."
+end
+
 desc "compile for Visual Studio [lapack=LAPACK_WRAPPER_USE_OPENBLAS]"
 task :build_win, [:lapack] do |t, args|
   args.with_defaults( :lapack => "LAPACK_WRAPPER_USE_OPENBLAS" )
@@ -69,6 +78,7 @@ task :build_win, [:lapack] do |t, args|
   end
 
   FileUtils.cd '..'
+  RunCTestSuite()
 end
 
 desc "compile for OSX [lapack=LAPACK_WRAPPER_USE_ACCELERATE]"
@@ -124,6 +134,7 @@ task :build_common, [:lapack] do |t, args|
   end
 
   FileUtils.cd '..'
+  RunCTestSuite()
 end
 
 desc 'install third parties for OSX'

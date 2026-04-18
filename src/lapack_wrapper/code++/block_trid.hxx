@@ -21,6 +21,14 @@
 /// file: block_trid.hxx
 ///
 
+/*!
+ * \file block_trid.hxx
+ * \brief Solver for symmetric block-tridiagonal systems.
+ *
+ * The class declared here manages a matrix assembled from dense diagonal and
+ * subdiagonal blocks and exposes direct factorization and solve routines.
+ */
+
 namespace lapack_wrapper {
 
   //============================================================================
@@ -37,6 +45,13 @@ namespace lapack_wrapper {
   :|:      |__/
   \*/
 
+  /*!
+   * \brief Symmetric block-tridiagonal direct solver.
+   *
+   * Despite the preserved historical spelling in the class name, the type is a
+   * solver for symmetric block-tridiagonal systems with configurable block
+   * sizes.
+   */
   template <typename T>
   class BlockTridiagonalSymmetic : public LinearSystemSolver<T> {
   public:
@@ -61,6 +76,8 @@ namespace lapack_wrapper {
   public:
 
     using LinearSystemSolver<T>::factorize;
+    using LinearSystemSolver<T>::solve;
+    using LinearSystemSolver<T>::t_solve;
 
     BlockTridiagonalSymmetic()
     : m_allocReals("BlockTridiagonalSymmetic-allocReals")

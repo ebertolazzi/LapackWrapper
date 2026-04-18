@@ -21,6 +21,16 @@
 /// file: lapack_wrapper++.hh
 ///
 
+/*!
+ * \file lapack_wrapper++.hh
+ * \brief High-level C++ interface for dense linear algebra helpers and solvers.
+ *
+ * This header collects the object-oriented layer built on top of the low-level
+ * BLAS/LAPACK wrappers. It exposes owning matrix containers, the abstract base
+ * interface shared by linear-system solvers, and the concrete dense, banded,
+ * tridiagonal, least-squares, eigenvalue, and quasi-Newton utilities.
+ */
+
 #pragma once
 
 #ifndef LAPACK_WRAPPERPP_dot_HH
@@ -218,6 +228,13 @@ namespace lapack_wrapper {
   :|:  |_|  |_|\__,_|\__|_|  |_/_/\_\
   \*/
 
+  /*!
+   * \brief Owning dense column-major matrix.
+   *
+   * `Matrix` extends `MatrixWrapper` with automatic storage management. It is
+   * the main helper type used by the higher-level solver interfaces whenever a
+   * temporary or a returned dense matrix must own its data.
+   */
   template <typename T>
   class Matrix : public MatrixWrapper<T> {
     lapack_wrapper::Malloc<T> m_mem;
@@ -243,6 +260,12 @@ namespace lapack_wrapper {
   :|:  |____/|_|\__,_|\__, |_|  |_|\__,_|\__|_|  |_/_/\_\
   :|:                 |___/
   \*/
+  /*!
+   * \brief Owning dense diagonal matrix.
+   *
+   * The class stores only the diagonal entries and extends
+   * `DiagMatrixWrapper` with allocation and copy semantics.
+   */
   template <typename T>
   class DiagMatrix : public DiagMatrixWrapper<T> {
     Malloc<T> m_mem{"DiagMatrix(m_mem)"};
@@ -277,6 +300,17 @@ namespace lapack_wrapper {
 
   // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+  /*!
+   * \brief Estimate the numerical rank of a matrix from a pivoted QR form.
+   *
+   * \param M     Number of rows.
+   * \param N     Number of columns.
+   * \param A     Matrix or factorized matrix data in column-major storage.
+   * \param LDA   Leading dimension of \p A.
+   * \param RCOND Relative threshold used to decide numerical rank.
+   * \param SVAL  Output estimates for singular-value-like indicators.
+   * \return Estimated numerical rank.
+   */
   template <typename T>
   integer
   rankEstimate(
@@ -288,7 +322,14 @@ namespace lapack_wrapper {
     T       SVAL[3]
   );
 
-  //! base class for linear system solver
+  /*!
+   * \brief Common interface implemented by all dense solver wrappers.
+   *
+   * Derived classes expose one or more factorization routines and then solve
+   * linear systems with one or multiple right-hand sides. The wrapper-level
+   * overloads accepting `MatrixWrapper` objects are implemented here so that
+   * every solver can share a consistent API.
+   */
   template <typename T>
   class LinearSystemSolver {
   public:

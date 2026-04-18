@@ -21,6 +21,15 @@
 /// file: eig.hxx
 ///
 
+/*!
+ * \file eig.hxx
+ * \brief Dense and sparse front-ends for eigenvalue and eigenvector analysis.
+ *
+ * The classes in this header accept matrices either in dense column-major form
+ * or in sparse coordinate form, internally assemble the data required by
+ * LAPACK, and expose convenient getters for the computed spectrum.
+ */
+
 namespace lapack_wrapper {
 
   /*\
@@ -32,7 +41,12 @@ namespace lapack_wrapper {
   :|:           |___/
   \*/
 
-  //! Sparse Matrix Structure
+  /*!
+   * \brief Compute eigenvalues of a real square matrix.
+   *
+   * The input can be provided either as a dense matrix or as a sparse matrix in
+   * coordinate format, which is first expanded into dense storage.
+   */
   template <typename T>
   class Eigenvalues {
   public:
@@ -102,6 +116,12 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  /*!
+   * \brief Compute eigenvalues and left/right eigenvectors of a real matrix.
+   *
+   * Complex conjugate eigenpairs are returned through real and imaginary parts
+   * or reconstructed into complex vectors by the accessor methods.
+   */
   template <typename T>
   class Eigenvectors {
   public:
@@ -174,6 +194,11 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  /*!
+   * \brief Compute generalized eigenvalues of the matrix pencil `(A, B)`.
+   *
+   * Both dense and sparse coordinate inputs are supported.
+   */
   template <typename T>
   class GeneralizedEigenvalues {
   public:
@@ -263,6 +288,12 @@ namespace lapack_wrapper {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  /*!
+   * \brief Compute generalized eigenvalues and eigenvectors of a matrix pencil.
+   *
+   * In addition to the spectral data, the class exposes balancing scales and
+   * reciprocal condition estimates returned by the generalized eigensolver.
+   */
   template <typename T>
   class GeneralizedEigenvectors {
   public:

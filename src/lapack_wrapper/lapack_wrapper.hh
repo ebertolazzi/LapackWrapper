@@ -21,6 +21,15 @@
 /// file: lapack_wrapper.hh
 ///
 
+/*!
+ * \file lapack_wrapper.hh
+ * \brief Low-level BLAS/LAPACK declarations, traits, and utility wrappers.
+ *
+ * This header selects the backend library at compile time and exposes the
+ * procedural interface used by the higher-level C++ layer in
+ * `lapack_wrapper++.hh`.
+ */
+
 #include "../lapack_wrapper_config.hh"
 
 #ifndef LAPACK_WRAPPER_dot_HH

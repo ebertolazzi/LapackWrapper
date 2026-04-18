@@ -18,8 +18,17 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: ls.hxx
+/// file: lsc.hxx
 ///
+
+/*!
+ * \file lsc.hxx
+ * \brief Equality-constrained linear least-squares solver.
+ *
+ * The solver assembles the Karush-Kuhn-Tucker system associated with a dense
+ * least-squares problem with linear equality constraints and solves it through
+ * an internal LU factorization.
+ */
 
 namespace lapack_wrapper {
 
@@ -55,6 +64,12 @@ namespace lapack_wrapper {
   :|:
   \*/
 
+  /*!
+   * \brief Solve dense equality-constrained least-squares problems.
+   *
+   * Rows selected in `row_select` define the least-squares part, while the
+   * remaining rows are interpreted as exact linear constraints.
+   */
   template <typename T>
   class LSC : public LinearSystemSolver<T> {
   public:
@@ -77,6 +92,9 @@ namespace lapack_wrapper {
     mutable real_type *       m_rhs{nullptr};
 
   public:
+
+    using LinearSystemSolver<T>::solve;
+    using LinearSystemSolver<T>::t_solve;
 
     LSC() : LinearSystemSolver<T>() {}
 
