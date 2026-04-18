@@ -21,6 +21,15 @@
 /// file: lu.hxx
 ///
 
+/*!
+ * \file lu.hxx
+ * \brief Dense LU-based direct solvers.
+ *
+ * The classes declared here provide LU factorizations for general rectangular
+ * and square dense matrices, both with and without complete pivoting, with
+ * interfaces that support preallocated workspaces or internally managed memory.
+ */
+
 namespace lapack_wrapper {
 
   //============================================================================
@@ -32,6 +41,13 @@ namespace lapack_wrapper {
   :|:  |_____\___/
   \*/
 
+  /*!
+   * \brief LU factorization wrapper using user-provided work buffers.
+   *
+   * The class stores the factorized matrix together with the row pivot vector
+   * in external memory supplied through `no_allocate()`. It is useful when the
+   * caller wants full control over allocations.
+   */
   template <typename T>
   class LU_no_alloc : public LinearSystemSolver<T> {
   public:
@@ -133,6 +149,12 @@ namespace lapack_wrapper {
 
   //============================================================================
 
+  /*!
+   * \brief Owning LU solver with internally managed storage.
+   *
+   * `LU` allocates the memory required by `LU_no_alloc` and exposes the same
+   * dense factorization and solve interface.
+   */
   template <typename T>
   class LU : public LU_no_alloc<T> {
   public:
@@ -197,6 +219,13 @@ namespace lapack_wrapper {
   :|:  |_____\___/|_|    \__\_\
   \*/
 
+  /*!
+   * \brief LU factorization with complete pivoting on caller-owned storage.
+   *
+   * The factorization is intended for square matrices and tracks both row and
+   * column permutations, which makes it more robust on ill-conditioned or
+   * nearly singular systems than plain partial-pivot LU.
+   */
   template <typename T>
   class LUPQ_no_alloc : public LinearSystemSolver<T> {
   public:
@@ -265,6 +294,12 @@ namespace lapack_wrapper {
 
   //============================================================================
 
+  /*!
+   * \brief Owning complete-pivot LU solver.
+   *
+   * This class manages the workspace required by `LUPQ_no_alloc` and offers
+   * the same factorize/solve API with automatic allocation.
+   */
   template <typename T>
   class LUPQ : public LUPQ_no_alloc<T> {
   public:

@@ -191,6 +191,8 @@ if ( UTILS_ENABLE_TESTS )
     test14-SparseTool2
     test15-LapackWrapper-regressions
     test16-LapackWrapper-coverage
+    test17-LapackWrapper-extra-coverage
+    test18-LapackWrapper-banded-block-coverage
   )
 
   add_custom_target( "${PROJECT_NAME}_all_tests" ALL )

@@ -2,6 +2,14 @@
 #ifndef SPARSETOOL_ITERATIVE_HH
 #define SPARSETOOL_ITERATIVE_HH
 
+/*!
+ * \file sparse_tool_iterative.hh
+ * \brief Iterative sparse solvers and preconditioners.
+ *
+ * This convenience header gathers the iterative Krylov methods and the
+ * preconditioners provided by `Sparse_tool`.
+ */
+
 #include "sparse_tool.hh"
 #include <iostream>
 

@@ -138,9 +138,10 @@ namespace Sparse_tool {
         pA = A_A.data();
         for ( integer k{0}; k < PRECO::pr_size; ++k, ++pR ) {
           real_type As1{0};
-          for ( integer i_cnt{pR[1] - pR[0]}; i_cnt > 0; --i_cnt )
+          for ( integer i_cnt{pR[1] - pR[0]}; i_cnt > 0; --i_cnt ) {
             As1  += *pA++ * s1(*pJ++);
-            _y(k) = a*(As1-v(k))+b*s1(k)+c*s0(k);
+          }
+          _y(k) = a*(As1-v(k))+b*s1(k)+c*s0(k);
         };
       }
     }

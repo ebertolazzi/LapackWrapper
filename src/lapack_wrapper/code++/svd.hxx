@@ -21,6 +21,14 @@
 /// file: svd.hxx
 ///
 
+/*!
+ * \file svd.hxx
+ * \brief Singular value and generalized singular value decompositions.
+ *
+ * The classes declared here provide dense SVD-based solvers, access to left
+ * and right singular-vector factors, and the generalized SVD for matrix pairs.
+ */
+
 namespace lapack_wrapper {
 
   //============================================================================
@@ -31,6 +39,12 @@ namespace lapack_wrapper {
   :|:   ___) |\ V / | |_| |
   :|:  |____/  \_/  |____/
   \*/
+  /*!
+   * \brief Singular-value decomposition using caller-provided storage.
+   *
+   * The factorization can be computed through either `gesvd` or `gesdd`,
+   * depending on the selected backend mode.
+   */
   template <typename T>
   class SVD_no_alloc : public LinearSystemSolver<T> {
   public:
@@ -198,6 +212,12 @@ namespace lapack_wrapper {
 
   //============================================================================
 
+  /*!
+   * \brief Owning SVD wrapper.
+   *
+   * `SVD` allocates the buffers used by `SVD_no_alloc` and exposes the same
+   * factorize/solve interface.
+   */
   template <typename T>
   class SVD : public SVD_no_alloc<T> {
   public:
@@ -288,6 +308,13 @@ namespace lapack_wrapper {
   :|:
   \*/
 
+  /*!
+   * \brief Generalized singular value decomposition of a matrix pair.
+   *
+   * Given two matrices `A` and `B`, the class computes the GSVD factors and
+   * stores the diagonal coefficient vectors together with the orthogonal
+   * factors commonly denoted by `U`, `V`, and `Q`.
+   */
   template <typename T>
   class GeneralizedSVD {
 

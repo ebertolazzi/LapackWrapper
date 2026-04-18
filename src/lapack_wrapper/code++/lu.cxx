@@ -186,7 +186,7 @@ namespace lapack_wrapper {
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     ) };
-    return info >= 0;
+    return info == 0;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -205,7 +205,7 @@ namespace lapack_wrapper {
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     ) };
-    UTILS_ASSERT( info >= 0, "LU::t_solve getrs INFO = {}\nat {}\n", info );
+    UTILS_ASSERT( info == 0, "LU::t_solve getrs INFO = {}\nat {}\n", info, who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

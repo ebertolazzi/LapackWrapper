@@ -21,6 +21,14 @@
 /// file: qn.hxx
 ///
 
+/*!
+ * \file qn.hxx
+ * \brief Quasi-Newton inverse-Hessian updates.
+ *
+ * The classes in this header maintain dense symmetric approximations of an
+ * inverse Hessian and update them using standard BFGS, DFP, or SR1 formulas.
+ */
+
 namespace lapack_wrapper {
 
   /*\
@@ -31,6 +39,12 @@ namespace lapack_wrapper {
   :|:   \__\_\\__,_|\__,_|___/_|_| \_|\___| \_/\_/  \__\___/|_| |_|
   \*/
 
+  /*!
+   * \brief Base class for dense quasi-Newton inverse-Hessian approximations.
+   *
+   * The matrix is stored explicitly and can be initialized, multiplied, and
+   * updated from gradient and step differences.
+   */
   template <typename T>
   class QN {
   public:
@@ -157,6 +171,9 @@ namespace lapack_wrapper {
   :|: |____/|_|   \____|____/
   \*/
 
+  /*!
+   * \brief BFGS inverse-Hessian update.
+   */
   template <typename T>
   class BFGS : public QN<T> {
   public:
@@ -199,6 +216,9 @@ namespace lapack_wrapper {
   :|:  |____/|_|   |_|
   \*/
 
+  /*!
+   * \brief DFP inverse-Hessian update.
+   */
   template <typename T>
   class DFP : public QN<T> {
   public:
@@ -240,6 +260,9 @@ namespace lapack_wrapper {
   :|:  |____/|_| \_\_|
   \*/
 
+  /*!
+   * \brief Symmetric rank-one inverse-Hessian update.
+   */
   template <typename T>
   class SR1 : public QN<T> {
   public:

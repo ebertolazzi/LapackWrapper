@@ -21,6 +21,14 @@
 /// file: lapack_wrapper_libs.hh
 ///
 
+/*!
+ * \file lapack_wrapper_libs.hh
+ * \brief Platform-specific automatic library selection helpers.
+ *
+ * The header is primarily used on Windows builds to pull the correct BLAS and
+ * LAPACK import libraries depending on the configured backend.
+ */
+
 #pragma once
 
 #ifndef LAPACK_WRAPPER_LIBS_dot_HH

@@ -21,6 +21,15 @@
 /// file: qr.hxx
 ///
 
+/*!
+ * \file qr.hxx
+ * \brief Dense QR and pivoted-QR factorizations.
+ *
+ * These classes expose orthogonal-factor-based decompositions together with
+ * helper methods to apply `Q`, recover `R`, estimate rank, and solve square
+ * systems obtained from the factorization.
+ */
+
 namespace lapack_wrapper {
 
   //============================================================================
@@ -32,6 +41,12 @@ namespace lapack_wrapper {
   :|:   \__\_\_| \_\
   \*/
 
+  /*!
+   * \brief QR factorization wrapper using externally supplied workspace.
+   *
+   * The factorized matrix, reflector coefficients, and LAPACK work arrays live
+   * in caller-owned memory configured through `no_allocate()`.
+   */
   template <typename T>
   class QR_no_alloc : public LinearSystemSolver<T> {
   public:
@@ -257,6 +272,11 @@ namespace lapack_wrapper {
   //============================================================================
   //============================================================================
 
+  /*!
+   * \brief Owning QR factorization wrapper.
+   *
+   * `QR` allocates and owns the buffers required by `QR_no_alloc`.
+   */
   template <typename T>
   class QR : public QR_no_alloc<T> {
   public:
@@ -343,6 +363,12 @@ namespace lapack_wrapper {
    |   \__\_\_| \_\_|
   \*/
 
+  /*!
+   * \brief Pivoted QR factorization with caller-owned buffers.
+   *
+   * In addition to the reflector data inherited from `QR_no_alloc`, this class
+   * stores the column permutation produced by rank-revealing QR.
+   */
   template <typename T>
   class QRP_no_alloc : public QR_no_alloc<T> {
   public:
@@ -524,6 +550,12 @@ namespace lapack_wrapper {
   //============================================================================
   //============================================================================
 
+  /*!
+   * \brief Owning pivoted QR factorization wrapper.
+   *
+   * `QRP` manages the numeric workspace and pivot arrays needed by
+   * `QRP_no_alloc`.
+   */
   template <typename T>
   class QRP : public QRP_no_alloc<T> {
   public:

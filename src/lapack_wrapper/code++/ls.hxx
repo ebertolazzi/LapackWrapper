@@ -21,6 +21,14 @@
 /// file: ls.hxx
 ///
 
+/*!
+ * \file ls.hxx
+ * \brief Dense least-squares solvers and minimum-norm variants.
+ *
+ * The algorithms in this header wrap LAPACK routines for linear least-squares
+ * problems solved by singular values or by rank-revealing QR with pivoting.
+ */
+
 namespace lapack_wrapper {
 
   //============================================================================
@@ -32,6 +40,13 @@ namespace lapack_wrapper {
   :|:  |_____|____/____/
   \*/
 
+  /*!
+   * \brief Least-squares solver based on singular values with external storage.
+   *
+   * The class is a thin stateful wrapper around the LAPACK routine used by the
+   * `LSS` backend. Memory for factorization data and work arrays is supplied by
+   * the caller.
+   */
   template <typename T>
   class LSS_no_alloc : public LinearSystemSolver<T> {
   public:
@@ -117,6 +132,12 @@ namespace lapack_wrapper {
   //============================================================================
   //============================================================================
 
+  /*!
+   * \brief Owning least-squares solver based on singular values.
+   *
+   * `LSS` allocates the storage required by `LSS_no_alloc` and is the simplest
+   * entry point when the caller only needs factorize/solve operations.
+   */
   template <typename T>
   class LSS : public LSS_no_alloc<T> {
   public:
@@ -199,6 +220,12 @@ namespace lapack_wrapper {
   :|: | |___ ___) || |
   :|: |_____|____/ |_|
   \*/
+  /*!
+   * \brief Rank-revealing least-squares solver with caller-managed buffers.
+   *
+   * This wrapper stores the QR-with-column-pivoting data used by LAPACK
+   * `gelsy`, enabling repeated solves once the matrix has been factorized.
+   */
   template <typename T>
   class LSY_no_alloc : public LinearSystemSolver<T> {
   public:
@@ -291,6 +318,12 @@ namespace lapack_wrapper {
   //============================================================================
   //============================================================================
 
+  /*!
+   * \brief Owning rank-revealing least-squares solver.
+   *
+   * `LSY` provides the same numerical method as `LSY_no_alloc` while managing
+   * all workspace allocations internally.
+   */
   template <typename T>
   class LSY : public LSY_no_alloc<T> {
   public:

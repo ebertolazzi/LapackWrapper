@@ -38,6 +38,12 @@ namespace lapack_wrapper {
     real_type       beta,
     real_type       y[]
   ) {
+    if ( N <= 0 ) return;
+    if ( N == 1 ) {
+      if ( Utils::is_zero(beta) ) y[0] = alpha * D[0] * x[0];
+      else                        y[0] = beta * y[0] + alpha * D[0] * x[0];
+      return;
+    }
     if ( Utils::is_zero(beta) ) {
       y[0] = alpha*(D[0]*x[0] + U[0] * x[1]);
       for ( integer i{1}; i < N-1; ++i )
@@ -68,16 +74,17 @@ namespace lapack_wrapper {
     real_type const _L[],
     real_type const _D[]
   ) {
+    integer nL{ N > 0 ? N-1 : 0 };
     if ( m_nRC != N ) {
       m_allocReals.reallocate(3*N);
       m_nRC  = N;
-      m_L    = m_allocReals(N);
       m_D    = m_allocReals(N);
+      m_L    = m_allocReals(size_t(nL));
       m_WORK = m_allocReals(N);
     }
-    copy( N, _L, 1, m_L, 1 );
+    if ( nL > 0 ) copy( nL, _L, 1, m_L, 1 );
     copy( N, _D, 1, m_D, 1 );
-    integer info{ pttrf( N, m_L, m_D ) };
+    integer info{ pttrf( N, m_D, m_L ) };
     UTILS_ASSERT( info == 0, "TridiagonalSPD::factorize[{}], return info = {}\n", who, info );
   }
 
@@ -90,16 +97,17 @@ namespace lapack_wrapper {
     real_type const _L[],
     real_type const _D[]
   ) {
+    integer nL{ N > 0 ? N-1 : 0 };
     if ( m_nRC != N ) {
       m_allocReals.reallocate(3*N);
       m_nRC  = N;
-      m_L    = m_allocReals(N);
       m_D    = m_allocReals(N);
+      m_L    = m_allocReals(size_t(nL));
       m_WORK = m_allocReals(N);
     }
-    copy( N, _L, 1, m_L, 1 );
+    if ( nL > 0 ) copy( nL, _L, 1, m_L, 1 );
     copy( N, _D, 1, m_D, 1 );
-    integer info{ pttrf( N, m_L, m_D ) };
+    integer info{ pttrf( N, m_D, m_L ) };
     return info == 0;
   }
 
@@ -184,21 +192,23 @@ namespace lapack_wrapper {
     real_type const D[],
     real_type const U[]
   ) {
+    integer n1{ N > 0 ? N-1 : 0 };
+    integer n2{ N > 1 ? N-2 : 0 };
     if ( m_nRC != N ) {
       m_nRC = N;
       m_allocReals.reallocate(6*N);
       m_allocIntegers.reallocate(2*N);
-      m_L     = m_allocReals(N);
       m_D     = m_allocReals(N);
-      m_U     = m_allocReals(N);
-      m_U2    = m_allocReals(N);
+      m_L     = m_allocReals(size_t(n1));
+      m_U     = m_allocReals(size_t(n1));
+      m_U2    = m_allocReals(size_t(n2));
       m_WORK  = m_allocReals(2*N);
       m_IPIV  = m_allocIntegers(N);
       m_IWORK = m_allocIntegers(N);
     }
-    copy( N-1, L, 1, m_L, 1 );
+    if ( n1 > 0 ) copy( n1, L, 1, m_L, 1 );
     copy( N,   D, 1, m_D, 1 );
-    copy( N-1, U, 1, m_U, 1 );
+    if ( n1 > 0 ) copy( n1, U, 1, m_U, 1 );
     integer info { gttrf( N, m_L, m_D, m_U, m_U2, m_IPIV ) };
     UTILS_ASSERT( info == 0, "TridiagonalLU::factorize[{}], return info = {}\n", who, info );
   }
@@ -213,21 +223,23 @@ namespace lapack_wrapper {
     real_type const D[],
     real_type const U[]
   ) {
+    integer n1{ N > 0 ? N-1 : 0 };
+    integer n2{ N > 1 ? N-2 : 0 };
     if ( m_nRC != N ) {
       m_nRC = N;
       m_allocReals.reallocate(6*N);
       m_allocIntegers.reallocate(2*N);
-      m_L     = m_allocReals(N);
       m_D     = m_allocReals(N);
-      m_U     = m_allocReals(N);
-      m_U2    = m_allocReals(N);
+      m_L     = m_allocReals(size_t(n1));
+      m_U     = m_allocReals(size_t(n1));
+      m_U2    = m_allocReals(size_t(n2));
       m_WORK  = m_allocReals(2*N);
       m_IPIV  = m_allocIntegers(N);
       m_IWORK = m_allocIntegers(N);
     }
-    copy( N, L, 1, m_L, 1 );
+    if ( n1 > 0 ) copy( n1, L, 1, m_L, 1 );
     copy( N, D, 1, m_D, 1 );
-    copy( N, U, 1, m_U, 1 );
+    if ( n1 > 0 ) copy( n1, U, 1, m_U, 1 );
     integer info{ gttrf( N, m_L, m_D, m_U, m_U2, m_IPIV ) };
     return info == 0;
   }
@@ -375,13 +387,15 @@ namespace lapack_wrapper {
     real_type const D[],
     real_type const U[]
   ) {
-    m_allocReals.reallocate(size_t(5*(N-1)));
+    integer n1{ N > 0 ? N-1 : 0 };
+    integer n2{ N > 1 ? N-2 : 0 };
+    m_allocReals.reallocate(size_t(N + 3*n1 + n2));
     m_nRC = N;
-    m_C   = m_allocReals(size_t(N-1));
-    m_S   = m_allocReals(size_t(N-1));
+    m_C   = m_allocReals(size_t(n1));
+    m_S   = m_allocReals(size_t(n1));
     m_BD  = m_allocReals(size_t(N));
-    m_BU  = m_allocReals(size_t(N-1));
-    m_BU2 = m_allocReals(size_t(N-2));
+    m_BU  = m_allocReals(size_t(n1));
+    m_BU2 = m_allocReals(size_t(n2));
 
     /*\
       | d u       | d u @     | d u @     | d u @     | d u @     |
@@ -392,10 +406,15 @@ namespace lapack_wrapper {
     \*/
 
     lapack_wrapper::copy( N,   D, 1, m_BD, 1 );
-    lapack_wrapper::copy( N-1, U, 1, m_BU, 1 );
-    lapack_wrapper::zero( N-2, m_BU2, 1 );
+    if ( n1 > 0 ) lapack_wrapper::copy( n1, U, 1, m_BU, 1 );
+    if ( n2 > 0 ) lapack_wrapper::zero( n2, m_BU2, 1 );
 
     m_normInfA = 0;
+    if ( N <= 0 ) return true;
+    if ( N == 1 ) {
+      m_normInfA = std::abs(m_BD[0]);
+      return true;
+    }
     integer i{0};
     for (; i < N-2; ++i ) {
       real_type Li{ L[i] };
@@ -436,6 +455,11 @@ namespace lapack_wrapper {
   template <typename T>
   void
   TridiagonalQR<T>::Rsolve( real_type xb[] ) const {
+    if ( m_nRC <= 0 ) return;
+    if ( m_nRC == 1 ) {
+      xb[0] /= m_BD[0];
+      return;
+    }
     xb[m_nRC-1] /= m_BD[m_nRC-1];
     xb[m_nRC-2] = (xb[m_nRC-2]-m_BU[m_nRC-2]*xb[m_nRC-1])/m_BD[m_nRC-2];
     for ( integer i{m_nRC-3}; i >= 0; --i )
@@ -447,10 +471,15 @@ namespace lapack_wrapper {
   template <typename T>
   void
   TridiagonalQR<T>::RsolveTransposed( real_type xb[] ) const {
+    if ( m_nRC <= 0 ) return;
+    if ( m_nRC == 1 ) {
+      xb[0] /= m_BD[0];
+      return;
+    }
     xb[0] /= m_BD[0];
     xb[1] = (xb[1]-m_BU[0]*xb[0])/m_BD[1];
     for ( integer i{2}; i < m_nRC; ++i )
-      xb[i] = (xb[i]-m_BU[i]*xb[i-1]-m_BU2[i]*xb[i-2])/m_BD[i];
+      xb[i] = (xb[i]-m_BU[i-1]*xb[i-1]-m_BU2[i-2]*xb[i-2])/m_BD[i];
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

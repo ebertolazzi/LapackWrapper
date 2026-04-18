@@ -18,8 +18,17 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: qr.hxx
+/// file: pinv.hxx
 ///
+
+/*!
+ * \file pinv.hxx
+ * \brief Pseudo-inverse construction based on QR factorizations.
+ *
+ * The classes in this header compute a Moore-Penrose pseudo-inverse for dense
+ * matrices and provide multiplication helpers for applying the inverse or its
+ * transpose without explicitly materializing the full matrix.
+ */
 
 namespace lapack_wrapper {
 
@@ -32,6 +41,12 @@ namespace lapack_wrapper {
   :|:  |_|
   \*/
 
+  /*!
+   * \brief Pseudo-inverse builder using caller-managed buffers.
+   *
+   * Internally the factorization is expressed through pivoted QR and auxiliary
+   * QR factorizations, while the public API exposes solve-style operations.
+   */
   template <typename T>
   class PINV_no_alloc : public LinearSystemSolver<T> {
   public:
@@ -189,6 +204,11 @@ namespace lapack_wrapper {
   //============================================================================
   //============================================================================
 
+  /*!
+   * \brief Owning pseudo-inverse wrapper.
+   *
+   * `PINV` manages the workspace required by `PINV_no_alloc`.
+   */
   template <typename T>
   class PINV : public PINV_no_alloc<T> {
   public:

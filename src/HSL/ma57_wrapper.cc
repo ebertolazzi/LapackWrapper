@@ -30,6 +30,7 @@ namespace lapack_wrapper {
     bool const isFortranIndexing,
     bool const isStoredSymmetric
   ) {
+    static_cast<void>( isStoredSymmetric );
     // Set dimension:
     m_nnz = Nnz;
     if (N_Row != N_Col) {

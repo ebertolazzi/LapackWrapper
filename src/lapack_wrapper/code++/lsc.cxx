@@ -18,7 +18,7 @@
 \*--------------------------------------------------------------------------*/
 
 ///
-/// file: ls.cxx
+/// file: lsc.cxx
 ///
 
 namespace lapack_wrapper {
@@ -138,6 +138,7 @@ namespace lapack_wrapper {
     m_allocWorks.reallocate( size_t(m_NRA+m_NR+m_NC) );
     m_work = m_allocWorks( size_t(m_NRA) );
     m_rhs  = m_allocWorks( size_t(m_NR+m_NC) );
+    lapack_wrapper::zero( m_NR+m_NC, m_rhs, 1 );
 
     /*\
     :|:  / 0   A^T  B^T \  /   x    \   / A^T b \
@@ -155,7 +156,6 @@ namespace lapack_wrapper {
         m_work, 1,
         0.0, m_rhs, 1
       );
-      lapack_wrapper::zero( m_NRA, m_rhs+m_NC, 1 );
     }
 
     for ( integer i{0}; i < m_NRB; ++i )
@@ -178,10 +178,12 @@ namespace lapack_wrapper {
     real_type B[],
     integer   ldB
   ) const {
+    integer NN{ m_NR+m_NC };
 
-    m_allocWorks.reallocate( size_t( (m_NRA+m_NR+m_NC)*nrhs ) );
+    m_allocWorks.reallocate( size_t( (m_NRA+NN)*nrhs ) );
     m_work = m_allocWorks( size_t( m_NRA*nrhs ) );
-    m_rhs  = m_allocWorks( size_t( (m_NR+m_NC)*nrhs ) );
+    m_rhs  = m_allocWorks( size_t( NN*nrhs ) );
+    lapack_wrapper::zero( NN*nrhs, m_rhs, 1 );
 
     /*\
     :|:  / 0   A^T  B^T \  /   x    \   / A^T b \
@@ -191,40 +193,32 @@ namespace lapack_wrapper {
     :|:  \ B    0    0  /  \ lambda /   \   c   /
     \*/
     // A^T b
-    for ( integer i{0}; i < m_NRA; ++i )
-      lapack_wrapper::copy( nrhs, B+m_to_rowA[i], ldB, m_work+i, m_NRA );
+    if ( m_NRA > 0 ) {
+      for ( integer i{0}; i < m_NRA; ++i )
+        lapack_wrapper::copy( nrhs, B+m_to_rowA[i], ldB, m_work+i, m_NRA );
 
-/*
-    lapack_wrapper::gemm(
-      Transposition::YES,
-      Transposition::NO,
-      m_NRA, m_NC,
-      integer               K,
-      1.0, m_Amat, m_NRA,
-      B, ldB,
-      0.0,
-      real                  C[],
-      integer               LDC
-    );
-
-
-
-    lapack_wrapper::gemv(
-      Transposition::YES, m_NRA, m_NC,
-      1.0, m_Amat, m_NRA,
-      m_work, 1,
-      0.0, m_rhs, 1
-    );
-
-    lapack_wrapper::zero( m_NRA, m_rhs+m_NC, 1 );
+      for ( integer j{0}; j < nrhs; ++j ) {
+        lapack_wrapper::gemv(
+          Transposition::YES, m_NRA, m_NC,
+          1.0, m_Amat, m_NRA,
+          m_work+j*m_NRA, 1,
+          0.0, m_rhs+j*NN, 1
+        );
+      }
+    }
 
     for ( integer i{0}; i < m_NRB; ++i )
-      m_rhs[m_NC+m_NRA+i] = xb[m_to_rowB[i]];
-*/
+      lapack_wrapper::copy( nrhs, B+m_to_rowB[i], ldB, m_rhs+m_NC+m_NRA+i, NN );
+
+    bool ok = m_lu.solve( nrhs, m_rhs, NN );
+    if ( ok ) {
+      for ( integer j{0}; j < nrhs; ++j )
+        lapack_wrapper::copy( m_NC, m_rhs+j*NN, 1, B+j*ldB, 1 );
+    }
 
     m_allocWorks.free();
 
-    return true;
+    return ok;
   }
 }
 
