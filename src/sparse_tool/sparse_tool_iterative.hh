@@ -53,17 +53,17 @@ namespace Sparse_tool {
     Vector<integer>   & U_I,
     Vector<integer>   & U_C
   ) {
-    UTILS_ASSERT0(
+    sp_assert(
       A.is_ordered(),
       "Sparse_Tool: separate_LDU\n"
       "pattern must be ordered before use\n"
     );
-    UTILS_ASSERT0(
+    sp_assert(
       A.nrows() == A.ncols(),
       "Sparse_Tool: separate_LDU\n"
       "only square matrix allowed\n"
     );
-    UTILS_ASSERT0(
+    sp_assert(
       A.nrows() > 0,
       "Sparse_Tool: separate_LDU\n"
       "empty matrix\n"

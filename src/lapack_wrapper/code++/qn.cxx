@@ -34,7 +34,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   QN<T>::allocate( integer N ) {
-    UTILS_ASSERT(
+    lw_assert(
       N > 0 && N <= 1000,
       "QN<T>::allocate, N = {} must be > 0 and <= 1000\n", N
     );

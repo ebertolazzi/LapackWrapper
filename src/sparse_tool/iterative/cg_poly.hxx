@@ -77,7 +77,7 @@ namespace Sparse_tool {
     ostream_type      * pStream = nullptr
   ) {
 
-    UTILS_ASSERT(
+    sp_assert(
       A.nrows() == b.size() &&
       A.ncols() == x.size() &&
       A.nrows() == A.ncols(),

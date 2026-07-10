@@ -40,6 +40,17 @@
 \*/
 @@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@
 
+/*
+ * On macOS, force Apple system headers used by Accelerate/vecLib to be
+ * parsed at global namespace scope before any Utils header is included.
+ * This prevents guarded system typedefs such as filesec_t from being first
+ * declared as Utils::filesec_t if a transitive Utils header opens namespace
+ * Utils around system includes.
+ */
+#if defined(__APPLE__)
+  #include <fcntl.h>
+#endif
+
 #ifdef NO_SYSTEM_UTILS
   #include "Utils.hh"
   #include "Utils_fmt.hh"
@@ -52,9 +63,23 @@
   #include <Utils_TicToc.hh>
 #endif
 
+#include <format>
+
 namespace lapack_wrapper {
   using Utils::ostream_type;
   using Utils::Malloc;
+
+  inline void
+  lw_assert( bool cond, std::string_view msg ) {
+    if ( !cond ) throw std::runtime_error( std::string(msg) );
+  }
+  
+  template <typename... Args> requires ( sizeof...(Args) > 0 )
+  inline void
+  lw_assert( bool cond, std::format_string<Args...> fmt, Args &&... args ) {
+    if ( !cond ) throw std::runtime_error( std::format( fmt, std::forward<Args>(args)... ) );
+  }
+
 }
 
 #endif

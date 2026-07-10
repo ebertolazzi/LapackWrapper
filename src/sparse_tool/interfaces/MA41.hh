@@ -17,7 +17,7 @@
 #define SPARSETOOL_MA41_dot_HH
 
 #include "../sparse_tool.hh"
-#include "../../HSL/hsl.h"
+#include "../../HSL/hsl.hh"
 #include "../../lapack_wrapper_config.hh"
 
 namespace Sparse_tool {
@@ -26,7 +26,7 @@ namespace Sparse_tool {
   class MA41 {
   public:
     using real_type = T;
-    using integer   = HSL::integer;
+    using integer   = lapack_wrapper::integer;
 
   private:
     enum {
@@ -93,7 +93,7 @@ namespace Sparse_tool {
       Vector<T>       & x,
       bool transpose = false
     ) {
-      return this->solve( &b.front(), &x.front(), transpose  );
+      return this->solve( b.data(), x.data(), transpose  );
     }
 
   };

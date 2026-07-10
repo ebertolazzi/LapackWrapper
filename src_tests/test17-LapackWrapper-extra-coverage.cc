@@ -1,5 +1,6 @@
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
+#include <Utils_Console.hh>
 
 #include <algorithm>
 #include <cmath>
@@ -23,6 +24,7 @@
 using real_type = lapack_wrapper::doublereal;
 using integer   = lapack_wrapper::integer;
 using lapack_wrapper::Transposition;
+using lapack_wrapper::lw_assert;
 
 static Utils::Console msg(&std::cout);
 
@@ -48,7 +50,7 @@ expect_close(
   real_type    b,
   real_type    tol = BIG_EPS
 ) {
-  UTILS_ASSERT(
+  lw_assert(
     close_enough(a, b, tol, tol),
     "{} mismatch: {} vs {}\n",
     what, a, b
@@ -150,15 +152,15 @@ test_lu_and_lupq_public_api() {
   {
     lapack_wrapper::LU<real_type> lu;
     lapack_wrapper::MatrixWrapper<real_type> Amat(A, N, N, N);
-    UTILS_ASSERT( lu.factorize( Amat ), "LU::factorize(MatrixWrapper) failed\n" );
+    lw_assert( lu.factorize( Amat ), "LU::factorize(MatrixWrapper) failed\n" );
 
     real_type rhs[N];
     lapack_wrapper::copy( N, b0, 1, rhs, 1 );
-    UTILS_ASSERT( lu.solve( rhs ), "LU::solve failed\n" );
+    lw_assert( lu.solve( rhs ), "LU::solve failed\n" );
     expect_vector_close( "LU single solve", N, rhs, x0 );
 
     lapack_wrapper::copy( N, bt0, 1, rhs, 1 );
-    UTILS_ASSERT( lu.t_solve( rhs ), "LU::t_solve failed\n" );
+    lw_assert( lu.t_solve( rhs ), "LU::t_solve failed\n" );
     expect_vector_close( "LU single t_solve", N, rhs, x0 );
 
     lapack_wrapper::Matrix<real_type> RHS(N,2);
@@ -166,7 +168,7 @@ test_lu_and_lupq_public_api() {
       RHS(i,0) = b0[i];
       RHS(i,1) = b1[i];
     }
-    UTILS_ASSERT( lu.solve( RHS ), "LU::solve(MatrixWrapper) failed\n" );
+    lw_assert( lu.solve( RHS ), "LU::solve(MatrixWrapper) failed\n" );
     expect_vector_close( "LU multi solve rhs0", N, RHS.data(),     x0 );
     expect_vector_close( "LU multi solve rhs1", N, RHS.data() + N, x1 );
 
@@ -174,14 +176,14 @@ test_lu_and_lupq_public_api() {
       RHS(i,0) = bt0[i];
       RHS(i,1) = bt1[i];
     }
-    UTILS_ASSERT( lu.t_solve( RHS ), "LU::t_solve(MatrixWrapper) failed\n" );
+    lw_assert( lu.t_solve( RHS ), "LU::t_solve(MatrixWrapper) failed\n" );
     expect_vector_close( "LU multi t_solve rhs0", N, RHS.data(),     x0 );
     expect_vector_close( "LU multi t_solve rhs1", N, RHS.data() + N, x1 );
 
     real_type cond1{ lu.cond1( dense_norm1(N, N, A, N) ) };
     real_type condI{ lu.condInf( dense_norm_inf(N, N, A, N) ) };
-    UTILS_ASSERT( std::isfinite(cond1) && cond1 > 0, "LU::cond1 invalid\n" );
-    UTILS_ASSERT( std::isfinite(condI) && condI > 0, "LU::condInf invalid\n" );
+    lw_assert( std::isfinite(cond1) && cond1 > 0, "LU::cond1 invalid\n" );
+    lw_assert( std::isfinite(condI) && condI > 0, "LU::condInf invalid\n" );
   }
 
   {
@@ -192,25 +194,25 @@ test_lu_and_lupq_public_api() {
     std::vector<integer>   iw{ size_t(N) };
 
     lu.no_allocate( N, N, fact.data(), piv.data(), work.data(), iw.data() );
-    UTILS_ASSERT( lu.factorize_nodim( A, N ), "LU_no_alloc::factorize_nodim failed\n" );
+    lw_assert( lu.factorize_nodim( A, N ), "LU_no_alloc::factorize_nodim failed\n" );
 
     real_type rhs[N];
     lapack_wrapper::copy( N, b1, 1, rhs, 1 );
-    UTILS_ASSERT( lu.solve( rhs ), "LU_no_alloc::solve failed\n" );
+    lw_assert( lu.solve( rhs ), "LU_no_alloc::solve failed\n" );
     expect_vector_close( "LU_no_alloc solve", N, rhs, x1 );
   }
 
   {
     lapack_wrapper::LUPQ<real_type> lupq;
-    UTILS_ASSERT( lupq.factorize( N, N, A, N ), "LUPQ::factorize failed\n" );
+    lw_assert( lupq.factorize( N, N, A, N ), "LUPQ::factorize failed\n" );
 
     real_type rhs[N];
     lapack_wrapper::copy( N, b0, 1, rhs, 1 );
-    UTILS_ASSERT( lupq.solve( rhs ), "LUPQ::solve failed\n" );
+    lw_assert( lupq.solve( rhs ), "LUPQ::solve failed\n" );
     expect_vector_close( "LUPQ solve", N, rhs, x0, 1e-7 );
 
     lapack_wrapper::copy( N, bt0, 1, rhs, 1 );
-    UTILS_ASSERT( lupq.t_solve( rhs ), "LUPQ::t_solve failed\n" );
+    lw_assert( lupq.t_solve( rhs ), "LUPQ::t_solve failed\n" );
     expect_vector_close( "LUPQ t_solve", N, rhs, x0, 1e-7 );
   }
 
@@ -220,11 +222,11 @@ test_lu_and_lupq_public_api() {
     std::vector<integer>   iw( size_t(2*N) );
 
     lupq.no_allocate( N, N*N, work.data(), 2*N, iw.data() );
-    UTILS_ASSERT( lupq.factorize_nodim( A, N ), "LUPQ_no_alloc::factorize_nodim failed\n" );
+    lw_assert( lupq.factorize_nodim( A, N ), "LUPQ_no_alloc::factorize_nodim failed\n" );
 
     real_type rhs[N];
     lapack_wrapper::copy( N, b1, 1, rhs, 1 );
-    UTILS_ASSERT( lupq.solve( rhs ), "LUPQ_no_alloc::solve failed\n" );
+    lw_assert( lupq.solve( rhs ), "LUPQ_no_alloc::solve failed\n" );
     expect_vector_close( "LUPQ_no_alloc solve", N, rhs, x1, 1e-7 );
   }
 }
@@ -244,7 +246,7 @@ test_lsc_public_api() {
   bool select[]{ true, false, false };
 
   lapack_wrapper::LSC<real_type> lsc;
-  UTILS_ASSERT( lsc.factorize( NR, NC, M, NR, select ), "LSC::factorize failed\n" );
+  lw_assert( lsc.factorize( NR, NC, M, NR, select ), "LSC::factorize failed\n" );
 
   real_type rhs0[]{ 1.5, 2.0, -1.0 };
   real_type sol0[]{ 2.0, -1.0 };
@@ -254,7 +256,7 @@ test_lsc_public_api() {
   {
     real_type xb[NR];
     lapack_wrapper::copy( NR, rhs0, 1, xb, 1 );
-    UTILS_ASSERT( lsc.solve( xb ), "LSC::solve failed\n" );
+    lw_assert( lsc.solve( xb ), "LSC::solve failed\n" );
     expect_vector_close( "LSC single solve", NC, xb, sol0 );
   }
 
@@ -264,7 +266,7 @@ test_lsc_public_api() {
       XB(i,0) = rhs0[i];
       XB(i,1) = rhs1[i];
     }
-    UTILS_ASSERT( lsc.solve( XB ), "LSC::solve(MatrixWrapper) failed\n" );
+    lw_assert( lsc.solve( XB ), "LSC::solve(MatrixWrapper) failed\n" );
     expect_vector_close( "LSC multi solve rhs0", NC, XB.data(),      sol0 );
     expect_vector_close( "LSC multi solve rhs1", NC, XB.data() + NR, sol1 );
   }
@@ -276,14 +278,14 @@ test_lsc_public_api() {
     };
     bool constraints_only[]{ false, false };
     lapack_wrapper::LSC<real_type> only_constraints;
-    UTILS_ASSERT(
+    lw_assert(
       only_constraints.factorize( 2, 2, I, 2, constraints_only ),
       "LSC::factorize failed for constraints-only system\n"
     );
 
     real_type xb[]{ 3.0, -2.0 };
     real_type expected[]{ 3.0, -2.0 };
-    UTILS_ASSERT( only_constraints.solve( xb ), "LSC::solve failed on constraints-only system\n" );
+    lw_assert( only_constraints.solve( xb ), "LSC::solve failed on constraints-only system\n" );
     expect_vector_close( "LSC constraints-only", 2, xb, expected );
   }
 
@@ -295,7 +297,7 @@ test_lsc_public_api() {
     } catch ( std::exception const & ) {
       threw = true;
     }
-    UTILS_ASSERT( threw, "LSC::t_solve should report unsupported operation\n" );
+    lw_assert( threw, "LSC::t_solve should report unsupported operation\n" );
   }
 }
 
@@ -326,15 +328,15 @@ test_tridiagonal_public_api() {
 
   {
     lapack_wrapper::TridiagonalLU<real_type> lu;
-    UTILS_ASSERT( lu.factorize( N, L, D, U ), "TridiagonalLU::factorize failed\n" );
+    lw_assert( lu.factorize( N, L, D, U ), "TridiagonalLU::factorize failed\n" );
 
     real_type rhs[N];
     lapack_wrapper::copy( N, b0, 1, rhs, 1 );
-    UTILS_ASSERT( lu.solve( rhs ), "TridiagonalLU::solve failed\n" );
+    lw_assert( lu.solve( rhs ), "TridiagonalLU::solve failed\n" );
     expect_vector_close( "TridiagonalLU solve", N, rhs, x0 );
 
     lapack_wrapper::copy( N, bt0, 1, rhs, 1 );
-    UTILS_ASSERT( lu.t_solve( rhs ), "TridiagonalLU::t_solve failed\n" );
+    lw_assert( lu.t_solve( rhs ), "TridiagonalLU::t_solve failed\n" );
     expect_vector_close( "TridiagonalLU t_solve", N, rhs, x0 );
 
     lapack_wrapper::Matrix<real_type> RHS(N,2);
@@ -342,7 +344,7 @@ test_tridiagonal_public_api() {
       RHS(i,0) = b0[i];
       RHS(i,1) = b1[i];
     }
-    UTILS_ASSERT( lu.solve( RHS ), "TridiagonalLU::solve(MatrixWrapper) failed\n" );
+    lw_assert( lu.solve( RHS ), "TridiagonalLU::solve(MatrixWrapper) failed\n" );
     expect_vector_close( "TridiagonalLU multi rhs0", N, RHS.data(),     x0 );
     expect_vector_close( "TridiagonalLU multi rhs1", N, RHS.data() + N, x1 );
 
@@ -350,11 +352,11 @@ test_tridiagonal_public_api() {
       RHS(i,0) = bt0[i];
       RHS(i,1) = bt1[i];
     }
-    UTILS_ASSERT( lu.t_solve( RHS ), "TridiagonalLU::t_solve(MatrixWrapper) failed\n" );
+    lw_assert( lu.t_solve( RHS ), "TridiagonalLU::t_solve(MatrixWrapper) failed\n" );
     expect_vector_close( "TridiagonalLU multi transpose rhs0", N, RHS.data(),     x0 );
     expect_vector_close( "TridiagonalLU multi transpose rhs1", N, RHS.data() + N, x1 );
 
-    UTILS_ASSERT(
+    lw_assert(
       std::isfinite( lu.cond1( 9.5 ) ) && std::isfinite( lu.condInf( 9.75 ) ),
       "TridiagonalLU condition estimates must be finite\n"
     );
@@ -371,15 +373,15 @@ test_tridiagonal_public_api() {
     lapack_wrapper::TridiagonalSPD<real_type>::axpy( N, 1.0, E, DS, y1, 0.0, rhs1 );
 
     lapack_wrapper::TridiagonalSPD<real_type> spd;
-    UTILS_ASSERT( spd.factorize( N, E, DS ), "TridiagonalSPD::factorize failed\n" );
+    lw_assert( spd.factorize( N, E, DS ), "TridiagonalSPD::factorize failed\n" );
 
     real_type rhs[N];
     lapack_wrapper::copy( N, rhs0, 1, rhs, 1 );
-    UTILS_ASSERT( spd.solve( rhs ), "TridiagonalSPD::solve failed\n" );
+    lw_assert( spd.solve( rhs ), "TridiagonalSPD::solve failed\n" );
     expect_vector_close( "TridiagonalSPD solve", N, rhs, y0 );
 
     lapack_wrapper::copy( N, rhs0, 1, rhs, 1 );
-    UTILS_ASSERT( spd.t_solve( rhs ), "TridiagonalSPD::t_solve failed\n" );
+    lw_assert( spd.t_solve( rhs ), "TridiagonalSPD::t_solve failed\n" );
     expect_vector_close( "TridiagonalSPD t_solve", N, rhs, y0 );
 
     lapack_wrapper::Matrix<real_type> RHS(N,2);
@@ -387,24 +389,24 @@ test_tridiagonal_public_api() {
       RHS(i,0) = rhs0[i];
       RHS(i,1) = rhs1[i];
     }
-    UTILS_ASSERT( spd.solve( RHS ), "TridiagonalSPD::solve(MatrixWrapper) failed\n" );
+    lw_assert( spd.solve( RHS ), "TridiagonalSPD::solve(MatrixWrapper) failed\n" );
     expect_vector_close( "TridiagonalSPD multi rhs0", N, RHS.data(),     y0 );
     expect_vector_close( "TridiagonalSPD multi rhs1", N, RHS.data() + N, y1 );
 
-    UTILS_ASSERT( std::isfinite( spd.cond1( 6.625 ) ), "TridiagonalSPD::cond1 invalid\n" );
+    lw_assert( std::isfinite( spd.cond1( 6.625 ) ), "TridiagonalSPD::cond1 invalid\n" );
   }
 
   {
     lapack_wrapper::TridiagonalQR<real_type> qr;
-    UTILS_ASSERT( qr.factorize( N, L, D, U ), "TridiagonalQR::factorize failed\n" );
+    lw_assert( qr.factorize( N, L, D, U ), "TridiagonalQR::factorize failed\n" );
 
     real_type rhs[N];
     lapack_wrapper::copy( N, b0, 1, rhs, 1 );
-    UTILS_ASSERT( qr.solve( rhs ), "TridiagonalQR::solve failed\n" );
+    lw_assert( qr.solve( rhs ), "TridiagonalQR::solve failed\n" );
     expect_vector_close( "TridiagonalQR solve", N, rhs, x0, 1e-7 );
 
     lapack_wrapper::copy( N, bt0, 1, rhs, 1 );
-    UTILS_ASSERT( qr.t_solve( rhs ), "TridiagonalQR::t_solve failed\n" );
+    lw_assert( qr.t_solve( rhs ), "TridiagonalQR::t_solve failed\n" );
     expect_vector_close( "TridiagonalQR t_solve", N, rhs, x0, 1e-7 );
 
     lapack_wrapper::Matrix<real_type> RHS(N,2);
@@ -412,7 +414,7 @@ test_tridiagonal_public_api() {
       RHS(i,0) = bt0[i];
       RHS(i,1) = bt1[i];
     }
-    UTILS_ASSERT( qr.t_solve( RHS ), "TridiagonalQR::t_solve(MatrixWrapper) failed\n" );
+    lw_assert( qr.t_solve( RHS ), "TridiagonalQR::t_solve(MatrixWrapper) failed\n" );
     expect_vector_close( "TridiagonalQR multi transpose rhs0", N, RHS.data(),     x0, 1e-7 );
     expect_vector_close( "TridiagonalQR multi transpose rhs1", N, RHS.data() + N, x1, 1e-7 );
 
@@ -426,8 +428,8 @@ test_tridiagonal_public_api() {
     real_type dummy[]{ 0.0 };
     real_type d1[]{ 2.0 };
     real_type rhs[]{ 6.0 };
-    UTILS_ASSERT( qr1.factorize( 1, dummy, d1, dummy ), "TridiagonalQR::factorize failed for N=1\n" );
-    UTILS_ASSERT( qr1.solve( rhs ), "TridiagonalQR::solve failed for N=1\n" );
+    lw_assert( qr1.factorize( 1, dummy, d1, dummy ), "TridiagonalQR::factorize failed for N=1\n" );
+    lw_assert( qr1.solve( rhs ), "TridiagonalQR::solve failed for N=1\n" );
     expect_close( "TridiagonalQR N=1 solve", rhs[0], 3.0 );
   }
 }

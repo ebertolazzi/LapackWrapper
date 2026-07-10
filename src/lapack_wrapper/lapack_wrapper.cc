@@ -263,7 +263,7 @@ namespace lapack_wrapper {
 
     std::vector<T> Tmat(N*N), line(N), r(nrhs);
 
-    gecopy( N, N, Amat, ldA, &Tmat.front(), N );
+    gecopy( N, N, Amat, ldA, Tmat.data(), N );
 
     for ( integer i{0}; i < N; ++i ) {
       std::fill( line.begin()+i, line.end(), T(0) );
@@ -275,7 +275,7 @@ namespace lapack_wrapper {
         T * pTjj{ &Tmat[j*(N+1)] };
         rotg( *pTjj, line[j], C, S );
         if ( N-j-1 > 0 ) rot( N-j-1, pTjj+N, N, &line[j+1], 1, C, S );
-        rot( nrhs, RHS+j, ldRHS, &r.front(), 1, C, S );
+        rot( nrhs, RHS+j, ldRHS, r.data(), 1, C, S );
       }
     }
     // risolvo R
@@ -284,7 +284,7 @@ namespace lapack_wrapper {
       ULselect::UPPER,
       Transposition::NO,
       DiagonalType::NON_UNIT,
-      N, nrhs, 1.0, &Tmat.front(), N, RHS, ldRHS
+      N, nrhs, 1.0, Tmat.data(), N, RHS, ldRHS
     );
   }
 

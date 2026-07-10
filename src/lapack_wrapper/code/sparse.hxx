@@ -491,9 +491,9 @@ namespace lapack_wrapper {
       integer   const * & pCols,
       real_type const * & pValues
     ) const override {
-      pRows   = &m_rows.front();
-      pCols   = &m_cols.front();
-      pValues = &m_vals.front();
+      pRows   = m_rows.data();
+      pCols   = m_cols.data();
+      pValues = m_vals.data();
     }
 
     void
@@ -548,7 +548,7 @@ namespace lapack_wrapper {
       r_type  val[],
       bool    fi
     ) {
-      UTILS_ASSERT(
+      lw_assert(
         NNZ == m_rows.size() &&
         NNZ == m_cols.size() &&
         NNZ == m_vals.size(),
@@ -612,14 +612,11 @@ namespace lapack_wrapper {
 
     void
     get_full_view( MatrixWrapper<real_type> & MW ) override {
-      UTILS_ASSERT0(
-        m_matrix_is_full,
-        "get_full_view, matrix is sparse\n"
-      );
+      lw_assert( m_matrix_is_full, "get_full_view, matrix is sparse\n" );
       if ( m_matrix_is_row_major ) {
-        MW.setup( &m_vals.front(), m_ncols, m_nrows, m_ncols );
+        MW.setup( m_vals.data(), m_ncols, m_nrows, m_ncols );
       } else {
-        MW.setup( &m_vals.front(), m_nrows, m_ncols, m_nrows );
+        MW.setup( m_vals.data(), m_nrows, m_ncols, m_nrows );
       }
     }
   };

@@ -12,7 +12,7 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-#include "ma41.hh"
+#include "MA41.hh"
 
 namespace Sparse_tool {
 
@@ -118,7 +118,7 @@ namespace Sparse_tool {
     fill(this->S.begin(),      this->S.end(),      0 );
 
     // set pars
-    HSL::ma41i<real_type>(this->CNTL, this->ICNTL, this->KEEP);
+    lapack_wrapper::ma41i<real_type>(this->CNTL, this->ICNTL, this->KEEP);
 
     if ( this->verbose ) fmt::print("done\n");
   }
@@ -130,12 +130,12 @@ namespace Sparse_tool {
 
     // analysis phase
     vector<integer> tmpIS(2 * NE + 12 * N + 1);
-    HSL::ma41a<T>(
+    lapack_wrapper::ma41a<T>(
       ANALISYS, this->N, this->NE,
-      &this->IRN.front(), &this->JCN.front(), &this->A.front(),
-      nullptr, &this->COLSCA.front(), &this->ROWSCA.front(), this->KEEP,
-      &tmpIS.front(), integer(tmpIS.size()),
-      &this->S.front(), integer(this->S.size()),
+      this->IRN.data(), this->JCN.data(), this->A.data(),
+      nullptr, this->COLSCA.data(), this->ROWSCA.data(), this->KEEP,
+      tmpIS.data(), integer(tmpIS.size()),
+      this->S.data(), integer(this->S.size()),
       this->CNTL, this->ICNTL, this->INFO, this->RINFO
     );
 
@@ -151,12 +151,12 @@ namespace Sparse_tool {
 
     // factorization phase
     // -------------------
-    HSL::ma41a<real_type>(
+    lapack_wrapper::ma41a<real_type>(
       FACTORIZATION, this->N, this->NE,
-      &this->IRN.front(), &this->JCN.front(), &this->A.front(),
-      nullptr, &this->COLSCA.front(), &this->ROWSCA.front(), this->KEEP,
-      &this->IS.front(), integer(this->IS.size()),
-      &this->S.front(), integer(this->S.size()),
+      this->IRN.data(), this->JCN.data(), this->A.data(),
+      nullptr, this->COLSCA.data(), this->ROWSCA.data(), this->KEEP,
+      this->IS.data(), integer(this->IS.size()),
+      this->S.data(), integer(this->S.size()),
       this->CNTL, this->ICNTL, this->INFO, this->RINFO
     );
 
@@ -183,10 +183,10 @@ namespace Sparse_tool {
     integer   j,
     real_type a
   ) {
-    UTILS_ASSERT(
+    sp_assert(
       i >= 0 && i < this->N && j >= 0 && j < this->N,
       "Sparse_tool: MA41::insert( {}, {}, a ) out of matrix\n", i, j
-    )
+    );
     this->IRN.push_back(i+1);
     this->JCN.push_back(j+1);
     this->A.push_back(a);
@@ -204,12 +204,12 @@ namespace Sparse_tool {
   int
   MA41<T>::solve( real_type RHS[], bool transpose ) {
     this->ICNTL[8] = transpose ? 0 : 1;
-    HSL::ma41a<real_type>(
+    lapack_wrapper::ma41a<real_type>(
       SOLVE, this->N, this->NE,
-      &this->IRN.front(), &this->JCN.front(), &this->A.front(),
-      RHS, &this->COLSCA.front(), &this->ROWSCA.front(), this->KEEP,
-      &this->IS.front(), integer(this->IS.size()),
-      &this->S.front(), integer(this->S.size()),
+      this->IRN.data(), this->JCN.data(), this->A.data(),
+      RHS, this->COLSCA.data(), this->ROWSCA.data(), this->KEEP,
+      this->IS.data(), integer(this->IS.size()),
+      this->S.data(), integer(this->S.size()),
       this->CNTL, this->ICNTL, this->INFO, this->RINFO
     );
 

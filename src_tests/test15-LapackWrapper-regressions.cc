@@ -1,5 +1,6 @@
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
+#include <Utils_Console.hh>
 
 #include <cmath>
 #include <iostream>
@@ -23,6 +24,7 @@
 using real_type = lapack_wrapper::doublereal;
 using integer   = lapack_wrapper::integer;
 using lapack_wrapper::Transposition;
+using lapack_wrapper::lw_assert;
 
 static Utils::Console msg(&std::cout);
 
@@ -48,7 +50,7 @@ expect_close(
   real_type    b,
   real_type    tol = BIG_EPS
 ) {
-  UTILS_ASSERT(
+  lw_assert(
     close_enough(a, b, tol, tol),
     "{} mismatch: {} vs {}\n",
     what, a, b
@@ -77,7 +79,7 @@ expect_zero_vector(
   real_type         tol = BIG_EPS
 ) {
   for ( integer i{0}; i < n; ++i ) {
-    UTILS_ASSERT(
+    lw_assert(
       std::isfinite(x[i]),
       "{} contains a non-finite value at {}\n",
       what, i
@@ -94,7 +96,7 @@ expect_finite_lower_3x3(
 ) {
   for ( integer i{0}; i < 3; ++i )
     for ( integer j{0}; j <= i; ++j )
-      UTILS_ASSERT(
+      lw_assert(
         std::isfinite(H(i,j)),
         "{} contains a non-finite value at ({},{})\n",
         what, i, j
@@ -120,7 +122,7 @@ test_lss_no_alloc_workspace_guard() {
   } catch ( std::exception const & ) {
     threw = true;
   }
-  UTILS_ASSERT( threw, "LSS_no_alloc::no_allocate should reject undersized workspaces\n" );
+  lw_assert( threw, "LSS_no_alloc::no_allocate should reject undersized workspaces\n" );
 
   std::vector<real_type> storage( static_cast<size_t>(LMIN) );
   lss.no_allocate( NR, NC, LMIN, storage.data() );
@@ -134,8 +136,8 @@ test_lss_no_alloc_workspace_guard() {
   real_type xb[NR];
   lapack_wrapper::gemv( Transposition::NO, NR, NC, 1.0, A, NR, x_true, 1, 0.0, xb, 1 );
 
-  UTILS_ASSERT( lss.factorize_nodim( A, NR ), "LSS_no_alloc::factorize_nodim failed\n" );
-  UTILS_ASSERT( lss.solve( xb ), "LSS_no_alloc::solve failed\n" );
+  lw_assert( lss.factorize_nodim( A, NR ), "LSS_no_alloc::factorize_nodim failed\n" );
+  lw_assert( lss.solve( xb ), "LSS_no_alloc::solve failed\n" );
   expect_vector_close( "LSS_no_alloc solution", NC, xb, x_true );
 }
 
@@ -158,7 +160,7 @@ test_lsy_workspace_and_transposed_tall_solve() {
   } catch ( std::exception const & ) {
     threw = true;
   }
-  UTILS_ASSERT(
+  lw_assert(
     threw,
     "LSY_no_alloc::no_allocate should require a pivot workspace of size max(NR,NC)\n"
   );
@@ -180,10 +182,10 @@ test_lsy_workspace_and_transposed_tall_solve() {
   lapack_wrapper::gemv( Transposition::YES, NR, NC, 1.0, A, NR, y2, 1, 0.0, b2, 1 );
 
   lapack_wrapper::LSY<real_type> lsy;
-  UTILS_ASSERT( lsy.factorize( NR, NC, A, NR ), "LSY::factorize failed\n" );
+  lw_assert( lsy.factorize( NR, NC, A, NR ), "LSY::factorize failed\n" );
 
   real_type xb[NR]{ b1[0], b1[1], b1[2], 7.0, -3.0 };
-  UTILS_ASSERT( lsy.t_solve( xb ), "LSY::t_solve failed on a tall matrix\n" );
+  lw_assert( lsy.t_solve( xb ), "LSY::t_solve failed on a tall matrix\n" );
   expect_vector_close( "LSY t_solve", NR, xb, y1 );
 
   lapack_wrapper::Matrix<real_type> XB(NR,2);
@@ -192,7 +194,7 @@ test_lsy_workspace_and_transposed_tall_solve() {
     XB(i,0) = b1[i];
     XB(i,1) = b2[i];
   }
-  UTILS_ASSERT( lsy.t_solve( XB ), "LSY::t_solve(MatrixWrapper) failed\n" );
+  lw_assert( lsy.t_solve( XB ), "LSY::t_solve(MatrixWrapper) failed\n" );
   expect_vector_close( "LSY multi t_solve rhs0", NR, XB.data(),        y1 );
   expect_vector_close( "LSY multi t_solve rhs1", NR, XB.data() + NR,   y2 );
 }
@@ -208,9 +210,9 @@ test_svd_zero_and_tall_paths() {
     real_type xb[]{ 1.0, -2.0, 3.0 };
     real_type yb[]{ -4.0, 5.0, 6.0 };
 
-    UTILS_ASSERT( svd.factorize( 3, 3, A0, 3 ), "SVD factorization of zero matrix failed\n" );
-    UTILS_ASSERT( svd.solve( xb ),   "SVD::solve failed on zero matrix\n" );
-    UTILS_ASSERT( svd.t_solve( yb ), "SVD::t_solve failed on zero matrix\n" );
+    lw_assert( svd.factorize( 3, 3, A0, 3 ), "SVD factorization of zero matrix failed\n" );
+    lw_assert( svd.solve( xb ),   "SVD::solve failed on zero matrix\n" );
+    lw_assert( svd.t_solve( yb ), "SVD::t_solve failed on zero matrix\n" );
     expect_zero_vector( "SVD zero solve",   3, xb );
     expect_zero_vector( "SVD zero t_solve", 3, yb );
   }
@@ -226,7 +228,7 @@ test_svd_zero_and_tall_paths() {
     };
 
     lapack_wrapper::SVD<real_type> svd;
-    UTILS_ASSERT( svd.factorize( NR, NC, A, NR ), "SVD factorization failed on tall matrix\n" );
+    lw_assert( svd.factorize( NR, NC, A, NR ), "SVD factorization failed on tall matrix\n" );
 
     real_type x_true[]{ 0.5, -1.0, 2.0 };
     real_type rhs[NR];
@@ -234,7 +236,7 @@ test_svd_zero_and_tall_paths() {
 
     real_type xb[NR];
     lapack_wrapper::copy( NR, rhs, 1, xb, 1 );
-    UTILS_ASSERT( svd.solve( xb ), "SVD::solve failed on tall matrix\n" );
+    lw_assert( svd.solve( xb ), "SVD::solve failed on tall matrix\n" );
     expect_vector_close( "SVD tall solve", NC, xb, x_true );
 
     real_type y_true[NR];
@@ -243,7 +245,7 @@ test_svd_zero_and_tall_paths() {
     lapack_wrapper::gemv( Transposition::YES, NR, NC, 1.0, A, NR, y_true, 1, 0.0, rhs_t, 1 );
 
     real_type yb[NR]{ rhs_t[0], rhs_t[1], rhs_t[2], 9.0, -8.0 };
-    UTILS_ASSERT( svd.t_solve( yb ), "SVD::t_solve failed on tall matrix\n" );
+    lw_assert( svd.t_solve( yb ), "SVD::t_solve failed on tall matrix\n" );
     expect_vector_close( "SVD tall t_solve", NR, yb, y_true );
   }
 }
@@ -297,21 +299,21 @@ test_pinv_zero_rank() {
   lapack_wrapper::PINV<real_type> pinv;
   real_type A[8]{};
 
-  UTILS_ASSERT( pinv.factorize( 4, 2, A, 4 ), "PINV factorization of zero matrix failed\n" );
+  lw_assert( pinv.factorize( 4, 2, A, 4 ), "PINV factorization of zero matrix failed\n" );
 
   real_type b[]{ 1.0, -2.0, 3.0, 4.0 };
   real_type x[2];
-  UTILS_ASSERT( pinv.mult_inv( b, 1, x, 1 ), "PINV::mult_inv failed on zero matrix\n" );
+  lw_assert( pinv.mult_inv( b, 1, x, 1 ), "PINV::mult_inv failed on zero matrix\n" );
   expect_zero_vector( "PINV mult_inv", 2, x );
 
   real_type bt[]{ -1.0, 5.0 };
   real_type xt[4];
-  UTILS_ASSERT( pinv.t_mult_inv( bt, 1, xt, 1 ), "PINV::t_mult_inv failed on zero matrix\n" );
+  lw_assert( pinv.t_mult_inv( bt, 1, xt, 1 ), "PINV::t_mult_inv failed on zero matrix\n" );
   expect_zero_vector( "PINV t_mult_inv", 4, xt );
 
   std::ostringstream stream;
   pinv.info( stream );
-  UTILS_ASSERT(
+  lw_assert(
     stream.str().find("rank = 0") != std::string::npos,
     "PINV info should report rank 0 for the zero matrix\n{}",
     stream.str()
@@ -374,10 +376,10 @@ test_gsvd_sparse_matches_dense_rectangular() {
     expect_close( "GSVD S diag", dense.gerS()[i], dense.beta(i), BIG_EPS );
   }
 
-  UTILS_ASSERT( dense.getU().nrows() == M && dense.getU().ncols() == M, "bad GSVD U size\n" );
-  UTILS_ASSERT( dense.getV().nrows() == P && dense.getV().ncols() == P, "bad GSVD V size\n" );
-  UTILS_ASSERT( dense.getQ().nrows() == N && dense.getQ().ncols() == N, "bad GSVD Q size\n" );
-  UTILS_ASSERT( !dense.info(1e-12).empty(), "GSVD info must not be empty\n" );
+  lw_assert( dense.getU().nrows() == M && dense.getU().ncols() == M, "bad GSVD U size\n" );
+  lw_assert( dense.getV().nrows() == P && dense.getV().ncols() == P, "bad GSVD V size\n" );
+  lw_assert( dense.getQ().nrows() == N && dense.getQ().ncols() == N, "bad GSVD Q size\n" );
+  lw_assert( !dense.info(1e-12).empty(), "GSVD info must not be empty\n" );
 }
 
 static
@@ -397,7 +399,7 @@ test_qr_mul_qt_matrixwrapper_dispatch() {
   };
 
   lapack_wrapper::QR<real_type> qr;
-  UTILS_ASSERT( qr.factorize( 3, 3, A, 3 ), "QR factorization failed\n" );
+  lw_assert( qr.factorize( 3, 3, A, 3 ), "QR factorization failed\n" );
 
   lapack_wrapper::Matrix<real_type> Cw(2,3);
   lapack_wrapper::Matrix<real_type> Cr(2,3);

@@ -85,7 +85,7 @@ namespace lapack_wrapper {
     if ( nL > 0 ) copy( nL, _L, 1, m_L, 1 );
     copy( N, _D, 1, m_D, 1 );
     integer info{ pttrf( N, m_D, m_L ) };
-    UTILS_ASSERT( info == 0, "TridiagonalSPD::factorize[{}], return info = {}\n", who, info );
+    lw_assert( info == 0, "TridiagonalSPD::factorize[{}], return info = {}\n", who, info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -118,7 +118,7 @@ namespace lapack_wrapper {
   TridiagonalSPD<T>::cond1( real_type norm1 ) const {
     real_type rcond;
     integer info{ ptcon1( m_nRC, m_D, m_L, norm1, rcond, m_WORK ) };
-    UTILS_ASSERT( info == 0, "TridiagonalSPD::cond1, return info = {}\n", info );
+    lw_assert( info == 0, "TridiagonalSPD::cond1, return info = {}\n", info );
     return rcond;
   }
 
@@ -210,7 +210,7 @@ namespace lapack_wrapper {
     copy( N,   D, 1, m_D, 1 );
     if ( n1 > 0 ) copy( n1, U, 1, m_U, 1 );
     integer info { gttrf( N, m_L, m_D, m_U, m_U2, m_IPIV ) };
-    UTILS_ASSERT( info == 0, "TridiagonalLU::factorize[{}], return info = {}\n", who, info );
+    lw_assert( info == 0, "TridiagonalLU::factorize[{}], return info = {}\n", who, info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -251,7 +251,7 @@ namespace lapack_wrapper {
   TridiagonalLU<T>::cond1( real_type norm1 ) const {
     real_type rcond;
     integer info { gtcon1( m_nRC, m_L, m_D, m_U, m_U2, m_IPIV, norm1, rcond, m_WORK, m_IWORK ) };
-    UTILS_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
+    lw_assert( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
     return rcond;
   }
 
@@ -262,7 +262,7 @@ namespace lapack_wrapper {
   TridiagonalLU<T>::condInf( real_type normInf ) const {
     real_type rcond;
     integer info{ gtconInf( m_nRC, m_L, m_D, m_U, m_U2, m_IPIV, normInf, rcond, m_WORK, m_IWORK ) };
-    UTILS_ASSERT( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
+    lw_assert( info == 0, "TridiagonalLU::cond1, return info = {}\n", info );
     return rcond;
   }
 
@@ -282,7 +282,7 @@ namespace lapack_wrapper {
   void
   TridiagonalLU<T>::solve( string_view who, real_type xb[] ) const {
     integer info{ gttrs( Transposition::NO, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC ) };
-    UTILS_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}\nat {}\n", info, who );
+    lw_assert( info == 0, "TridiagonalLU::solve, return info = {}\nat {}\n", info, who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -301,7 +301,7 @@ namespace lapack_wrapper {
   void
   TridiagonalLU<T>::t_solve( string_view who, real_type xb[] ) const {
     integer info { gttrs( Transposition::YES, m_nRC, 1, m_L, m_D, m_U, m_U2, m_IPIV, xb, m_nRC ) };
-    UTILS_ASSERT( info == 0, "TridiagonalLU::t_solve, return info = {}\nat {}\n", info, who );
+    lw_assert( info == 0, "TridiagonalLU::t_solve, return info = {}\nat {}\n", info, who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -325,7 +325,7 @@ namespace lapack_wrapper {
     integer     ldXB
   ) const {
     integer info{ gttrs( Transposition::NO, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB ) };
-    UTILS_ASSERT( info == 0, "TridiagonalLU::solve, return info = {}\nat {}\n", info, who );
+    lw_assert( info == 0, "TridiagonalLU::solve, return info = {}\nat {}\n", info, who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -349,7 +349,7 @@ namespace lapack_wrapper {
     integer     ldXB
   ) const {
     integer info{ gttrs( Transposition::YES, m_nRC, nrhs, m_L, m_D, m_U, m_U2, m_IPIV, xb, ldXB ) };
-    UTILS_ASSERT( info == 0, "TridiagonalLU::t_solve, return info = {}\nat {}\n", info, who );
+    lw_assert( info == 0, "TridiagonalLU::t_solve, return info = {}\nat {}\n", info, who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -447,7 +447,7 @@ namespace lapack_wrapper {
     real_type const U[]
   ) {
     bool ok = this->factorize( N, L, D, U );
-    UTILS_ASSERT( ok, "TridiagonalQR<T>::factorize failed at {}\n", who );
+    lw_assert( ok, "TridiagonalQR<T>::factorize failed at {}\n", who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -593,9 +593,9 @@ namespace lapack_wrapper {
     for ( integer i{0}; i < m_nRC-1; ++i )
       rot( nrhs, RHS+i, ldRHS, RHS+i+1, ldRHS, m_C[i], m_S[i] );
 
-    copy( m_nRC,   m_BD,  1, &D.front(),  1 );
-    copy( m_nRC-1, m_BU,  1, &U.front(),  1 );
-    copy( m_nRC-2, m_BU2, 1, &U2.front(), 1 );
+    copy( m_nRC,   m_BD,  1, D.data(),  1 );
+    copy( m_nRC-1, m_BU,  1, U.data(),  1 );
+    copy( m_nRC-2, m_BU2, 1, U2.data(), 1 );
     T line[3];
     integer i{0};
     while ( i < m_nRC-1 ) {
@@ -609,22 +609,22 @@ namespace lapack_wrapper {
         rotg( D[j], line[0], CC, SS );
         rot( 1, &U[j],  1, &line[1], 1, CC, SS );
         rot( 1, &U2[j], 1, &line[2], 1, CC, SS );
-        rot( nrhs, RHS+j, ldRHS, &tmp.front(), 1, CC, SS );
+        rot( nrhs, RHS+j, ldRHS, tmp.data(), 1, CC, SS );
         ++j;
       }
       // penultima
       rotg( D[j], line[1], CC, SS );
       rot( 1, &U[j],  1, &line[2], 1, CC, SS );
-      rot( nrhs, RHS+j, ldRHS, &tmp.front(), 1, CC, SS );
+      rot( nrhs, RHS+j, ldRHS, tmp.data(), 1, CC, SS );
       ++j;
 
       rotg( D[j], line[2], CC, SS );
-      rot( nrhs, RHS+j, ldRHS, &tmp.front(), 1, CC, SS );
+      rot( nrhs, RHS+j, ldRHS, tmp.data(), 1, CC, SS );
 
       // ultima
       line[2] = lambda;
       rotg( D[j], line[2], CC, SS );
-      rot( nrhs, RHS+j, ldRHS, &tmp.front(), 1, CC, SS );
+      rot( nrhs, RHS+j, ldRHS, tmp.data(), 1, CC, SS );
 
       ++i; // next lambda
     }
@@ -633,7 +633,7 @@ namespace lapack_wrapper {
       line[0] = lambda;
       std::fill( tmp.begin(), tmp.end(), T(0) );
       rotg( D[j], line[0], CC, SS );
-      rot( nrhs, RHS+j, ldRHS, &tmp.front(), 1, CC, SS );
+      rot( nrhs, RHS+j, ldRHS, tmp.data(), 1, CC, SS );
     }
 
     for ( integer j{0}; j < nrhs; ++j ) {

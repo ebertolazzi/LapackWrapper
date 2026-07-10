@@ -44,7 +44,7 @@ namespace lapack_wrapper {
       false, false, Nin, nullptr, Nin,
       nullptr, nullptr, nullptr, Nin, nullptr, Nin, &Lworkdummy, -1
     ) };
-    UTILS_ASSERT( info == 0, "Eigenvalues<T>::allocate, call geev return info = {}\n", info );
+    lw_assert( info == 0, "Eigenvalues<T>::allocate, call geev return info = {}\n", info );
     m_Lwork = integer( Lworkdummy );
     m_mem.reallocate( size_t( m_Lwork + (2+m_N) * m_N) );
     m_Re      = m_mem( size_t(m_N) );
@@ -63,7 +63,7 @@ namespace lapack_wrapper {
       m_Re, m_Im, nullptr, m_N, nullptr, m_N,
       m_Work, m_Lwork
     ) };
-    UTILS_ASSERT( info == 0, "Eigenvalues<T>::compute, call geev return info = {}\n", info );
+    lw_assert( info == 0, "Eigenvalues<T>::compute, call geev return info = {}\n", info );
   }
 
 
@@ -78,7 +78,7 @@ namespace lapack_wrapper {
   ) {
     this->allocate( NRC );
     integer info { gecopy( NRC, NRC, data, ldData, m_A_saved, NRC ) };
-    UTILS_ASSERT( info == 0, "Eigenvalues<T>::setup, call gecopy return info = {}\n", info );
+    lw_assert( info == 0, "Eigenvalues<T>::setup, call gecopy return info = {}\n", info );
     this->compute();
   }
 
@@ -89,7 +89,7 @@ namespace lapack_wrapper {
   Eigenvalues<T>::setup( MatW const & M ) {
     this->allocate( M.nrows() );
     integer info { gecopy( m_N, m_N, M.data(), M.ldim(), m_A_saved, m_N ) };
-    UTILS_ASSERT( info == 0, "Eigenvalues<T>::setup, call gecopy return info = {}\n", info );
+    lw_assert( info == 0, "Eigenvalues<T>::setup, call gecopy return info = {}\n", info );
     this->compute();
   }
 
@@ -181,7 +181,7 @@ namespace lapack_wrapper {
       m_VR, m_N,
       &Lworkdummy, doLwork
     ) };
-    UTILS_ASSERT( info == 0, "Eigenvectors::allocate, call geev return info = {}\n", info );
+    lw_assert( info == 0, "Eigenvectors::allocate, call geev return info = {}\n", info );
     m_Lwork = integer(Lworkdummy);
     m_mem.reallocate( size_t( m_Lwork + (2+3*m_N) * m_N) );
     m_Re      = m_mem( size_t(m_N) );
@@ -207,7 +207,7 @@ namespace lapack_wrapper {
       m_VR,      m_N,
       m_Work,    m_Lwork
     ) };
-    UTILS_ASSERT( info == 0, "GeneralizedEigenvectors::compute, call geev return info = {}\n", info );
+    lw_assert( info == 0, "GeneralizedEigenvectors::compute, call geev return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -221,7 +221,7 @@ namespace lapack_wrapper {
   ) {
     this->allocate( NRC );
     integer info{ gecopy( NRC, NRC, A_data, ldA, m_A_saved, NRC ) };
-    UTILS_ASSERT( info == 0, "Eigenvectors::setup, call gecopy return info = {}\n", info );
+    lw_assert( info == 0, "Eigenvectors::setup, call gecopy return info = {}\n", info );
     this->compute();
   }
 
@@ -232,7 +232,7 @@ namespace lapack_wrapper {
   Eigenvectors<T>::setup( MatW const & A ) {
     this->allocate( A.nrows() );
     integer info { gecopy( m_N, m_N, A.data(), A.ldim(),  m_A_saved, m_N ) };
-    UTILS_ASSERT( info == 0, "Eigenvectors::setup, call gecopy return info = {}\n", info );
+    lw_assert( info == 0, "Eigenvectors::setup, call gecopy return info = {}\n", info );
     this->compute();
   }
 
@@ -374,7 +374,7 @@ namespace lapack_wrapper {
       nullptr, nullptr, nullptr,
       nullptr, Nin, nullptr, Nin, &Lworkdummy, -1
     ) };
-    UTILS_ASSERT( info == 0, "GeneralizedEigenvalues::allocate, call geev return info = {}\n", info );
+    lw_assert( info == 0, "GeneralizedEigenvalues::allocate, call geev return info = {}\n", info );
     m_Lwork = integer(Lworkdummy);
     m_mem.reallocate( size_t( m_Lwork + (3+2*m_N) * m_N) );
     m_alphaRe = m_mem( size_t(m_N) );
@@ -399,7 +399,7 @@ namespace lapack_wrapper {
       nullptr, m_N, nullptr, m_N,
       m_Work, m_Lwork
     ) };
-    UTILS_ASSERT( info == 0, "GeneralizedEigenvalues::compute, call geev return info = {}\n", info );
+    lw_assert( info == 0, "GeneralizedEigenvalues::compute, call geev return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -416,7 +416,7 @@ namespace lapack_wrapper {
     this->allocate( NRC );
     integer info1 { gecopy( NRC, NRC, A_data, ldA, m_A_saved, NRC ) };
     integer info2 { gecopy( NRC, NRC, B_data, ldB, m_B_saved, NRC ) };
-    UTILS_ASSERT(
+    lw_assert(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvalues::setup, call gecopy return info1 = {}, info2 = {}\n",
       info1, info2
@@ -432,7 +432,7 @@ namespace lapack_wrapper {
     this->allocate( A.nrows() );
     integer info1 { gecopy( m_N, m_N, A.data(), A.ldim(), m_A_saved, m_N ) };
     integer info2 { gecopy( m_N, m_N, B.data(), B.ldim(), m_B_saved, m_N ) };
-    UTILS_ASSERT(
+    lw_assert(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvalues::setup, call gecopy return info1 = {}, info2 = {}\n",
       info1, info2
@@ -543,7 +543,7 @@ namespace lapack_wrapper {
       &Lworkdummy, doLwork,
       nullptr, nullptr
     ) };
-    UTILS_ASSERT( info == 0, "GeneralizedEigenvectors::allocate, call geev return info = {}\n", info );
+    lw_assert( info == 0, "GeneralizedEigenvectors::allocate, call geev return info = {}\n", info );
     m_Lwork = integer(Lworkdummy);
     m_mem_real.reallocate( size_t( m_Lwork + (7+4*m_N) * m_N) );
     m_mem_int.reallocate( size_t( 2*m_N + 6 ) );
@@ -586,7 +586,7 @@ namespace lapack_wrapper {
       m_Work,    m_Lwork,
       m_iWork,   m_bWork
     ) };
-    UTILS_ASSERT( info == 0, "GeneralizedEigenvectors::compute, call ggevx return info = {}\n", info );
+    lw_assert( info == 0, "GeneralizedEigenvectors::compute, call ggevx return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -603,7 +603,7 @@ namespace lapack_wrapper {
     this->allocate( NRC );
     integer info1 { gecopy( NRC, NRC, A_data, ldA, m_A_saved, NRC ) };
     integer info2 { gecopy( NRC, NRC, B_data, ldB, m_B_saved, NRC ) };
-    UTILS_ASSERT(
+    lw_assert(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvectors::setup, call gecopy return info1 = {}, info2 = {}\n",
       info1, info2
@@ -619,7 +619,7 @@ namespace lapack_wrapper {
     this->allocate( A.nrows() );
     integer info1 { gecopy( m_N, m_N, A.data(), A.ldim(), m_A_saved, m_N ) };
     integer info2 { gecopy( m_N, m_N, B.data(), B.ldim(), m_B_saved, m_N ) };
-    UTILS_ASSERT(
+    lw_assert(
       info1 == 0 && info2 == 0,
       "GeneralizedEigenvectors::setup, call gecopy return info1 = {}, info2 = {}\n",
       info1, info2

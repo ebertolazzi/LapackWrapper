@@ -12,7 +12,7 @@
  |                                                                          |
 \*--------------------------------------------------------------------------*/
 
-#include "ma48.hh"
+#include "MA48.hh"
 
 namespace Sparse_tool {
 
@@ -119,17 +119,17 @@ namespace Sparse_tool {
     std::fill( JCN_work.begin(), JCN_work.end(), 0 );
     std::copy( JCN.begin(), JCN.end(), JCN_work.begin() );
 
-    HSL::ma48a<T>(
+    lapack_wrapper::ma48a<T>(
       this->nRow, this->nCol, this->nnz, 1,
-      integer(A_work.size()), &A_work.front(),
-      &IRN_work.front(), &JCN_work.front(), &KEEP.front(),
-      this->CNTL, this->ICNTL, &IW.front(),
+      integer(A_work.size()), A_work.data(),
+      IRN_work.data(), JCN_work.data(), KEEP.data(),
+      this->CNTL, this->ICNTL, IW.data(),
       this->INFO, this->RINFO
     );
 
     for (
       unsigned kkk{0};
-      this->INFO[3] > A_work.size() && kkk < 10;
+      this->INFO[3] > static_cast<integer>(A_work.size()) && kkk < 10;
       ++kkk
     ) {
       integer newsz{ this->INFO[3] };
@@ -146,11 +146,11 @@ namespace Sparse_tool {
       std::fill( JCN_work.begin(), JCN_work.end(), 0 );
       std::copy( JCN.begin(), JCN.end(), JCN_work.begin() );
 
-      HSL::ma48a<T>(
+      lapack_wrapper::ma48a<T>(
         this->nRow, this->nCol, this->nnz, 1,
-        integer(A_work.size()), &A_work.front(),
-        &IRN_work.front(), &JCN_work.front(), &KEEP.front(),
-        this->CNTL, this->ICNTL, &IW.front(),
+        integer(A_work.size()), A_work.data(),
+        IRN_work.data(), JCN_work.data(), KEEP.data(),
+        this->CNTL, this->ICNTL, IW.data(),
         this->INFO, this->RINFO
       );
     }
@@ -161,12 +161,12 @@ namespace Sparse_tool {
 
     // factorization phase
     // -------------------
-    HSL::ma48b<real_type>(
+    lapack_wrapper::ma48b<real_type>(
       this->nRow, this->nCol, this->nnz, 1,
-      integer(A_work.size()), &A_work.front(),
-      &IRN_work.front(), &JCN_work.front(), &KEEP.front(),
+      integer(A_work.size()), A_work.data(),
+      IRN_work.data(), JCN_work.data(), KEEP.data(),
       this->CNTL, this->ICNTL,
-      &W.front(), &IW.front(),
+      W.data(), IW.data(),
       this->INFO, this->RINFO
     );
 
@@ -193,7 +193,7 @@ namespace Sparse_tool {
     integer   j,
     real_type a
   ) {
-    UTILS_ASSERT(
+    sp_assert(
       i >= 0 && i < this->nRow && j >= 0 && j < this->nCol,
       "Sparsetool: MA48::insert( {}, {}, a ) out of matrix\n", i, j
     );
@@ -208,7 +208,7 @@ namespace Sparse_tool {
     this->verbose = v;
     if ( this->verbose ) fmt::print("ma48::setup()\n");
     // set pars
-    HSL::ma48i<real_type>(this->CNTL, this->ICNTL);
+    lapack_wrapper::ma48i<real_type>(this->CNTL, this->ICNTL);
     //this->ICNTL[6] = 0; // handle structurally rank deficient matrices.
     this->KEEP.resize(this->nRow+9*this->nCol+7);
     this->IW.resize(6*this->nRow+3*this->nCol);
@@ -223,13 +223,13 @@ namespace Sparse_tool {
     real_type ERROR[3];
     integer   NM{std::max(this->nRow,this->nCol)};
     W.resize(2*NM);
-    HSL::ma48c<real_type>(
+    lapack_wrapper::ma48c<real_type>(
       this->nRow, this->nCol, (transposed ? 1 : 0), 1,
-      integer(A_work.size()), &A_work.front(),
-      &IRN_work.front(), &KEEP.front(),
+      integer(A_work.size()), A_work.data(),
+      IRN_work.data(), KEEP.data(),
       this->CNTL, this->ICNTL,
       RHS, X, ERROR,
-      &W.front(), &IW.front(), this->INFO
+      W.data(), IW.data(), this->INFO
     );
 
     if ( this->verbose ) {

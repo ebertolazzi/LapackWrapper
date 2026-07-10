@@ -2520,7 +2520,7 @@ namespace lapack_wrapper {
                         M, N, alpha, A, LDA, beta, B, LDB, C, LDC );
   #else
     integer ierr{ gecopy( M, N, B, LDB, C, LDC ) };
-    UTILS_ASSERT( ierr == 0, "geadd, ierr = {}\n", ierr );
+    lw_assert( ierr == 0, "geadd, ierr = {}\n", ierr );
     real const * Aj{A};
     real       * Cj{C};
     for ( integer j{0}; j < N; ++j, Aj += LDA, Cj += LDC ) {
@@ -2547,7 +2547,7 @@ namespace lapack_wrapper {
                         M, N, alpha, A, LDA, beta, B, LDB, C, LDC );
   #else
     integer ierr{gecopy( M, N, B, LDB, C, LDC )};
-    UTILS_ASSERT( ierr == 0, "geadd, ierr = {}\n", ierr );
+    lw_assert( ierr == 0, "geadd, ierr = {}\n", ierr );
     doublereal const * Aj{A};
     doublereal       * Cj{C};
     for ( integer j{0}; j < N; ++j, Aj += LDA, Cj += LDC ) {
@@ -6314,7 +6314,7 @@ namespace lapack_wrapper {
       if ( lwork < 0 ) {
         work[0] = real(lw);
       } else {
-        UTILS_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
+        lw_assert( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
         sggsvd_(
           const_cast<character*>( JOBU ? "U" : "N"),
           const_cast<character*>( JOBV ? "V" : "N"),
@@ -6336,7 +6336,7 @@ namespace lapack_wrapper {
       if ( lwork < 0 ) {
         work[0] = real(lw);
       } else {
-        UTILS_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
+        lw_assert( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
         LAPACK_F77NAME(sggsvd)(
           const_cast<character*>( JOBU ? "U" : "N"),
           const_cast<character*>( JOBV ? "V" : "N"),
@@ -6456,7 +6456,7 @@ namespace lapack_wrapper {
       if ( lwork < 0 ) {
         work[0] = doublereal(lw);
       } else {
-        UTILS_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
+        lw_assert( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
         dggsvd_(
           const_cast<character*>( JOBU ? "U" : "N"),
           const_cast<character*>( JOBV ? "V" : "N"),
@@ -6478,7 +6478,7 @@ namespace lapack_wrapper {
       if ( lwork < 0 ) {
         work[0] = doublereal(lw);
       } else {
-        UTILS_ASSERT( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
+        lw_assert( lwork >= lw, "ggsvd, lwork = {} must be >= {}\n", lwork, lw );
         LAPACK_F77NAME(dggsvd)(
           const_cast<character*>( JOBU ? "U" : "N"),
           const_cast<character*>( JOBV ? "V" : "N"),

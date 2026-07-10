@@ -48,7 +48,7 @@ namespace Sparse_tool {
 
     using std::abs;
 
-    UTILS_ASSERT(
+    sp_assert(
       A.nrows() == b.size() &&
       A.ncols() == x.size() &&
       A.nrows() == A.ncols(),
@@ -96,7 +96,7 @@ namespace Sparse_tool {
     do {
 
       vType rho = rtilde.dot(r);
-      UTILS_ASSERT0(
+      sp_assert(
         abs(rho) != vType(0),
         "Sparse_tool::bicgstab, breakdown, rho == 0\n"
       );
@@ -107,7 +107,7 @@ namespace Sparse_tool {
       v = A * p;
       v /= P;
       alpha = rtilde.dot(v);
-      UTILS_ASSERT0(
+      sp_assert(
         alpha != vType(0),
         "Sparse_tool::bicgstab, breakdown, tau == 0\n"
       );
@@ -119,7 +119,7 @@ namespace Sparse_tool {
       t /= P;
 
       omega = t.dot(t);
-      UTILS_ASSERT0(
+      sp_assert(
         abs(omega) != vType(0),
         "Sparse_tool::bicgstab, breakdown, omega == 0\n"
       );

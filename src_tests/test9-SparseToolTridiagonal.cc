@@ -3,6 +3,7 @@
 #include <sparse_tool/sparse_tool_extra.hh>
 #include <sparse_tool/sparse_tool_iterative.hh>
 #include <sparse_tool/sparse_tool_matrix_market.hh>
+#include <Utils_Console.hh>
 
 //#include <sparse_tool/interfaces/MA41.hh>
 //#include <sparse_tool/interfaces/MA48.hh>

@@ -49,17 +49,17 @@ namespace Sparse_tool {
       integer           _maxIter
     ) {
 
-      UTILS_ASSERT0(
+      sp_assert(
         A.is_ordered(),
         "Sparse_tool: JACOBIpreconditioner::build_JACOBI\n"
         "pattern must be ordered before use\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() == A.ncols(),
         "Sparse_tool: ACOBIpreconditioner::build_JACOBI\n"
         "only square matrix allowed\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() > 0,
         "Sparse_tool: JACOBIpreconditioner::build_JACOBI\n"
         "empty matrix\n"
@@ -127,7 +127,7 @@ namespace Sparse_tool {
         }
       }
       for ( integer i{0}; i < PRECO::pr_size; ++i )
-        UTILS_ASSERT(
+        sp_assert(
           D(i) != real_type(0),
           "Sparse_tool: JACOBIpreconditioner::D({}) = {}, size = {}\n",
           i, D(i), D.size()
@@ -155,7 +155,7 @@ namespace Sparse_tool {
     template <typename VECTOR>
     void
     ass_preco( VECTOR & x, VECTOR const & b ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         std::addressof(x) != std::addressof(b),
         "Sparse_tool: JACOBIpreconditioner::ass_preco(x,b)\n"
         "`x` and `b` cant be the same\n"

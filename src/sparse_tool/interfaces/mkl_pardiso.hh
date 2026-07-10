@@ -143,7 +143,7 @@ namespace Sparse_tool {
     template <typename MT, typename Compare>
     void
     load( Sparse<real_or_complex,MT> const & M, Compare cmp ) {
-      UTILS_ASSERT(
+      sp_assert(
         M.nrows() == M.ncols(),
         "Sparse_tool: Pardiso interface, matrix must be square {} x {}\n",
         M.nrows(), M.ncols()
@@ -183,7 +183,7 @@ namespace Sparse_tool {
         }
       }
 
-      UTILS_ASSERT0(
+      sp_assert(
         R(0) == 0 && R(n) == nnz,
         "Pardiso interface, load failed\n"
       )
@@ -216,12 +216,12 @@ namespace Sparse_tool {
 
       pardiso(
         pt, &maxfct, &mnum, &mtype, &phase,
-        &n, (real*)&A.front(), &R.front(), &J.front(),
+        &n, (real*)A.data(), R.data(), J.data(),
         perm, nullptr, iparm, &msglvl,
         nullptr, nullptr, &error
       );
 
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: mkl_pardiso interface, during symbolic factorization ERROR N.{}\n{}\n",
         error, error_to_string(error)
@@ -249,12 +249,12 @@ namespace Sparse_tool {
       // iparm[32] = 1; /* compute determinant */
       pardiso(
         pt, &maxfct, &mnum, &mtype, &phase,
-        &n, (real*)&A.front(), &R.front(), &J.front(),
-        &perm.front(), &nrhs, iparm, &msglvl,
+        &n, (real*)A.data(), R.data(), J.data(),
+        perm.data(), &nrhs, iparm, &msglvl,
         nullptr, nullptr, &error
       );
 
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: mkl_pardiso interface, during numerical factorization ERROR N.{}\n{}\n",
         error, error_to_string(error)
@@ -274,11 +274,11 @@ namespace Sparse_tool {
       MKL_INT error = 0;
       pardiso(
         pt, &maxfct, &mnum, &mtype, &phase,
-        &n, (real*)&A.front(), &R.front(), &J.front(),
-        &perm.front(), &nrhs, iparm, &msglvl,
+        &n, (real*)A.data(), R.data(), J.data(),
+        perm.data(), &nrhs, iparm, &msglvl,
         (real*)b, (real*)x, &error
       );
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, during solution ERROR N.{},\n{}\n",
         error, error_to_string(error)
@@ -288,7 +288,7 @@ namespace Sparse_tool {
     void
     solve( Vector<real_or_complex> const & b, Vector<real_or_complex> & x ) {
       x.resize( b.size() );
-      solve( 1, &b.front(), &x.front() );
+      solve( 1, b.data(), x.data() );
     }
 
     /* -------------------------------------------------------------------- */
@@ -301,11 +301,11 @@ namespace Sparse_tool {
       MKL_INT nrhs  = 0;
       pardiso(
         pt, &maxfct, &mnum, &mtype, &phase,
-        &n, nullptr, &R.front(), &J.front(),
+        &n, nullptr, R.data(), J.data(),
         nullptr, &nrhs, iparm, &msglvl,
         nullptr, nullptr, &error
       );
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, during free memory ERROR N.{}\n{}\n",
         error, error_to_string(error)

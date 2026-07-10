@@ -51,17 +51,17 @@ namespace Sparse_tool {
     void
     build_ILDU( MAT const & A ) {
 
-      UTILS_ASSERT0(
+      sp_assert(
         A.is_ordered(),
         "Sparse_tool: ILDUKpreconditioner::build_LDU\n"
         "pattern must be ordered before use\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() == A.ncols(),
         "Sparse_tool: ILDUKpreconditioner::build_LDU\n"
         "only square matrix allowed\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() > 0,
         "Sparse_tool: ILDUKpreconditioner::build_LDU\n"
         "empty matrix\n"
@@ -186,7 +186,7 @@ namespace Sparse_tool {
         for ( kk = 0; kk < U_sizek; ++kk )
           { integer i{U_Ik[kk]}; U_Ak[kk] = W(i) / D(i); W(i) = 0; }
 
-        UTILS_ASSERT(
+        sp_assert(
           D(k) != real_type(0),
           "Sparse_tool: ILDUKpreconditioner found D({}) == 0!\n", k
         );

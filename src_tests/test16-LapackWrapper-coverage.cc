@@ -1,5 +1,6 @@
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
+#include <Utils_Console.hh>
 
 #include <algorithm>
 #include <array>
@@ -28,6 +29,44 @@ using real_type    = lapack_wrapper::doublereal;
 using integer      = lapack_wrapper::integer;
 using complex_type = std::complex<real_type>;
 using lapack_wrapper::Transposition;
+using lapack_wrapper::lw_assert;
+
+#include <format>
+#include <stdexcept>
+
+namespace std {
+
+  template <typename CharT, typename real_type>
+  struct formatter<std::complex<real_type>, CharT> {
+    std::formatter<real_type, CharT> value_formatter;
+
+    constexpr auto
+    parse( std::basic_format_parse_context<CharT> & ctx ) {
+      return value_formatter.parse(ctx);
+    }
+
+    template <typename FormatContext>
+    auto
+    format( std::complex<real_type> const & z, FormatContext & ctx ) const {
+      auto out = ctx.out();
+
+      *out++ = CharT('(');
+      ctx.advance_to(out);
+
+      out = value_formatter.format( z.real(), ctx );
+
+      *out++ = CharT(',');
+      *out++ = CharT(' ');
+      ctx.advance_to(out);
+
+      out = value_formatter.format( z.imag(), ctx );
+
+      *out++ = CharT(')');
+
+      return out;
+    }
+  };
+}
 
 static Utils::Console msg(&std::cout);
 
@@ -63,7 +102,7 @@ expect_close(
   real_type    b,
   real_type    tol = BIG_EPS
 ) {
-  UTILS_ASSERT(
+  lw_assert(
     close_enough(a, b, tol, tol),
     "{} mismatch: {} vs {}\n",
     what, a, b
@@ -78,7 +117,7 @@ expect_close(
   complex_type b,
   real_type    tol = BIG_EPS
 ) {
-  UTILS_ASSERT(
+  lw_assert(
     close_enough(a, b, tol),
     "{} mismatch: {} vs {}\n",
     what, a, b
@@ -155,7 +194,7 @@ test_matrix_and_diag_wrappers() {
     expect_close( "DiagMatrix value", D[i],     1.0 );
     expect_close( "DiagMatrix copy",  Dcopy[i], 1.0 );
   }
-  UTILS_ASSERT( !D.to_string().empty(), "DiagMatrix::to_string must not be empty\n" );
+  lw_assert( !D.to_string().empty(), "DiagMatrix::to_string must not be empty\n" );
 
   real_type A_rank[]{
     1,0,0,0,
@@ -165,7 +204,7 @@ test_matrix_and_diag_wrappers() {
   };
   real_type sval[3];
   integer rank{ lapack_wrapper::rankEstimate( 4, 4, A_rank, 4, real_type(1e-12), sval ) };
-  UTILS_ASSERT( rank == 2, "rankEstimate should detect rank 2, found {}\n", rank );
+  lw_assert( rank == 2, "rankEstimate should detect rank 2, found {}\n", rank );
 }
 
 static
@@ -186,13 +225,13 @@ test_qr_qrp_public_api() {
     std::vector<real_type> work( static_cast<size_t>(Lwork) );
     lapack_wrapper::QR_no_alloc<real_type> qr;
     qr.no_allocate( NR, NC, Lwork, work.data() );
-    UTILS_ASSERT( qr.factorize_nodim( A, NR ), "QR_no_alloc::factorize_nodim failed\n" );
+    lw_assert( qr.factorize_nodim( A, NR ), "QR_no_alloc::factorize_nodim failed\n" );
 
     lapack_wrapper::Matrix<real_type> Qr, R, Arec;
     qr.getQreduced( Qr );
     qr.getR( R );
     qr.getTau( Arec );
-    UTILS_ASSERT( Arec.nrows() == 1 && Arec.ncols() == NC, "QR::getTau returned wrong size\n" );
+    lw_assert( Arec.nrows() == 1 && Arec.ncols() == NC, "QR::getTau returned wrong size\n" );
 
     Arec.setup( NR, NC );
     lapack_wrapper::gemm( 1.0, Qr, R, 0.0, Arec );
@@ -207,7 +246,7 @@ test_qr_qrp_public_api() {
     };
 
     lapack_wrapper::QR<real_type> qr;
-    UTILS_ASSERT( qr.factorize( 3, 3, A, 3 ), "QR factorize failed\n" );
+    lw_assert( qr.factorize( 3, 3, A, 3 ), "QR factorize failed\n" );
 
     lapack_wrapper::Matrix<real_type> left_w(3,2), left_r(3,2);
     lapack_wrapper::Matrix<real_type> right_w(2,3), right_r(2,3);
@@ -258,7 +297,7 @@ test_qr_qrp_public_api() {
     lapack_wrapper::Matrix<real_type> RHS(3,2);
     lapack_wrapper::gemv( Transposition::NO, 3, 3, 1.0, A, 3, x1, 1, 0.0, RHS.data(),     1 );
     lapack_wrapper::gemv( Transposition::NO, 3, 3, 1.0, A, 3, x2, 1, 0.0, RHS.data() + 3, 1 );
-    UTILS_ASSERT( qr.solve( RHS ), "QR::solve(MatrixWrapper) failed\n" );
+    lw_assert( qr.solve( RHS ), "QR::solve(MatrixWrapper) failed\n" );
     expect_vector_close( "QR solve matrix rhs0", 3, RHS.data(),     x1 );
     expect_vector_close( "QR solve matrix rhs1", 3, RHS.data() + 3, x2 );
 
@@ -267,7 +306,7 @@ test_qr_qrp_public_api() {
     lapack_wrapper::Matrix<real_type> RT(3,2);
     lapack_wrapper::gemv( Transposition::YES, 3, 3, 1.0, A, 3, y1, 1, 0.0, RT.data(),     1 );
     lapack_wrapper::gemv( Transposition::YES, 3, 3, 1.0, A, 3, y2, 1, 0.0, RT.data() + 3, 1 );
-    UTILS_ASSERT( qr.t_solve( RT ), "QR::t_solve(MatrixWrapper) failed\n" );
+    lw_assert( qr.t_solve( RT ), "QR::t_solve(MatrixWrapper) failed\n" );
     expect_vector_close( "QR t_solve matrix rhs0", 3, RT.data(),     y1 );
     expect_vector_close( "QR t_solve matrix rhs1", 3, RT.data() + 3, y2 );
   }
@@ -287,7 +326,7 @@ test_qr_qrp_public_api() {
     std::vector<integer>   iwork( static_cast<size_t>(NC) );
     lapack_wrapper::QRP_no_alloc<real_type> qrp;
     qrp.no_allocate( NR, NC, Lwork, work.data(), NC, iwork.data() );
-    UTILS_ASSERT( qrp.factorize_nodim( A, NR ), "QRP_no_alloc::factorize_nodim failed\n" );
+    lw_assert( qrp.factorize_nodim( A, NR ), "QRP_no_alloc::factorize_nodim failed\n" );
 
     integer perm[NC];
     qrp.getPerm( perm );
@@ -319,7 +358,7 @@ test_qr_qrp_public_api() {
     expect_vector_close( "QRP inv_permute_cols", Cols.num_elems(), Cols.data(), ColsRef.data() );
 
     integer rank{ qrp.rankEstimate(1e-12) };
-    UTILS_ASSERT( rank == 2, "QRP rankEstimate should detect rank 2, found {}\n", rank );
+    lw_assert( rank == 2, "QRP rankEstimate should detect rank 2, found {}\n", rank );
   }
 }
 
@@ -338,7 +377,7 @@ test_svd_public_api_and_matrix_overloads() {
   };
 
   lapack_wrapper::SVD<real_type> svd;
-  UTILS_ASSERT( svd.factorize( NR, NC, A, NR ), "SVD factorization failed\n" );
+  lw_assert( svd.factorize( NR, NC, A, NR ), "SVD factorization failed\n" );
 
   for ( integer j{0}; j < MINRC; ++j ) {
     std::array<real_type,MINRC> ej{0,0,0};
@@ -369,7 +408,7 @@ test_svd_public_api_and_matrix_overloads() {
   lapack_wrapper::Matrix<real_type> XB(NR,2);
   lapack_wrapper::gemv( Transposition::NO, NR, NC, 1.0, A, NR, x1, 1, 0.0, XB.data(),      1 );
   lapack_wrapper::gemv( Transposition::NO, NR, NC, 1.0, A, NR, x2, 1, 0.0, XB.data() + NR, 1 );
-  UTILS_ASSERT( svd.solve( XB ), "SVD::solve(MatrixWrapper) failed\n" );
+  lw_assert( svd.solve( XB ), "SVD::solve(MatrixWrapper) failed\n" );
   expect_vector_close( "SVD solve matrix rhs0", NC, XB.data(),      x1 );
   expect_vector_close( "SVD solve matrix rhs1", NC, XB.data() + NR, x2 );
 
@@ -385,7 +424,7 @@ test_svd_public_api_and_matrix_overloads() {
     YB(i,0) = b1[i];
     YB(i,1) = b2[i];
   }
-  UTILS_ASSERT( svd.t_solve( YB ), "SVD::t_solve(MatrixWrapper) failed\n" );
+  lw_assert( svd.t_solve( YB ), "SVD::t_solve(MatrixWrapper) failed\n" );
   expect_vector_close( "SVD t_solve matrix rhs0", NR, YB.data(),      y1 );
   expect_vector_close( "SVD t_solve matrix rhs1", NR, YB.data() + NR, y2 );
 }
@@ -432,7 +471,7 @@ test_eigen_dense_sparse_public_api() {
     std::vector<std::vector<complex_type>> right, left;
     eig.getRightEigenvector( right );
     eig.getLeftEigenvector( left );
-    UTILS_ASSERT( right.size() == 3 && left.size() == 3, "bad eigenvector count\n" );
+    lw_assert( right.size() == 3 && left.size() == 3, "bad eigenvector count\n" );
 
     for ( integer k{0}; k < 3; ++k ) {
       complex_type lambda;
@@ -447,13 +486,13 @@ test_eigen_dense_sparse_public_api() {
       tmp[1] = A[4] * rhs[1];
       tmp[2] = A[8] * rhs[2];
       for ( integer i{0}; i < 3; ++i ) tmp[i] -= lambda * rhs[i];
-      UTILS_ASSERT( vector_norm(3, tmp) < BIG_EPS, "bad right eigenvector residual\n" );
+      lw_assert( vector_norm(3, tmp) < BIG_EPS, "bad right eigenvector residual\n" );
 
       tmp[0] = A[0] * lhs[0];
       tmp[1] = A[4] * lhs[1];
       tmp[2] = A[8] * lhs[2];
       for ( integer i{0}; i < 3; ++i ) tmp[i] -= lambda * lhs[i];
-      UTILS_ASSERT( vector_norm(3, tmp) < BIG_EPS, "bad left eigenvector residual\n" );
+      lw_assert( vector_norm(3, tmp) < BIG_EPS, "bad left eigenvector residual\n" );
     }
   }
 
@@ -483,7 +522,7 @@ test_eigen_dense_sparse_public_api() {
     std::vector<std::vector<complex_type>> right, left;
     gev.getRightEigenvector( right );
     gev.getLeftEigenvector( left );
-    UTILS_ASSERT( right.size() == 3 && left.size() == 3, "bad generalized eigenvector count\n" );
+    lw_assert( right.size() == 3 && left.size() == 3, "bad generalized eigenvector count\n" );
 
     for ( integer k{0}; k < 3; ++k ) {
       complex_type lambda;
@@ -496,12 +535,12 @@ test_eigen_dense_sparse_public_api() {
       tmp[0] = A[0]*vr[0] - lambda*B[0]*vr[0];
       tmp[1] = A[4]*vr[1] - lambda*B[4]*vr[1];
       tmp[2] = A[8]*vr[2] - lambda*B[8]*vr[2];
-      UTILS_ASSERT( vector_norm(3, tmp) < BIG_EPS, "bad generalized right eigenvector residual\n" );
+      lw_assert( vector_norm(3, tmp) < BIG_EPS, "bad generalized right eigenvector residual\n" );
 
       tmp[0] = A[0]*vl[0] - lambda*B[0]*vl[0];
       tmp[1] = A[4]*vl[1] - lambda*B[4]*vl[1];
       tmp[2] = A[8]*vl[2] - lambda*B[8]*vl[2];
-      UTILS_ASSERT( vector_norm(3, tmp) < BIG_EPS, "bad generalized left eigenvector residual\n" );
+      lw_assert( vector_norm(3, tmp) < BIG_EPS, "bad generalized left eigenvector residual\n" );
     }
   }
 }
@@ -515,7 +554,7 @@ check_finite_lower_3x3(
 ) {
   for ( integer i{0}; i < 3; ++i )
     for ( integer j{0}; j <= i; ++j )
-      UTILS_ASSERT(
+      lw_assert(
         std::isfinite(H(i,j)),
         "{} contains a non-finite entry at ({},{})\n",
         name, i, j
@@ -548,7 +587,7 @@ test_quasi_newton_public_api() {
   for ( integer i{0}; i < 3; ++i ) expect_close( "BFGS zero mult", out[i], 0.0 );
   bfgs.init();
   bfgs.update( y, s, 1e-10 );
-  UTILS_ASSERT( !bfgs.to_string().empty(), "BFGS::to_string must not be empty\n" );
+  lw_assert( !bfgs.to_string().empty(), "BFGS::to_string must not be empty\n" );
   check_finite_lower_3x3( "BFGS lower", bfgs );
 
   lapack_wrapper::DFP<real_type> dfp;
@@ -556,7 +595,7 @@ test_quasi_newton_public_api() {
   dfp.init();
   dfp.update( f0, f1, x0, x1, 1e-10 );
   dfp.mult( x, out );
-  UTILS_ASSERT( !dfp.to_string().empty(), "DFP::to_string must not be empty\n" );
+  lw_assert( !dfp.to_string().empty(), "DFP::to_string must not be empty\n" );
   check_finite_lower_3x3( "DFP lower", dfp );
 
   lapack_wrapper::SR1<real_type> sr1;
@@ -564,7 +603,7 @@ test_quasi_newton_public_api() {
   sr1.init();
   sr1.update( f0, f1, s, 1e-10 );
   sr1.mult( x, out );
-  UTILS_ASSERT( !sr1.to_string().empty(), "SR1::to_string must not be empty\n" );
+  lw_assert( !sr1.to_string().empty(), "SR1::to_string must not be empty\n" );
   check_finite_lower_3x3( "SR1 lower", sr1 );
 }
 

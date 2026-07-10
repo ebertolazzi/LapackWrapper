@@ -27,6 +27,7 @@
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
 #include <lapack_wrapper/lapack_wrapper_tmpl.hh>
+#include <Utils_Console.hh>
 
 #ifdef __GNUC__
 #pragma GCC diagnostic push

@@ -61,17 +61,17 @@ namespace Sparse_tool {
     void
     build_SOR( MAT const & A, real_type const & _omega, integer _maxIter ) {
 
-      UTILS_ASSERT0(
+      sp_assert(
         A.is_ordered(),
         "Sparse_tool: CSSORpreconditioner::build_SOR\n"
         "pattern must be ordered before use\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() == A.ncols(),
         "Sparse_tool: CSSORpreconditioner::build_SOR\n"
         "only square matrix allowed\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() > 0,
         "Sparse_tool: CSSORpreconditioner::build_SOR\n"
         "empty matrix\n"
@@ -189,7 +189,7 @@ namespace Sparse_tool {
         }
       }
       for ( integer i{0}; i < PRECO::pr_size; ++i )
-        UTILS_ASSERT(
+        sp_assert(
           D(i) != real_type(0),
           "Sparse_tool: CSSORpreconditioner::D({}) = {}, size = {}\n",
           i, D(i), D.size()

@@ -1,5 +1,6 @@
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
+#include <Utils_Console.hh>
 
 #include <algorithm>
 #include <cmath>
@@ -22,6 +23,7 @@
 
 using real_type = lapack_wrapper::doublereal;
 using integer   = lapack_wrapper::integer;
+using lapack_wrapper::lw_assert;
 
 static Utils::Console msg(&std::cout);
 
@@ -47,7 +49,7 @@ expect_close(
   real_type    b,
   real_type    tol = TEST_EPS
 ) {
-  UTILS_ASSERT(
+  lw_assert(
     close_enough(a, b, tol, tol),
     "{} mismatch: {} vs {}\n",
     what, a, b
@@ -142,7 +144,7 @@ test_banded_lu_api() {
 
   std::ostringstream stream;
   blu.dump( stream );
-  UTILS_ASSERT( !stream.str().empty(), "BandedLU::dump should not be empty\n" );
+  lw_assert( !stream.str().empty(), "BandedLU::dump should not be empty\n" );
 
   std::vector<real_type> rhs0( static_cast<size_t>(N) );
   std::vector<real_type> rhs1( static_cast<size_t>(N) );
@@ -153,20 +155,20 @@ test_banded_lu_api() {
   blu.aAxpy( 1.0, x0, axpy_rhs.data() );
   expect_vector_close( "BandedLU aAxpy", N, axpy_rhs.data(), rhs0.data() );
 
-  UTILS_ASSERT( blu.factorize(), "BandedLU::factorize failed\n" );
+  lw_assert( blu.factorize(), "BandedLU::factorize failed\n" );
 
   std::vector<real_type> rhs_single( rhs0 );
-  UTILS_ASSERT( blu.solve( rhs_single.data() ), "BandedLU::solve failed\n" );
+  lw_assert( blu.solve( rhs_single.data() ), "BandedLU::solve failed\n" );
   expect_vector_close( "BandedLU solve", N, rhs_single.data(), x0 );
 
   lapack_wrapper::Matrix<real_type> RHS;
   fill_rhs_matrix( N, 2, rhs0, rhs1, RHS );
-  UTILS_ASSERT( blu.solve( RHS ), "BandedLU::solve(MatrixWrapper) failed\n" );
+  lw_assert( blu.solve( RHS ), "BandedLU::solve(MatrixWrapper) failed\n" );
   expect_vector_close( "BandedLU multi rhs0", N, RHS.data(),     x0 );
   expect_vector_close( "BandedLU multi rhs1", N, RHS.data() + N, x1 );
 
   fill_rhs_matrix( N, 2, rhs0, rhs1, RHS );
-  UTILS_ASSERT( blu.t_solve( RHS ), "BandedLU::t_solve(MatrixWrapper) failed\n" );
+  lw_assert( blu.t_solve( RHS ), "BandedLU::t_solve(MatrixWrapper) failed\n" );
   expect_vector_close( "BandedLU transpose rhs0", N, RHS.data(),     x0 );
   expect_vector_close( "BandedLU transpose rhs1", N, RHS.data() + N, x1 );
 }
@@ -193,7 +195,7 @@ exercise_banded_spd( lapack_wrapper::ULselect uplo ) {
   if ( uplo == lapack_wrapper::ULselect::LOWER ) {
     for ( integer j{0}; j < N; ++j ) spd(0,j) = D[j];
     for ( integer j{0}; j < N-1; ++j ) spd(1,j) = OD[j];
-    UTILS_ASSERT( spd.factorize(), "BandedSPD::factorize failed for LOWER storage\n" );
+    lw_assert( spd.factorize(), "BandedSPD::factorize failed for LOWER storage\n" );
   } else {
     for ( integer j{0}; j < N; ++j ) spd(1,j) = D[j];
     for ( integer j{1}; j < N; ++j ) spd(0,j) = OD[j-1];
@@ -206,17 +208,17 @@ exercise_banded_spd( lapack_wrapper::ULselect uplo ) {
   dense_matvec( N, N, A, x1, rhs1.data() );
 
   std::vector<real_type> rhs_single( rhs0 );
-  UTILS_ASSERT( spd.solve( rhs_single.data() ), "BandedSPD::solve failed\n" );
+  lw_assert( spd.solve( rhs_single.data() ), "BandedSPD::solve failed\n" );
   expect_vector_close( "BandedSPD solve", N, rhs_single.data(), x0 );
 
   lapack_wrapper::Matrix<real_type> RHS;
   fill_rhs_matrix( N, 2, rhs0, rhs1, RHS );
-  UTILS_ASSERT( spd.solve( RHS ), "BandedSPD::solve(MatrixWrapper) failed\n" );
+  lw_assert( spd.solve( RHS ), "BandedSPD::solve(MatrixWrapper) failed\n" );
   expect_vector_close( "BandedSPD multi rhs0", N, RHS.data(),     x0 );
   expect_vector_close( "BandedSPD multi rhs1", N, RHS.data() + N, x1 );
 
   fill_rhs_matrix( N, 2, rhs0, rhs1, RHS );
-  UTILS_ASSERT( spd.t_solve( RHS ), "BandedSPD::t_solve(MatrixWrapper) failed\n" );
+  lw_assert( spd.t_solve( RHS ), "BandedSPD::t_solve(MatrixWrapper) failed\n" );
   expect_vector_close( "BandedSPD transpose rhs0", N, RHS.data(),     x0 );
   expect_vector_close( "BandedSPD transpose rhs1", N, RHS.data() + N, x1 );
 }
@@ -265,10 +267,10 @@ test_block_tridiagonal_wrapper_api() {
   BT.setL( 0, L0, 2 );
   BT.setL( 1, L1, 2 );
 
-  UTILS_ASSERT( BT.num_blocks() == nblk, "BlockTridiagonalSymmetic::num_blocks mismatch\n" );
-  UTILS_ASSERT( BT.D_nrows(1) == bs,     "BlockTridiagonalSymmetic::D_nrows mismatch\n" );
-  UTILS_ASSERT( BT.L_ncols(1) == bs,     "BlockTridiagonalSymmetic::L_ncols mismatch\n" );
-  UTILS_ASSERT( BT.factorize(), "BlockTridiagonalSymmetic::factorize failed\n" );
+  lw_assert( BT.num_blocks() == nblk, "BlockTridiagonalSymmetic::num_blocks mismatch\n" );
+  lw_assert( BT.D_nrows(1) == bs,     "BlockTridiagonalSymmetic::D_nrows mismatch\n" );
+  lw_assert( BT.L_ncols(1) == bs,     "BlockTridiagonalSymmetic::L_ncols mismatch\n" );
+  lw_assert( BT.factorize(), "BlockTridiagonalSymmetic::factorize failed\n" );
 
   std::vector<real_type> rhs0( static_cast<size_t>(N) );
   std::vector<real_type> rhs1( static_cast<size_t>(N) );
@@ -277,12 +279,12 @@ test_block_tridiagonal_wrapper_api() {
 
   lapack_wrapper::Matrix<real_type> RHS;
   fill_rhs_matrix( N, 2, rhs0, rhs1, RHS );
-  UTILS_ASSERT( BT.solve( RHS ), "BlockTridiagonalSymmetic::solve(MatrixWrapper) failed\n" );
+  lw_assert( BT.solve( RHS ), "BlockTridiagonalSymmetic::solve(MatrixWrapper) failed\n" );
   expect_vector_close( "BlockTridiagonal solve rhs0", N, RHS.data(),     x0 );
   expect_vector_close( "BlockTridiagonal solve rhs1", N, RHS.data() + N, x1 );
 
   fill_rhs_matrix( N, 2, rhs0, rhs1, RHS );
-  UTILS_ASSERT( BT.t_solve( RHS ), "BlockTridiagonalSymmetic::t_solve(MatrixWrapper) failed\n" );
+  lw_assert( BT.t_solve( RHS ), "BlockTridiagonalSymmetic::t_solve(MatrixWrapper) failed\n" );
   expect_vector_close( "BlockTridiagonal transpose rhs0", N, RHS.data(),     x0 );
   expect_vector_close( "BlockTridiagonal transpose rhs1", N, RHS.data() + N, x1 );
 }

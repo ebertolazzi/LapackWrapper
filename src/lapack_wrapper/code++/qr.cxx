@@ -37,7 +37,7 @@ namespace lapack_wrapper {
   QR_no_alloc<T>::get_Lwork_QR( integer NR, integer NC ) {
     real_type tmp; // get optimal allocation
     integer info { geqrf( NR, NC, nullptr, NR, nullptr, &tmp, -1 ) };
-    UTILS_ASSERT( info == 0, "QR_no_alloc::get_Lwork_QR call lapack_wrapper::geqrf return info = {}\n", info );
+    lw_assert( info == 0, "QR_no_alloc::get_Lwork_QR call lapack_wrapper::geqrf return info = {}\n", info );
     return std::max( integer(tmp), std::max( NR, NC ) );
   }
 
@@ -56,7 +56,7 @@ namespace lapack_wrapper {
     m_nReflector = std::min(NR,NC);
     m_LworkQR    = this->get_Lwork_QR( NR, NC );
     integer Lwmin{ m_LworkQR + NR*NC + m_nReflector };
-    UTILS_ASSERT(
+    lw_assert(
       Lwork >= Lwmin,
       "QR_no_alloc::no_allocate( NR = {}, NC = {}, Lwork {}, .. )\n"
       "Lwork must be >= {}\n",
@@ -78,13 +78,13 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "QR_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
     );
     info = geqrf( m_nrows, m_ncols, m_Afactorized, m_nrows, m_Tau, m_WorkQR, m_LworkQR );
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "QR_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}\n",
       who, info
@@ -120,7 +120,7 @@ namespace lapack_wrapper {
     real_type     C[],
     integer       ldC
   ) const {
-    UTILS_ASSERT(
+    lw_assert(
       (SIDE == SideMultiply::LEFT  && NR == m_nrows) ||
       (SIDE == SideMultiply::RIGHT && NC == m_nrows),
       "QR_no_alloc::applyQ( SIDE = {}, TRANS = {}, Nrefl = {}, NR = {}, NC = {}, C, ldC = {})\n"
@@ -139,7 +139,7 @@ namespace lapack_wrapper {
       C, ldC,
       m_WorkQR, m_LworkQR
     ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "QR_no_alloc::applyQ call lapack_wrapper::ormqr return info = {} Lwork = {}\n",
       info, m_LworkQR
@@ -529,7 +529,7 @@ namespace lapack_wrapper {
   QRP_no_alloc<T>::get_Lwork_QRP( integer NR, integer NC ) {
     real_type tmp; // get optimal allocation
     integer info { geqp3( NR, NC, nullptr, NR, nullptr, nullptr, &tmp, -1 ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "QRP::get_Lwork_QRP call lapack_wrapper::geqp3 return info = {}\n", info
     );
@@ -556,7 +556,7 @@ namespace lapack_wrapper {
 
     integer Lwmin{ m_LworkQR + NR*NC + NR+NC };
 
-    UTILS_ASSERT(
+    lw_assert(
       Liwork >= NC && Lwork >= Lwmin,
       "QRP_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {}, ...)\n"
       "Lwork must be >= {} amd Liwork = NC",
@@ -588,7 +588,7 @@ namespace lapack_wrapper {
   ) {
     // calcolo fattorizzazione QR della matrice A
     integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "QRP_no_alloc::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
@@ -598,7 +598,7 @@ namespace lapack_wrapper {
       m_nrows, m_ncols, m_Afactorized, m_nrows,
       m_JPVT, m_Tau, m_WorkQR, m_LworkQR
     );
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "QRP_no_alloc::factorize[{}] call lapack_wrapper::geqrf return info = {}\n",
       who, info
@@ -656,7 +656,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    UTILS_ASSERT(
+    lw_assert(
       nr == m_ncols,
       "QRP_no_alloc::permute_rows, bad number of row, expected {} found {}\n",
       m_ncols, nr
@@ -674,7 +674,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    UTILS_ASSERT(
+    lw_assert(
       nr == m_ncols,
       "QRP_no_alloc::inv_permute_rows, bad number of row, expected {} found {}\n",
       m_ncols, nr
@@ -692,7 +692,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    UTILS_ASSERT(
+    lw_assert(
       nc == m_ncols,
       "QRP_no_alloc::permute_cols, bad number of cols, expected {} found {}\n",
       m_ncols, nc
@@ -710,7 +710,7 @@ namespace lapack_wrapper {
     real_type C[],
     integer   ldC
   ) const {
-    UTILS_ASSERT(
+    lw_assert(
       nc == m_ncols,
       "QRP_no_alloc::inv_permute_cols, bad number of cols, expected {} found {}\n",
       m_ncols, nc

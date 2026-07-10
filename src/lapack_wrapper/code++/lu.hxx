@@ -349,7 +349,7 @@ namespace lapack_wrapper {
       real_type const A[],
       integer         LDA
     ) override {
-      UTILS_ASSERT( NR == NC, "LUPQ::factorize, non square matrix: {} x {}\n", NR, NC );
+      lw_assert( NR == NC, "LUPQ::factorize, non square matrix: {} x {}\n", NR, NC );
       factorize( who, NR, A, LDA );
     }
 

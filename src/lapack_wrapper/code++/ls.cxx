@@ -45,7 +45,7 @@ namespace lapack_wrapper {
     integer minRC  { std::min(NR,NC) };
     integer NRC    { NR*NC };
     integer Lwmin  { 2*NRC+minRC };
-    UTILS_ASSERT(
+    lw_assert(
       Lwork >= Lwmin,
       "LSS_no_alloc( NR = {}, NC = {}, LWork = {}, ...)\n"
       "LWork must be >= {}\n",
@@ -70,7 +70,7 @@ namespace lapack_wrapper {
       nullptr, NR, nullptr, NRC, nullptr,
       m_rcond, m_rank, &tmp, -1
     ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "LSS_no_alloc::getL( NR={}, NC={}, nrhs={} )\n"
       "call of gelss return info = {}\n",
@@ -89,7 +89,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Amat, m_nrows ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "LSS_no_alloc::factorize( who={},...)"
       " call lapack_wrapper::gecopy return info = {}\n",
@@ -248,7 +248,7 @@ namespace lapack_wrapper {
     integer NRC   { NR*NC };
     integer Lwmin { 2*NRC };
     integer Lipiv { std::max(NR,NC) };
-    UTILS_ASSERT(
+    lw_assert(
       Lwork >= 2*NRC && Liwork >= Lipiv,
       "LSS_no_alloc( NR = {}, NC = {}, LWork = {}, ..., Liwork = {})\n"
       "LWork must be >= {} and Liwork must be >= {}\n",
@@ -273,7 +273,7 @@ namespace lapack_wrapper {
       nullptr, NR, nullptr, NRC, nullptr,
       m_rcond, m_rank, &tmp, -1
     ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "LSY_no_alloc::getL( NR={}, NC={}, nrhs={} )\n"
       "call of gelss return info = {}\n",
@@ -292,7 +292,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info { gecopy( m_nrows, m_ncols, A, LDA, m_Amat, m_nrows ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info
@@ -447,7 +447,7 @@ namespace lapack_wrapper {
   ) {
     allocate( NR, NC );
     integer info { gecopy( m_nrows, m_ncols, A, LDA, m_Amat, m_nrows ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "LSY::factorize[{}] call lapack_wrapper::gecopy return info = {}\n",
       who, info

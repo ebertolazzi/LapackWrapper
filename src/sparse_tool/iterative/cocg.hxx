@@ -46,7 +46,7 @@ namespace Sparse_tool {
     ostream_type      * pStream = nullptr
   ) {
 
-    UTILS_ASSERT(
+    sp_assert(
       A.nrows() == b.size() &&
       A.ncols() == x.size() &&
       A.nrows() == A.ncols(),
@@ -82,7 +82,7 @@ namespace Sparse_tool {
 
       q  = A * p;
       mu = q.conjugate().dot(p);
-      UTILS_ASSERT0(
+      sp_assert(
         mu != vType(0),
         "Sparse_tool: COCG failed found mu == 0\n"
       );

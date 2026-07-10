@@ -160,9 +160,9 @@ namespace lapack_wrapper {
     std::vector<T> Wmin( MN ), Wmax( MN );
 
     // Test the input scalar arguments.
-    UTILS_ASSERT( M >= 0 && N >= 0,      "rankEstimate, bad size matrix {} x {}\n",         M, N  );
-    UTILS_ASSERT( LDA >= max_index(1,M), "rankEstimate, bad leading dimension ldA = {}\n",  LDA   );
-    UTILS_ASSERT( RCOND >= 0,            "rankEstimate, bad condision number rcond = {}\n", RCOND );
+    lw_assert( M >= 0 && N >= 0,      "rankEstimate, bad size matrix {} x {}\n",         M, N  );
+    lw_assert( LDA >= max_index(1,M), "rankEstimate, bad leading dimension ldA = {}\n",  LDA   );
+    lw_assert( RCOND >= 0,            "rankEstimate, bad condision number rcond = {}\n", RCOND );
 
     // Quick return if possible
     SVAL[0] = 0;
@@ -181,8 +181,8 @@ namespace lapack_wrapper {
         T SMAXPR, S1, C1, S2, C2;
         T * pA0r = A + RANK * LDA;
         T & Arr  = pA0r[RANK];
-        laic1( 2, RANK, &Wmin.front(), SMIN, pA0r, Arr, SMINPR, S1, C1 );
-        laic1( 1, RANK, &Wmax.front(), SMAX, pA0r, Arr, SMAXPR, S2, C2 );
+        laic1( 2, RANK, Wmin.data(), SMIN, pA0r, Arr, SMINPR, S1, C1 );
+        laic1( 1, RANK, Wmax.data(), SMAX, pA0r, Arr, SMAXPR, S2, C2 );
 
         if ( SMAXPR*RCOND > SMINPR ) break;
 

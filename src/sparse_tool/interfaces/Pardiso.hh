@@ -193,7 +193,7 @@ namespace Sparse_tool {
     {
       int error = 0;
       F77NAME(pardisoinit)( pt, &mtype, &solver, iparm, dparm, &error );
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, Error N. {}\n{}\n",
         error, error_to_string(error)
@@ -214,7 +214,7 @@ namespace Sparse_tool {
     template <typename MT, typename Compare>
     void
     load( Sparse<real,MT> const & M, Compare cmp ) {
-      UTILS_ASSERT(
+      sp_assert(
         M.nrows() == M.ncols(),
         "Pardiso interface, matrix must be square {} x {}\n",
         M.nrows(), M.ncols()
@@ -250,7 +250,7 @@ namespace Sparse_tool {
         }
       }
 
-      UTILS_ASSERT0(
+      sp_assert(
         R(0) == 0 && R(n) == nnz,
         "Pardiso interface, load failed\n"
       )
@@ -277,9 +277,8 @@ namespace Sparse_tool {
     void
     check_matrix() const {
       integer error{0};
-      F77NAME(pardiso_chkmatrix)( &mtype, &n,
-                                  &A.front(), &R.front(), &J.front(), &error );
-      UTILS_ASSERT(
+      F77NAME(pardiso_chkmatrix)( &mtype, &n, A.data(), R.data(), J.data(), &error );
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, in consistency matrix ERROR N. {}\n{}\n",
         error, error_to_string(error)
@@ -296,7 +295,7 @@ namespace Sparse_tool {
     check_rhs( integer nrhs, real_or_complex const b[] ) const {
       integer error{ 0 };
       F77NAME(pardiso_chkvec)( &n, &nrhs, b, &error );
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, in right hand side ERROR N.{}\n{}\n",
         error, error_to_string(error)
@@ -313,10 +312,10 @@ namespace Sparse_tool {
       integer error{ 0 };
       F77NAME(pardiso_printstats)(
         &mtype, &n,
-        &A.front(), &R.front(), &J.front(),
+        A.data(), R.data(), J.data(),
         &nrhs, b, &error
       );
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, in printstats ERROR N.{}\n{}\n",
         error, error_to_string(error)
@@ -339,10 +338,10 @@ namespace Sparse_tool {
 
       F77NAME(pardiso)(
         pt, &maxfct, &mnum, &mtype, &phase,
-        &n, &A.front(), &R.front(), &J.front(), perm, &idum,
+        &n, A.data(), R.data(), J.data(), perm, &idum,
         iparm, &msglvl, ddum, ddum, &error, dparm
       );
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, during symbolic factorization ERROR N.{}\n{}\n",
         error, error_to_string(error)
@@ -370,10 +369,10 @@ namespace Sparse_tool {
       // iparm[32] = 1; /* compute determinant */
       F77NAME(pardiso)(
         pt, &maxfct, &mnum, &mtype, &phase,
-        &n, &A.front(), &R.front(), &J.front(), &idum, &idum,
+        &n, A.data(), R.data(), J.data(), &idum, &idum,
         iparm, &msglvl, ddum, ddum, &error, dparm
       );
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, during numerical factorization ERROR N.{}\n{}\n",
         error, error_to_string(error)
@@ -394,10 +393,10 @@ namespace Sparse_tool {
       integer error { 0 };
       F77NAME(pardiso)(
         pt, &maxfct, &mnum, &mtype, &phase,
-        &n, (real*)&A.front(), &R.front(), &J.front(), &idum, &nrhs,
+        &n, (real*)A.data(), R.data(), J.data(), &idum, &nrhs,
         iparm, &msglvl, (real*)b, (real*)x, &error, dparm
       );
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, during solution ERROR N.{}\n{}\n",
         error, error_to_string(error)
@@ -407,7 +406,7 @@ namespace Sparse_tool {
     void
     solve( Vector<real_or_complex> const & b, Vector<real_or_complex> & x ) {
       x.resize( b.size() );
-      solve( 1, &b.front(), &x.front() );
+      solve( 1, b.data(), x.data() );
     }
 
     /* -------------------------------------------------------------------- */
@@ -421,10 +420,10 @@ namespace Sparse_tool {
       integer error { 0  };
       F77NAME(pardiso)(
         pt, &maxfct, &mnum, &mtype, &phase,
-        &n, ddum, &R.front(), &J.front(), &idum, &idum,
+        &n, ddum, R.data(), J.data(), &idum, &idum,
         iparm, &msglvl, ddum, ddum, &error, dparm
       );
-      UTILS_ASSERT(
+      sp_assert(
         error == 0,
         "Sparse_tool: Pardiso interface, during free memory ERROR N.{}\n{}\n",
         error, error_to_string(error)

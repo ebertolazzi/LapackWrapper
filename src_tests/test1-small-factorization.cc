@@ -23,6 +23,7 @@
 #include <functional>
 #include <lapack_wrapper/lapack_wrapper.hh>
 #include <lapack_wrapper/lapack_wrapper++.hh>
+#include <Utils_Console.hh>
 
 #ifdef __GNUC__
 #pragma GCC diagnostic push
@@ -41,6 +42,7 @@ using namespace std;
 using real_type = double;
 using lapack_wrapper::integer;
 using lapack_wrapper::Transposition;
+using lapack_wrapper::lw_assert;
 
 static Utils::Console msg(&std::cout);
 
@@ -122,7 +124,7 @@ static void test1() {
     print_vector("residual", M, b);
     fmt::print("‖res‖₂ = {:12.6e}\n", res);
     
-    UTILS_ASSERT(res < EPS, "Test 1 failed! res = {:12.6e}\n", res);
+    lw_assert(res < EPS, "Test 1 failed! res = {:12.6e}\n", res);
     msg.green("Test 1 PASSED ✓");
 }
 
@@ -173,7 +175,7 @@ static void test2() {
     print_vector("residual", M, b);
     fmt::print("‖res‖₂ = {:12.6e}\n", res);
     
-    UTILS_ASSERT(res < EPS, "Test 2 failed! res = {:12.6e}\n", res);
+    lw_assert(res < EPS, "Test 2 failed! res = {:12.6e}\n", res);
     msg.green("Test 2 PASSED ✓");
 }
 
@@ -224,7 +226,7 @@ static void test3() {
     real_type res = lapack_wrapper::nrm2(M, b, 1);
     fmt::print("‖res‖₂ = {:12.6e}\n", res);
     
-    UTILS_ASSERT(res < EPS, "Test 3 failed! res = {:12.6e}\n", res);
+    lw_assert(res < EPS, "Test 3 failed! res = {:12.6e}\n", res);
     msg.green("Test 3 PASSED ✓");
 }
 
@@ -246,7 +248,7 @@ static void test3() {
         fmt::print("residual = {}", lapack_wrapper::print_matrix(1, M, b, 1)); \
         real_type res = lapack_wrapper::nrm2(M, b, 1); \
         fmt::print("‖res‖₂ = {:12.6e}\n", res); \
-        UTILS_ASSERT0(res < EPS, "Test failed!\n"); \
+        lw_assert(res < EPS, "Test failed!\n"); \
     } while(0)
 
 static void test4() {
@@ -388,7 +390,7 @@ static void test6() {
     real_type res_qr = lapack_wrapper::nrm2(N, b, 1);
     fmt::print("‖res‖₂ (QR) = {:12.6e}\n", res_qr);
     
-    UTILS_ASSERT(res_lu < EPS && res_qr < EPS, 
+    lw_assert(res_lu < EPS && res_qr < EPS, 
                 "Test 6 failed! LU res = {:12.6e}, QR res = {:12.6e}\n", 
                 res_lu, res_qr);
     
@@ -434,7 +436,7 @@ static void test7() {
     real_type res = lapack_wrapper::nrm2(M, b, 1);
     fmt::print("‖res‖₂ = {:12.6e}\n", res);
     
-    UTILS_ASSERT(res < EPS, "Test 7 failed! res = {:12.6e}\n", res);
+    lw_assert(res < EPS, "Test 7 failed! res = {:12.6e}\n", res);
     msg.green("Test 7 PASSED ✓");
 }
 
@@ -478,7 +480,7 @@ static void test8() {
     real_type res = lapack_wrapper::nrm2(M, b, 1);
     fmt::print("‖res‖₂ = {:12.6e}\n", res);
     
-    UTILS_ASSERT(res < EPS, "Test 8 failed! res = {:12.6e}\n", res);
+    lw_assert(res < EPS, "Test 8 failed! res = {:12.6e}\n", res);
     msg.green("Test 8 PASSED ✓");
 }
 
@@ -589,7 +591,7 @@ static void test10() {
     real_type res = lapack_wrapper::nrm2(M, b, 1);
     fmt::print("‖res‖₂ = {:12.6e}\n", res);
     
-    UTILS_ASSERT(res < EPS, "Test 10 failed! res = {:12.6e}\n", res);
+    lw_assert(res < EPS, "Test 10 failed! res = {:12.6e}\n", res);
     msg.green("Test 10 PASSED ✓");
 }
 

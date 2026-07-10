@@ -45,22 +45,22 @@ namespace Sparse_tool {
     void
     build_ILDU( MAT const & A, PAT const & P ) {
 
-      UTILS_ASSERT0(
+      sp_assert(
         P.is_ordered(),
         "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "pattern must be ordered before use\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         P.nrows() == A.nrows() && P.ncols() == A.ncols(),
         "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "pattern do not match matrix size\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         P.nrows() == P.ncols(),
         "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "only square matrix allowed\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         P.nrows() > 0,
         "Sparse_tool: ILDUpreconditioner::build_ILDU\n"
         "empty matrix\n"
@@ -156,7 +156,7 @@ namespace Sparse_tool {
         W = 0;
         #endif
 
-        UTILS_ASSERT(
+        sp_assert(
           D(k) != real_type(0),
           "Sparse_tool: ILDUpreconditioner found D({}) == 0!\n", k
         );

@@ -46,7 +46,7 @@ namespace Sparse_tool {
     ostream_type      * pStream = nullptr
   ) {
 
-    UTILS_ASSERT(
+    sp_assert(
       A.nrows() == b.size() &&
       A.ncols() == x.size() &&
       A.nrows() == A.ncols(),
@@ -83,7 +83,7 @@ namespace Sparse_tool {
 
       qt = q / P;
       mu = qt.conjugate().dot(q);
-      UTILS_ASSERT0(
+      sp_assert(
         mu != vType(0),
         "Sparse_tool: COCR failed found mu == 0\n"
       );
@@ -97,7 +97,7 @@ namespace Sparse_tool {
       beta = rho;
       rho  = rt.conjugate().dot(Art);
       beta = rho/beta;
-      UTILS_ASSERT0(
+      sp_assert(
         beta != vType(0),
         "Sparse_tool: COCR failed found beta == 0\n"
       );

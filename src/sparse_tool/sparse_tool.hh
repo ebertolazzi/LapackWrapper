@@ -116,6 +116,17 @@ namespace Sparse_tool {
   using std::greater;
   using std::less;
 
+  inline void
+  sp_assert( bool cond, string_view msg ) {
+    if ( !cond ) throw std::runtime_error( string(msg) );
+  }
+  
+  template <typename... Args> requires ( sizeof...(Args) > 0 )
+  inline void
+  sp_assert( bool cond, std::format_string<Args...> fmt, Args &&... args ) {
+    if ( !cond ) throw std::runtime_error( std::format( fmt, std::forward<Args>(args)... ) );
+  }
+
   // FROM BLITZ++
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -1575,7 +1586,7 @@ namespace Sparse_tool {
     //!
     void
     test_nnz(integer idx) const {
-      UTILS_ASSERT(
+      sp_assert(
         idx < sp_nnz,
         "Sparse::operator [{}] index out of range\n", idx
       );
@@ -1587,7 +1598,7 @@ namespace Sparse_tool {
     //!
     void
     test_index(integer i, integer j) const {
-      UTILS_ASSERT(
+      sp_assert(
         i < sp_nrows && j < sp_ncols,
         "Sparse::test_index({},{}) index out of range\n", i, j
       );
@@ -1599,7 +1610,7 @@ namespace Sparse_tool {
     //!
     void
     test_row(integer i) const {
-      UTILS_ASSERT(
+      sp_assert(
         i < sp_nrows,
         "Sparse::test_row({}) index out of range\n", i
       );
@@ -1611,7 +1622,7 @@ namespace Sparse_tool {
     //!
     void
     test_col(integer j) const {
-      UTILS_ASSERT(
+      sp_assert(
         j < sp_ncols,
         "Sparse::test_col({}) index out of range\n", j
       );
@@ -2275,11 +2286,11 @@ namespace Sparse_tool {
       T   const & s,
       VEC const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         std::addressof(res) != std::addressof(x),
         "Sparse_tool: [res += s * (A * x)]: add_S_mul_M_mul_V `res` and `x` cant be the same"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SBASE::sp_nrows,
         "Sparse_tool: [res += s * (A * x)] result vector too small"
       );
@@ -2297,11 +2308,11 @@ namespace Sparse_tool {
       T   const & s,
       VEC const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         std::addressof(res) != std::addressof(&x),
         "Sparse_tool: [res += s * (A^T * x)] add_S_mul_M_mul_V, `res` and `x` cant be the same"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SBASE::sp_ncols,
         "Sparse_tool: [res += s * (A^T * x)] result vector too small"
       );
@@ -2319,7 +2330,7 @@ namespace Sparse_tool {
       T  const & s,
       VB const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SBASE::sp_nrows,
         "Sparse_tool: [res += s * (A * x)] result vector too small"
       );
@@ -2337,7 +2348,7 @@ namespace Sparse_tool {
       T  const & s,
       VB const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SBASE::sp_ncols,
         "Sparse_tool: [res += s * (A^T * x)] result vector too small"
       );
@@ -3010,7 +3021,7 @@ namespace Sparse_tool {
       integer nc{0};
       C(0) = 0;
       for ( integer k{1}; k < SPARSE::sp_nnz; ++k ) {
-        UTILS_ASSERT(
+        sp_assert(
           J(k-1) <= J(k),
           "CCoorMatrix::internal_order() internal error\n"
           "J({}) is not <= J({})\n",
@@ -3019,7 +3030,7 @@ namespace Sparse_tool {
         integer kk{ J(k) - J(k-1) };
         while ( kk-- > 0 ) C(++nc) = k;
       }
-      UTILS_ASSERT(
+      sp_assert(
         nc < SPARSE::sp_ncols || SPARSE::sp_nnz == 0,
         "CCoorMatrix::internal_order()\n"
         "nc = {} is not less of sp_ncols = {}, sp_nnz = {}\n",
@@ -3093,14 +3104,14 @@ namespace Sparse_tool {
     real_type const &
     operator ()( integer i, integer j ) const {
       integer pos{ position(i,j) };
-      UTILS_ASSERT( pos != SPARSE::sp_nnz, "CCoorMatrix({},{}) referring to a non existent element", i, j );
+      sp_assert( pos != SPARSE::sp_nnz, "CCoorMatrix({},{}) referring to a non existent element", i, j );
       return A(pos);
     }
 
     real_type &
     operator ()( integer i, integer j ) {
       integer pos{ position(i,j) };
-      UTILS_ASSERT( pos != SPARSE::sp_nnz, "CCoorMatrix({},{}) referring to a non existent element", i, j );
+      sp_assert( pos != SPARSE::sp_nnz, "CCoorMatrix({},{}) referring to a non existent element", i, j );
       return A(pos);
     }
 
@@ -3143,11 +3154,11 @@ namespace Sparse_tool {
       T   const & s,
       VEC const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         std::addressof(res) != std::addressof(x),
         "Sparse_tool: [res += s * (A * x)] add_S_mul_M_mul_V, `res` and `x` cant be the same"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SPARSE::sp_nrows,
         "Sparse_tool: [res += s * (A * x)] result vector too small"
       );
@@ -3167,11 +3178,11 @@ namespace Sparse_tool {
       T   const & s,
       VEC const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         std::addressof(res) != std::addressof(x),
         "Sparse_tool: [res += s * (A^T * x)] add_S_mul_Mt_mul_V, `res` and `x` cant be the same"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SPARSE::sp_ncols,
         "Sparse_tool: [res += s * (A^T * x)] result vector too small"
       );
@@ -3191,7 +3202,7 @@ namespace Sparse_tool {
       T  const & s,
       VB const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SPARSE::sp_nrows,
         "Sparse_tool: [res += s * (A * x)] result vector too small"
       );
@@ -3211,7 +3222,7 @@ namespace Sparse_tool {
       T  const & s,
       VB const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SPARSE::sp_ncols,
         "Sparse_tool: [res += s * (A^T * x)] result vector too small"
       );
@@ -3260,11 +3271,11 @@ namespace Sparse_tool {
     VR                    & res,
     VX              const & x
   ) {
-    UTILS_ASSERT0(
+    sp_assert(
       std::addressof(res) != std::addressof(x),
       "Sparse_tool: [res += s * (A * x)] S_mul_M_mul_V, `res` and `x` cant be the same"
     );
-    UTILS_ASSERT0(
+    sp_assert(
       res.size() >= nrows,
       "Sparse_tool: [res += s * (A * x)] result vector too small"
     );
@@ -3302,11 +3313,11 @@ namespace Sparse_tool {
     VR                    & res,
     VX              const & x
   ) {
-    UTILS_ASSERT0(
+    sp_assert(
       std::addressof(res) != std::addressof(x),
       "Sparse_tool: [res += s * (A^T * x)] S_mul_Mt_mul_V, `res` and `x` cant be the same"
     );
-    UTILS_ASSERT0(
+    sp_assert(
       res.size() >= nrows,
       "Sparse_tool: [res += s * (A^T * x)] result vector too small"
     );
@@ -3408,7 +3419,7 @@ namespace Sparse_tool {
 
     void
     internal_order() {
-      UTILS_ASSERT0(
+      sp_assert(
         R[SPARSE::sp_nrows] == SPARSE::sp_nnz,
         "Sparse_tool: CRowMatrix::internal_order() bad data for matrix\n"
       );
@@ -3424,7 +3435,7 @@ namespace Sparse_tool {
           for ( kk = rk; kk < rk1; ++kk ) SPARSE::ldu_count(ii,J(kk));
   #ifdef SPARSETOOL_DEBUG
           for ( kk = rk+1; kk < rk1; ++kk )
-            UTILS_ASSERT0(
+            sp_assert(
               J(kk-1) < J(kk),
               "Sparse_tool: CRowMatrix::internal_order() failed\n"
             );
@@ -3470,7 +3481,7 @@ namespace Sparse_tool {
         }
       }
 
-      UTILS_ASSERT0(
+      sp_assert(
         R(0) == 0 && R(SPARSE::sp_nrows) == SPARSE::sp_nnz,
         "CRowMatrix::resize(Sparse & A) failed\n"
       );
@@ -3625,7 +3636,7 @@ namespace Sparse_tool {
     real_type const &
     operator ()( integer i, integer j ) const {
       integer pos{ position(i,j) };
-      UTILS_ASSERT(
+      sp_assert(
         pos != SPARSE::sp_nnz,
         "CRowMatrix({},{}) referring to a non existent element\n", i, j
       );
@@ -3635,7 +3646,7 @@ namespace Sparse_tool {
     real_type &
     operator ()( integer i, integer j ) {
       integer pos{ position(i,j) };
-      UTILS_ASSERT(
+      sp_assert(
         pos != SPARSE::sp_nnz,
         "CRowMatrix({},{}) referring to a non existent element\n", i, j
       );
@@ -3816,7 +3827,7 @@ namespace Sparse_tool {
           for ( kk = ck; kk < ck1; ++kk ) SPARSE::ldu_count(I(kk),jj);
   #ifdef SPARSETOOL_DEBUG
           for ( kk = ck+1; kk < ck1; ++kk )
-            UTILS_ASSERT0(
+            sp_assert(
               I(kk-1) < I(kk),
               "Sparse_tool: CColMatrix::internal_order() failed\n"
             );
@@ -3860,7 +3871,7 @@ namespace Sparse_tool {
           I(jj) = i;
         }
       }
-      UTILS_ASSERT0(
+      sp_assert(
         C(0) == 0 && C(SPARSE::sp_ncols) == SPARSE::sp_nnz,
         "CColMatrix::resize(Sparse & A) failed\n"
       );
@@ -4016,7 +4027,7 @@ namespace Sparse_tool {
     real_type const &
     operator () (integer i, integer j) const {
       integer pos{ position(i,j) };
-      UTILS_ASSERT(
+      sp_assert(
         pos != SPARSE::sp_nnz,
         "CColMatrix({},{}) referring to a non existent element\n", i, j
       );
@@ -4026,7 +4037,7 @@ namespace Sparse_tool {
     real_type &
     operator () (integer i, integer j) {
       integer pos{ position(i,j) };
-      UTILS_ASSERT(
+      sp_assert(
         pos != SPARSE::sp_nnz,
         "CColMatrix({},{}) referring to a non existent element\n", i, j
       );
@@ -4603,7 +4614,7 @@ namespace Sparse_tool {
     operator () ( integer i, integer j ) const {
       SPARSE::test_index(i,j);
       integer kk{ (j+1)-i };
-      UTILS_ASSERT(
+      sp_assert(
         kk < 3,
         "TridMatrix({},{}) index out of range\n", i, j
       );
@@ -4614,7 +4625,7 @@ namespace Sparse_tool {
     operator () ( integer i, integer j ) {
       SPARSE::test_index(i,j);
       integer kk{ (j+1)-i };
-      UTILS_ASSERT(
+      sp_assert(
         kk < 3,
         "TridMatrix({},{}) index out of range\n", i, j
       );
@@ -4684,11 +4695,11 @@ namespace Sparse_tool {
       T   const & s,
       VEC const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         std::addressof(res) != std::addressof(x),
         "Sparse_tool: [res += s * (A * x)] add_S_mul_M_mul_V, `res` and `x` cant be the same\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SPARSE::sp_nrows,
         "Sparse_tool: [res += s * (A * x)] result vector too small\n"
       );
@@ -4710,11 +4721,11 @@ namespace Sparse_tool {
       T   const & s,
       VEC const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         std::addressof(res) != std::addressof(x),
         "Sparse_tool: [res += s * (A^T * x)] add_S_mul_Mt_mul_V, `res` and `x` cant be the same\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SPARSE::sp_nrows,
         "Sparse_tool: [res += s * (A^T * x)] result vector too small\n"
       );
@@ -4734,7 +4745,7 @@ namespace Sparse_tool {
       T  const & s,
       VB const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SPARSE::sp_nrows,
         "[res += s * (A * x)] result vector too small\n"
       );
@@ -4754,7 +4765,7 @@ namespace Sparse_tool {
       T  const & s,
       VB const & x
     ) const {
-      UTILS_ASSERT0(
+      sp_assert(
         res.size() >= SPARSE::sp_nrows,
         "[res += s * (A^T * x)] result vector too small\n"
       );

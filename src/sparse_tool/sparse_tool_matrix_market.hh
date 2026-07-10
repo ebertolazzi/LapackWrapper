@@ -130,7 +130,7 @@ namespace Sparse_tool {
     void
     read_header( istream_type & stream ) {
 
-      UTILS_ASSERT0(
+      sp_assert(
         stream.good(),
         "Sparse_tool::MatrixMarket::read_header\n"
         "In reading Matrix Market File, cannot read header!\n"
@@ -173,13 +173,13 @@ namespace Sparse_tool {
           else if ( strcmp( p, "skew-symmetric") == 0 ) mType = MM_SKEW_SYMMETRIC;
           else if ( strcmp( p, "Hermitian")      == 0 ) mType = MM_HERMITIAN;
 
-          else UTILS_ASSERT0( false, "Sparse_tool::MatrixMarket::read_header\nbad MatrixMarket file format" );
+          else sp_assert( false, "Sparse_tool::MatrixMarket::read_header\nbad MatrixMarket file format" );
         }
       }
 
       // check consistency of type
       if ( mType == MM_HERMITIAN ) {
-        UTILS_ASSERT(
+        sp_assert(
           vType == MM_COMPLEX,
           "Sparse_tool::MatrixMarket::read_header\n"
           "inconsistent file data, a matrix with entries of type: {}\n"
@@ -188,7 +188,7 @@ namespace Sparse_tool {
         );
       }
       if ( mType == MM_SKEW_SYMMETRIC ) {
-        UTILS_ASSERT(
+        sp_assert(
           vType == MM_REAL || vType == MM_COMPLEX,
           "Sparse_tool::MatrixMarket::read_header\n"
           "inconsistent file data, a matrix with entries of type: {}\n"
@@ -221,7 +221,7 @@ namespace Sparse_tool {
 
       read_header( stream );
 
-      UTILS_ASSERT0(
+      sp_assert(
         cType == MM_COORDINATE,
         "Sparse_tool::MatrixMarket::read\n"
         "file must be a coordinate file!"
@@ -231,7 +231,7 @@ namespace Sparse_tool {
 
       integer kk{0};
       while( kk < m_nnz ) {
-        UTILS_ASSERT0(
+        sp_assert(
           stream.good(),
           "Sparse_tool::MatrixMarket::read\n"
           "Failed in reading Matrix Market File\n"
@@ -242,7 +242,7 @@ namespace Sparse_tool {
         integer i, j;
         sscanf( m_line, "%d%d", &i, &j );
 
-        UTILS_ASSERT(
+        sp_assert(
           i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
           "Sparse_tool::MatrixMarket::read\n"
           "In reading Matrix Market File, bad pattern ({},{}) index on line {}\n"
@@ -264,12 +264,12 @@ namespace Sparse_tool {
 
       read_header( stream );
 
-      UTILS_ASSERT0(
+      sp_assert(
         cType == MM_COORDINATE,
         "Sparse_tool::MatrixMarket::read\n"
         "file must be a coordinate file!\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         vType == MM_INTEGER,
         "Sparse_tool::MatrixMarket::read\n"
         "file must have integer entries!\n"
@@ -279,7 +279,7 @@ namespace Sparse_tool {
 
       integer kk{0};
       while ( kk < m_nnz ) {
-        UTILS_ASSERT0(
+        sp_assert(
           stream.good(),
           "Sparse_tool::MatrixMarket::read\n"
           "Failed in reading Matrix Market File\n"
@@ -290,7 +290,7 @@ namespace Sparse_tool {
         integer i{0}, j{0}, a{0};
         sscanf( m_line, "%d%d%d", &i, &j, &a );
 
-        UTILS_ASSERT(
+        sp_assert(
           i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
           "Sparse_tool::MatrixMarket::read\n"
           "In reading Matrix Market File, bad pattern ({},{}) = {} index on line {}\n"
@@ -317,12 +317,12 @@ namespace Sparse_tool {
 
       read_header( stream );
 
-      UTILS_ASSERT0(
+      sp_assert(
         cType == MM_COORDINATE,
         "Sparse_tool::MatrixMarket::read\n"
         "file must be a coordinate file!\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         vType != MM_PATTERN,
         "Sparse_tool::MatrixMarket::read\n"
         "try to read a matrix from a pattern only file!\n"
@@ -332,7 +332,7 @@ namespace Sparse_tool {
 
       integer kk{0};
       while( kk < m_nnz ) {
-        UTILS_ASSERT0(
+        sp_assert(
           stream.good(),
           "Sparse_tool::MatrixMarket::read\n"
           "Failed in reading Matrix Market File\n"
@@ -352,7 +352,7 @@ namespace Sparse_tool {
           }
         }
 
-        UTILS_ASSERT(
+        sp_assert(
           i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
           "Sparse_tool::MatrixMarket::read\n"
           "In reading Matrix Market File, bad pattern ({},{}) = (r:{},i:{})index on line {}\n"
@@ -402,7 +402,7 @@ namespace Sparse_tool {
       integer kk{0};
       while ( kk < m_nnz ) {
 
-        UTILS_ASSERT0(
+        sp_assert(
           stream.good(),
           "Sparse_tool::MatrixMarket::read\n"
           "Failed in reading Matrix Market File\n"
@@ -414,7 +414,7 @@ namespace Sparse_tool {
         double  a{0};
         sscanf( m_line, "%d%d%lf", &i, &j, &a );
 
-        UTILS_ASSERT(
+        sp_assert(
           i >= 1 && j >= 1 && i <= m_nrows && j <= m_ncols,
           "Sparse_tool::MatrixMarket::read\n"
           "In reading Matrix Market File, bad pattern ({},{}) = {} index on line {}\n"
@@ -537,7 +537,7 @@ namespace Sparse_tool {
         fname
       ) };
       ifstream file(fname.data());
-      UTILS_ASSERT( file.is_open(), msg );
+      sp_assert( file.is_open(), msg );
       read( file, M );
       file.close();
     }

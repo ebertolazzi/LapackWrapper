@@ -1,224 +1,185 @@
-if File.exist?(File.expand_path('./cmake_utils/Rakefile_common.rb', File.dirname(__FILE__))) then
-  require_relative "./cmake_utils/Rakefile_common.rb"
-else
-  require_relative "../Rakefile_common.rb"
+%w(colorize fileutils rake/clean).each do |gem|
+  begin
+    require gem
+  rescue LoadError
+    warn "Install the #{gem} gem:\n $ (sudo) gem install #{gem}".magenta
+    exit 1
+  end
 end
+require 'shellwords'
 
-CLEAN.include   ["./**/*.o", "./**/*.obj", "./bin/**/example*", "./build"]
 CLEAN.clear_exclude.exclude { |fn| fn.pathmap("%f").downcase == "core" }
-CLOBBER.include []
 
-#task :mkl, [:year, :bits] do |t, args|
-#  args.with_defaults(:year => "2017", :bits => "x64" )
-#  sh "'C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/bin/compilervars.bat' -arch #{args.bits} vs#{args.year}shell"
-#end
-
-def ChangeOnFile( file, text_to_replace, text_to_put_in_place )
-  text = File.read file
-  File.open(file, 'w+'){|f| f << text.gsub(text_to_replace, text_to_put_in_place)}
+# Configurazione esterna (opzionale)
+if File.exist?(File.expand_path('../Rakefile_configure.rb', File.dirname(__FILE__)))
+  require_relative '../Rakefile_configure.rb'
+elsif File.exist?(File.expand_path('../../Rakefile_configure.rb', File.dirname(__FILE__)))
+  require_relative '../../Rakefile_configure.rb'
+else
+  COMPILE_DEBUG      = false
+  COMPILE_DYNAMIC    = false
+  COMPILE_EXECUTABLE = true
 end
 
-def RunCTestSuite()
-  return unless COMPILE_EXECUTABLE
-
-  FileUtils.cd "build"
-  puts "run CTEST for LAPACK WRAPPER".yellow
-  sh "ctest --output-on-failure"
-  FileUtils.cd ".."
+# ----------------------------------------------------------------------------
+# Rilevamento OS
+# ----------------------------------------------------------------------------
+case RUBY_PLATFORM
+when /darwin/
+  OS = :mac
+when /linux|cygwin/
+  OS = :linux
+when /msys/
+  OS = :mingw
+else
+  OS = :win
 end
 
-desc "compile for Visual Studio [lapack=LAPACK_WRAPPER_USE_OPENBLAS]"
-task :build_win, [:lapack] do |t, args|
-  args.with_defaults( :lapack => "LAPACK_WRAPPER_USE_OPENBLAS" )
+if RUBY_PLATFORM =~ /darwin/
+  LAPACK_BACKEND = 'Accelerate'
+else
+  LAPACK_BACKEND = 'OpenBLAS'
+end
 
-  Rake::Task[:win_3rd].invoke()
+def build_type
+  COMPILE_DEBUG ? 'Debug' : 'Release'
+end
 
-  # check architecture
-  case `where cl.exe`.chop
-  when /x64\\cl\.exe/
-    VS_ARCH = 'x64'
-  when /amd64\\cl\.exe/
-    VS_ARCH = 'x64'
-  when /bin\\cl\.exe/
-    VS_ARCH = 'x86'
-  else
-    raise RuntimeError, "Cannot determine architecture for Visual Studio".red
+def install_prefix
+  File.expand_path('lib', __dir__)
+end
+
+def project_root
+  File.expand_path(__dir__)
+end
+
+def build_dir
+  File.join(project_root, 'build')
+end
+
+def cmake_generator
+  'Ninja'
+end
+
+def cmake_configure_command(backend, enable_tests:)
+  args = [
+    "-G", cmake_generator,
+    "-B", build_dir,
+    "-DCMAKE_BUILD_TYPE=#{build_type}",
+    "-DCMAKE_INSTALL_PREFIX=#{install_prefix}",
+    "-DBUILD_SHARED_LIBS=#{COMPILE_DYNAMIC ? 'ON' : 'OFF'}",
+    "-DBUILD_TESTING=#{enable_tests ? 'ON' : 'OFF'}",
+    "-DLAPACK_WRAPPER_INSTALL=ON",
+    "-DLAPACK_WRAPPER_STRICT_WARNINGS=OFF",
+    "-DLAPACK_WRAPPER_BACKEND=#{backend}",
+    project_root
+  ]
+  args.join(' ')
+end
+
+def cmake_build_command(target = nil)
+  cmd = ["--build", build_dir, "--config", build_type]
+  cmd += ["--target", target] if target
+  cmd += ["--parallel"]
+  cmd.join(' ')
+end
+
+def configure_cmake(backend, enable_tests:)
+  puts "Configuring CMake in #{build_dir} with backend #{backend}...".green
+  sh "cmake " + cmake_configure_command(backend, enable_tests: enable_tests)
+end
+
+# ----------------------------------------------------------------------------
+# Task
+# ----------------------------------------------------------------------------
+desc "default task --> build"
+task :default => :build
+
+desc "git clean reset"
+task :git_clean do
+  sh "git reset --hard"
+  sh "git clean -d -x -f"
+end
+
+desc "Configure CMake for library-only build"
+task :configure, [:backend] do |t, args|
+  backend = args[:backend] || LAPACK_BACKEND
+  configure_cmake(backend, enable_tests: false)
+end
+
+desc "Configure CMake with tests enabled"
+task :configure_tests, [:backend] do |t, args|
+  backend = args[:backend] || LAPACK_BACKEND
+  configure_cmake(backend, enable_tests: true)
+end
+
+desc "Build and install library only"
+task :build, [:backend] do |t, args|
+  backend = args[:backend] || LAPACK_BACKEND
+  configure_cmake(backend, enable_tests: false)
+  puts "Compiling and installing library only...".green
+  sh "cmake " + cmake_build_command('install')
+end
+
+desc "Compile all targets, including tests"
+task :compile_all, [:backend] do |t, args|
+  backend = args[:backend] || LAPACK_BACKEND
+  configure_cmake(backend, enable_tests: true)
+  puts "Compiling all targets...".green
+  sh "cmake " + cmake_build_command
+end
+
+desc "Run tests (configures and compiles tests if needed)"
+task :test, [:backend] do |t, args|
+  backend = args[:backend] || LAPACK_BACKEND
+  configure_cmake(backend, enable_tests: true)
+  puts "Compiling tests...".green
+  sh "cmake " + cmake_build_command('LapackWrapper_all_tests')
+  puts "Running tests...".green
+  Dir.chdir(build_dir) do
+    sh "ctest -C #{build_type} --output-on-failure"
   end
-
-  FileUtils.rm_f 'src/lapack_wrapper_config.hh'
-  FileUtils.cp   'src/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper_config.hh'
-
-  ChangeOnFile(
-    'src/lapack_wrapper_config.hh',
-    '@@LAPACK_WRAPPER_USE@@',
-    "#define #{args.lapack} 1"
-  )
-  ChangeOnFile(
-    'src/lapack_wrapper_config.hh',
-    '@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@',
-    "#define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1"
-  )
-
-  FileUtils.mkdir_p "./lib/lib"
-  FileUtils.mkdir_p "./lib/bin"
-  FileUtils.mkdir_p "./lib/bin/"+VS_ARCH
-  FileUtils.mkdir_p "./lib/dll"
-  FileUtils.mkdir_p "./lib/include"
-
-  FileUtils.rm_rf   "build"
-  FileUtils.mkdir_p "build"
-  FileUtils.cd      "build"
-
-  puts "run CMAKE for LAPACK WRAPPER".yellow
-  sh "cmake -G Ninja -DBITS:VAR=#{VS_ARCH} " + cmd_cmake_build() + ' -D' + args.lapack + ':VAR=ON ..'
-  if COMPILE_DEBUG then
-    sh 'cmake --build . --config Debug --target install '+PARALLEL
-  else
-    sh 'cmake --build . --config Release --target install '+PARALLEL
-  end
-
-  FileUtils.cd '..'
-  RunCTestSuite()
 end
 
-desc "compile for OSX [lapack=LAPACK_WRAPPER_USE_ACCELERATE]"
-task :build_osx, [:lapack] do |t, args|
-  args.with_defaults(:lapack => "LAPACK_WRAPPER_USE_ACCELERATE")
-  Rake::Task[:osx_3rd].invoke()
-  Rake::Task[:build_common].invoke(args.lapack)
+desc "Build and run tests (alias for test)"
+task :run, [:backend] => :test do
+  # same as test
 end
 
-desc "compile for LINUX [lapack=LAPACK_WRAPPER_USE_OPENBLAS]"
-task :build_linux, [:lapack] do |t, args|
-  args.with_defaults(:lapack => "LAPACK_WRAPPER_USE_OPENBLAS")
-  Rake::Task[:linux_3rd].invoke()
-  Rake::Task[:build_common].invoke(args.lapack)
+desc "Clean build artifacts (keeps lib/ and lib3rd/)"
+task :clean_build do
+  puts "Removing build directory...".green
+  FileUtils.rm_rf build_dir
 end
 
-desc "compile for MINGW [lapack=LAPACK_WRAPPER_USE_OPENBLAS]"
-task :build_mingw, [:lapack] do |t, args|
-  args.with_defaults(:lapack => "LAPACK_WRAPPER_USE_OPENBLAS")
-  Rake::Task[:mingw_3rd].invoke()
-  Rake::Task[:build_common].invoke(args.lapack)
+desc "Full clean (removes build, lib, lib3rd, bin, object files)"
+task :clean do
+  puts "Full cleaning...".green
+  FileUtils.rm_rf build_dir
+  FileUtils.rm_rf File.join(project_root, 'lib')
+  FileUtils.rm_rf File.join(project_root, 'lib3rd')
+  FileUtils.rm_rf File.join(project_root, 'bin')
+  FileUtils.rm_f Dir.glob(File.join(project_root, '**', '*.o'))
+  FileUtils.rm_f Dir.glob(File.join(project_root, '**', '*.obj'))
 end
 
-desc 'compile for OSX/LINUX/MINGW'
-task :build_common, [:lapack] do |t, args|
-  args.with_defaults( :lapack => "LAPACK_WRAPPER_USE_ACCELERATE" )
-
-  FileUtils.rm_f 'src/lapack_wrapper_config.hh'
-  FileUtils.cp   'src/lapack_wrapper_config.hh.tmpl', 'src/lapack_wrapper_config.hh'
-
-  ChangeOnFile(
-    'src/lapack_wrapper_config.hh',
-    '@@LAPACK_WRAPPER_USE@@',
-    "#define #{args.lapack} 1"
-  )
-  ChangeOnFile(
-    'src/lapack_wrapper_config.hh',
-    '@@LAPACK_WRAPPER_NOSYSTEM_OPENBLAS@@',
-    "// #define LAPACK_WRAPPER_DO_NOT_USE_SYSTEM_OPENBLAS 1"
-  )
-
-  FileUtils.rm_rf   "build"
-  FileUtils.mkdir_p "build"
-  FileUtils.cd      "build"
-
-  puts "run CMAKE for LAPACK WRAPPER".yellow
-
-  sh "cmake -G Ninja " + cmd_cmake_build() + ' -D' + args.lapack + ':VAR=ON ..'
-  if COMPILE_DEBUG then
-    sh 'cmake --build . --config Debug --target install '+PARALLEL
-  else
-    sh 'cmake --build . --config Release --target install '+PARALLEL
-  end
-
-  FileUtils.cd '..'
-  RunCTestSuite()
-end
-
-desc 'install third parties for OSX'
-task :osx_3rd do
-  FileUtils.cd 'ThirdParties'
-  sh "rake install_osx"
-  FileUtils.cd '..'
-end
-
-desc 'install third parties for LINUX'
-task :linux_3rd do
-  FileUtils.cd 'ThirdParties'
-  sh "rake install_linux"
-  FileUtils.cd '..'
-end
-
-desc 'install third parties for MINGW'
-task :mingw_3rd do
-  FileUtils.cd 'ThirdParties'
-  sh "rake install_mingw"
-  FileUtils.cd '..'
-end
-
-desc 'install third parties for WINDOWS'
-task :win_3rd do
-  FileUtils.cd 'ThirdParties'
-  sh "rake install_win"
-  FileUtils.cd '..'
-end
-
-desc "clean for OSX"
-task :clean_osx do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-  FileUtils.rm_rf 'build'
-  FileUtils.cd 'ThirdParties'
-  sh "rake clean_osx"
-  FileUtils.cd '..'
-end
-
-desc "clean for LINUX"
-task :clean_linux do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-  FileUtils.rm_rf 'build'
-  FileUtils.cd 'ThirdParties'
-  sh "rake clean_linux"
-  FileUtils.cd '..'
-end
-
-desc "clean for MINGW"
-task :clean_mingw do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-  FileUtils.rm_rf 'build'
-  FileUtils.cd 'ThirdParties'
-  sh "rake clean_mingw"
-  FileUtils.cd '..'
-end
-
-desc "clean for WINDOWS"
-task :clean_win do
-  FileUtils.rm_rf 'lib'
-  FileUtils.rm_rf 'lib3rd'
-  FileUtils.rm_rf 'build'
-  FileUtils.cd 'ThirdParties'
-  sh "rake clean_win"
-  FileUtils.cd '..'
-end
-
-task :cppcheck do
-  FileUtils.rm_rf   'lib'
-  FileUtils.rm_rf   'build'
-  FileUtils.mkdir_p 'build'
-  FileUtils.cd      'build'
-  sh 'cmake -DCMAKE_EXPORT_COMPILE_COMMAND=ON ..'
-  sh 'cppcheck --project=compile_commands.json'
-end
-
-desc 'pack for OSX/LINUX/WINDOWS'
+desc "Package using CPack"
 task :cpack do
-  FileUtils.cd "build"
-  puts "run CPACK for Embed Figlet".yellow
-  sh 'cpack -C CPackConfig.cmake'
-  sh 'cpack -C CPackSourceConfig.cmake'
-  FileUtils.cd ".."
+  puts "Creating packages...".green
+  Dir.chdir(build_dir) do
+    sh "cpack -C #{build_type} CPackConfig.cmake"
+    sh "cpack -C #{build_type} CPackSourceConfig.cmake"
+  end
 end
+
+# Compatibility aliases.
+task build_osx: :build
+task build_linux: :build
+task build_mingw: :build
+task build_win: :build
+task clean_osx: :clean
+task clean_linux: :clean
+task clean_mingw: :clean
+task clean_win: :clean
+
+CLOBBER.include []

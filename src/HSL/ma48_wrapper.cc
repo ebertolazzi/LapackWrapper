@@ -149,7 +149,7 @@ namespace lapack_wrapper {
     }
 
     // Copy Memory:
-    std::copy_n( ArrayA, m_nnz, m_a.begin() );
+    std::copy_n( ArrayA, m_nnz, m_a.data() );
     // Pivoting:
     lapack_wrapper::ma48a<real>(
       m_nrows,
@@ -157,13 +157,13 @@ namespace lapack_wrapper {
       m_nnz,
       m_job,
       m_la,
-      &m_a.front(),
-      &m_irn.front(),
-      &m_jcn.front(),
-      &m_keep.front(),
+      m_a.data(),
+      m_irn.data(),
+      m_jcn.data(),
+      m_keep.data(),
       m_cntl,
       m_icntl,
-      &m_iw.front(),
+      m_iw.data(),
       m_info,
       m_rinfo
     );
@@ -192,13 +192,13 @@ namespace lapack_wrapper {
         m_nnz,
         m_job,
         m_la,
-        &m_a.front(),
-        &m_irn.front(),
-        &m_jcn.front(),
-        &m_keep.front(),
+        m_a.data(),
+        m_irn.data(),
+        m_jcn.data(),
+        m_keep.data(),
         m_cntl,
         m_icntl,
-        &m_iw.front(),
+        m_iw.data(),
         m_info,
         m_rinfo
       );
@@ -217,14 +217,14 @@ namespace lapack_wrapper {
       m_nnz,
       m_job,
       m_la,
-      &m_a.front(),
-      &m_irn.front(),
-      &m_jcn.front(),
-      &m_keep.front(),
+      m_a.data(),
+      m_irn.data(),
+      m_jcn.data(),
+      m_keep.data(),
       m_cntl,
       m_icntl,
-      &m_w.front(),
-      &m_iw.front(),
+      m_w.data(),
+      m_iw.data(),
       m_info,
       m_rinfo
     );
@@ -257,16 +257,16 @@ namespace lapack_wrapper {
       itrans ? 1 : 0,
       m_job,
       m_la,
-      &m_a.front(),
-      &m_irn.front(),
-      &m_keep.front(),
+      m_a.data(),
+      m_irn.data(),
+      m_keep.data(),
       m_cntl,
       m_icntl,
       RHS,
       X,
       ma48errors,
-      &m_w.front(),
-      &m_iw.front(),
+      m_w.data(),
+      m_iw.data(),
       m_info
     );
 
@@ -315,7 +315,7 @@ namespace lapack_wrapper {
       for ( int j{0}; ok && j < nrhs; ++j ) {
         real const * RHSj{ RHS + j * ldRHS };
         copy_n( RHSj, m_ncols, tmpRHS.begin() );
-        ok = this->solve(&tmpRHS.front(), X + j * ldX, true);
+        ok = this->solve( tmpRHS.data(), X + j * ldX, true);
       }
     } else {
       for ( int j{0}; ok && j < nrhs; ++j )

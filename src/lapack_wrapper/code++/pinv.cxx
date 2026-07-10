@@ -61,7 +61,7 @@ namespace lapack_wrapper {
     integer   * iWork
   ) {
 
-    UTILS_ASSERT(
+    lw_assert(
       NR >= NC,
       "PINV_no_alloc::no_allocate( NR = {}, NC = {},...)\n"
       "must be NR >= NC\n",
@@ -71,7 +71,7 @@ namespace lapack_wrapper {
     m_LWorkQRP1 = m_QRP1.get_Lwork_QRP( NR, NC ) + (NR+1)*(NC+1);
     m_LWorkQR2  = m_QR2.get_Lwork_QR( NC, NC )   + (NC+1)*(NC+1);
     integer Ltot{ m_LWorkQRP1 + m_LWorkQR2 + (NR+NC)*NC };
-    UTILS_ASSERT(
+    lw_assert(
       Lwork >= Ltot && Liwork >= NC,
       "PINV_no_alloc::no_allocate( NR = {}, NC = {}, Lwork = {},..., Liwork = {},...)\n"
       "Lwork must be >= {} and Liwork >= {}\n",
@@ -100,7 +100,7 @@ namespace lapack_wrapper {
   ) {
     // copy matrix and scale
     integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_A_factored, m_nrows ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "{}, call to gecopy( N = {}, M = {}, A, LDA = {}, B, LDB = {}\n"
       "return info = {}\n",
@@ -284,7 +284,7 @@ namespace lapack_wrapper {
     integer         ldX
   ) const {
 
-    UTILS_ASSERT(
+    lw_assert(
       ldB >= m_nrows && ldX >= m_ncols,
       "PINV_no_alloc::mult_inv( nrhs = {}, B, ldB = {}, X, ldX = {}\n"
       "ldB must be >= {} and ldX must be >= {}\n",
@@ -391,7 +391,7 @@ namespace lapack_wrapper {
     integer         ldX
   ) const {
 
-    UTILS_ASSERT(
+    lw_assert(
       ldB >= m_ncols && ldX >= m_nrows,
       "PINV_no_alloc::t_mult_inv( nrhs = {}, B, ldB = {}, X, ldX = {}\n"
       "ldB must be >= {} and ldX must be >= {}\n",

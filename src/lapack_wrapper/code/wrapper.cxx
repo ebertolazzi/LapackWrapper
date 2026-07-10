@@ -45,7 +45,7 @@ namespace lapack_wrapper {
   , m_ldData(ld)
   , m_data(_data)
   {
-    UTILS_ASSERT_DEBUG(
+    lw_assert(
       nr >= 0 && nc >= 0 && m_ldData >= nr,
       "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions\n",
       nr, nc, ld
@@ -66,7 +66,7 @@ namespace lapack_wrapper {
     m_nrows  = nr;
     m_ncols  = nc;
     m_ldData = ld;
-    UTILS_ASSERT_DEBUG(
+    lw_assert(
       nr >= 0 && nc >= 0 && m_ldData >= nr,
       "MatrixWrapper( data, nr={}, nc={}, ld={}) bad dimensions\n",
       nr, nc, ld
@@ -107,7 +107,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::check( MatW const & A ) const {
-    UTILS_ASSERT(
+    lw_assert(
       A.nrows() == m_nrows && A.ncols() == m_ncols,
       "MatrixWrapper::check(A) size(A) = {} x {} expected {} x {}\n",
       A.nrows(), A.ncols(), m_nrows, m_ncols
@@ -119,7 +119,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   MatrixWrapper<T>::check( Sparse const & sp ) const {
-    UTILS_ASSERT(
+    lw_assert(
       sp.get_number_of_rows() <= m_nrows &&
       sp.get_number_of_cols() <= m_ncols,
       "MatrixWrapper::check(sp) size(sp) = {} x {} must be contained in {} x {}\n",
@@ -134,7 +134,7 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::load( real_type const data_in[], integer ldData_in ) {
     integer info{ gecopy( m_nrows, m_ncols, data_in, ldData_in, m_data, m_ldData ) };
-    UTILS_ASSERT( info == 0, "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info );
+    lw_assert( info == 0, "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -156,7 +156,7 @@ namespace lapack_wrapper {
     check(A);
     #endif
     integer info{ gecopy( A.nrows(), A.ncols(), A.data(), A.ldim(), m_data, m_ldData ) };
-    UTILS_ASSERT( info == 0, "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info );
+    lw_assert( info == 0, "MatrixWrapper::load call lapack_wrapper::gecopy return info = {}\n", info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -165,7 +165,7 @@ namespace lapack_wrapper {
   void
   MatrixWrapper<T>::load_transposed( MatW const & A ) {
     #ifndef LAPACK_WRAPPER_NO_DEBUG
-    UTILS_ASSERT(
+    lw_assert(
       A.ncols() == m_nrows && A.nrows() == m_ncols,
       "MatrixWrapper::load_transposed(A) size(A) = {} x {} expected {} x {}\n",
       A.nrows(), A.ncols(), m_ncols, m_nrows
@@ -512,10 +512,7 @@ namespace lapack_wrapper {
   template <typename T>
   typename DiagMatrixWrapper<T>::DMatW &
   DiagMatrixWrapper<T>::operator = ( DMatW const & COPY ) {
-    UTILS_ASSERT0(
-      m_dim == COPY.m_dim,
-      "DiagMatrixWrapper operator = bad matrix dimensions\n"
-    );
+    lw_assert( m_dim == COPY.m_dim, "DiagMatrixWrapper operator = bad matrix dimensions\n" );
     std::copy_n( COPY.m_data, COPY.m_dim, m_data );
     return *this;
   }

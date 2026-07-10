@@ -210,7 +210,7 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   SparseCCOOR<T>::foundNaN() const
-  { return Utils::found_NaN( &m_vals.front(), m_nnz ); }
+  { return Utils::found_NaN( m_vals.data(), m_nnz ); }
 
   template <typename T>
   void
@@ -224,7 +224,7 @@ namespace lapack_wrapper {
     real_type       y[],
     integer         incY
   ) const {
-    UTILS_ASSERT(
+    lw_assert(
       DimX == m_ncols && DimY == m_nrows,
       "SparseCCOOR::gemv, bad dimensions, "
       "dimX = {}, dimY = {} matrix is {} x {}\n",
@@ -235,7 +235,7 @@ namespace lapack_wrapper {
         lapack_wrapper::gemv(
           Transposition::YES, m_ncols, m_nrows,
           alpha,
-          &m_vals.front(), m_ncols,
+          m_vals.data(), m_ncols,
           x, 1,
           beta,
           y, 1
@@ -245,7 +245,7 @@ namespace lapack_wrapper {
           Transposition::NO,
           m_nrows, m_ncols,
           alpha,
-          &m_vals.front(), m_nrows,
+          m_vals.data(), m_nrows,
           x, 1,
           beta,
           y, 1
@@ -274,7 +274,7 @@ namespace lapack_wrapper {
     real_type       y[],
     integer         incY
   ) const {
-    UTILS_ASSERT(
+    lw_assert(
       DimY == m_ncols && DimX == m_nrows,
       "SparseCCOOR::gemv_Transposed, bad dimensions, "
       "dimX = {}, dimY = {} matrix is {} x {}\n",
@@ -286,7 +286,7 @@ namespace lapack_wrapper {
           Transposition::NO,
           m_ncols, m_nrows,
           alpha,
-          &m_vals.front(), m_ncols,
+          m_vals.data(), m_ncols,
           x, 1,
           beta,
           y, 1
@@ -296,7 +296,7 @@ namespace lapack_wrapper {
           Transposition::YES,
           m_nrows, m_ncols,
           alpha,
-          &m_vals.front(), m_nrows,
+          m_vals.data(), m_nrows,
           x, 1,
           beta,
           y, 1
@@ -325,7 +325,7 @@ namespace lapack_wrapper {
     real_type       y[],
     integer         incY
   ) const {
-    UTILS_ASSERT(
+    lw_assert(
       DimY == m_ncols && DimX == m_nrows && DimX == DimY,
       "SparseCCOOR::gemv_Symmetric, bad dimensions, "
       "dimX = {}, dimY = {} matrix is {} x {}\n",
@@ -443,7 +443,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseCCOOR<T>::fill( real_type const V[], integer M ) {
-    UTILS_ASSERT0(
+    lw_assert(
       M == m_nnz,
       "SparseCCOOR::fill(...) bad size input vector\n"
     );
@@ -454,7 +454,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseCCOOR<T>::fill( std::vector<real_type> const & V ) {
-    UTILS_ASSERT0(
+    lw_assert(
       V.size() == m_vals.size(),
       "SparseCCOOR::fill(...) bad size input vector\n"
     );
@@ -498,7 +498,7 @@ namespace lapack_wrapper {
     integer   col,
     real_type val
   ) {
-    UTILS_ASSERT(
+    lw_assert(
       row >= 0 && row < m_nrows && col >= 0 && col < m_ncols,
       "SparseCCOOR::push_value_C({},{}) out of bound\n", row, col
     );
@@ -521,7 +521,7 @@ namespace lapack_wrapper {
     integer   col,
     real_type val
   ) {
-    UTILS_ASSERT(
+    lw_assert(
       row > 0 && row <= m_nrows && col > 0 && col <= m_ncols,
       "SparseCCOOR::push_value_F({},{}) out of bound\n", row, col
     );

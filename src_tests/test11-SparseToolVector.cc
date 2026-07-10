@@ -24,6 +24,7 @@
 #include <sparse_tool/sparse_tool_extra.hh>
 #include <sparse_tool/sparse_tool_iterative.hh>
 #include <sparse_tool/sparse_tool_matrix_market.hh>
+#include <Utils_Console.hh>
 
 #ifdef __GNUC__
 #pragma GCC diagnostic push

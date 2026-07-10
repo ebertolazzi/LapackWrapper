@@ -378,7 +378,7 @@ namespace lapack_wrapper {
     virtual
     void
     solve( string_view who, real_type xb[] ) const {
-      UTILS_ASSERT(
+      lw_assert(
         this->solve( xb ),
         "LinearSystemSolver::solve failed at {}\n", who
       );
@@ -387,7 +387,7 @@ namespace lapack_wrapper {
     virtual
     void
     t_solve( string_view who, real_type xb[] ) const {
-      UTILS_ASSERT(
+      lw_assert(
         this->t_solve( xb ),
         "LinearSystemSolver::t_solve failed at {}\n", who
       );
@@ -396,7 +396,7 @@ namespace lapack_wrapper {
     virtual
     void
     solve( string_view who, integer nrhs, real_type B[], integer ldB ) const {
-      UTILS_ASSERT(
+      lw_assert(
         this->solve( nrhs, B, ldB ),
         "LinearSystemSolver::solve failed at {}\n", who
       );
@@ -405,7 +405,7 @@ namespace lapack_wrapper {
     virtual
     void
     t_solve( string_view who, integer nrhs, real_type B[], integer ldB ) const {
-      UTILS_ASSERT(
+      lw_assert(
         this->t_solve( nrhs, B, ldB ),
         "LinearSystemSolver::solve failed at {}\n", who
       );
@@ -420,9 +420,7 @@ namespace lapack_wrapper {
       real_type const /* A   */ [],
       integer         /* LDA */
     ) {
-      UTILS_ERROR0(
-        "LinearSystemSolver::factorize, not defined in derived class\n"
-      );
+      lw_assert( false, "LinearSystemSolver::factorize, not defined in derived class\n" );
     }
 
     virtual

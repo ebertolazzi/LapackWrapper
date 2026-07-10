@@ -42,7 +42,7 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info{ gecopy( m_nrows, m_ncols, A, LDA, m_Afactorized, m_nrows ) };
-    UTILS_ASSERT(
+    lw_assert(
       info == 0,
       "LU::factorize[{}] gecopy(nRow={}, nCol={}, A, LDA={}, B, LDB={}) : INFO = {}\n",
       who, m_nrows, m_ncols, LDA, m_nrows, info
@@ -50,7 +50,7 @@ namespace lapack_wrapper {
     info = getrf(
       m_nrows, m_ncols, m_Afactorized, m_nrows, m_i_pivot
     );
-    UTILS_ASSERT( info == 0, "LU::factorize[{}] getrf INFO = {}\n", who, info );
+    lw_assert( info == 0, "LU::factorize[{}] getrf INFO = {}\n", who, info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -72,7 +72,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   LU_no_alloc<T>::check_ls( string_view who ) const {
-    UTILS_ASSERT(
+    lw_assert(
       m_nrows == m_ncols,
       "LU<T>::{}, rectangular matrix {} x {}\n", who, m_nrows, m_ncols
     );
@@ -104,7 +104,7 @@ namespace lapack_wrapper {
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
     ) };
-    UTILS_ASSERT( info == 0, "LU::solve, getrs INFO = {}\nat {}\n", info, who );
+    lw_assert( info == 0, "LU::solve, getrs INFO = {}\nat {}\n", info, who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -133,7 +133,7 @@ namespace lapack_wrapper {
       m_nrows, 1, m_Afactorized, m_nrows, m_i_pivot,
       xb, m_nrows
     ) };
-    UTILS_ASSERT( info == 0, "LU::t_solve, getrs INFO = {}\nat {}\n", info, who );
+    lw_assert( info == 0, "LU::t_solve, getrs INFO = {}\nat {}\n", info, who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -167,7 +167,7 @@ namespace lapack_wrapper {
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     ) };
-    UTILS_ASSERT( info == 0, "LU::solve getrs INFO = {}\nat {}\n", info, who );
+    lw_assert( info == 0, "LU::solve getrs INFO = {}\nat {}\n", info, who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -205,7 +205,7 @@ namespace lapack_wrapper {
       m_nrows, nrhs, m_Afactorized, m_nrows, m_i_pivot,
       B, ldB
     ) };
-    UTILS_ASSERT( info == 0, "LU::t_solve getrs INFO = {}\nat {}\n", info, who );
+    lw_assert( info == 0, "LU::t_solve getrs INFO = {}\nat {}\n", info, who );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -218,7 +218,7 @@ namespace lapack_wrapper {
       m_nrows, m_Afactorized, m_nrows,
       norm1, rcond, m_Work, m_Iwork
     ) };
-    UTILS_ASSERT( info == 0, "LU::cond1, gecon1 return info = {}\n", info );
+    lw_assert( info == 0, "LU::cond1, gecon1 return info = {}\n", info );
     return rcond;
   }
 
@@ -232,7 +232,7 @@ namespace lapack_wrapper {
       m_nrows, m_Afactorized, m_nrows,
       normInf, rcond, m_Work, m_Iwork
     ) };
-    UTILS_ASSERT( info == 0, "LU::condInf, geconInf return info = {}\n", info );
+    lw_assert( info == 0, "LU::condInf, geconInf return info = {}\n", info );
     return rcond;
   }
 
@@ -278,7 +278,7 @@ namespace lapack_wrapper {
     integer     Liwork,
     integer   * iWork
   ) {
-    UTILS_ASSERT(
+    lw_assert(
       Lwork >= NRC*NRC && Liwork >= 2*NRC,
       "LUPQ_no_alloc::no_allocate( NRC = {}, Lwork = {}, ..., Liwork = {}, ... )\n"
       "Lwork must be >= {} and Liwork >= {}\n",
@@ -300,9 +300,9 @@ namespace lapack_wrapper {
     integer         LDA
   ) {
     integer info{ gecopy( m_nRC, m_nRC, A, LDA, m_Afactorized, m_nRC ) };
-    UTILS_ASSERT( info == 0, "LUPQ_no_alloc::factorize[{}] gecopy INFO = {}\n", who, info );
+    lw_assert( info == 0, "LUPQ_no_alloc::factorize[{}] gecopy INFO = {}\n", who, info );
     info = getc2( m_nRC, m_Afactorized, m_nRC, m_i_piv, m_j_piv );
-    UTILS_ASSERT( info == 0, "LUPQ_no_alloc::factorize[{}] getc2 INFO = {}\n", who, info );
+    lw_assert( info == 0, "LUPQ_no_alloc::factorize[{}] getc2 INFO = {}\n", who, info );
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

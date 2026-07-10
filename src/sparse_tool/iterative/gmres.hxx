@@ -92,7 +92,7 @@ namespace Sparse_tool {
 
     using std::abs;
 
-    UTILS_ASSERT(
+    sp_assert(
       A.nrows() == b.size() &&
       A.ncols() == x.size() &&
       A.nrows() == A.ncols(),

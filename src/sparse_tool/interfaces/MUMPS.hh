@@ -136,9 +136,9 @@ namespace Sparse_tool {
 
       m_mumps_struct.n   = m_nrows;
       m_mumps_struct.nz  = m_nnz;
-      m_mumps_struct.irn = &m_I_vec.front(); // row indices
-      m_mumps_struct.jcn = &m_J_vec.front(); // column indices
-      m_mumps_struct.a   = &m_A_vec.front(); // values
+      m_mumps_struct.irn = m_I_vec.data(); // row indices
+      m_mumps_struct.jcn = m_J_vec.data(); // column indices
+      m_mumps_struct.a   = m_A_vec.data(); // values
       m_mumps_struct.rhs = 0; // right hand side will be set later
       // solver params
       m_mumps_struct.icntl[0] = 0; // output errors
@@ -178,7 +178,7 @@ namespace Sparse_tool {
       x = b;
       // MUMPS solution
       m_mumps_struct.job = JOB_SOLVE;
-      m_mumps_struct.rhs = (typename MUMPSType<T>::scalarType *)&x.front();
+      m_mumps_struct.rhs = (typename MUMPSType<T>::scalarType *)x.data();
       mumps_c(m_mumps_struct);
       check("MUMPS error during solution");
       m_mumps_struct.rhs = 0;

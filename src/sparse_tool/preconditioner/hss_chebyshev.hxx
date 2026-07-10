@@ -42,17 +42,17 @@ namespace Sparse_tool {
     void
     build_HSS_CHEBYSHEV( MAT const & A, integer m, rreal_type delta ) {
 
-      UTILS_ASSERT0(
+      sp_assert(
         A.is_ordered(),
         "Sparse_tool: HSS_CHEBYSHEV_Preconditioner::build_LDU\n"
         "pattern must be ordered before use\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() == A.ncols(),
         "Sparse_tool: HSS_CHEBYSHEV_Preconditioner::build_LDU\n"
         "only square matrix allowed\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() > 0,
         "Sparse_tool: HSS_CHEBYSHEV_Preconditioner::build_LDU\n"
         "empty matrix\n"
@@ -62,7 +62,7 @@ namespace Sparse_tool {
       sqrt_epsilon = std::pow( (1+std::sqrt(1-delta*delta))/delta,1.0/(m+1.0) );
       sqrt_epsilon = (sqrt_epsilon-1)/(sqrt_epsilon+1);
 
-      UTILS_ASSERT0(
+      sp_assert(
         sqrt_epsilon > 0 && sqrt_epsilon < 1,
         "Sparse_tool: HSS_CHEBYSHEV_Preconditioner::build_LDU\n"
         "computed epsilon must be in the interval (0,1)"

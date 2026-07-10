@@ -37,17 +37,17 @@ namespace Sparse_tool {
     void
     build_HSSOR( MAT const & A, rreal_type const & omega, integer m ) {
 
-      UTILS_ASSERT0(
+      sp_assert(
         A.is_ordered(),
         "Sparse_tool: HSS_SSOR_Preconditioner::build_LDU\n"
         "pattern must be ordered before use\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() == A.ncols(),
         "Sparse_tool: HSS_SSOR_Preconditioner::build_LDU\n"
         "only square matrix allowed\n"
       );
-      UTILS_ASSERT0(
+      sp_assert(
         A.nrows() > 0,
         "Sparse_tool: HSS_SSOR_Preconditioner::build_LDU\n"
         "empty matrix\n"
