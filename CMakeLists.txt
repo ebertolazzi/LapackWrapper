@@ -176,7 +176,7 @@ set(
 
 set(
   LAPACK_WRAPPER_EIGEN_VERSION
-  "5.0.0"
+  "5.0.1"
   CACHE STRING "Eigen version to fetch if no local checkout is found"
 )
 
