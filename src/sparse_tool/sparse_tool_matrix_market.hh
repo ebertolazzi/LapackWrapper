@@ -621,7 +621,7 @@ namespace Sparse_tool {
         break;
       case MM_INTEGER:
       case MM_REAL:
-        UTILS_ERROR("Sparse_tool::MatrixMarket_save_to_file: Cannot write a complex matrix with non complex type");
+        Utils::Error("Sparse_tool::MatrixMarket_save_to_file: Cannot write a complex matrix with non complex type");
         break;
       case MM_COMPLEX:
         for ( A.Begin(); A.End(); A.Next() )
@@ -678,7 +678,7 @@ namespace Sparse_tool {
           fmt::print( file, "{}\t{}\t{}\n", A.row()+1, A.column()+1, A.value() );
         break;
       case MM_COMPLEX:
-        UTILS_ERROR("Sparse_tool::MatrixMarket_save_to_file: Cannot write a NON complex matrix with a complex type");
+        Utils::Error("Sparse_tool::MatrixMarket_save_to_file: Cannot write a NON complex matrix with a complex type");
         break;
     //  default:
     //    break;

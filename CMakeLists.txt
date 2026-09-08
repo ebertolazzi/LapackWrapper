@@ -170,7 +170,7 @@ set(
 
 set(
   LAPACK_WRAPPER_EIGEN_LOCAL_DIR
-  "${CMAKE_CURRENT_SOURCE_DIR}/../Eigen"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../eigen"
   CACHE PATH "Local Eigen checkout"
 )
 
@@ -178,6 +178,11 @@ set(
   LAPACK_WRAPPER_EIGEN_VERSION
   "5.0.1"
   CACHE STRING "Eigen version to fetch if no local checkout is found"
+)
+set(
+  LAPACK_WRAPPER_UTILSLITE_REF
+  "Utils2.0"
+  CACHE STRING "UtilsLite branch/tag to fetch"
 )
 
 # Default local install layout:
@@ -222,7 +227,8 @@ include( FetchContent )
 # policy used for source dependencies that provide their own CMake project.
 #
 # Resolution order:
-#   1. If LOCAL_DIR contains a CMakeLists.txt, expose it through the standard
+#   1. If LOCAL_DIR contains a CMakeLists.txt and its current Git branch equals
+#      EXPECTED_REF, expose it through the standard
 #      FETCHCONTENT_SOURCE_DIR_<NAME> cache variable and call
 #      FetchContent_MakeAvailable(NAME).  This makes local sibling checkouts
 #      reproducible and avoids unnecessary downloads.
@@ -238,7 +244,7 @@ include( FetchContent )
 #   <NAME>_SOURCE     - human-readable source summary for the final report.
 #   <NAME>_SOURCE_DIR - actual source directory, when known.
 # ============================================================================
-function( lapack_wrapper_use_local_or_fetch NAME LOCAL_DIR )
+function( lapack_wrapper_use_local_or_fetch NAME LOCAL_DIR EXPECTED_REF )
   # Convert the user-provided path to an absolute path relative to this project.
   # This makes the behavior independent of the caller's current working
   # directory and keeps cache entries stable across configure invocations.
@@ -262,16 +268,40 @@ function( lapack_wrapper_use_local_or_fetch NAME LOCAL_DIR )
   set( _saved_skip_install_rules "${CMAKE_SKIP_INSTALL_RULES}" )
   set( CMAKE_SKIP_INSTALL_RULES ON )
 
-  if ( EXISTS "${_local_abs}/CMakeLists.txt" )
-    message( STATUS "Using local ${NAME}: ${_local_abs}" )
+  set( _local_matches FALSE )
+  set( _local_branch "not available" )
+  if ( EXISTS "${_local_abs}/CMakeLists.txt" AND GIT_EXECUTABLE )
+    execute_process(
+      COMMAND "${GIT_EXECUTABLE}" -C "${_local_abs}" symbolic-ref --quiet --short HEAD
+      RESULT_VARIABLE _branch_result
+      OUTPUT_VARIABLE _local_branch
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+    )
+    if ( NOT _branch_result EQUAL 0 )
+      set( _local_branch "detached HEAD or unavailable" )
+    endif()
+    if ( _branch_result EQUAL 0 AND _local_branch STREQUAL EXPECTED_REF )
+      set( _local_matches TRUE )
+    endif()
+  endif()
+
+  if ( _local_matches )
+    message( STATUS "LapackWrapper: ${NAME} -> local ${_local_abs} (branch '${_local_branch}', requested '${EXPECTED_REF}')" )
     set( "FETCHCONTENT_SOURCE_DIR_${_name_upper}" "${_local_abs}" CACHE PATH "Local ${NAME} checkout" FORCE )
     FetchContent_MakeAvailable( ${NAME} )
-    set( "${NAME}_SOURCE" "local: ${_local_abs}" PARENT_SCOPE )
+    set( "${NAME}_SOURCE" "local: ${_local_abs} [branch ${_local_branch}]" PARENT_SCOPE )
     set( "${NAME}_SOURCE_DIR" "${_local_abs}" PARENT_SCOPE )
   else()
-    message( STATUS "Fetching ${NAME}" )
+    unset( "FETCHCONTENT_SOURCE_DIR_${_name_upper}" CACHE )
+    if ( EXISTS "${_local_abs}/CMakeLists.txt" )
+      message( STATUS "LapackWrapper: ${NAME} -> ignoring local ${_local_abs} (branch '${_local_branch}', requested '${EXPECTED_REF}')" )
+    else()
+      message( STATUS "LapackWrapper: ${NAME} -> local checkout not found at ${_local_abs}" )
+    endif()
+    message( STATUS "LapackWrapper: ${NAME} -> FetchContent (requested '${EXPECTED_REF}')" )
     FetchContent_MakeAvailable( ${NAME} )
-    set( "${NAME}_SOURCE" "FetchContent" PARENT_SCOPE )
+    set( "${NAME}_SOURCE" "FetchContent: ${EXPECTED_REF}" PARENT_SCOPE )
     if ( DEFINED "${_name_lower}_SOURCE_DIR" )
       set( "${NAME}_SOURCE_DIR" "${${_name_lower}_SOURCE_DIR}" PARENT_SCOPE )
     endif()
@@ -393,11 +423,29 @@ get_filename_component(
   BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
+set( LAPACK_WRAPPER_UTILSLITE_LOCAL_MATCHES FALSE )
+set( LAPACK_WRAPPER_UTILSLITE_LOCAL_BRANCH "not available" )
+if ( EXISTS "${LAPACK_WRAPPER_UTILSLITE_LOCAL_DIR_ABS}/CMakeLists.txt" AND GIT_EXECUTABLE )
+  execute_process(
+    COMMAND "${GIT_EXECUTABLE}" -C "${LAPACK_WRAPPER_UTILSLITE_LOCAL_DIR_ABS}" symbolic-ref --quiet --short HEAD
+    RESULT_VARIABLE _lapack_utils_branch_result
+    OUTPUT_VARIABLE LAPACK_WRAPPER_UTILSLITE_LOCAL_BRANCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+  if ( NOT _lapack_utils_branch_result EQUAL 0 )
+    set( LAPACK_WRAPPER_UTILSLITE_LOCAL_BRANCH "detached HEAD or unavailable" )
+  endif()
+  if ( _lapack_utils_branch_result EQUAL 0 AND LAPACK_WRAPPER_UTILSLITE_LOCAL_BRANCH STREQUAL LAPACK_WRAPPER_UTILSLITE_REF )
+    set( LAPACK_WRAPPER_UTILSLITE_LOCAL_MATCHES TRUE )
+  endif()
+endif()
+
 # Prefer an already built sibling UtilsLite library when present.  This mirrors
 # the old large-project workflow without requiring cmake_utils functions.  The
 # lookup uses the same platform suffix convention defined above, so static and
 # shared UtilsLite artifacts can be discovered under the local lib directories.
-if ( EXISTS "${LAPACK_WRAPPER_UTILSLITE_LOCAL_DIR_ABS}" )
+if ( LAPACK_WRAPPER_UTILSLITE_LOCAL_MATCHES )
   find_library(
     LAPACK_WRAPPER_UTILSLITE_IMPORTED_LIB
     NAMES
@@ -411,10 +459,10 @@ if ( EXISTS "${LAPACK_WRAPPER_UTILSLITE_LOCAL_DIR_ABS}" )
   )
 endif()
 
-if ( LAPACK_WRAPPER_UTILSLITE_IMPORTED_LIB )
+if ( LAPACK_WRAPPER_UTILSLITE_LOCAL_MATCHES AND LAPACK_WRAPPER_UTILSLITE_IMPORTED_LIB )
 
-  message( STATUS "Using prebuilt UtilsLite: ${LAPACK_WRAPPER_UTILSLITE_IMPORTED_LIB}" )
-  set( LAPACK_WRAPPER_UTILSLITE_SOURCE "prebuilt: ${LAPACK_WRAPPER_UTILSLITE_IMPORTED_LIB}" )
+  message( STATUS "LapackWrapper: UtilsLite -> prebuilt ${LAPACK_WRAPPER_UTILSLITE_IMPORTED_LIB} (branch '${LAPACK_WRAPPER_UTILSLITE_LOCAL_BRANCH}', requested '${LAPACK_WRAPPER_UTILSLITE_REF}')" )
+  set( LAPACK_WRAPPER_UTILSLITE_SOURCE "prebuilt: ${LAPACK_WRAPPER_UTILSLITE_IMPORTED_LIB} [branch ${LAPACK_WRAPPER_UTILSLITE_LOCAL_BRANCH}]" )
 
   add_library( lapack_wrapper_UtilsLite_imported UNKNOWN IMPORTED GLOBAL )
   set_target_properties(
@@ -437,10 +485,10 @@ else()
   FetchContent_Declare(
     UtilsLite
     GIT_REPOSITORY https://github.com/ebertolazzi/UtilsLite.git
-    GIT_TAG        Utils2.0
+    GIT_TAG        ${LAPACK_WRAPPER_UTILSLITE_REF}
     GIT_SHALLOW    TRUE
   )
-  lapack_wrapper_use_local_or_fetch( UtilsLite "${LAPACK_WRAPPER_UTILSLITE_LOCAL_DIR}" )
+  lapack_wrapper_use_local_or_fetch( UtilsLite "${LAPACK_WRAPPER_UTILSLITE_LOCAL_DIR}" "${LAPACK_WRAPPER_UTILSLITE_REF}" )
   set( LAPACK_WRAPPER_UTILSLITE_SOURCE "${UtilsLite_SOURCE}" )
 
   foreach( _utils_candidate
@@ -477,10 +525,14 @@ foreach( _utils_tgt
   utils_UtilsLite
 )
   if ( TARGET ${_utils_tgt} )
-    get_target_property( _utils_inc ${_utils_tgt} INTERFACE_INCLUDE_DIRECTORIES )
+    get_target_property( _utils_real_target ${_utils_tgt} ALIASED_TARGET )
+    if ( NOT _utils_real_target )
+      set( _utils_real_target ${_utils_tgt} )
+    endif()
+    get_target_property( _utils_inc ${_utils_real_target} INTERFACE_INCLUDE_DIRECTORIES )
     if ( _utils_inc )
       set_target_properties(
-        ${_utils_tgt} PROPERTIES
+        ${_utils_real_target} PROPERTIES
         INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_utils_inc}"
       )
     endif()
@@ -513,18 +565,42 @@ if ( NOT TARGET Eigen3::Eigen )
     BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
   )
 
-  if ( EXISTS "${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS}/Eigen/Core" )
-    message( STATUS "Using local Eigen checkout: ${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS}" )
-    set( LAPACK_WRAPPER_EIGEN_SOURCE "local: ${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS}" )
+  set( _lapack_eigen_local_matches FALSE )
+  set( _lapack_eigen_local_branch "not available" )
+  if ( EXISTS "${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS}/Eigen/Core" AND GIT_EXECUTABLE )
+    execute_process(
+      COMMAND "${GIT_EXECUTABLE}" -C "${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS}" symbolic-ref --quiet --short HEAD
+      RESULT_VARIABLE _lapack_eigen_branch_result
+      OUTPUT_VARIABLE _lapack_eigen_local_branch
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+    )
+    if ( NOT _lapack_eigen_branch_result EQUAL 0 )
+      set( _lapack_eigen_local_branch "detached HEAD or unavailable" )
+    endif()
+    if ( _lapack_eigen_branch_result EQUAL 0 AND _lapack_eigen_local_branch STREQUAL LAPACK_WRAPPER_EIGEN_VERSION )
+      set( _lapack_eigen_local_matches TRUE )
+    endif()
+  endif()
+
+  if ( _lapack_eigen_local_matches )
+    message( STATUS "LapackWrapper: Eigen -> local ${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS} (branch '${_lapack_eigen_local_branch}', requested '${LAPACK_WRAPPER_EIGEN_VERSION}')" )
+    set( LAPACK_WRAPPER_EIGEN_SOURCE "local: ${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS} [branch ${_lapack_eigen_local_branch}]" )
     add_library( Eigen3::Eigen INTERFACE IMPORTED GLOBAL )
     target_include_directories( Eigen3::Eigen SYSTEM INTERFACE "${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS}" )
   elseif ( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/include/Eigen/Core" )
+    if ( EXISTS "${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS}/Eigen/Core" )
+      message( STATUS "LapackWrapper: Eigen -> ignoring local ${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS} (branch '${_lapack_eigen_local_branch}', requested '${LAPACK_WRAPPER_EIGEN_VERSION}')" )
+    endif()
     message( STATUS "Using bundled Eigen: ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/include" )
     set( LAPACK_WRAPPER_EIGEN_SOURCE "bundled: lib3rd/include" )
     add_library( Eigen3::Eigen INTERFACE IMPORTED GLOBAL )
     target_include_directories( Eigen3::Eigen SYSTEM INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/include" )
   else()
-    message( STATUS "Fetching Eigen ${LAPACK_WRAPPER_EIGEN_VERSION}" )
+    if ( EXISTS "${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS}/Eigen/Core" )
+      message( STATUS "LapackWrapper: Eigen -> ignoring local ${LAPACK_WRAPPER_EIGEN_LOCAL_DIR_ABS} (branch '${_lapack_eigen_local_branch}', requested '${LAPACK_WRAPPER_EIGEN_VERSION}')" )
+    endif()
+    message( STATUS "LapackWrapper: Eigen -> FetchContent (requested '${LAPACK_WRAPPER_EIGEN_VERSION}')" )
     set( LAPACK_WRAPPER_EIGEN_SOURCE "FetchContent: ${LAPACK_WRAPPER_EIGEN_VERSION}" )
     FetchContent_Declare(
       eigen3

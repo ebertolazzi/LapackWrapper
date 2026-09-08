@@ -177,7 +177,7 @@ namespace lapack_wrapper {
   template <typename T>
   void
   SparseMatrixBase<T>::get_full_view( MatrixWrapper<real_type> & ) {
-    UTILS_ERROR0( "get_full_view not defined\n");
+    Utils::Error( "get_full_view not defined\n");
   }
 
   /*\
@@ -210,7 +210,7 @@ namespace lapack_wrapper {
   template <typename T>
   bool
   SparseCCOOR<T>::foundNaN() const
-  { return Utils::found_NaN( m_vals.data(), m_nnz ); }
+  { return Utils::found_NaN_or_Inf( m_vals.data(), m_nnz ); }
 
   template <typename T>
   void

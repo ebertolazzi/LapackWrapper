@@ -108,7 +108,7 @@ namespace lapack_wrapper {
       real_type const [] /* M[] */,
       integer            /* ldM */
     ) override {
-      UTILS_ERROR0("LSC::factorize, virtual one not defined!");
+      Utils::Error("LSC::factorize, virtual one not defined!");
     }
 
     bool
@@ -118,7 +118,8 @@ namespace lapack_wrapper {
       real_type const [] /* M[] */,
       integer            /* ldM */
     ) override {
-      UTILS_ERROR0("LSC::factorize, virtual one not defined!");
+      Utils::Error("LSC::factorize, virtual one not defined!");
+      return false; // unreachable: UTILS_ERROR0 always throws
     }
 
     bool
@@ -142,7 +143,8 @@ namespace lapack_wrapper {
 
     bool
     t_solve( real_type [] ) const override {
-      UTILS_ERROR0("LSC::t_solve not defined!");
+      Utils::Error("LSC::t_solve not defined!");
+      return false; // unreachable: UTILS_ERROR0 always throws
     }
 
   };
