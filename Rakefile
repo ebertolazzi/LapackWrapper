@@ -24,15 +24,28 @@ end
 # ----------------------------------------------------------------------------
 # Rilevamento OS
 # ----------------------------------------------------------------------------
-case RUBY_PLATFORM
-when /darwin/
-  OS = :mac
-when /linux|cygwin/
-  OS = :linux
-when /msys/
+# MSYSTEM is exported by every MSYS2 shell and is the only reliable way to
+# tell a MinGW environment from a plain POSIX one: the ruby shipped in the
+# MSYS subsystem reports its platform as "linux"/"cygwin" even when it drives
+# a UCRT64 / MINGW64 toolchain, which made this build announce itself as Linux
+# and pick the Linux library suffixes. MSYSTEM=MSYS is the POSIX shell and is
+# deliberately NOT treated as MinGW.
+PINS_MINGW_ENVS = %w(UCRT64 MINGW64 MINGW32 CLANG64 CLANG32 CLANGARM64)
+PINS_IS_MINGW   = PINS_MINGW_ENVS.include?(ENV['MSYSTEM'].to_s.upcase)
+
+if PINS_IS_MINGW
   OS = :mingw
 else
-  OS = :win
+  case RUBY_PLATFORM
+  when /darwin/
+    OS = :mac
+  when /msys|mingw/
+    OS = :mingw
+  when /linux|cygwin/
+    OS = :linux
+  else
+    OS = :win
+  end
 end
 
 if RUBY_PLATFORM =~ /darwin/
