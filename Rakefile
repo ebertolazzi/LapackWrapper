@@ -8,6 +8,19 @@
 end
 require 'shellwords'
 
+# Maximum number of parallel compile jobs. GCC/MSVC can need a couple of GB per
+# C++20 translation unit, and an over-subscribed build is a classic source of
+# compiler crashes. PINS_MAX_CORE (or JOBS) caps it; 16 by default.
+def pins_jobs
+  require 'etc'
+  cap = ENV['PINS_MAX_CORE'].to_i
+  cap = 16 if cap <= 0
+  n = ENV['JOBS'].to_i
+  n = Etc.nprocessors if n <= 0
+  [n, cap].min
+end
+
+
 CLEAN.clear_exclude.exclude { |fn| fn.pathmap("%f").downcase == "core" }
 
 # Configurazione esterna (opzionale)
@@ -93,7 +106,7 @@ end
 def cmake_build_command(target = nil)
   cmd = ["--build", build_dir, "--config", build_type]
   cmd += ["--target", target] if target
-  cmd += ["--parallel"]
+  cmd += ["--parallel", pins_jobs.to_s]
   cmd.join(' ')
 end
 
